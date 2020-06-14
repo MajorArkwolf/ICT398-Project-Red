@@ -1,5 +1,6 @@
 #include <iostream>
+#include "Engine/Engine.hpp"
 
 int main() {
-    std::cout << "Hello World" << std::endl;
+    RedEngine::Engine::run();
 }

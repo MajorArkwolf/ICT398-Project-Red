@@ -1,6 +1,6 @@
 #include "Mesh.hpp"
 #include <utility>
-#include "View/Renderer/OpenGL.hpp"
+#include "Engine/Renderer/OpenGL.hpp"
 
 Mesh::Mesh(std::vector<Vertex> newVertices, std::vector<unsigned int> newIndices,
            std::vector<TextureB> newTextures) {

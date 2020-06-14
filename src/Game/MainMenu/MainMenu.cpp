@@ -3,6 +3,7 @@
 #include "MainMenu.hpp"
 #include "DataStructures/Model/Animation.hpp"
 #include <imgui.h>
+#include "Engine/SubModules/GUIManager.hpp"
 
 //using Controller::Input::BLUE_InputAction;
 //using Controller::Input::BLUE_InputType;
@@ -127,7 +128,7 @@ void MainMenu::handleWindowEvent() {
 
 void MainMenu::GUIStart() {
     auto &engine  = RedEngine::Engine::get();
-    //GUIManager::startWindowFrame();
+    GUIManager::startWindowFrame();
     MainMenuGUI();
     if (displayDifficultyMenu) {
         DifficultyMenu();
@@ -193,5 +194,5 @@ void MainMenu::DifficultyMenu() {
 }
 
 void MainMenu::GUIEnd() {
-    //GUIManager::endWindowFrame();
+    GUIManager::endWindowFrame();
 }

@@ -1,7 +1,6 @@
 #include "Engine/Engine.hpp"
 
 #include <iostream>
-#include <stdexcept>
 #include <imgui.h>
 
 // Game States
@@ -15,7 +14,7 @@ auto RedEngine::Engine::run() -> void {
     auto &engine = RedEngine::Engine::get();
 
     //ResourceManager::getInstance().loadResources();
-    engine.gameStack.AddToStack(std::make_unique<MainMenu>());
+    engine.gameStack.AddToStack(std::make_shared<MainMenu>());
     engine.gameStack.getTop()->Init();
 
     engine.t  = 0.0;
@@ -113,7 +112,7 @@ RedEngine::Engine::Engine(){
     //this->guiManager.initialiseImGUI(window);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
-    modelManager.getModelID("res/model/error.fbx");
+    modelManager.GetModelID("res/model/error.fbx");
 }
 
 RedEngine::Engine::~Engine() {

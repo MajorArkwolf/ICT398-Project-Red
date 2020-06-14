@@ -1,0 +1,11 @@
+#version 410 core
+out vec4 sk_FragColor;
+
+in vec3 sk_TexCoords;
+
+uniform samplerCube skybox;
+
+void main()
+{    
+    sk_FragColor = texture(skybox, sk_TexCoords);
+}

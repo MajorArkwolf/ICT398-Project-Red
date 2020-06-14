@@ -1,12 +1,12 @@
 #include "OpenGL.hpp"
 #include <iostream>
-#include "Controller/Engine/Engine.hpp"
+#include "Engine/Engine.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <algorithm>
 
 void View::OpenGL::Draw() {
-    auto &engine = BlueEngine::Engine::get();
+    auto &engine = RedEngine::Engine::get();
     if (!windowMinimized()) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -46,7 +46,7 @@ void View::OpenGL::Init() {
     int width  = 0;
     int height = 0;
 
-    auto &engine = BlueEngine::Engine::get();
+    auto &engine = RedEngine::Engine::get();
     glfwGetWindowSize(engine.window, &width, &height);
     glViewport(0, 0, width, height);
     glEnable(GL_BLEND);
@@ -150,7 +150,7 @@ void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
 }
 
 void View::OpenGL::ResizeWindow() {
-    auto &engine = BlueEngine::Engine::get();
+    auto &engine = RedEngine::Engine::get();
     int width = 0, height = 0;
     glfwGetWindowSize(engine.window, &width, &height);
     engine.setLastWindowXSize(width);
@@ -209,7 +209,7 @@ unsigned int View::OpenGL::TextureFromFile(const char *path, const std::string &
     }
     return textureID;
 }
-void View::OpenGL::SetCameraOnRender(Camera &mainCamera) {
+void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
     camera = &mainCamera;
 }
 
@@ -272,7 +272,7 @@ void View::OpenGL::DrawTerrain(unsigned int &VAO, const std::vector<unsigned int
 }
 
 bool View::OpenGL::windowMinimized() {
-    auto &engine = BlueEngine::Engine::get();
+    auto &engine = RedEngine::Engine::get();
     int width = 0, height = 0;
     glfwGetWindowSize(engine.window, &width, &height);
     return width == 0 || height == 0;

@@ -10,3 +10,6 @@
 [submodule "lib/assimp"]
 	path = lib/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "lib/stb_image"]
+	path = lib/stb_image
+	url = git@github.com:MajorArkwolf/stb_image-cmake.git

@@ -40,7 +40,7 @@ namespace RedEngine {
 
         /// The game stack to allow to switch between scenes.
         ///
-        GameStack<std::unique_ptr<BaseState>> gameStack;
+        GameStack<std::shared_ptr<BaseState>> gameStack;
       private:
 
 

@@ -7,7 +7,7 @@
 
 MainMenuObject::StaticModel::StaticModel(const std::string& name) {
     auto &rm = RedEngine::Engine::get().modelManager;
-    model = rm.getModelID(name);
+    model = rm.GetModelID(name);
     shader = std::make_shared<Shader>(Shader("res/shader/vertshader.vs", "res/shader/fragshader.fs"));
 }
 
@@ -54,7 +54,7 @@ void MainMenuObject::StaticModel::draw(const glm::mat4 &projection, const glm::m
     // Get the resource manager and call for it to draw the model
     //auto& res_manager = ResourceManager::getInstance();
     auto &rm = RedEngine::Engine::get().modelManager;
-    rm.Draw(model, shader.get())
+    rm.Draw(model, shader.get());
     //res_manager.drawModel(model, shader.get());
 }
 

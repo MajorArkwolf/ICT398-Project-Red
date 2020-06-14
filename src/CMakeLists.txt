@@ -13,6 +13,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/Renderer/Skybox.cpp
     #--SubModules
     Engine/SubModules/ModelManager.cpp
+    Engine/SubModules/GUIManager.cpp
 
     #Game
     #--MainMenu

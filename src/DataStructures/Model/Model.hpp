@@ -12,9 +12,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Mesh.hpp"
-#include "Model/Models/Animation.hpp"
-#include "Model/Models/DataTypes.hpp"
-#include "View/Renderer/Shader.hpp"
+#include "DataStructures/Model/Animation.hpp"
+#include "DataStructures/Model/DataTypes.hpp"
+#include "Engine/Renderer/Shader.hpp"
 
 namespace Model {
     class Model {

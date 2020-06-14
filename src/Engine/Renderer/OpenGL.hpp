@@ -4,11 +4,11 @@
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "DrawStruct.hpp"
-#include "Model/Models/DataTypes.hpp"
+#include "DataStructures/Model/DataTypes.hpp"
 #include "Skybox.hpp"
-#include "View/EulerCamera.hpp"
-#include "Model/Models/Model.hpp"
-#include "Model/Vertix.hpp"
+#include "Engine/EulerCamera.hpp"
+#include "DataStructures/Model/Model.hpp"
+#include "DataStructures/Model/Vertix.hpp"
 
 namespace View {
     class OpenGL: public View::Renderer {
@@ -83,7 +83,7 @@ namespace View {
          * Sets the camera to the renderer for the render pass. Required for lighting.
          * @param mainCamera the active camera in the scene.
          */
-        void SetCameraOnRender(Camera &mainCamera);
+        void SetCameraOnRender(Engine::Camera &mainCamera);
         /**
          * Setup the terrain models
          * @param VAO index of buffer.
@@ -120,7 +120,7 @@ namespace View {
         /// A draw que only for transparent objects.
         std::vector<View::Data::DrawItem> drawQueTransparent = {};
         /// The active camera on the draw pass.
-        Camera *camera = nullptr;
+        Engine::Camera *camera = nullptr;
         /// The sky box for the scene.
         Skybox skyBox = {};
 

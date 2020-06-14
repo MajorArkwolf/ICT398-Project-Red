@@ -1,7 +1,7 @@
 #include "Skybox.hpp"
 #include <glad/glad.h>
 #include <iostream>
-#include "stb_image.h"
+#include <stb_image.h>
 #include "Engine/Engine.hpp"
 
 View::Skybox::~Skybox() {

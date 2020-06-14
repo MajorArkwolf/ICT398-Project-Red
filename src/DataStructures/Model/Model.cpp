@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "Controller/Engine/Engine.hpp"
+#include <Engine/Engine.hpp>
 
 static inline glm::vec3 vec3_cast(const aiVector3D &v) { return glm::vec3(v.x, v.y, v.z); }
 static inline glm::vec2 vec2_cast(const aiVector3D &v) { return glm::vec2(v.x, v.y); } // it's aiVector3D because assimp's texture coordinates use that
@@ -18,7 +18,7 @@ Model::Model::Model(const string& path, bool gamma = false) : gammaCorrection(ga
 }
 
 void Model::Model::Draw(Shader& shader) {
-    auto cameraPos = BlueEngine::Engine::get().gameStack.getTop()->camera.Position;
+    auto cameraPos = RedEngine::Engine::get().gameStack.getTop()->camera.Position;
     shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
     shader.setVec3("viewPos", cameraPos);
@@ -195,7 +195,7 @@ std::vector<TextureB> Model::Model::loadMaterialTextures(aiMaterial *mat, aiText
         }
         if (!skip) { // if texture hasn't been loaded already, load it
             TextureB texture = {};
-            texture.id   = BlueEngine::Engine::get().renderer.TextureFromFile(str.C_Str(), this->directory, false);
+            texture.id   = RedEngine::Engine::get().renderer.TextureFromFile(str.C_Str(), this->directory, false);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);

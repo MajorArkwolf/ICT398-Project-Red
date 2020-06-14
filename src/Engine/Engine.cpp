@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <imgui.h>
 
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
@@ -14,7 +15,7 @@ auto RedEngine::Engine::run() -> void {
     auto &engine = RedEngine::Engine::get();
 
     //ResourceManager::getInstance().loadResources();
-    engine.gameStack.AddToStack(std::make_shared<MainMenu>());
+    engine.gameStack.AddToStack(std::make_unique<MainMenu>());
     engine.gameStack.getTop()->Init();
 
     engine.t  = 0.0;
@@ -63,16 +64,16 @@ auto RedEngine::Engine::run() -> void {
     glfwDestroyWindow(engine.window);
 }
 
-GUIManager &RedEngine::Engine::getGuiManager() {
-    return guiManager;
-}
+//GUIManager &RedEngine::Engine::getGuiManager() {
+//    return guiManager;
+//}
 
 RedEngine::Engine::Engine(){
     getBasePath();
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }
-    gleqInit();
+    //gleqInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -97,7 +98,7 @@ RedEngine::Engine::Engine(){
         glfwTerminate();
     }
 
-    gleqTrackWindow(window);
+    //gleqTrackWindow(window);
     glfwMakeContextCurrent(window);
 
     // tell GLFW to capture our mouse
@@ -109,10 +110,10 @@ RedEngine::Engine::Engine(){
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    this->guiManager.initialiseImGUI(window);
-    // This is a bandaid fix for gameobject animation, error model just like source.
+    //this->guiManager.initialiseImGUI(window);
+    // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
-    ResourceManager::getInstance().getModelID("res/model/error.fbx");
+    modelManager.getModelID("res/model/error.fbx");
 }
 
 RedEngine::Engine::~Engine() {
@@ -125,37 +126,37 @@ auto RedEngine::Engine::get() -> Engine & {
 }
 
 auto RedEngine::Engine::processInput(double dt) -> void {
-    GLEQevent event;
-    auto handledMouse  = true;
-    auto &inputManager = Controller::Input::InputManager::getInstance();
-
-    while (gleqNextEvent(&event)) {
-        if (event.type == GLEQ_KEY_PRESSED || event.type == GLEQ_KEY_RELEASED) {
-            inputManager.recordKeyStates(event);
-        }
-        switch (event.type) {
-            case GLEQ_KEY_PRESSED: {
-                if (event.keyboard.key == GLFW_KEY_F1) {
-                    auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
-                    if (mouseMode == GLFW_CURSOR_NORMAL) {
-                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                    } else {
-                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                    }
-                }
-            } break;
-            case GLEQ_WINDOW_CLOSED: {
-                this->endEngine();
-            } break;
-            default: break;
-        }
-
-        gameStack.getTop()->handleInputData(inputManager.ProcessInput(event), dt);
-        gleqFreeEvent(&event);
-    }
-    if (!handledMouse) {
-        this->mouse = {0.0f, 0.0f};
-    }
+//    GLEQevent event;
+//    auto handledMouse  = true;
+//    auto &inputManager = Controller::Input::InputManager::getInstance();
+//
+//    while (gleqNextEvent(&event)) {
+//        if (event.type == GLEQ_KEY_PRESSED || event.type == GLEQ_KEY_RELEASED) {
+//            inputManager.recordKeyStates(event);
+//        }
+//        switch (event.type) {
+//            case GLEQ_KEY_PRESSED: {
+//                if (event.keyboard.key == GLFW_KEY_F1) {
+//                    auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
+//                    if (mouseMode == GLFW_CURSOR_NORMAL) {
+//                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//                    } else {
+//                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//                    }
+//                }
+//            } break;
+//            case GLEQ_WINDOW_CLOSED: {
+//                this->endEngine();
+//            } break;
+//            default: break;
+//        }
+//
+//        gameStack.getTop()->handleInputData(inputManager.ProcessInput(event), dt);
+//        gleqFreeEvent(&event);
+//    }
+//    if (!handledMouse) {
+//        this->mouse = {0.0f, 0.0f};
+//    }
 }
 
 bool RedEngine::Engine::getMouseMode() {
@@ -164,7 +165,7 @@ bool RedEngine::Engine::getMouseMode() {
 }
 
 void RedEngine::Engine::setMouseMode(bool mode) {
-    if (mode == true) {
+    if (mode) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     } else {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

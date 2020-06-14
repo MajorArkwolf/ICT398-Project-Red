@@ -12,6 +12,7 @@
 #include "Game/BaseState.hpp"
 #include "Engine/GameStack.hpp"
 #include "Engine/Renderer/OpenGL.hpp"
+#include "Engine/SubModules/ModelManager.hpp"
 
 namespace RedEngine {
 
@@ -39,7 +40,7 @@ namespace RedEngine {
 
         /// The game stack to allow to switch between scenes.
         ///
-        GameStack<std::shared_ptr<BaseState>> gameStack;
+        GameStack<std::unique_ptr<BaseState>> gameStack;
       private:
 
 
@@ -140,6 +141,9 @@ namespace RedEngine {
 
 
         void SettingMenu();
+
+        ///Engine Sub Modules
+        ModelManager modelManager = {};
 
         ///Engine Variables
 

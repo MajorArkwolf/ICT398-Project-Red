@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <iostream>
 #include "stb_image.h"
-#include "Controller/Engine/Engine.hpp"
+#include "Engine/Engine.hpp"
 
 View::Skybox::~Skybox() {
     glDeleteVertexArrays(1, &skyboxVAO);

@@ -9,10 +9,11 @@
 //#include "gleq.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include "Engine/BaseState.hpp"
+#include "Game/BaseState.hpp"
 #include "Engine/GameStack.hpp"
+#include "Engine/Renderer/OpenGL.hpp"
 
-namespace BlueEngine {
+namespace RedEngine {
 
     /**
      * @class Engine
@@ -43,7 +44,7 @@ namespace BlueEngine {
 
 
         /// GUI Manager for our GUI interface.
-        GUIManager guiManager;
+        //GUIManager guiManager;
         /// Flag used to determine if the engine should shutdown.
         bool isRunning = true;
         /**
@@ -97,7 +98,7 @@ namespace BlueEngine {
          * Gets the GUI manager interface.
          * @return the GUIManager object.
          */
-        GUIManager &getGuiManager();
+        //GUIManager &getGuiManager();
 
         /**
          * @brief Overloaded assignment operator, set to default overload

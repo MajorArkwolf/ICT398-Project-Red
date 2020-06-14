@@ -9,12 +9,12 @@
 enum class Camera_Movement { FORWARD, BACKWARD, LEFT, RIGHT };
 
 /// Default values used to initialise a camera.
-constexpr float YAW         = 0.0;
-constexpr float PITCH        = 0.0;
-constexpr float SPEED        = 0.05;
-constexpr float SENSITIVITY  = 0.1;
-constexpr float ZOOM         = 45.0;
-namespace View {
+constexpr double YAW         = 0.0;
+constexpr double PITCH        = 0.0;
+constexpr double SPEED        = 0.05;
+constexpr double SENSITIVITY  = 0.1;
+constexpr double ZOOM         = 45.0;
+namespace Engine {
 /**
  * Euler Camera designed to interact in a 3D environment.
  */
@@ -27,11 +27,11 @@ namespace View {
         glm::vec3 Right = {};
         glm::vec3 WorldUp = {};
         /// Euler Angles
-        float Yaw = {};
-        float Pitch = {};
+        double Yaw = {};
+        double Pitch = {};
         /// Camera options
-        float MovementSpeed = {};
-        float MouseSensitivity = {};
+        double MovementSpeed = {};
+        double MouseSensitivity = {};
         double Zoom = {};
 
         /**
@@ -41,7 +41,7 @@ namespace View {
          * @param yaw of the camera.
          * @param pitch of the camera.
          */
-        Camera(glm::dvec3 position = glm::dvec3(0.0f, 0.0f, 0.0f),
+        explicit Camera(glm::dvec3 position = glm::dvec3(0.0f, 0.0f, 0.0f),
                glm::dvec3 up = glm::dvec3(0.0f, 1.0f, 0.0f), double yaw = YAW,
                double pitch = PITCH);
 
@@ -94,10 +94,13 @@ namespace View {
          */
         glm::ivec2 getLocation() const;
 
+        /**
+         * The right vector of the camera
+         * @return right vector
+         */
         glm::vec3 GetRightVector();
 
         void ProcessKeyboardInput(bool forward, bool backward, bool left, bool right, double deltaTime);
-        static void LuaInit();
         /**
          * Calculates the front vector from the Camera's (updated) Euler Angles
          */

@@ -54,7 +54,7 @@ class GameStack {
 
     /**
      * Returns the top of the stacks state.
-     * @return
+     * @return the top element
      */
     T& getTop() {
         return gameStack.top();

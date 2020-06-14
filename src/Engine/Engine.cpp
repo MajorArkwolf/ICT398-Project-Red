@@ -1,22 +1,19 @@
-#include "Controller/Engine/Engine.hpp"
+#include "Engine/Engine.hpp"
 
 #include <iostream>
 #include <stdexcept>
 
-#include "Controller/PhysicsFacade/React/ReactShapes.hpp"
-
 // Game States
-#include "Game/Prototype/PrototypeScene.hpp"
 #include "Game/MainMenu/MainMenu.hpp"
 
-using BlueEngine::Engine;
+using RedEngine::Engine;
 using std::runtime_error;
 using std::string;
 
-auto Engine::run() -> void {
-    auto &engine = Engine::get();
+auto RedEngine::Engine::run() -> void {
+    auto &engine = RedEngine::Engine::get();
 
-    ResourceManager::getInstance().loadResources();
+    //ResourceManager::getInstance().loadResources();
     engine.gameStack.AddToStack(std::make_shared<MainMenu>());
     engine.gameStack.getTop()->Init();
 
@@ -66,11 +63,11 @@ auto Engine::run() -> void {
     glfwDestroyWindow(engine.window);
 }
 
-GUIManager &BlueEngine::Engine::getGuiManager() {
+GUIManager &RedEngine::Engine::getGuiManager() {
     return guiManager;
 }
 
-Engine::Engine(){
+RedEngine::Engine::Engine(){
     getBasePath();
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
@@ -118,17 +115,16 @@ Engine::Engine(){
     ResourceManager::getInstance().getModelID("res/model/error.fbx");
 }
 
-Engine::~Engine() {
+RedEngine::Engine::~Engine() {
     glfwTerminate();
 }
 
-auto Engine::get() -> Engine & {
+auto RedEngine::Engine::get() -> Engine & {
     static auto instance = Engine{};
-
     return instance;
 }
 
-auto Engine::processInput(double dt) -> void {
+auto RedEngine::Engine::processInput(double dt) -> void {
     GLEQevent event;
     auto handledMouse  = true;
     auto &inputManager = Controller::Input::InputManager::getInstance();
@@ -162,12 +158,12 @@ auto Engine::processInput(double dt) -> void {
     }
 }
 
-bool BlueEngine::Engine::getMouseMode() {
+bool RedEngine::Engine::getMouseMode() {
     auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
     return mouseMode == GLFW_CURSOR_NORMAL;
 }
 
-void BlueEngine::Engine::setMouseMode(bool mode) {
+void RedEngine::Engine::setMouseMode(bool mode) {
     if (mode == true) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     } else {
@@ -175,22 +171,22 @@ void BlueEngine::Engine::setMouseMode(bool mode) {
     }
 }
 
-auto Engine::getIsRunning() const -> bool {
+auto RedEngine::Engine::getIsRunning() const -> bool {
     return this->isRunning;
 }
 
-auto Engine::endEngine() -> void {
+auto RedEngine::Engine::endEngine() -> void {
     isRunning = false;
 }
 
-auto Engine::getBasePath() -> void {
+auto RedEngine::Engine::getBasePath() -> void {
     // char *base_path = SDL_GetBasePath();
     // basepath        = std::string(base_path);
     // SDL_free(base_path);
     basepath = "./";
 }
 
-void Engine::SettingMenu() {
+void RedEngine::Engine::SettingMenu() {
     ImVec2 buttonSize(150, 30);
 
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -238,28 +234,28 @@ void Engine::SettingMenu() {
     ImGui::End();
 }
 
-int BlueEngine::Engine::getLastWindowXSize() const {
+int RedEngine::Engine::getLastWindowXSize() const {
     return lastWindowXSize;
 }
 
-void BlueEngine::Engine::setLastWindowXSize(int lastWindowXSize) {
+void RedEngine::Engine::setLastWindowXSize(int lastWindowXSize) {
     Engine::lastWindowXSize = lastWindowXSize;
 }
 
-int BlueEngine::Engine::getLastWindowYSize() const {
+int RedEngine::Engine::getLastWindowYSize() const {
     return lastWindowYSize;
 }
 
-void BlueEngine::Engine::setLastWindowYSize(int lastWindowYSize) {
+void RedEngine::Engine::setLastWindowYSize(int lastWindowYSize) {
     Engine::lastWindowYSize = lastWindowYSize;
 }
-double BlueEngine::Engine::getT() const {
+double RedEngine::Engine::getT() const {
     return t;
 }
-double BlueEngine::Engine::getDt() const {
+double RedEngine::Engine::getDt() const {
     return dt;
 }
 
-double BlueEngine::Engine::getFrameTime() const {
+double RedEngine::Engine::getFrameTime() const {
     return EngineFrameTime;
 }

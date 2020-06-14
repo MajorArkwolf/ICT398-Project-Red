@@ -10,7 +10,11 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/Renderer/OpenGL.cpp
     Engine/Renderer/Shader.cpp
     Engine/Renderer/Skybox.cpp
-    
+
+    #Game
+    Game/MainMenu/MainMenu.cpp
+    Game/MainMenu/StaticModel.cpp
+
 )
 
 # Include project header files.

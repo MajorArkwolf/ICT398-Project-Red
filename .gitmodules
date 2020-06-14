@@ -13,3 +13,6 @@
 [submodule "imgui"]
 	path = imgui
 	url = git@github.com:MajorArkwolf/imgui.git
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/MajorArkwolf/imgui.git

@@ -2,6 +2,15 @@
 # Add source files.
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
+
+    #Engine
+    Engine/Engine.cpp
+    Engine/EulerCamera.cpp
+    #Engine Renderer
+    Engine/Renderer/OpenGL.cpp
+    Engine/Renderer/Shader.cpp
+    Engine/Renderer/Skybox.cpp
+    
 )
 
 # Include project header files.

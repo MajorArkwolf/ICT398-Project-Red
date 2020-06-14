@@ -1,6 +1,7 @@
 #include "GUIManager.hpp"
-
 #include "Engine/Engine.hpp"
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
 GUIManager::GUIManager() {
     initialiseWindowOpenMap();
@@ -132,14 +133,12 @@ void GUIManager::displayTerrainSettings() {
 }
 
 void GUIManager::startWindowFrame() {
-
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
 void GUIManager::endWindowFrame() {
-
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
@@ -149,10 +148,6 @@ void GUIManager::toggleWindow(const std::string &windowName) {
         bool &open = windowOpenMap.at(windowName);
         open       = !open;
     }
-}
-
-void GUIManager::setTerrainManager(Controller::TerrainManager *terrain) {
-    terrainManager = terrain;
 }
 
 void GUIManager::initialiseWindowOpenMap() {

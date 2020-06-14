@@ -4,15 +4,13 @@
 #include <string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#define GLEQ_IMPLEMENTATION
-#define GLEQ_STATIC
-//#include "gleq.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include "Game/BaseState.hpp"
 #include "Engine/GameStack.hpp"
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
+#include "Engine/SubModules/GUIManager.hpp"
 
 namespace RedEngine {
 
@@ -45,7 +43,7 @@ namespace RedEngine {
 
 
         /// GUI Manager for our GUI interface.
-        //GUIManager guiManager;
+        GUIManager guiManager;
         /// Flag used to determine if the engine should shutdown.
         bool isRunning = true;
         /**
@@ -99,7 +97,7 @@ namespace RedEngine {
          * Gets the GUI manager interface.
          * @return the GUIManager object.
          */
-        //GUIManager &getGuiManager();
+        GUIManager &getGuiManager();
 
         /**
          * @brief Overloaded assignment operator, set to default overload

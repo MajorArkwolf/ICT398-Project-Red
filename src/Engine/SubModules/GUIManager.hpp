@@ -1,18 +1,12 @@
 #pragma once
-
 #include <imgui.h>
 #include <map>
 #include <string>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <examples/imgui_impl_glfw.h>
-#include <examples/imgui_impl_opengl3.h>
+
 
 #include "Engine/EulerCamera.hpp"
-
-namespace Controller {
-    class TerrainManager;
-}
 
 class GUIManager {
   public:
@@ -82,21 +76,10 @@ class GUIManager {
      */
     void toggleWindow(const std::string &windowName);
 
-    /**
-     * @brief Sets the terrain manager to use by the terrain texture manager
-     * @param terrain the Terrain Manager to manage
-     */
-    void setTerrainManager(Controller::TerrainManager *terrain);
-
   private:
     /// A mapping of a window name to a location in the window open array
     std::map<std::string, bool> windowOpenMap;
 
     /// Initialises the window open map
     void initialiseWindowOpenMap();
-
-    /// Pointer to the current terrain manager
-    Controller::TerrainManager *terrainManager{};
-
-    static void luaToggleWindow(std::string window);
 };

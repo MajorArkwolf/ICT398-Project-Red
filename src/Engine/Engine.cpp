@@ -63,9 +63,9 @@ auto RedEngine::Engine::run() -> void {
     glfwDestroyWindow(engine.window);
 }
 
-//GUIManager &RedEngine::Engine::getGuiManager() {
-//    return guiManager;
-//}
+GUIManager &RedEngine::Engine::getGuiManager() {
+    return guiManager;
+}
 
 RedEngine::Engine::Engine(){
     getBasePath();
@@ -109,7 +109,7 @@ RedEngine::Engine::Engine(){
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    //this->guiManager.initialiseImGUI(window);
+    this->guiManager.initialiseImGUI(window);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     modelManager.GetModelID("res/model/error.fbx");
@@ -191,7 +191,7 @@ void RedEngine::Engine::SettingMenu() {
 
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-    //auto &window = BlueEngine::Engine::get().window;
+    auto &mainWindow = RedEngine::Engine::get().window;
 
     ImGui::SetNextWindowFocus();
     ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
@@ -202,9 +202,9 @@ void RedEngine::Engine::SettingMenu() {
     if (ImGui::Button("Borderless Windowed", buttonSize)) {
         lastWindowXSize = mode->width / 2;
         lastWindowYSize = mode->height / 2;
-        glfwSetWindowMonitor(window, nullptr, 0, 0, lastWindowXSize, lastWindowYSize, mode->refreshRate);
+        glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, lastWindowXSize, lastWindowYSize, mode->refreshRate);
         this->renderer.UpdateViewPort(0, 0, lastWindowXSize, lastWindowYSize);
-        glfwSetWindowPos(window, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
+        glfwSetWindowPos(mainWindow, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Windowed", buttonSize)) {
@@ -212,16 +212,16 @@ void RedEngine::Engine::SettingMenu() {
         lastWindowYSize = mode->height / 2;
         glfwSetWindowMonitor(window, nullptr, 0, 0, lastWindowXSize, lastWindowYSize, mode->refreshRate);
         this->renderer.UpdateViewPort(0, 0, lastWindowXSize, lastWindowYSize);
-        glfwSetWindowPos(window, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
+        glfwSetWindowPos(mainWindow, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Borderless Fullscreen", buttonSize)) {
-        glfwSetWindowMonitor(window, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
+        glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
         this->renderer.UpdateViewPort(0, 0, mode->width, mode->height);
     }
 
     if (ImGui::Button("Fullscreen", buttonSize)) {
-        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        glfwSetWindowMonitor(mainWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
         this->renderer.UpdateViewPort(0, 0, mode->width, mode->height);
     }
     ImGui::Separator();

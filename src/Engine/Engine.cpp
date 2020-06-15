@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <imgui.h>
-
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
 

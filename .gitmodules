@@ -16,3 +16,6 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/MajorArkwolf/imgui.git
+[submodule "lib/react"]
+	path = lib/react
+	url = https://github.com/DanielChappuis/reactphysics3d.git

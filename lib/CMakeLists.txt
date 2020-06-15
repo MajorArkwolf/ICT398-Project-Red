@@ -2,6 +2,9 @@
 option(ASSIMP_BUILD_TESTS OFF)
 option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
 option(OPTION_BUILD_TESTS OFF)
+option(GLFW_BUILD_DOCS OFF)
+option(GLFW_BUILD_TESTS OFF)
+option(GLFW_BUILD_EXAMPLES OFF)
 
 # Build libraries.
 string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -15,12 +18,10 @@ add_compile_options(
     # Visual Studio
     $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
+add_subdirectory(react)
 add_subdirectory(glm)
 add_subdirectory(assimp)
 add_subdirectory(glad)
-option(GLFW_BUILD_DOCS OFF)
-option(GLFW_BUILD_TESTS OFF)
-option(GLFW_BUILD_EXAMPLES OFF)
 add_subdirectory(glfw)
 add_subdirectory(imgui)
 add_subdirectory(stb_image)
@@ -29,6 +30,7 @@ add_subdirectory(stb_image)
 set_target_properties(assimp PROPERTIES DEBUG_POSTFIX "")
 set_target_properties(glad PROPERTIES DEBUG_POSTFIX "")
 set_target_properties(glfw PROPERTIES DEBUG_POSTFIX "")
+set_target_properties(reactphysics3d PROPERTIES DEBUG_POSTFIX "")
 
 
 # Ignore warnings from library headers.
@@ -38,4 +40,5 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     assimp/include
     glad/include
     glad/src
+    react/src
 )

@@ -10,9 +10,6 @@
 [submodule "lib/stb_image"]
 	path = lib/stb_image
 	url = git@github.com:MajorArkwolf/stb_image-cmake.git
-[submodule "imgui"]
-	path = imgui
-	url = git@github.com:MajorArkwolf/imgui.git
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/MajorArkwolf/imgui.git

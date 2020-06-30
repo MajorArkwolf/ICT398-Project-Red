@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-    ECS/ECS.cpp
+    #ECS/ECS.cpp
     #--Components
 )
 

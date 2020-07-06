@@ -5,7 +5,7 @@
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
 
-using RedEngine::Engine;
+
 using std::runtime_error;
 using std::string;
 

@@ -285,3 +285,7 @@ void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
 void View::OpenGL::AddToQueTransparent(View::Data::DrawItem &drawItem) {
     drawQueTransparent.push_back(drawItem);
 }
+
+View::OpenGL::~OpenGL() {
+
+}

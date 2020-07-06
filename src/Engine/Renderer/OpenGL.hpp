@@ -11,7 +11,7 @@
 #include "DataStructures/Model/Vertix.hpp"
 
 namespace View {
-    class OpenGL: public View::Renderer {
+    class OpenGL: public Renderer {
       public:
         /**
          * Default Constructor
@@ -20,7 +20,7 @@ namespace View {
         /**
          * Default Destructor
          */
-        ~OpenGL() = default;
+        ~OpenGL() override;
         /**
          * Draw call for the renderer.
          */

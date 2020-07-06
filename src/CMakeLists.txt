@@ -19,6 +19,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--MainMenu
     Game/MainMenu/MainMenu.cpp
     Game/MainMenu/StaticModel.cpp
+    #--Demo Scene
+    Game/Demo/Demo.cpp
 
     #DataStructures
     #--Model
@@ -28,7 +30,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-    #ECS/ECS.cpp
+    ECS/Ecs.cpp
     #--Components
 )
 

@@ -15,7 +15,7 @@ class BaseState {
     virtual ~BaseState() = default;
 
     /// Whether mouse is set to relative mode (reset to center of window each frame)
-    bool relativeMouse = 1;
+    bool relativeMouse = true;
 
     /**
      * @brief Virtual initialisation function for a game state
@@ -27,13 +27,13 @@ class BaseState {
      * @brief Virtual soft initialisation function for a game state
      * Used separately from a hard init to reset variables needed for games tate function
      */
-    virtual void display() = 0;
+    virtual void Display() = 0;
 
     /**
      * @brief Virtual un-initialisation function for a game state
      * Used to free memory from the game state, called right before popping the game stack
      */
-    virtual void unInit() = 0;
+    virtual void UnInit() = 0;
 
     /**
      * @brief Virtual function for handling input events encased within a a custom Input Event
@@ -48,10 +48,17 @@ class BaseState {
      * @param dt Delta time since last frame
      * @param t The time since the program was started
      */
-    virtual void update(double t, double dt) = 0;
+    virtual void Update(double t, double dt) = 0;
+
+    /**
+     * Virtual fixed update function for updating things that need to be decoupled from the frame rate.
+     * @param dt Delta time since last frame
+     * @param t t The time since the program was started
+     */
+    virtual void FixedUpdate(double t, double dt) = 0;
 
     /// Camera required for renderer.
-    Engine::Camera camera;
+    //Engine::Camera camera;
 
     /**
      * Starts the GUI menu.

@@ -4,6 +4,7 @@
 #include "DataStructures/Model/Animation.hpp"
 #include <imgui.h>
 #include "Engine/SubModules/GUIManager.hpp"
+#include "Game/Demo/Demo.hpp"
 
 //using Controller::Input::BLUE_InputAction;
 //using Controller::Input::BLUE_InputType;
@@ -36,7 +37,7 @@ void MainMenu::Init() {
     camera.updateCameraVectors();
 }
 
-auto MainMenu::display() -> void {
+auto MainMenu::Display() -> void {
     auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
@@ -45,13 +46,15 @@ auto MainMenu::display() -> void {
     }
 }
 
-auto MainMenu::update(double t, double dt) -> void {
+auto MainMenu::FixedUpdate(double t, double dt) -> void {}
+
+auto MainMenu::Update(double t, double dt) -> void {
     for (auto & m : sModels) {
         m.update(t, dt);
     }
 }
 
-void MainMenu::unInit() {
+void MainMenu::UnInit() {
 
 }
 
@@ -130,9 +133,6 @@ void MainMenu::GUIStart() {
     auto &engine  = RedEngine::Engine::get();
     GUIManager::startWindowFrame();
     MainMenuGUI();
-    if (displayDifficultyMenu) {
-        DifficultyMenu();
-    }
 }
 
 void MainMenu::MainMenuGUI() {
@@ -145,9 +145,9 @@ void MainMenu::MainMenuGUI() {
     ImGui::Separator();
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
-    if (ImGui::Button("Play Game", ImVec2(285, 40))) {
-        //startGame(Difficulty::easy);
-        displayDifficultyMenu = true;
+    if (ImGui::Button("Demo", ImVec2(285, 40))) {
+        auto &engine = RedEngine::Engine::get();
+        engine.gameStack.AddToStack(std::make_shared<Demo>());
     }
     ImGui::Separator();
 
@@ -163,33 +163,6 @@ void MainMenu::MainMenuGUI() {
         engine.SettingMenu();
     }
 
-    ImGui::End();
-}
-
-void MainMenu::DifficultyMenu() {
-    auto &engine = RedEngine::Engine::get();
-    ImVec2 buttonSize(150, 30);
-    ImGui::SetNextWindowFocus();
-    ImGui::SetNextWindowSize(ImVec2(500, 100), 1);
-    ImGui::Begin("Difficulty", &displayDifficultyMenu,
-                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-    ImGui::Separator();
-    ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
-    ImGui::Text("Select Difficulty");
-    if (ImGui::Button("Easy", buttonSize)) {
-        //startGame(Model::Difficulty::easy);
-        displayDifficultyMenu = false;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Medium", buttonSize)) {
-        //startGame(Model::Difficulty::medium);
-        displayDifficultyMenu = false;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Hard", buttonSize)) {
-        //startGame(Model::Difficulty::hard);
-        displayDifficultyMenu = false;
-    }
     ImGui::End();
 }
 

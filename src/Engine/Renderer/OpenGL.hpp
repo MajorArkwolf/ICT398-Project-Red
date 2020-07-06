@@ -112,6 +112,8 @@ namespace View {
          */
         void UpdateViewPort(int bl, int br, int tl, int tr) override;
 
+        Engine::Camera* GetActiveCamera() {return camera;}
+
     private:
         /// Decides if the renderer should be in wire frame mode or not.
         bool wireFrame = false;

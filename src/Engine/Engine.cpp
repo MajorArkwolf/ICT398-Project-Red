@@ -44,18 +44,18 @@ auto RedEngine::Engine::run() -> void {
             // previousState = currentState;
             glfwPollEvents();
             engine.processInput(engine.dt);
-            engine.gameStack.getTop()->update(engine.t, engine.dt);
+            engine.gameStack.getTop()->FixedUpdate(engine.t, engine.dt);
             engine.t += engine.dt;
             accumulator -= engine.dt;
         }
 
         // const double alpha = accumulator / dt;
         // state = currentState * alpha + previousState * (1.0 - alpha);
-
-        engine.gameStack.getTop()->display();
+        engine.gameStack.getTop()->Update(engine.t, engine.EngineFrameTime);
+        engine.gameStack.getTop()->Display();
         engine.renderer.Draw();
         if (engine.gameStack.isRemoveTopFlag()) {
-            engine.gameStack.getTop()->unInit();
+            engine.gameStack.getTop()->UnInit();
         }
         engine.gameStack.checkTop();
     }

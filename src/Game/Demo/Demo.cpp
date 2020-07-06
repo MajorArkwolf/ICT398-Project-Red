@@ -1,8 +1,5 @@
-//
-// Created by Peter Crabbe on 30/6/20.
-//
-
 #include "Demo.hpp"
+#include "Engine/Engine.hpp"
 
 Demo::Demo() {
     camera = Engine::Camera();
@@ -13,12 +10,14 @@ void Demo::Init() {
 
 }
 
-void Demo::unInit() {
+void Demo::UnInit() {
 
 }
 
-void Demo::display() {
-
+void Demo::Display() {
+    auto &engine   = RedEngine::Engine::get();
+    auto &renderer = RedEngine::Engine::get().renderer;
+    renderer.SetCameraOnRender(camera);
 }
 
 void Demo::GUIStart() {
@@ -26,5 +25,13 @@ void Demo::GUIStart() {
 }
 
 void Demo::GUIEnd() {
+
+}
+
+void Demo::Update(double t, double dt) {
+
+}
+
+void Demo::FixedUpdate(double t, double dt) {
 
 }

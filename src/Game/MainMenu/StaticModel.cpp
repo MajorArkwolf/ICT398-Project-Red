@@ -13,28 +13,13 @@ MainMenuObject::StaticModel::StaticModel(const std::string& name) {
 
 MainMenuObject::StaticModel::~StaticModel() = default;
 
-void MainMenuObject::StaticModel::update(double t, double dt) {
+void MainMenuObject::StaticModel::Update(double t, double dt) {
     if (animator != nullptr) {
         animator->BoneTransform(dt);
     }
 }
 
-void MainMenuObject::StaticModel::addToDraw() {
-    // Create a function pointer of the GameObject's draw call for the DrawItem
-    std::function<void(const glm::mat4& projection, const glm::mat4& view, const glm::dvec3& cameraPos)> e = [&](const glm::mat4& projection, const glm::mat4& view, const glm::dvec3& cameraPos) {
-        this->draw(projection, view, cameraPos);
-    };
-
-    // Here the DrawItem for the GameObject is generated and configured
-    View::Data::DrawItem drawItem = {};
-    drawItem.drawPointer = e;
-
-    // Finally the DrawItem is added to the renderer queue
-    auto& renderer = RedEngine::Engine::get().renderer;
-    renderer.AddToQue(drawItem);
-}
-
-void MainMenuObject::StaticModel::draw(const glm::mat4 &projection, const glm::mat4 &view, const glm::dvec3 &cameraPos) {
+void MainMenuObject::StaticModel::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
     shader->use();
     shader->setMat4("projection", projection);
     shader->setMat4("view", view);

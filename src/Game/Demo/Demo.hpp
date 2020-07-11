@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/BaseState.hpp"
+#include "ECS/Ecs.hpp"
 
 class Demo : public BaseState {
 public:
@@ -7,13 +8,13 @@ public:
     ~Demo() override = default;
     void Init() override;
     void UnInit() override;
-    void Display() override;
+    void Display(glm::mat4 projection, glm::mat4 view) override;
     void GUIStart() override;
     void GUIEnd() override;
     void Update(double t, double dt) override;
     void FixedUpdate(double t, double dt) override;
 
 private:
-    Engine::Camera camera;
+    ECS ecs = {};
 };
 

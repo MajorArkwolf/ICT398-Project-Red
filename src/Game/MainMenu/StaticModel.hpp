@@ -15,9 +15,8 @@ namespace MainMenuObject {
     public:
         explicit StaticModel(const std::string& name);
         ~StaticModel();
-        void update(double t, double dt);
-        void addToDraw();
-        void draw(const glm::mat4& projection, const glm::mat4& view, const glm::dvec3& cameraPos);
+        void Update(double t, double dt);
+        void Draw(const glm::mat4& projection, const glm::mat4& view);
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
         glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);

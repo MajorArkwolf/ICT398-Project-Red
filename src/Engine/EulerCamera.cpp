@@ -83,8 +83,8 @@ void Engine::Camera::updateCameraVectors() {
     Up = glm::normalize(glm::cross(Right, Front));
 }
 
-glm::ivec2 Engine::Camera::getLocation() const {
-    auto key = glm::ivec2(static_cast<int>(Position.x), static_cast<int>(Position.z));
+glm::dvec2 Engine::Camera::getLocation() const {
+    auto key = glm::dvec2(Position.x, Position.z);
     return key;
 }
 

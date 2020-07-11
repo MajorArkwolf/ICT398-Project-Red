@@ -38,16 +38,6 @@ namespace View {
          */
         void ToggleWireFrame() override;
         /**
-         * Adds an item to the draw que.
-         * @param drawItem Passes DrawItem into the que to be used for rendering purposes.
-         */
-        void AddToQue(View::Data::DrawItem& drawItem);
-        /**
-         * Adds an item to the draw que.
-         * @param drawItem Passes DrawItem into the que to be used for rendering purposes.
-         */
-        void AddToQueTransparent(View::Data::DrawItem& drawItem);
-        /**
          * Setups a general mesh for the renderer in the OpenGL Context.
          * @param VAO buffer identity
          * @param VBO buffer identity
@@ -85,25 +75,6 @@ namespace View {
          */
         void SetCameraOnRender(Engine::Camera &mainCamera);
         /**
-         * Setup the terrain models
-         * @param VAO index of buffer.
-         * @param VBO index of buffer.
-         * @param EBO index of buffer.
-         * @param vertices to load into the buffers.
-         * @param indices to load into the buffers.
-         */
-        void SetupTerrainModel(unsigned int &VAO, unsigned &VBO, unsigned int &EBO, const std::vector<Blue::Vertex>& vertices, const std::vector<unsigned int>& indices);
-
-        /**
-         * Draw the Terrain models
-         * @param VAO index to the buffer object in OpenGL.
-         * @param textures a vector of texture ID's used to generate the terrain.
-         * @param ebo_size The size of the indices buffer.
-         */
-        void DrawTerrain(unsigned int &VAO, const std::vector<unsigned int> &textures,
-                         const unsigned int& ebo_size);
-
-        /**
          * Updates the viewport.
          * @param bl Bottom left, should be 0.
          * @param br Bottom right, should be 0.
@@ -117,20 +88,10 @@ namespace View {
     private:
         /// Decides if the renderer should be in wire frame mode or not.
         bool wireFrame = false;
-        /// DrawQue of objects that need to be rendered by the renderer.
-        std::vector<View::Data::DrawItem> drawQue = {};
-        /// A draw que only for transparent objects.
-        std::vector<View::Data::DrawItem> drawQueTransparent = {};
         /// The active camera on the draw pass.
         Engine::Camera *camera = nullptr;
         /// The sky box for the scene.
         Skybox skyBox = {};
-
-        /**
-         * Sorts the objects based on the view distance, helps solve alpha issues.
-         */
-        void sortDrawDistance();
-
         /**
          * Checks to see if the window is in a minimized state.
          * @return true if minimized.

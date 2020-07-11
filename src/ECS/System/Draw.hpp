@@ -1,6 +1,6 @@
 #include <entt/entt.hpp>
-
+#include <glm/matrix.hpp>
 
 namespace System {
-    void Draw(const entt::registry& registry);
+    void Draw(entt::registry& registry, const glm::mat4& projection, const glm::mat4& view);
 }

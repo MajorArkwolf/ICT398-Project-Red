@@ -52,7 +52,6 @@ auto RedEngine::Engine::run() -> void {
         // const double alpha = accumulator / dt;
         // state = currentState * alpha + previousState * (1.0 - alpha);
         engine.gameStack.getTop()->Update(engine.t, engine.EngineFrameTime);
-        engine.gameStack.getTop()->Display();
         engine.renderer.Draw();
         if (engine.gameStack.isRemoveTopFlag()) {
             engine.gameStack.getTop()->UnInit();

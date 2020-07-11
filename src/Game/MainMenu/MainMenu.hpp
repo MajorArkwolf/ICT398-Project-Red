@@ -19,7 +19,7 @@ public:
     /**
      * Display method for the scene.
      */
-    auto Display() -> void override;
+    auto Display(glm::mat4 projection, glm::mat4 view) -> void override;
 
     /**
      * Update function for main menu.
@@ -74,7 +74,7 @@ private:
     void handleWindowEvent();
 
     /// Camera for the scene
-    Engine::Camera camera;
+    //Engine::Camera camera;
 
     /// models used inside of the scene.
     std::vector<MainMenuObject::StaticModel> sModels = {};

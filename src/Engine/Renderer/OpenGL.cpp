@@ -8,39 +8,24 @@
 void View::OpenGL::Draw() {
     auto &engine = RedEngine::Engine::get();
     if (!windowMinimized()) {
+        camera = &engine.gameStack.getTop()->camera;
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         engine.gameStack.getTop()->GUIStart();
         int width = 0, height = 0;
         glfwGetWindowSize(engine.window, &width, &height);
-
-
         glm::mat4 projection =
                 glm::perspective(glm::radians(camera->Zoom),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera->GetViewMatrix();
         glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-        sortDrawDistance();
-        if (wireFrame) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-
-        for (auto &m : drawQue) {
-            m.drawPointer(projection, view, camera->Position);
-        }
-        for (auto &m : drawQueTransparent) {
-            m.drawPointer(projection, view, camera->Position);
-        }
+        engine.gameStack.getTop()->Display(projection, view);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         skyBox.draw(skyboxView, projection);
         engine.gameStack.getTop()->GUIEnd();
     }
     glfwSwapBuffers(engine.window);
-    drawQue.clear();
-    drawQueTransparent.clear();
 }
 void View::OpenGL::Init() {
     int width  = 0;
@@ -158,10 +143,6 @@ void View::OpenGL::ResizeWindow() {
     UpdateViewPort(0, 0, width, height);
 }
 
-void View::OpenGL::AddToQue(View::Data::DrawItem& drawItem) {
-    drawQue.push_back(drawItem);
-}
-
 unsigned int View::OpenGL::TextureFromFile(const char *path, const std::string &directory,
                                                      [[maybe_unused]] bool gamma) {
     std::string filename = std::string(path);
@@ -213,62 +194,19 @@ void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
     camera = &mainCamera;
 }
 
-void View::OpenGL::sortDrawDistance() {
-    glm::vec3 cpos = {camera->Position.x, static_cast<float>(camera->Position.y), static_cast<float>(camera->Position.z)};
-    for (auto &e : drawQue) {
-        e.distance = glm::distance(e.pos, cpos);
-    }
-    sort(drawQueTransparent.begin(), drawQueTransparent.end(),
-         [](const View::Data::DrawItem& lhs, const View::Data::DrawItem& rhs)->bool {
-             return lhs.distance > rhs.distance;
-         });
-}
+//void View::OpenGL::sortDrawDistance() {
+//    glm::vec3 cpos = {camera->Position.x, static_cast<float>(camera->Position.y), static_cast<float>(camera->Position.z)};
+//    for (auto &e : drawQue) {
+//        e.distance = glm::distance(e.pos, cpos);
+//    }
+//    sort(drawQueTransparent.begin(), drawQueTransparent.end(),
+//         [](const View::Data::DrawItem& lhs, const View::Data::DrawItem& rhs)->bool {
+//             return lhs.distance > rhs.distance;
+//         });
+//}
 
 void View::OpenGL::ToggleWireFrame() {
     wireFrame = !wireFrame;
-}
-
-void View::OpenGL::SetupTerrainModel(unsigned int &VAO, unsigned &VBO, unsigned int &EBO, const std::vector<Blue::Vertex>& vertices, const std::vector<unsigned int>& indices) {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Blue::Vertex), &vertices[0],
-                 GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-    // Vertex Positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Blue::Vertex), nullptr);
-
-    // TexCords
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Blue::Vertex),
-                          reinterpret_cast<void *>(offsetof(Blue::Vertex, texCoords)));
-
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Blue::Vertex),
-                          reinterpret_cast<void *>(offsetof(Blue::Vertex, normals)));
-    glBindVertexArray(0);
-}
-
-void View::OpenGL::DrawTerrain(unsigned int &VAO, const std::vector<unsigned int> &textures,
-                               const unsigned int& ebo_size) {
-    GLint count = 0;
-    for (auto &e : textures) {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, e);
-        ++count;
-    }
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, ebo_size, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
 }
 
 bool View::OpenGL::windowMinimized() {
@@ -282,9 +220,9 @@ void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
     glViewport(bl, br, tl, tr);
 }
 
-void View::OpenGL::AddToQueTransparent(View::Data::DrawItem &drawItem) {
-    drawQueTransparent.push_back(drawItem);
-}
+//void View::OpenGL::AddToQueTransparent(View::Data::DrawItem &drawItem) {
+//    drawQueTransparent.push_back(drawItem);
+//}
 
 View::OpenGL::~OpenGL() {
 

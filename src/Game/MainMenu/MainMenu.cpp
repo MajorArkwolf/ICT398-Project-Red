@@ -37,12 +37,12 @@ void MainMenu::Init() {
     camera.updateCameraVectors();
 }
 
-auto MainMenu::Display() -> void {
+auto MainMenu::Display(glm::mat4 projection, glm::mat4 view) -> void {
     auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
     for (auto& m : sModels) {
-        m.addToDraw();
+        m.Draw(projection, view);
     }
 }
 
@@ -50,7 +50,7 @@ auto MainMenu::FixedUpdate(double t, double dt) -> void {}
 
 auto MainMenu::Update(double t, double dt) -> void {
     for (auto & m : sModels) {
-        m.update(t, dt);
+        m.Update(t, dt);
     }
 }
 

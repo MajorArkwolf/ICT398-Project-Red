@@ -213,7 +213,7 @@ void Model::Model::Update(float t, float dt) {
 
 static inline void ToUpperString(std::string& string) {
     std::for_each(string.begin(), string.end(), [](char & c){
-      c = ::toupper(c);
+      c = toupper(c);
     });
 }
 
@@ -226,7 +226,6 @@ void Model::Model::LoadAnimations(const aiScene* scene) {
         for (size_t ii = 0; ii < scene->mAnimations[i]->mNumChannels; ++ii) {
             AnimJointNode anim = {};
             auto channel = scene->mAnimations[i]->mChannels[ii];
-            std::string name = channel->mNodeName.C_Str();
             anim.numPosKeys = channel->mNumPositionKeys;
             anim.numRotKeys = channel->mNumRotationKeys;
             //anim.numScaleKeys = channel->mNumScalekeys;
@@ -239,7 +238,7 @@ void Model::Model::LoadAnimations(const aiScene* scene) {
 //            for (size_t x = 0; x < channel->mNumScalingKeys; ++x) {
 //                anim.posKey.emplace_back(vec3_cast(channel->mScalingKeys[x]));
 //            }
-            newAnimation.animMap.emplace(name, anim);
+            newAnimation.animMap.emplace(channel->mNodeName.C_Str(), anim);
         }
         animation.emplace_back(newAnimation);
     }

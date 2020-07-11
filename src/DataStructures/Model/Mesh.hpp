@@ -44,7 +44,7 @@ class Mesh {
      * @param BoneID the bone id
      * @param Weight the weight of the given bone
      */
-    void AddBoneData(unsigned VectorID, unsigned BoneID, float Weight);
+    void AddBoneData(unsigned VectorID, int BoneID, float Weight);
 
     /**
      * Move the data onto the GPU

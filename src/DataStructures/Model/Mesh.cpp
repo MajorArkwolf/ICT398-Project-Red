@@ -13,9 +13,9 @@ Mesh::Mesh(std::vector<Vertex> newVertices, std::vector<unsigned int> newIndices
 void Mesh::Draw(Shader& shader) {
     View::OpenGL::DrawModel(shader, VAO, textures, indices);
 }
-void Mesh::AddBoneData(unsigned VectorID, unsigned BoneID, float Weight) {
-    for (unsigned x = 0; x < 4; ++x) {
-        if (vertices.at(VectorID).BoneWeight[x] == 0.0) {
+void Mesh::AddBoneData(unsigned VectorID, int BoneID, float Weight) {
+    for (int x = 0; x < 4; ++x) {
+        if (vertices.at(VectorID).BoneWeight[x] == 0.0f) {
             vertices.at(VectorID).BoneIDs[x]    = BoneID;
             vertices.at(VectorID).BoneWeight[x] = Weight;
             return;

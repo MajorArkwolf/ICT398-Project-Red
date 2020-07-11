@@ -15,7 +15,6 @@ void Demo::UnInit() {
 }
 
 void Demo::Display() {
-    auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
 }

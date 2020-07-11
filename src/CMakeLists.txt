@@ -32,6 +32,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     #ECS
     ECS/Ecs.cpp
     #--Components
+    ECS/Component/Model.cpp
+    #--Systems
+    ECS/System/Draw.cpp
 )
 
 # Include project header files.

@@ -11,9 +11,7 @@ MainMenuObject::StaticModel::StaticModel(const std::string& name) {
     shader = std::make_shared<Shader>(Shader("res/shader/vertshader.vs", "res/shader/fragshader.fs"));
 }
 
-MainMenuObject::StaticModel::~StaticModel() {
-
-}
+MainMenuObject::StaticModel::~StaticModel() = default;
 
 void MainMenuObject::StaticModel::update(double t, double dt) {
     if (animator != nullptr) {

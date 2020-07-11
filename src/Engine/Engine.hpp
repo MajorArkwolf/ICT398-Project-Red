@@ -58,7 +58,6 @@ namespace RedEngine {
         /// Testing values
         int lastWindowXSize     = 800;
         int lastWindowYSize     = 600;
-        bool firstMouse = true;
 
         double t  = 0.0;
         double dt = 0.01;

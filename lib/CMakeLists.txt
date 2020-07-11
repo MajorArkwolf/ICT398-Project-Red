@@ -42,4 +42,6 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     glad/include
     glad/src
     react/src
+    stb_image/
+    entt/
 )

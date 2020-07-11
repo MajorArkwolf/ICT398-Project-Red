@@ -266,7 +266,7 @@ void Model::Model::LoadBones(unsigned MeshIndex, const aiMesh* pMesh)
         for (unsigned j = 0 ; j < pMesh->mBones[i]->mNumWeights; ++j) {
             unsigned VertexID = pMesh->mBones[i]->mWeights[j].mVertexId;
             float Weight = pMesh->mBones[i]->mWeights[j].mWeight;
-            meshes.at(MeshIndex).AddBoneData(VertexID, boneIndex, Weight);
+            meshes.at(MeshIndex).AddBoneData(VertexID, static_cast<int>(boneIndex), Weight);
         }
     }
 }

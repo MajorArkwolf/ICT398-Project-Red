@@ -14,6 +14,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--SubModules
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
+    #- InputManagement
+    Engine/InputManager.cpp
+    Engine/GLFWEventManager.cpp
 
     #Game
     #--MainMenu

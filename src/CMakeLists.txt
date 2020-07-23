@@ -31,6 +31,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     #ECS
     ECS/Ecs.cpp
+    ECS/Entity.cpp
     #--Components
     ECS/Component/Model.cpp
     #--Systems

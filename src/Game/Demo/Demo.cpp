@@ -14,6 +14,8 @@ Demo::Demo() {
     auto &tran = entity.AddComponent<Component::Transform>();
     tran.pos.x = 20.0f;
     tran.pos.z = 2.0f;
+    auto& anim = entity.AddComponent<Component::Animation>(entity.GetComponent<Component::Model>().id);
+    anim.animator.LoadAnimation("PUNCH");
 }
 
 void Demo::Init() {

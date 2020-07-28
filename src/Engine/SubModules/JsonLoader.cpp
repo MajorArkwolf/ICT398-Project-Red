@@ -33,7 +33,11 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::string&
         auto &trans = ent->AddComponent<Component::Transform>();
         auto transform = j.at("Transform");
         auto position = transform.at("Position");
+        auto rotation = transform.at("Rotation");
+        auto scale = transform.at("Scale");
         trans.pos = {position.at("X").get<float>(), position.at("Y").get<float>(), position.at("Z").get<float>()};
+        trans.scale = {scale.at("X").get<float>(), scale.at("Y").get<float>(), scale.at("Z").get<float>()};
+        trans.rot = {rotation.at("W").get<float>(), rotation.at("X").get<float>(), rotation.at("Y").get<float>(), rotation.at("Z").get<float>()};
     }
     if (j.contains("Animation")) {
         auto &anim = ent->AddComponent<Component::Animation>(ent->GetComponent<Component::Model>().id);

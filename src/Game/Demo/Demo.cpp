@@ -10,6 +10,7 @@ Demo::Demo() {
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     auto entity = JSONLoader::LoadEntity("./res/Entity/Test.json", this->ecs);
+    auto entity2 = JSONLoader::LoadEntity("./res/Entity/Test2.json", this->ecs);
 //    auto &tran = entity->get()->AddComponent<Component::Transform>();
 //    tran.pos.x = 20.0f;
 //    tran.pos.z = 2.0f;

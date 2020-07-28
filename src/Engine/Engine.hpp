@@ -34,8 +34,6 @@ namespace RedEngine {
 
         /// The current FPS
         double fps           = 0.0;
-        /// Base path to the program.
-        std::filesystem::path basepath = {};
 
         /// The game stack to allow to switch between scenes.
         ///
@@ -50,10 +48,6 @@ namespace RedEngine {
          */
         auto setBasePath() -> void;
         /**
-         * Gets the basepath of the executable
-         */
-        auto getBasePath() const -> std::filesystem::path;
-        /**
          * Privatised constructor due to the engine being a singleton.
          */
         Engine();
@@ -66,6 +60,8 @@ namespace RedEngine {
         double dt = 0.01;
         double EngineFrameTime   = 0.0;
         std::string glsl_version = "";
+        /// Base path to the program.
+        std::filesystem::path basepath = {};
 
 
       public:
@@ -161,5 +157,9 @@ namespace RedEngine {
         double getT() const;
         double getDt() const;
         double getFrameTime() const;
+        /**
+         * Gets the basepath of the executable
+         */
+        auto getBasePath() const -> std::filesystem::path;
     };
 }

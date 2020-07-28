@@ -19,16 +19,18 @@ void View::Skybox::Init() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-    faces.emplace_back("./res/images/skybox/right.jpg");
-    faces.emplace_back("./res/images/skybox/left.jpg");
-    faces.emplace_back("./res/images/skybox/top.jpg");
-    faces.emplace_back("./res/images/skybox/bottom.jpg");
-    faces.emplace_back("./res/images/skybox/front.jpg");
-    faces.emplace_back("./res/images/skybox/back.jpg");
+    auto basepath = RedEngine::Engine::get().getBasePath();
+
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "right.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "left.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "top.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "bottom.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "front.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "back.jpg");
     cubemapTexture = loadCubemap(faces);
 
-    auto vs = string("./res/shader/skybox_vert.vs");
-    auto fs = string("./res/shader/skybox_frag.fv");
+    auto vs = string(basepath / "res" / "shader" / "skybox_vert.vs");
+    auto fs = string(basepath / "res" / "shader" / "skybox_frag.fv");
     shader = std::make_unique<Shader>(vs.c_str(), fs.c_str(), "");
     shader->use();
     shader->setInt("skybox", 0);

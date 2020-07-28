@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <string>
+#include <variant>
 
 
 #include "GLFW/glfw3.h"
@@ -12,7 +13,7 @@ namespace Input
 
 	enum  GLFWEventType
 	{
-		  None
+		None
 		, WindowMoved
 		, WindowResized
 		, WindowClosed
@@ -40,45 +41,46 @@ namespace Input
 
 	struct GLFWEvent
 	{
-		GLFWEventType Type;
-		union 
+		struct Position
 		{
-			struct Position
-			{
-				int X = 0;
-				int Y = 0;
-			};
-			struct Size
-			{
-				int Width = 0;
-				int Height = 0;
-			};
-			struct Scroll
-			{
-				int X = 0;
-				int Y = 0;
-			};
-			struct Keyboard
-			{
-				int Key = 0;
-				int Scancode = 0;
-				int Mods = 0;
-			};
-			struct Mouse
-			{
-				int Button = 0;
-				int Mods = 0;
-			};
-			struct File
-			{
-				std::vector<std::string> Paths;
-			};
-			struct Scale
-			{
-				float X = 0.f;
-				float Y = 0.f;
-			};
+			int X = 0;
+			int Y = 0;
 		};
+		struct Size
+		{
+			int Width = 0;
+			int Height = 0;
+		};
+		struct Scroll
+		{
+			int X = 0;
+			int Y = 0;
+		};
+		struct Keyboard
+		{
+			int Key = 0;
+			int Scancode = 0;
+			int Mods = 0;
+		};
+		struct Mouse
+		{
+			int Button = 0;
+			int Mods = 0;
+		};
+		struct File
+		{
+			std::vector<std::string> Paths;
+		};
+		struct Scale
+		{
+			float X = 0.f;
+			float Y = 0.f;
+		};
+
+		GLFWEventType Type;
+		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> asd;
+		
+
 	};
 
 	class GLFWEventManager
@@ -116,6 +118,6 @@ namespace Input
 		static void WindowContentScaleCallback(GLFWwindow* window, float xscale, float yscale);
 
 
-		std::queue<Input::InputEvent> EventQueue;
+		std::queue<InputEvent> EventQueue;
 	};
 }

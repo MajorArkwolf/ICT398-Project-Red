@@ -1,12 +1,5 @@
 #include "GLFWEventManager.h"
 
-void GLFWEventManager::gleqInit(void)
-{
-    glfwSetMonitorCallback(gleq_monitor_callback);
-    glfwSetJoystickCallback(gleq_joystick_callback);
-
-}
-
 void Input::GLFWEventManager::Init(GLFWwindow* window)
 {
 }
@@ -19,9 +12,7 @@ void Input::GLFWEventManager::WindowPosCallback(GLFWwindow* window, int x, int y
 {
     GLFWEvent event;
     event.Type = GLFWEventType::WindowMoved;
-    event.Window = window;
-    event.Position.X = x;
-    event.Position.Type = y;
+
     EventQueue.Emplace(event);
 }
 

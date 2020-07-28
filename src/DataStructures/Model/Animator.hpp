@@ -7,6 +7,8 @@
 #include "DataStructures/Model/Animation.hpp"
 #include "DataStructures/Model/DataTypes.hpp"
 
+
+
 namespace Model {
     class Model;
     class Animator {

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <filesystem>
 #include "Game/BaseState.hpp"
 #include "Engine/GameStack.hpp"
 #include "Engine/Renderer/OpenGL.hpp"
@@ -34,22 +35,24 @@ namespace RedEngine {
         /// The current FPS
         double fps           = 0.0;
         /// Base path to the program.
-        std::string basepath = "";
+        std::filesystem::path basepath = {};
 
         /// The game stack to allow to switch between scenes.
         ///
         GameStack<std::shared_ptr<BaseState>> gameStack;
       private:
-
-
         /// GUI Manager for our GUI interface.
         GUIManager guiManager;
         /// Flag used to determine if the engine should shutdown.
         bool isRunning = true;
         /**
-         * Gets the basepath of where the engine is running.
+         * Sets the basepath of where the engine is running.
          */
-        auto getBasePath() -> void;
+        auto setBasePath() -> void;
+        /**
+         * Gets the basepath of the executable
+         */
+        auto getBasePath() const -> std::filesystem::path;
         /**
          * Privatised constructor due to the engine being a singleton.
          */

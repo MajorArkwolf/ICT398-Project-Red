@@ -213,7 +213,7 @@ void Model::Model::Update(float t, float dt) {
 
 static inline void ToUpperString(std::string& string) {
     std::for_each(string.begin(), string.end(), [](char & c){
-      c = toupper(c);
+      c = static_cast<char>(toupper(c));
     });
 }
 

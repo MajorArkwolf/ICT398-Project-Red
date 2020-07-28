@@ -4,11 +4,16 @@
 #include <Engine/Engine.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include "StaticModel.hpp"
+#include "Engine/Engine.hpp"
 
 MainMenuObject::StaticModel::StaticModel(const std::string& name) {
     auto &rm = RedEngine::Engine::get().modelManager;
     model = rm.GetModelID(name);
-    shader = std::make_shared<Shader>(Shader("res/shader/vertshader.vs", "res/shader/fragshader.fs"));
+    auto vert = RedEngine::Engine::get().basepath;
+    vert.append("res/shader/vertshader.vs");
+    auto frag = RedEngine::Engine::get().basepath;
+    frag.append("res/shader/fragshader.fs");
+    shader = std::make_shared<Shader>(Shader(vert, frag, std::filesystem::path{}));
 }
 
 MainMenuObject::StaticModel::~StaticModel() = default;

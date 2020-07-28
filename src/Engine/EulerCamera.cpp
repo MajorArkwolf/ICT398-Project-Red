@@ -30,7 +30,7 @@ glm::mat4 Engine::Camera::GetViewMatrix() {
 }
 
 void Engine::Camera::ProcessKeyboard(Camera_Movement direction, double deltaTime) {
-    const float velocity = MovementSpeed * (static_cast<float>(deltaTime) * 1000.f);
+    const auto velocity = static_cast<float>(MovementSpeed * deltaTime * 1000.0);
     if (direction == Camera_Movement::FORWARD)
         Position += Front * velocity;
     if (direction == Camera_Movement::BACKWARD)
@@ -83,8 +83,8 @@ void Engine::Camera::updateCameraVectors() {
     Up = glm::normalize(glm::cross(Right, Front));
 }
 
-glm::ivec2 Engine::Camera::getLocation() const {
-    auto key = glm::ivec2(static_cast<int>(Position.x), static_cast<int>(Position.z));
+glm::dvec2 Engine::Camera::getLocation() const {
+    auto key = glm::dvec2(Position.x, Position.z);
     return key;
 }
 

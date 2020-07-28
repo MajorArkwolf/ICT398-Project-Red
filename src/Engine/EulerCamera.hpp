@@ -90,9 +90,9 @@ namespace Engine {
 
         /**
          * Gets the location of the camera on the x and y axis.
-         * @return
+         * @return the location of the camera
          */
-        glm::ivec2 getLocation() const;
+        glm::dvec2 getLocation() const;
 
         /**
          * The right vector of the camera

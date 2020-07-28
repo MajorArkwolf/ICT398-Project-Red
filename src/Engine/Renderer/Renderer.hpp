@@ -4,6 +4,8 @@
 
 namespace View {
     class Renderer {
+    public:
+        virtual ~Renderer() = default;
         /**
          * Initialises the renderer.
          */

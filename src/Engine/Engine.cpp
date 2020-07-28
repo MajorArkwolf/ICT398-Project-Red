@@ -44,18 +44,17 @@ auto RedEngine::Engine::run() -> void {
             // previousState = currentState;
             glfwPollEvents();
             engine.processInput(engine.dt);
-            engine.gameStack.getTop()->update(engine.t, engine.dt);
+            engine.gameStack.getTop()->FixedUpdate(engine.t, engine.dt);
             engine.t += engine.dt;
             accumulator -= engine.dt;
         }
 
         // const double alpha = accumulator / dt;
         // state = currentState * alpha + previousState * (1.0 - alpha);
-
-        engine.gameStack.getTop()->display();
+        engine.gameStack.getTop()->Update(engine.t, engine.EngineFrameTime);
         engine.renderer.Draw();
         if (engine.gameStack.isRemoveTopFlag()) {
-            engine.gameStack.getTop()->unInit();
+            engine.gameStack.getTop()->UnInit();
         }
         engine.gameStack.checkTop();
     }
@@ -108,7 +107,7 @@ RedEngine::Engine::Engine(){
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    this->guiManager.initialiseImGUI(window);
+    GUIManager::initialiseImGUI(window);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     modelManager.GetModelID("res/model/error.fbx");
@@ -123,7 +122,7 @@ auto RedEngine::Engine::get() -> Engine & {
     return instance;
 }
 
-auto RedEngine::Engine::processInput(double dt) -> void {
+auto RedEngine::Engine::processInput(double deltaTime) -> void {
 //    GLEQevent event;
 //    auto handledMouse  = true;
 //    auto &inputManager = Controller::Input::InputManager::getInstance();
@@ -237,16 +236,16 @@ int RedEngine::Engine::getLastWindowXSize() const {
     return lastWindowXSize;
 }
 
-void RedEngine::Engine::setLastWindowXSize(int lastWindowXSize) {
-    Engine::lastWindowXSize = lastWindowXSize;
+void RedEngine::Engine::setLastWindowXSize(int newLastWindowXSize) {
+    Engine::lastWindowXSize = newLastWindowXSize;
 }
 
 int RedEngine::Engine::getLastWindowYSize() const {
     return lastWindowYSize;
 }
 
-void RedEngine::Engine::setLastWindowYSize(int lastWindowYSize) {
-    Engine::lastWindowYSize = lastWindowYSize;
+void RedEngine::Engine::setLastWindowYSize(int newLastWindowYSize) {
+    Engine::lastWindowYSize = newLastWindowYSize;
 }
 double RedEngine::Engine::getT() const {
     return t;

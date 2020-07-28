@@ -26,6 +26,7 @@ add_subdirectory(glfw)
 add_subdirectory(imgui)
 add_subdirectory(stb_image)
 add_subdirectory(entt)
+add_subdirectory(json)
 
 # Puts a stop to the endlessly irritating practise postfixing 'd' onto debug libraries.
 set_target_properties(assimp PROPERTIES DEBUG_POSTFIX "")

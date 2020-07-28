@@ -29,6 +29,6 @@ public:
 
 private:
     entt::entity entityHandle{0};
-    ECS* ecs;
+    ECS* ecs = nullptr;
 };
 

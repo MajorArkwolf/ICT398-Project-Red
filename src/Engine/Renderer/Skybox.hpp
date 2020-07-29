@@ -4,8 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-
-using std::string, std::vector;
+#include <filesystem>
 namespace View {
     /**
      * Basic OpenGL Sky box.
@@ -61,7 +60,7 @@ namespace View {
         /// Texture assigned to the skybox.
         unsigned int cubemapTexture = 0;
         /// Faces used by the skybox to generate the cube map.
-        vector<string> faces = {};
+        std::vector<std::filesystem::path> faces = {};
         /// The coordinates to form a cube.
         float skyboxVertices[108] = {
             // positions
@@ -88,7 +87,7 @@ namespace View {
          * @param faces the faces to be loaded in.
          * @return the buffer object id.
          */
-        unsigned int loadCubemap(vector<string> faces);
+        unsigned int loadCubemap(const std::vector<std::filesystem::path>& faces);
 
 
     };

@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #include <assimp/Importer.hpp>
 #include <assimp/matrix4x4.h>
@@ -25,7 +26,7 @@ namespace Model {
         /// Meshes of models.
         std::vector<Mesh> meshes = {};
         /// The directory of the model.
-        std::string directory = {};
+        std::filesystem::path directory = {};
         /// Does the model need gamma correction.
         bool gammaCorrection = {};
 
@@ -43,6 +44,13 @@ namespace Model {
         Model(const std::string& path, bool gamma);
 
         /**
+         * Constructor for a filepath for the model.
+         * @param path file path
+         * @param gamma is there gamma
+         */
+        Model(const std::filesystem::path& path, bool gamma);
+
+        /**
          * Draw call for the model
          * @param shader used to draw the model.
          */
@@ -52,7 +60,7 @@ namespace Model {
 
         /*----------------*/
         unsigned numBones = 0;
-        std::vector<BoneInfo> boneInfo;
+        std::vector<BoneInfo> boneInfo = {};
         std::vector<Animation> animation = {};
         Animation* getAnimation(const std::string& animName);
 
@@ -61,7 +69,7 @@ namespace Model {
          * Loads a model from file.
          * @param path to the model.
          */
-        void loadModel(const std::string &path);
+        void loadModel(const std::filesystem::path &path);
         /**
          * Process Nodes from ASSIMP into the models.
          * @param node of the model.
@@ -115,8 +123,6 @@ namespace Model {
         JointsName rootJoint;
         /// Is the model animation
         bool isAnimated = false;
-        /// Name of the model
-        std::string name = "";
     };
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
+#include <filesystem>
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "DrawStruct.hpp"
@@ -58,8 +59,8 @@ namespace View {
          * @param gamma A flag to set if there is gamma present.
          * @return A texture ID to avoid loading duplicates.
          */
-        static unsigned int TextureFromFile(const char *path, const std::string &directory,
-                                                   [[maybe_unused]] bool gamma);
+        static unsigned int TextureFromFile(const std::string& path, std::filesystem::path directory,
+                                            [[maybe_unused]] bool gamma);
         /**
          * Draws a generic OpenGL Model.
          * @param shader the shader used to draw the model.

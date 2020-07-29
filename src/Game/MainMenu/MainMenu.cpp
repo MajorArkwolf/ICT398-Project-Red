@@ -19,8 +19,9 @@ MainMenu::~MainMenu() = default;
 void MainMenu::Init() {
     camera = Engine::Camera();
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-    sModels.emplace_back("res/model/ClothedMan.gltf");
-    sModels.emplace_back("res/model/ClothedMan.gltf");
+    auto basepath = RedEngine::Engine::get().getBasePath();
+    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
+    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
     sModels.at(0).position.x = 20.0f;
     sModels.at(0).position.z = 2.0f;
     sModels.at(0).animator = std::make_shared<Model::Animator>();
@@ -37,18 +38,22 @@ void MainMenu::Init() {
     camera.updateCameraVectors();
 }
 
-auto MainMenu::Display(glm::mat4 projection, glm::mat4 view) -> void {
+auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
     auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
+    ecs.Draw(projection, view);
     for (auto& m : sModels) {
         m.Draw(projection, view);
     }
 }
 
-auto MainMenu::FixedUpdate(double t, double dt) -> void {}
+auto MainMenu::FixedUpdate(double t, double dt) -> void {
+    ecs.FixedUpdate(t, dt);
+}
 
 auto MainMenu::Update(double t, double dt) -> void {
+    ecs.Update(t, dt);
     for (auto & m : sModels) {
         m.Update(t, dt);
     }
@@ -146,7 +151,6 @@ void MainMenu::MainMenuGUI() {
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        auto &engine = RedEngine::Engine::get();
         engine.gameStack.AddToStack(std::make_shared<Demo>());
     }
     ImGui::Separator();

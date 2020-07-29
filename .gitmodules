@@ -9,7 +9,7 @@
 	url = https://github.com/assimp/assimp.git
 [submodule "lib/stb_image"]
 	path = lib/stb_image
-	url = git@github.com:MajorArkwolf/stb_image-cmake.git
+	url = https://github.com/MajorArkwolf/stb_image-cmake.git
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/MajorArkwolf/imgui.git
@@ -22,3 +22,6 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json.git
+[submodule "lib/cpplocate"]
+	path = lib/cpplocate
+	url = https://github.com/cginternals/cpplocate.git

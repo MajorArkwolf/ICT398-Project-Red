@@ -43,8 +43,8 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::string&
             auto scale = transform.at("Scale");
             trans.pos = {position.at("X").get<float>(), position.at("Y").get<float>(), position.at("Z").get<float>()};
             trans.scale = {scale.at("X").get<float>(), scale.at("Y").get<float>(), scale.at("Z").get<float>()};
-            trans.rot = {rotation.at("W").get<float>(), rotation.at("X").get<float>(), rotation.at("Y").get<float>(),
-                         rotation.at("Z").get<float>()};
+            trans.rot = glm::quat(glm::vec3(glm::radians(rotation.at("X").get<float>()), glm::radians(rotation.at("Y").get<float>()),
+                         glm::radians(rotation.at("Z").get<float>())));
         } catch (const std::exception& e) {
             std::cerr << "JSON Transform failed: " << e.what() << '\n';
         }

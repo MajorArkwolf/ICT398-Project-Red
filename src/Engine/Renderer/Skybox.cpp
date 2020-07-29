@@ -29,8 +29,8 @@ void View::Skybox::Init() {
     faces.emplace_back(basepath / "res" / "images" / "skybox" / "back.jpg");
     cubemapTexture = loadCubemap(faces);
 
-    auto vs = string(basepath / "res" / "shader" / "skybox_vert.vs");
-    auto fs = string(basepath / "res" / "shader" / "skybox_frag.fv");
+    auto vs = basepath / "res" / "shader" / "skybox_vert.vs";
+    auto fs = basepath / "res" / "shader" / "skybox_frag.fv";
     shader = std::make_unique<Shader>(vs, fs, "");
     shader->use();
     shader->setInt("skybox", 0);

@@ -72,10 +72,8 @@ void Model::Model::processNode(aiNode *node, const aiScene *scene) {
         auto newMesh = processMesh(mesh, scene);
         meshes.push_back(newMesh);
         if (isAnimated) {
-            //processBones(mesh, scene, i);
             LoadBones(i, mesh);
             LoadAnimations(scene);
-            //LoadAnimations();
             LoadJoints(mesh, scene->mRootNode);
         }
     }

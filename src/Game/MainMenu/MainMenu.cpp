@@ -20,8 +20,8 @@ void MainMenu::Init() {
     camera = Engine::Camera();
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
     auto basepath = RedEngine::Engine::get().getBasePath();
-    sModels.emplace_back(basepath / "res" / "model" / "ClothedMan.gltf");
-    sModels.emplace_back(basepath / "res" / "model" / "ClothedMan.gltf");
+    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
+    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
     sModels.at(0).position.x = 20.0f;
     sModels.at(0).position.z = 2.0f;
     sModels.at(0).animator = std::make_shared<Model::Animator>();

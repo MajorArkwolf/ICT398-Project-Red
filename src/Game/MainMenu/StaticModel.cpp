@@ -6,7 +6,7 @@
 #include "StaticModel.hpp"
 #include "Engine/Engine.hpp"
 
-MainMenuObject::StaticModel::StaticModel(const std::string& name) {
+MainMenuObject::StaticModel::StaticModel(const std::filesystem::path& name) {
     auto &rm = RedEngine::Engine::get().modelManager;
     model = rm.GetModelID(name);
     auto basepath = RedEngine::Engine::get().getBasePath();

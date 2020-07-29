@@ -1,0 +1,44 @@
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Cpp11
+ColumnLimit: 100
+IndentWidth: 4
+TabWidth: 4
+BreakInheritanceList: AfterColon
+AlignAfterOpenBracket: true
+ConstructorInitializerIndentWidth: 4
+PenaltyExcessCharacter: 4
+BreakBeforeBraces: Attach
+IndentPPDirectives: AfterHash
+AllowShortFunctionsOnASingleLine: Empty
+PointerAlignment: Right
+SpaceBeforeParens: ControlStatements
+IncludeBlocks: Regroup
+NamespaceIndentation: All
+Cpp11BracedListStyle: true
+IndentCaseLabels: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+SortIncludes: true
+SpaceBeforeAssignmentOperators: true
+UseTab: Never
+FixNamespaceComments: false
+SpaceAfterTemplateKeyword: false
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+AlwaysBreakTemplateDeclarations: true
+SortUsingDeclarations: true
+BreakBeforeTernaryOperators: true
+AlignOperands: true
+AllowShortCaseLabelsOnASingleLine: true
+IncludeCategories:
+# Standard library headers
+  - Regex:           '^<[^\/]*$'
+    Priority:        1
+# Other headers
+  - Regex:           '^<.*'
+    Priority:        2
+# Project headers
+  - Regex:           '.*'
+    Priority:        3

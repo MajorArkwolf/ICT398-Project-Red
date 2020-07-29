@@ -81,5 +81,4 @@ void JSONLoader::LoadScene(const std::filesystem::path &filepath, ECS &ecs) {
             LoadEntity(filename, ecs);
         }
     }
-
 }

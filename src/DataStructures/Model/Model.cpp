@@ -40,7 +40,7 @@ void Model::Model::loadModel(const std::filesystem::path &path) {
     directory = path;
     Assimp::Importer importer;
     auto *scene =
-        importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
+        importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs |
                                     aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights | aiProcess_GenSmoothNormals);
 
     // check for errors

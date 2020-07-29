@@ -25,7 +25,7 @@ void Demo::UnInit() {
 
 }
 
-void Demo::Display(glm::mat4 projection, glm::mat4 view) {
+void Demo::Display(const glm::mat4& projection, const glm::mat4& view) {
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
     ecs.Draw(projection, view, camera.getLocation());

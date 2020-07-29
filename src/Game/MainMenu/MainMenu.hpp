@@ -2,7 +2,6 @@
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
 #include "Engine/EulerCamera.hpp"
-#include "Game/MainMenu/StaticModel.hpp"
 #include "ECS/Ecs.hpp"
 
 class MainMenu : public BaseState {
@@ -76,9 +75,6 @@ private:
 
     /// Camera for the scene
     //Engine::Camera camera;
-
-    /// models used inside of the scene.
-    std::vector<MainMenuObject::StaticModel> sModels = {};
     void MainMenuGUI();
     bool displayDifficultyMenu = false;
     ECS ecs = {};

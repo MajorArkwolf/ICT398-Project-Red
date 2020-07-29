@@ -1,35 +1,43 @@
 #include "JsonLoader.hpp"
-#include <nlohmann/json.hpp>
 #include "ECS/Ecs.hpp"
 #include "ECS/Entity.hpp"
 #include <iostream>
 #include <fstream>
+#include "Engine/Engine.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
 #include "Engine/Renderer/Shader.hpp"
 
-std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::string& filepath, ECS& ecs) {
-    using namespace nlohmann;
+using namespace nlohmann;
 
-    std::optional<std::shared_ptr<Entity>> entity = {};
-
+nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &filepath) {
+    json j = {};
     std::ifstream i(filepath);
     if (!i.is_open()) {
-        std::cerr << "ERROR: Load entity " << filepath << " did not load.\n";
-        return entity;
+        std::cerr << "ERROR: Failed to load JSON file at " << filepath << ".\n";
     }
-    json j = {};
     i >> j;
+    return j;
+}
+
+std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesystem::path& filepath, ECS& ecs) {
+    json j = LoadJson(filepath);
+    std::optional<std::shared_ptr<Entity>> entity = {};
+    auto basepath = RedEngine::Engine::get().getBasePath();
+    auto fullPath = basepath / "res" / "Entity" / filepath;
     entity = std::make_shared<Entity>(ecs.CreateEntity());
     auto &ent = entity.value();
     if (j.contains("Model")) {
         try {
             auto model = j.at("Model");
-            auto vertShader = model.at("VertShader").get<std::string>();
-            auto fragShader = model.at("FragShader").get<std::string>();
-            auto modelFilepath = model.at("ModelFilePath").get<std::string>();
+            auto vertShader = basepath;
+            vertShader.append(model.at("VertShader").get<std::string>());
+            auto fragShader = basepath;
+            fragShader.append(model.at("FragShader").get<std::string>());
+            auto modelFilepath = basepath;
+            modelFilepath.append(model.at("ModelFilePath").get<std::string>());
             ent->AddComponent<Component::Model>(modelFilepath,
-                                                std::make_shared<Shader>(vertShader.c_str(), fragShader.c_str()));
+                                                std::make_shared<Shader>(vertShader, fragShader, std::filesystem::path{}));
         } catch (const std::exception& e) {
             std::cerr << "JSON Model failed: " << e.what() << '\n';
         }
@@ -59,4 +67,19 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::string&
         }
     }
     return entity;
+}
+
+void JSONLoader::LoadScene(const std::filesystem::path &filepath, ECS &ecs) {
+    auto basepath = RedEngine::Engine::get().getBasePath();
+    auto fullPath = basepath / "res" / "Entity" / filepath;
+    auto j = LoadJson(fullPath);
+    if (j.contains("Entity")) {
+        auto entities = j.at("Entity");
+        for (auto &e : entities) {
+            auto file = e.get<std::string>();
+            auto filename = fullPath.remove_filename().append(file);
+            LoadEntity(filename, ecs);
+        }
+    }
+
 }

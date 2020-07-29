@@ -36,7 +36,7 @@ void View::Skybox::Init() {
     shader->setInt("skybox", 0);
 }
 
-unsigned int View::Skybox::loadCubemap(vector<string> mFaces) {
+unsigned int View::Skybox::loadCubemap(const std::vector<std::filesystem::path>& mFaces) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -44,7 +44,7 @@ unsigned int View::Skybox::loadCubemap(vector<string> mFaces) {
     int width, height, nrChannels;
     for (unsigned int i = 0; i < mFaces.size(); i++) {
         unsigned char *data =
-            stbi_load(mFaces[i].c_str(), &width, &height, &nrChannels, 0);
+            stbi_load(mFaces[i].string().c_str(), &width, &height, &nrChannels, 0);
         if (data) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width,
                          height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

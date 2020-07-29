@@ -35,7 +35,7 @@ Shader::Shader(const std::filesystem::path &vertex, const std::filesystem::path 
         vertexCode   = vShaderStream.str();
         fragmentCode = fShaderStream.str();
         // if geometry shader path is present, also load a geometry shader
-        if (geo != "") {
+        if (!geo.empty()) {
             gShaderFile.open(geo);
             auto gShaderStream = std::stringstream();
             gShaderStream << gShaderFile.rdbuf();
@@ -63,7 +63,7 @@ Shader::Shader(const std::filesystem::path &vertex, const std::filesystem::path 
     checkCompileErrors(fragmentId, "FRAGMENT");
     // if geometry shader is given, compile geometry shader
     unsigned int geometry = 0;
-    if (geo != "") {
+    if (!geo.empty()) {
         const char *gShaderCode = geometryCode.c_str();
         geometry                = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(geometry, 1, &gShaderCode, nullptr);
@@ -74,14 +74,14 @@ Shader::Shader(const std::filesystem::path &vertex, const std::filesystem::path 
     ID = glCreateProgram();
     glAttachShader(ID, vertexId);
     glAttachShader(ID, fragmentId);
-    if (geo != "")
+    if (!geo.empty())
         glAttachShader(ID, geometry);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
     // delete the shaders as they're linked into our program now and no longer necessery
     glDeleteShader(vertexId);
     glDeleteShader(fragmentId);
-    if (geo != "") {
+    if (!geo.empty()) {
         glDeleteShader(geometry);
     }
 }

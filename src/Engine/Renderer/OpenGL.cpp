@@ -143,19 +143,15 @@ void View::OpenGL::ResizeWindow() {
     UpdateViewPort(0, 0, width, height);
 }
 
-unsigned int View::OpenGL::TextureFromFile(const char *path, const std::string &directory,
-                                                     [[maybe_unused]] bool gamma) {
-    std::string filename = std::string(path);
-    if (filename.find("..") < filename.length()) {
-        filename.erase(0, 2);
-    }
-    filename = directory + '/' + filename;
-    std::replace(filename.begin(), filename.end(), '\\', '/');
+unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesystem::path directory,
+                                           [[maybe_unused]] bool gamma) {
+    std::filesystem::path filename = directory.remove_filename() / path;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
+    // filename to C string may not work on other OS's please verify it does.
     unsigned char *data =
             stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data) {

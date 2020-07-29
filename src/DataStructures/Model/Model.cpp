@@ -13,6 +13,10 @@ Model::Model::Model(char *path, bool gamma = false) : gammaCorrection(gamma) {
     loadModel(path);
 }
 
+Model::Model::Model(const std::filesystem::path &path, bool gamma) : gammaCorrection(gamma){
+    loadModel(path);
+}
+
 Model::Model::Model(const string& path, bool gamma = false) : gammaCorrection(gamma) {
     loadModel(path);
 }
@@ -27,20 +31,13 @@ void Model::Model::Draw(Shader& shader) {
     }
 }
 
-static inline bool CheckFileType(const std::string& dir) {
-
-    if (dir.substr(dir.find_last_of(".") + 1) == "fbx") {
-        return false;
-    } else if (dir.substr(dir.find_last_of(".") + 1) =="obj") {
-        return false;
-    } else {
-        return true;
-    }
+static inline bool CheckFileType(const std::filesystem::path& dir) {
+    return !(dir == "fbx" || dir == "obj");
 }
 
-void Model::Model::loadModel(string const &path) {
+void Model::Model::loadModel(const std::filesystem::path &path) {
     // read file via ASSIMP
-    directory = path.substr(0, path.find_last_of('/'));
+    directory = path;
     Assimp::Importer importer;
     auto *scene =
         importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
@@ -56,8 +53,7 @@ void Model::Model::loadModel(string const &path) {
     }
 
     // retrieve the directory path of the filepath
-    name = path;
-    isAnimated = CheckFileType(path);
+    isAnimated = CheckFileType(path.extension());
     isAnimated = isAnimated && scene->HasAnimations();
     globalInverseTransform = glm::inverse(mat4_cast(scene->mRootNode->mTransformation));
     // process ASSIMP's root node recursively
@@ -294,16 +290,6 @@ static inline aiNode* FindRootJoint(aiMesh* mesh, aiNode* root) {
     }
     return nullptr;
 }
-
-//static inline void PrintJoints(JointsName& joint, int count) {
-//    for (size_t i = 0; i < count; ++i) {
-//        std::cout << ".";
-//    }
-//    std::cout << joint.name << std::endl;
-//    for (auto &j : joint.children) {
-//        PrintJoints(j, count + 1);
-//    }
-//}
 
 void Model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
     auto rootBone = FindRootJoint(mesh, root);

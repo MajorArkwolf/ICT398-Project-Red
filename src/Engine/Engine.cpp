@@ -6,7 +6,6 @@
 #include "Game/MainMenu/MainMenu.hpp"
 #include <cpplocate/cpplocate.h>
 
-using RedEngine::Engine;
 using std::runtime_error;
 using std::string;
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/vec3.hpp>
 #include <glm/matrix.hpp>
+#include <filesystem>
 #include "Engine/Renderer/Shader.hpp"
 #include "DataStructures/Model/Animator.hpp"
 
@@ -13,8 +14,8 @@ namespace MainMenuObject {
      */
     class StaticModel {
     public:
-        explicit StaticModel(const std::string& name);
-        ~StaticModel();
+        explicit StaticModel(const std::filesystem::path& name);
+        ~StaticModel() = default;
         void Update(double t, double dt);
         void Draw(const glm::mat4& projection, const glm::mat4& view);
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);

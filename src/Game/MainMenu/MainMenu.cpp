@@ -147,7 +147,6 @@ void MainMenu::MainMenuGUI() {
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        auto &engine = RedEngine::Engine::get();
         engine.gameStack.AddToStack(std::make_shared<Demo>());
     }
     ImGui::Separator();

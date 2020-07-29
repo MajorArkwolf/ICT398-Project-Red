@@ -14,7 +14,7 @@ namespace MainMenuObject {
     class StaticModel {
     public:
         explicit StaticModel(const std::string& name);
-        ~StaticModel();
+        ~StaticModel() = default;
         void Update(double t, double dt);
         void Draw(const glm::mat4& projection, const glm::mat4& view);
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);

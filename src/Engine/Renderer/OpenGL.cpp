@@ -153,7 +153,7 @@ unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesys
     int width, height, nrComponents;
     // filename to C string may not work on other OS's please verify it does.
     unsigned char *data =
-            stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+            stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
     if (data) {
         GLenum format = 1;
         if (nrComponents == 1)

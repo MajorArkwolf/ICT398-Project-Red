@@ -15,8 +15,6 @@ MainMenuObject::StaticModel::StaticModel(const std::string& name) {
     shader = std::make_shared<Shader>(Shader(vert, frag, std::filesystem::path{}));
 }
 
-MainMenuObject::StaticModel::~StaticModel() = default;
-
 void MainMenuObject::StaticModel::Update(double t, double dt) {
     if (animator != nullptr) {
         animator->BoneTransform(dt);

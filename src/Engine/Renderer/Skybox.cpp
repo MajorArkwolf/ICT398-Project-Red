@@ -31,7 +31,7 @@ void View::Skybox::Init() {
 
     auto vs = string(basepath / "res" / "shader" / "skybox_vert.vs");
     auto fs = string(basepath / "res" / "shader" / "skybox_frag.fv");
-    shader = std::make_unique<Shader>(vs.c_str(), fs.c_str(), "");
+    shader = std::make_unique<Shader>(vs, fs, "");
     shader->use();
     shader->setInt("skybox", 0);
 }

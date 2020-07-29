@@ -2,7 +2,7 @@
 
 #include <map>
 
-auto ModelManager::GetModelID(const std::string& filename) -> size_t {
+auto ModelManager::GetModelID(const std::filesystem::path& filename) -> size_t {
     auto id = nameToId.find(filename);
     if (id == nameToId.end()) { // file not loaded yet
         m[size] = Model::Model(filename, false);

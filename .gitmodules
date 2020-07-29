@@ -22,3 +22,6 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json.git
+[submodule "lib/cpplocate"]
+	path = lib/cpplocate
+	url = https://github.com/cginternals/cpplocate.git

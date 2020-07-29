@@ -4,7 +4,7 @@
 #include <imgui.h>
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
-
+#include <cpplocate/cpplocate.h>
 
 using std::runtime_error;
 using std::string;
@@ -66,7 +66,7 @@ GUIManager &RedEngine::Engine::getGuiManager() {
 }
 
 RedEngine::Engine::Engine(){
-    getBasePath();
+    setBasePath();
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }
@@ -177,11 +177,9 @@ auto RedEngine::Engine::endEngine() -> void {
     isRunning = false;
 }
 
-auto RedEngine::Engine::getBasePath() -> void {
-    // char *base_path = SDL_GetBasePath();
-    // basepath        = std::string(base_path);
-    // SDL_free(base_path);
-    basepath = "./";
+auto RedEngine::Engine::setBasePath() -> void {
+    basepath = cpplocate::getExecutablePath();
+    basepath.remove_filename();
 }
 
 void RedEngine::Engine::SettingMenu() {
@@ -256,4 +254,8 @@ double RedEngine::Engine::getDt() const {
 
 double RedEngine::Engine::getFrameTime() const {
     return EngineFrameTime;
+}
+
+auto RedEngine::Engine::getBasePath() const -> std::filesystem::path {
+    return this->basepath;
 }

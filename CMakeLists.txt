@@ -100,7 +100,7 @@ target_link_options(${PROJECT_NAME} PRIVATE
 )
 
 # Include and link against dependencies.
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL glfw assimp glm glad imgui stb_image ReactPhysics3D::reactphysics3d EnTT::EnTT nlohmann_json::nlohmann_json ${CMAKE_DL_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL glfw assimp glm glad imgui stb_image ReactPhysics3D::reactphysics3d EnTT::EnTT nlohmann_json::nlohmann_json cpplocate::cpplocate ${CMAKE_DL_LIBS})
 
 
 # Symlink or copy the resources to the binary location.

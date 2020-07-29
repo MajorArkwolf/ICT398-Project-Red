@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <filesystem>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -11,12 +11,11 @@ class Shader {
   public:
     /**
      * Constructs a shader on the fly
-     * @param vertexPath path the vertex shader
-     * @param fragmentPath path the fragment shader
-     * @param geometryPath path the geometry shader
+     * @param vertex path the vertex shader
+     * @param fragment path the fragment shader
+     * @param geo path the geometry shader
      */
-    Shader(const char *vertexPath, const char *fragmentPath,
-           const char *geometryPath = nullptr);
+    Shader(const std::filesystem::path& vertex, const std::filesystem::path& fragment, const std::filesystem::path& geo);
 
     /**
      * Activates the shader program

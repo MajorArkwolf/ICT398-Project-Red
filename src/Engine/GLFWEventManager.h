@@ -11,7 +11,7 @@ namespace Input
 {
 	struct InputEvent;
 
-	enum  GLFWEventType
+	enum class GLFWEventType
 	{
 		None
 		, WindowMoved
@@ -86,15 +86,15 @@ namespace Input
 	class GLFWEventManager
 	{
 	public:
-		GLFWEventManager() {};
+		GLFWEventManager() = default;
 		GLFWEventManager(const GLFWEventManager& other) = delete;
 		GLFWEventManager(const GLFWEventManager&& other) = delete;
 		GLFWEventManager& operator=(const GLFWEventManager& rhs) = delete;
 		GLFWEventManager& operator=(const GLFWEventManager&& rhs) = delete;
 		~GLFWEventManager() = delete;
 
-		void Init(GLFWwindow* window);
-		void TrackWindow(GLFWwindow* window);
+		static void Init(GLFWwindow* window);
+		static void TrackWindow(GLFWwindow* window);
 
 
 	private:
@@ -116,8 +116,5 @@ namespace Input
 		static void JoystickCallback(int jid, int action);
 		static void WindowMaximiseCallback(GLFWwindow* window, int maximised);
 		static void WindowContentScaleCallback(GLFWwindow* window, float xscale, float yscale);
-
-
-		std::queue<InputEvent> EventQueue;
 	};
 }

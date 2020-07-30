@@ -1,4 +1,6 @@
 #include "GLFWEventManager.h"
+#include "Engine.hpp"
+#include "InputManager.h"
 
 void Input::GLFWEventManager::Init(GLFWwindow* window)
 {
@@ -6,10 +8,12 @@ void Input::GLFWEventManager::Init(GLFWwindow* window)
 
 void Input::GLFWEventManager::TrackWindow(GLFWwindow* window)
 {
+    glfwSetWindowPosCallback(window, WindowPosCallback);
 }
 
 void Input::GLFWEventManager::WindowPosCallback(GLFWwindow* window, int x, int y)
 {
+    auto& engine = RedEngine::Engine::get();
     GLFWEvent event;
     event.Type = GLFWEventType::WindowMoved;
 

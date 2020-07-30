@@ -12,154 +12,155 @@
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
+#include "Engine/InputManager.h"
 
 namespace RedEngine {
 
-    /**
-     * @class Engine
-     * @brief The main game engine
-     */
-    class Engine {
-      public:
-        static constexpr auto FPS_UPDATE_INTERVAL = 0.5;
+	/**
+	 * @class Engine
+	 * @brief The main game engine
+	 */
+	class Engine {
+	public:
+		static constexpr auto FPS_UPDATE_INTERVAL = 0.5;
 
-        /// Mouse movement.
-        glm::vec2 mouse = {};
+		/// Mouse movement.
+		glm::vec2 mouse = {};
 
-        /// GLFW handles.
-        GLFWwindow *window = nullptr;
+		/// GLFW handles.
+		GLFWwindow* window = nullptr;
 
-        /// Renderer for OpenGL
-        View::OpenGL renderer = {};
+		/// Renderer for OpenGL
+		View::OpenGL renderer = {};
 
-        /// The current FPS
-        double fps           = 0.0;
+		/// The current FPS
+		double fps = 0.0;
 
-        /// The game stack to allow to switch between scenes.
-        ///
-        GameStack<std::shared_ptr<BaseState>> gameStack;
-      private:
-        /// GUI Manager for our GUI interface.
-        GUIManager guiManager;
-        /// Flag used to determine if the engine should shutdown.
-        bool isRunning = true;
-        /**
-         * Sets the basepath of where the engine is running.
-         */
-        auto setBasePath() -> void;
-        /**
-         * Privatised constructor due to the engine being a singleton.
-         */
-        Engine();
+		/// The game stack to allow to switch between scenes.
+		///
+		GameStack<std::shared_ptr<BaseState>> gameStack;
 
-        /// Testing values
-        int lastWindowXSize     = 800;
-        int lastWindowYSize     = 600;
+		/**
+		 * Deleted move constructor due to unique pointers being used.
+		 */
+		Engine(Engine&&) = delete;
 
-        double t  = 0.0;
-        double dt = 0.01;
-        double EngineFrameTime   = 0.0;
-        std::string glsl_version = "";
-        /// Base path to the program.
-        std::filesystem::path basepath = {};
+		/**
+		 * Deleted move destructor due to unique pointers being used.
+		 */
+		Engine(const Engine&) = delete;
 
+		/**
+		 * Destructor for the engine
+		 */
+		~Engine();
 
-      public:
-        /**
-         * Deleted move constructor due to unique pointers being used.
-         */
-        Engine(Engine &&)      = delete;
+		/**
+		 * @brief Getter to the engine variables.
+		 * @return Engine by reference
+		 */
+		static auto get()->Engine&;
 
-        /**
-         * Deleted move destructor due to unique pointers being used.
-         */
-        Engine(const Engine &) = delete;
+		/**
+		 * @brief The game engine main loop
+		 */
+		static auto run() -> void;
 
-        /**
-         * Destructor for the engine
-         */
-        ~Engine();
+		/**
+		 * Gets the GUI manager interface.
+		 * @return the GUIManager object.
+		 */
+		GUIManager& getGuiManager();
 
-        /**
-         * @brief Getter to the engine variables.
-         * @return Engine by reference
-         */
-        static auto get() -> Engine &;
+		/**
+		 * @brief Overloaded assignment operator, set to default overload
+		 */
+		auto operator=(Engine&&)->Engine & = delete;
 
-        /**
-         * @brief The game engine main loop
-         */
-        static auto run() -> void;
+		/**
+		 * @brief Overloaded const assignment operator, set to delete overload
+		 */
+		auto operator=(const Engine&)->Engine & = delete;
 
-        /**
-         * Gets the GUI manager interface.
-         * @return the GUIManager object.
-         */
-        GUIManager &getGuiManager();
+		/**
+		 * Check to see if the engine is running.
+		 * @return the current state of the engine.
+		 */
+		auto getIsRunning() const -> bool;
 
-        /**
-         * @brief Overloaded assignment operator, set to default overload
-         */
-        auto operator=(Engine &&) -> Engine & = delete;
+		/**
+		 * Tells the engine the program is requesting termination.
+		 */
+		auto endEngine() -> void;
 
-        /**
-         * @brief Overloaded const assignment operator, set to delete overload
-         */
-        auto operator=(const Engine &) -> Engine & = delete;
+		/**
+		 * Process the input from our 3rd party library.
+		 */
+		void processInput(double deltaTime);
 
-        /**
-         * Check to see if the engine is running.
-         * @return the current state of the engine.
-         */
-        auto getIsRunning() const -> bool;
+		/**
+		 * Checks to see what type of mouse mode the engine has set.
+		 * @return the value of the mouse.
+		 */
+		bool getMouseMode();
 
-        /**
-         * Tells the engine the program is requesting termination.
-         */
-        auto endEngine() -> void;
-
-        /**
-         * Process the input from our 3rd party library.
-         */
-        void processInput(double deltaTime);
-
-        /**
-         * Checks to see what type of mouse mode the engine has set.
-         * @return the value of the mouse.
-         */
-        bool getMouseMode();
-
-        /**
-         * Sets the mouse mode
-         * @param mode sets the mouse mode.
-         */
-        void setMouseMode(bool mode);
+		/**
+		 * Sets the mouse mode
+		 * @param mode sets the mouse mode.
+		 */
+		void setMouseMode(bool mode);
 
 
-        void SettingMenu();
+		void SettingMenu();
 
-        ///Engine Sub Modules
-        ModelManager modelManager = {};
+		///Engine Sub Modules
+		ModelManager modelManager = {};
 
-        ///Engine Variables
+		///Engine Variables
 
-        float gammaCorrection = 1.f;
-        bool showSettingsMenu = false;
+		float gammaCorrection = 1.f;
+		bool showSettingsMenu = false;
 
-        int getLastWindowXSize() const;
+		int getLastWindowXSize() const;
 
-        void setLastWindowXSize(int lastWindowXSize);
+		void setLastWindowXSize(int lastWindowXSize);
 
-        int getLastWindowYSize() const;
+		int getLastWindowYSize() const;
 
-        void setLastWindowYSize(int lastWindowYSize);
+		void setLastWindowYSize(int lastWindowYSize);
 
-        double getT() const;
-        double getDt() const;
-        double getFrameTime() const;
-        /**
-         * Gets the basepath of the executable
-         */
-        auto getBasePath() const -> std::filesystem::path;
-    };
+		double getT() const;
+		double getDt() const;
+		double getFrameTime() const;
+		/**
+		 * Gets the basepath of the executable
+		 */
+		auto getBasePath() const->std::filesystem::path;
+
+	private:
+		/// GUI Manager for our GUI interface.
+		GUIManager guiManager;
+		/// Flag used to determine if the engine should shutdown.
+		bool isRunning = true;
+		/**
+		 * Sets the basepath of where the engine is running.
+		 */
+		auto setBasePath() -> void;
+		/**
+		 * Privatised constructor due to the engine being a singleton.
+		 */
+		Engine();
+
+		/// Testing values
+		int lastWindowXSize = 800;
+		int lastWindowYSize = 600;
+
+		double t = 0.0;
+		double dt = 0.01;
+		double EngineFrameTime = 0.0;
+		std::string glsl_version = "";
+		/// Base path to the program.
+		std::filesystem::path Basepath = {};
+
+	};
 }

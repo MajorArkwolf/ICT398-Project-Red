@@ -1,20 +1,22 @@
 #pragma once
 #include <queue>
+#include "InputManager.h"
 
-namespace Input { struct InputEvent; };
+namespace Input {
+	struct InputEvent;
+	class RedEventManager
+	{
+	public:
+		RedEventManager() = default;
+		RedEventManager(const RedEventManager& other) = delete;
+		RedEventManager(const RedEventManager&& other) = delete;
+		RedEventManager& operator=(const RedEventManager& rhs) = delete;
+		RedEventManager& operator=(const RedEventManager&& rhs) = delete;
+		~RedEventManager() = default;
 
-class RedEventManager
-{
-public:
-	RedEventManager() = default;
-	RedEventManager(const RedEventManager& other) = delete;
-	RedEventManager(const RedEventManager&& other) = delete;
-	RedEventManager& operator=(const RedEventManager& rhs) = delete;
-	RedEventManager& operator=(const RedEventManager&& rhs) = delete;
-	~RedEventManager() = delete;
-
-	bool PollEvents(Input::InputEvent& event);
-	void AddEventToQueue(Input::InputEvent& event);
-private:
-	std::queue<Input::InputEvent> EventQueue;
-};
+		bool PollEvents(Input::InputEvent& event);
+		void AddEventToQueue(Input::InputEvent& event);
+	private:
+		std::queue<InputEvent> EventQueue;
+	};
+}

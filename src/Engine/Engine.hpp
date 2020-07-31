@@ -13,6 +13,9 @@
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Engine/InputManager.h"
+#include "Engine/RedEventManager.hpp"
+
+namespace Input { class RedEventManager; };
 
 namespace RedEngine {
 
@@ -137,6 +140,9 @@ namespace RedEngine {
 		 */
 		auto getBasePath() const->std::filesystem::path;
 
+		Input::RedEventManager& GetEventManager();
+		Input::InputManager& GetInputManager();
+
 	private:
 		/// GUI Manager for our GUI interface.
 		GUIManager guiManager;
@@ -160,7 +166,9 @@ namespace RedEngine {
 		double EngineFrameTime = 0.0;
 		std::string glsl_version = "";
 		/// Base path to the program.
-		std::filesystem::path Basepath = {};
+		std::filesystem::path basepath = {};
 
+		Input::RedEventManager EventManager;
+		Input::InputManager InputManager;
 	};
 }

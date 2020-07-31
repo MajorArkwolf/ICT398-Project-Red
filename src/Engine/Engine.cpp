@@ -5,6 +5,8 @@
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
 #include <cpplocate/cpplocate.h>
+#include "GLFWInputWrangler.h"
+
 
 using std::runtime_error;
 using std::string;
@@ -106,6 +108,8 @@ RedEngine::Engine::Engine(){
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
+
+    Input::GLFWInputWrangler::TrackWindow(window);
 
     GUIManager::initialiseImGUI(window);
     // This allows us to use model 0 as an error model.
@@ -258,4 +262,14 @@ double RedEngine::Engine::getFrameTime() const {
 
 auto RedEngine::Engine::getBasePath() const -> std::filesystem::path {
     return this->basepath;
+}
+
+Input::RedEventManager& RedEngine::Engine::GetEventManager()
+{
+    return EventManager;
+}
+
+Input::InputManager& RedEngine::Engine::GetInputManager()
+{
+    return InputManager;
 }

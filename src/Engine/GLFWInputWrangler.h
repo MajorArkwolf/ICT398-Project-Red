@@ -4,7 +4,7 @@
 #include <string>
 #include <variant>
 
-
+#include <glad/glad.h>
 #include "GLFW/glfw3.h"
 
 namespace Input
@@ -18,6 +18,7 @@ namespace Input
 		, WindowResized
 		, WindowClosed
 		, WindowRefresh
+		, WindowFocused
 		, WindowDefocused
 		, WindowIconified
 		, WindowUnIconified
@@ -77,25 +78,26 @@ namespace Input
 			float Y = 0.f;
 		};
 
-		GLFWEventType Type;
-		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> asd;
+		GLFWEventType Type = GLFWEventType::None;
+		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> Data = {};
+		GLFWwindow* Window = nullptr;
 		
 
 	};
 
-	class GLFWEventManager
+	class GLFWInputWrangler
 	{
 	public:
-		GLFWEventManager() = default;
-		GLFWEventManager(const GLFWEventManager& other) = delete;
-		GLFWEventManager(const GLFWEventManager&& other) = delete;
-		GLFWEventManager& operator=(const GLFWEventManager& rhs) = delete;
-		GLFWEventManager& operator=(const GLFWEventManager&& rhs) = delete;
-		~GLFWEventManager() = delete;
+		GLFWInputWrangler() = delete;
+		GLFWInputWrangler(const GLFWInputWrangler& other) = delete;
+		GLFWInputWrangler(const GLFWInputWrangler&& other) = delete;
+		GLFWInputWrangler& operator=(const GLFWInputWrangler& rhs) = delete;
+		GLFWInputWrangler& operator=(const GLFWInputWrangler&& rhs) = delete;
+		~GLFWInputWrangler() = delete;
 
 		static void Init(GLFWwindow* window);
 		static void TrackWindow(GLFWwindow* window);
-
+		static bool PollEvent(GLFWEvent& event);
 
 	private:
 		static void WindowPosCallback(GLFWwindow* window, int x, int y);
@@ -116,5 +118,7 @@ namespace Input
 		static void JoystickCallback(int jid, int action);
 		static void WindowMaximiseCallback(GLFWwindow* window, int maximised);
 		static void WindowContentScaleCallback(GLFWwindow* window, float xscale, float yscale);
+
+		static std::queue<GLFWEvent> EventQueue;
 	};
 }

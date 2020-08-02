@@ -15,9 +15,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
     #- InputManagement
-    Engine/InputManager.cpp
-    Engine/GLFWInputWrangler.cpp
-    Engine/RedEventManager.cpp
+    Engine/Input/InputManager.cpp
+    Engine/Input/GLFWInputWrangler.cpp
+    Engine/Input/RedEventManager.cpp
 
     #Game
     #--MainMenu

@@ -7,82 +7,80 @@
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 
-namespace Input
+namespace input
 {
 	struct InputEvent;
 
 	enum class GLFWEventType
 	{
-		None
-		, WindowMoved
-		, WindowResized
-		, WindowClosed
-		, WindowRefresh
-		, WindowFocused
-		, WindowDefocused
-		, WindowIconified
-		, WindowUnIconified
-		, FramebufferResized
-		, ButtonPressed
-		, ButtonReleased
-		, CursorMoved
-		, CursorEnteredWindow
-		, CursorLeftWindow
-		, MouseScrolled
-		, KeyPressed
-		, KeyReleased
-		, KeyRepeated
-		, MonitorConnected
-		, MonitorDisconnected
-		, FileDropped
-		, WindowMaximised
-		, WindowUnMaximised
-		, WindowScaleChanged
+		kNone
+		, kWindowMoved
+		, kWindowResized
+		, kWindowClosed
+		, kWindowRefresh
+		, kWindowFocused
+		, kWindowDefocused
+		, kWindowIconified
+		, kWindowUnIconified
+		, kFramebufferResized
+		, kButtonPressed
+		, kButtonReleased
+		, kCursorMoved
+		, kCursorEnteredWindow
+		, kCursorLeftWindow
+		, kMouseScrolled
+		, kKeyPressed
+		, kKeyReleased
+		, kKeyRepeated
+		, kMonitorConnected
+		, kMonitorDisconnected
+		, kFileDropped
+		, kWindowMaximised
+		, kWindowUnMaximised
+		, kWindowScaleChanged
 	};
 
 	struct GLFWEvent
 	{
 		struct Position
 		{
-			int X = 0;
-			int Y = 0;
+			int x = 0;
+			int y = 0;
 		};
 		struct Size
 		{
-			int Width = 0;
-			int Height = 0;
+			int width = 0;
+			int height = 0;
 		};
 		struct Scroll
 		{
-			int X = 0;
-			int Y = 0;
+			int x = 0;
+			int y = 0;
 		};
 		struct Keyboard
 		{
-			int Key = 0;
-			int Scancode = 0;
-			int Mods = 0;
+			int key = 0;
+			int scancode = 0;
+			int mods = 0;
 		};
 		struct Mouse
 		{
-			int Button = 0;
-			int Mods = 0;
+			int button = 0;
+			int mods = 0;
 		};
 		struct File
 		{
-			std::vector<std::string> Paths;
+			std::vector<std::string> paths;
 		};
 		struct Scale
 		{
-			float X = 0.f;
-			float Y = 0.f;
+			float x = 0.f;
+			float y = 0.f;
 		};
 
-		GLFWEventType Type = GLFWEventType::None;
-		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> Data = {};
-		GLFWwindow* Window = nullptr;
-		
-
+		GLFWEventType type = GLFWEventType::kNone;
+		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> data = {};
+		GLFWwindow* window = nullptr;
 	};
 
 	class GLFWInputWrangler
@@ -98,6 +96,7 @@ namespace Input
 		static void Init(GLFWwindow* window);
 		static void TrackWindow(GLFWwindow* window);
 		static bool PollEvent(GLFWEvent& event);
+
 
 	private:
 		static void WindowPosCallback(GLFWwindow* window, int x, int y);
@@ -119,6 +118,6 @@ namespace Input
 		static void WindowMaximiseCallback(GLFWwindow* window, int maximised);
 		static void WindowContentScaleCallback(GLFWwindow* window, float xscale, float yscale);
 
-		static std::queue<GLFWEvent> EventQueue;
+
 	};
 }

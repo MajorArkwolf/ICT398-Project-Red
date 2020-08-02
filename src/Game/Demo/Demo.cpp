@@ -43,3 +43,7 @@ void Demo::Update(double t, double dt) {
 void Demo::FixedUpdate(double t, double dt) {
     ecs.FixedUpdate(t, dt);
 }
+
+void Demo::HandleInputData(input::InputEvent inputData, double deltaTime)
+{
+}

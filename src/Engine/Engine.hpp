@@ -12,10 +12,10 @@
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
-#include "Engine/InputManager.h"
-#include "Engine/RedEventManager.hpp"
+#include "Engine/Input/InputManager.hpp"
+#include "Engine/Input/RedEventManager.hpp"
 
-namespace Input { class RedEventManager; };
+namespace input { class RedEventManager; };
 
 namespace RedEngine {
 
@@ -140,8 +140,8 @@ namespace RedEngine {
 		 */
 		auto getBasePath() const->std::filesystem::path;
 
-		Input::RedEventManager& GetEventManager();
-		Input::InputManager& GetInputManager();
+		input::RedEventManager& GetEventManager();
+		input::InputManager& GetInputManager();
 
 	private:
 		/// GUI Manager for our GUI interface.
@@ -168,7 +168,7 @@ namespace RedEngine {
 		/// Base path to the program.
 		std::filesystem::path basepath = {};
 
-		Input::RedEventManager EventManager;
-		Input::InputManager InputManager;
+		input::RedEventManager EventManager;
+		input::InputManager InputManager;
 	};
 }

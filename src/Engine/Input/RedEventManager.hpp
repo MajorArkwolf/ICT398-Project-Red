@@ -1,8 +1,8 @@
 #pragma once
 #include <queue>
-#include "InputManager.h"
+#include "InputManager.hpp"
 
-namespace Input {
+namespace input {
 	struct InputEvent;
 	class RedEventManager
 	{
@@ -14,9 +14,9 @@ namespace Input {
 		RedEventManager& operator=(const RedEventManager&& rhs) = delete;
 		~RedEventManager() = default;
 
-		bool PollEvents(Input::InputEvent& event);
-		void AddEventToQueue(Input::InputEvent& event);
+		bool PollEvents(input::InputEvent& event);
+		void AddEventToQueue(input::InputEvent& event);
 	private:
-		std::queue<InputEvent> EventQueue;
+		std::queue<InputEvent> event_queue_;
 	};
 }

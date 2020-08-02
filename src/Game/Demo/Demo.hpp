@@ -13,6 +13,7 @@ public:
     void GUIEnd() override;
     void Update(double t, double dt) override;
     void FixedUpdate(double t, double dt) override;
+    void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
 private:
     ECS ecs = {};

@@ -59,6 +59,10 @@ void MainMenu::UnInit() {
 
 }
 
+void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime)
+{
+}
+
 void MainMenu::handleWindowEvent() {
     auto &engine = RedEngine::Engine::get();
     engine.renderer.ResizeWindow();

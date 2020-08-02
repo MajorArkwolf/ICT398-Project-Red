@@ -1,9 +1,6 @@
 #pragma once
-
-//#include "Controller/InputManager.hpp"
+namespace input { class InputEvent; }
 #include "Engine/EulerCamera.hpp"
-#include <glm/matrix.hpp>
-
 /**
  * @class BaseState
  * @brief Pure virtual class for a game state
@@ -42,7 +39,7 @@ class BaseState {
      * @param inputData The InputData event that contains the user input
      * @param deltaTime time since last frame
      */
-    //virtual void handleInputData(Controller::Input::InputData inputData, double deltaTime) = 0;
+    virtual void HandleInputData(input::InputEvent inputData, double deltaTime) = 0;
 
     /**
      * @brief Virtual update function for updating physics within a game state

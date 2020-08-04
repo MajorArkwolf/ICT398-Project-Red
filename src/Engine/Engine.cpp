@@ -19,7 +19,7 @@ auto redengine::Engine::Run() -> void {
     engine.t_  = 0.0;
     engine.dt_ = 0.01;
 
-    double currentTime = glfwGetTime();
+    double current_time = glfwGetTime();
     double accumulator = 0.0;
 
     // State previous;
@@ -30,15 +30,15 @@ auto redengine::Engine::Run() -> void {
 
 
     while (engine.GetIsRunning()) {
-        double newTime   = glfwGetTime();
-        double frameTime = newTime - currentTime;
-        engine.engine_frame_time_ = frameTime;
+        double new_time   = glfwGetTime();
+        double frame_time = new_time - current_time;
+        engine.engine_frame_time_ = frame_time;
 
-        if (frameTime > 0.25)
-            frameTime = 0.25;
-        currentTime = newTime;
+        if (frame_time > 0.25)
+            frame_time = 0.25;
+        current_time = new_time;
 
-        accumulator += frameTime;
+        accumulator += frame_time;
 
         while (accumulator >= engine.dt_) {
             // previousState = currentState;

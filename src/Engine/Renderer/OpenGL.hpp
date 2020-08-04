@@ -11,7 +11,7 @@
 #include "DataStructures/Model/Model.hpp"
 #include "DataStructures/Model/Vertix.hpp"
 
-namespace View {
+namespace view {
     class OpenGL: public Renderer {
       public:
         /**

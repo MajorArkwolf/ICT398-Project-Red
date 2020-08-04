@@ -5,7 +5,7 @@
 #include "stb_image.h"
 #include <algorithm>
 
-void View::OpenGL::Draw() {
+void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
     if (!windowMinimized()) {
         camera = &engine.game_stack_.getTop()->camera;
@@ -27,7 +27,7 @@ void View::OpenGL::Draw() {
     }
     glfwSwapBuffers(engine.window_);
 }
-void View::OpenGL::Init() {
+void view::OpenGL::Init() {
     int width  = 0;
     int height = 0;
 
@@ -43,12 +43,12 @@ void View::OpenGL::Init() {
     skyBox.Init();
 
 }
-void View::OpenGL::DeInit() {
+void view::OpenGL::DeInit() {
 
 }
 
-void View::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vector<TextureB> &textures,
-               const std::vector<unsigned int> &indices) {
+void view::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vector<TextureB> &textures,
+                             const std::vector<unsigned int> &indices) {
     // bind appropriate textures
     unsigned int diffuseNr  = 1;
     unsigned int specularNr = 1;
@@ -84,8 +84,8 @@ void View::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vecto
     glActiveTexture(GL_TEXTURE0);
 }
 
-void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int &EBO,
-               std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
+void view::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int &EBO,
+                             std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
     // create buffers/arrays
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -134,7 +134,7 @@ void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
     glBindVertexArray(0);
 }
 
-void View::OpenGL::ResizeWindow() {
+void view::OpenGL::ResizeWindow() {
     auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
     glfwGetWindowSize(engine.window_, &width, &height);
@@ -143,7 +143,7 @@ void View::OpenGL::ResizeWindow() {
     UpdateViewPort(0, 0, width, height);
 }
 
-unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesystem::path directory,
+unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesystem::path directory,
                                            [[maybe_unused]] bool gamma) {
     std::filesystem::path filename = directory.remove_filename() / path;
 
@@ -186,7 +186,7 @@ unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesys
     }
     return textureID;
 }
-void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
+void view::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
     camera = &mainCamera;
 }
 
@@ -201,18 +201,18 @@ void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
 //         });
 //}
 
-void View::OpenGL::ToggleWireFrame() {
+void view::OpenGL::ToggleWireFrame() {
     wireFrame = !wireFrame;
 }
 
-bool View::OpenGL::windowMinimized() {
+bool view::OpenGL::windowMinimized() {
     auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
     glfwGetWindowSize(engine.window_, &width, &height);
     return width == 0 || height == 0;
 }
 
-void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
+void view::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
     glViewport(bl, br, tl, tr);
 }
 
@@ -220,6 +220,6 @@ void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
 //    drawQueTransparent.push_back(drawItem);
 //}
 
-View::OpenGL::~OpenGL() {
+view::OpenGL::~OpenGL() {
 
 }

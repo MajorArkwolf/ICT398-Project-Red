@@ -11,7 +11,7 @@ Mesh::Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indic
 }
 
 void Mesh::Draw(Shader& shader) {
-    View::OpenGL::DrawModel(shader, vao_, textures_, indices_);
+    view::OpenGL::DrawModel(shader, vao_, textures_, indices_);
 }
 void Mesh::AddBoneData(unsigned vector_id, int bone_id, float weight) {
     for (int x = 0; x < 4; ++x) {
@@ -25,5 +25,5 @@ void Mesh::AddBoneData(unsigned vector_id, int bone_id, float weight) {
 }
 
 void Mesh::MoveToGPU() {
-    View::OpenGL::SetupMesh(vao_, vbo_, ebo_, this->vertices_, this->indices_);
+    view::OpenGL::SetupMesh(vao_, vbo_, ebo_, this->vertices_, this->indices_);
 }

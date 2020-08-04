@@ -28,7 +28,7 @@ namespace redengine {
         GLFWwindow *window_ = nullptr;
 
         /// Renderer for OpenGL
-        View::OpenGL renderer_ = {};
+        view::OpenGL renderer_ = {};
 
         /// The game stack to allow to switch between scenes.
         ///

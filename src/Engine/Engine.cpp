@@ -5,7 +5,7 @@
 // Game States
 #include "Game/MainMenu/MainMenu.hpp"
 #include <cpplocate/cpplocate.h>
-#include "Engine/Input/GLFWInputWrangler.hpp"
+#include "Engine/SubModules/Input/GLFWInputWrangler.hpp"
 
 
 using std::runtime_error;

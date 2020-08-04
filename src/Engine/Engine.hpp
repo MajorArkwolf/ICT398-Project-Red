@@ -12,8 +12,8 @@
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
-#include "Engine/Input/InputManager.hpp"
-#include "Engine/Input/RedEventManager.hpp"
+#include "Engine/SubModules/Input/InputManager.hpp"
+#include "Engine/SubModules/Input/RedEventManager.hpp"
 
 namespace input { class RedEventManager; };
 

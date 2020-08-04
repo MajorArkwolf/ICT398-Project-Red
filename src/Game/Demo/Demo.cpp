@@ -46,4 +46,5 @@ void Demo::FixedUpdate(double t, double dt) {
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime)
 {
+
 }

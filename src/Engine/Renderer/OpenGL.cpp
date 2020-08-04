@@ -6,33 +6,33 @@
 #include <algorithm>
 
 void View::OpenGL::Draw() {
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     if (!windowMinimized()) {
-        camera = &engine.gameStack.getTop()->camera;
+        camera = &engine.game_stack_.getTop()->camera;
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        engine.gameStack.getTop()->GUIStart();
+        engine.game_stack_.getTop()->GUIStart();
         int width = 0, height = 0;
-        glfwGetWindowSize(engine.window, &width, &height);
+        glfwGetWindowSize(engine.window_, &width, &height);
         glm::mat4 projection =
                 glm::perspective(glm::radians(camera->Zoom),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera->GetViewMatrix();
         glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-        engine.gameStack.getTop()->Display(projection, view);
+        engine.game_stack_.getTop()->Display(projection, view);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         skyBox.draw(skyboxView, projection);
-        engine.gameStack.getTop()->GUIEnd();
+        engine.game_stack_.getTop()->GUIEnd();
     }
-    glfwSwapBuffers(engine.window);
+    glfwSwapBuffers(engine.window_);
 }
 void View::OpenGL::Init() {
     int width  = 0;
     int height = 0;
 
-    auto &engine = RedEngine::Engine::get();
-    glfwGetWindowSize(engine.window, &width, &height);
+    auto &engine = redengine::Engine::get();
+    glfwGetWindowSize(engine.window_, &width, &height);
     glViewport(0, 0, width, height);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -135,11 +135,11 @@ void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
 }
 
 void View::OpenGL::ResizeWindow() {
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
-    glfwGetWindowSize(engine.window, &width, &height);
-    engine.setLastWindowXSize(width);
-    engine.setLastWindowYSize(height);
+    glfwGetWindowSize(engine.window_, &width, &height);
+    engine.SetLastWindowXSize(width);
+    engine.SetLastWindowYSize(height);
     UpdateViewPort(0, 0, width, height);
 }
 
@@ -206,9 +206,9 @@ void View::OpenGL::ToggleWireFrame() {
 }
 
 bool View::OpenGL::windowMinimized() {
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
-    glfwGetWindowSize(engine.window, &width, &height);
+    glfwGetWindowSize(engine.window_, &width, &height);
     return width == 0 || height == 0;
 }
 

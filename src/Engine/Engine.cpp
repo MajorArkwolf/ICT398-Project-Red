@@ -9,15 +9,15 @@
 using std::runtime_error;
 using std::string;
 
-auto RedEngine::Engine::run() -> void {
-    auto &engine = RedEngine::Engine::get();
+auto redengine::Engine::Run() -> void {
+    auto &engine = redengine::Engine::get();
 
     //ResourceManager::getInstance().loadResources();
-    engine.gameStack.AddToStack(std::make_shared<MainMenu>());
-    engine.gameStack.getTop()->Init();
+    engine.game_stack_.AddToStack(std::make_shared<MainMenu>());
+    engine.game_stack_.getTop()->Init();
 
-    engine.t  = 0.0;
-    engine.dt = 0.01;
+    engine.t_  = 0.0;
+    engine.dt_ = 0.01;
 
     double currentTime = glfwGetTime();
     double accumulator = 0.0;
@@ -26,13 +26,13 @@ auto RedEngine::Engine::run() -> void {
     // State current;
     // State state;
     // glfwFocusWindow(engine.window);
-    engine.renderer.Init();
+    engine.renderer_.Init();
 
 
-    while (engine.getIsRunning()) {
+    while (engine.GetIsRunning()) {
         double newTime   = glfwGetTime();
         double frameTime = newTime - currentTime;
-        engine.EngineFrameTime = frameTime;
+        engine.engine_frame_time_ = frameTime;
 
         if (frameTime > 0.25)
             frameTime = 0.25;
@@ -40,33 +40,33 @@ auto RedEngine::Engine::run() -> void {
 
         accumulator += frameTime;
 
-        while (accumulator >= engine.dt) {
+        while (accumulator >= engine.dt_) {
             // previousState = currentState;
             glfwPollEvents();
-            engine.processInput(engine.dt);
-            engine.gameStack.getTop()->FixedUpdate(engine.t, engine.dt);
-            engine.t += engine.dt;
-            accumulator -= engine.dt;
+            engine.ProcessInput(engine.dt_);
+            engine.game_stack_.getTop()->FixedUpdate(engine.t_, engine.dt_);
+            engine.t_ += engine.dt_;
+            accumulator -= engine.dt_;
         }
 
         // const double alpha = accumulator / dt;
         // state = currentState * alpha + previousState * (1.0 - alpha);
-        engine.gameStack.getTop()->Update(engine.t, engine.EngineFrameTime);
-        engine.renderer.Draw();
-        if (engine.gameStack.isRemoveTopFlag()) {
-            engine.gameStack.getTop()->UnInit();
+        engine.game_stack_.getTop()->Update(engine.t_, engine.engine_frame_time_);
+        engine.renderer_.Draw();
+        if (engine.game_stack_.isRemoveTopFlag()) {
+            engine.game_stack_.getTop()->UnInit();
         }
-        engine.gameStack.checkTop();
+        engine.game_stack_.checkTop();
     }
-    glfwDestroyWindow(engine.window);
+    glfwDestroyWindow(engine.window_);
 }
 
-GUIManager &RedEngine::Engine::getGuiManager() {
-    return guiManager;
+GUIManager &redengine::Engine::GetGuiManager() {
+    return gui_manager_;
 }
 
-RedEngine::Engine::Engine(){
-    setBasePath();
+redengine::Engine::Engine(){
+    SetupBasePath();
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }
@@ -76,7 +76,7 @@ RedEngine::Engine::Engine(){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
     glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
-    glsl_version = "#version 150";
+    glsl_version_ = "#version 150";
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,
@@ -87,19 +87,19 @@ RedEngine::Engine::Engine(){
     // glfw window creation
     // --------------------
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    lastWindowXSize = mode->width / 2;
-    lastWindowYSize = mode->height / 2;
-    window = glfwCreateWindow(lastWindowXSize, lastWindowYSize, "Project Blue", nullptr, nullptr);
-    if (window == nullptr) {
+    last_window_x_size_ = mode->width / 2;
+    last_window_y_size_ = mode->height / 2;
+    window_ = glfwCreateWindow(last_window_x_size_, last_window_y_size_, "Project Blue", nullptr, nullptr);
+    if (window_ == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }
 
     //gleqTrackWindow(window);
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window_);
 
     // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -107,22 +107,22 @@ RedEngine::Engine::Engine(){
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    GUIManager::initialiseImGUI(window);
+    GUIManager::initialiseImGUI(window_);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
-    modelManager.GetModelID(basepath / "res" / "model" / "error.fbx");
+    model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");
 }
 
-RedEngine::Engine::~Engine() {
+redengine::Engine::~Engine() {
     glfwTerminate();
 }
 
-auto RedEngine::Engine::get() -> Engine & {
+auto redengine::Engine::get() -> Engine & {
     static auto instance = Engine{};
     return instance;
 }
 
-auto RedEngine::Engine::processInput(double deltaTime) -> void {
+auto redengine::Engine::ProcessInput(double deltaTime) -> void {
 //    GLEQevent event;
 //    auto handledMouse  = true;
 //    auto &inputManager = Controller::Input::InputManager::getInstance();
@@ -156,106 +156,105 @@ auto RedEngine::Engine::processInput(double deltaTime) -> void {
 //    }
 }
 
-bool RedEngine::Engine::getMouseMode() {
-    auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
+bool redengine::Engine::GetMouseMode() {
+    auto mouseMode = glfwGetInputMode(window_, GLFW_CURSOR);
     return mouseMode == GLFW_CURSOR_NORMAL;
 }
 
-void RedEngine::Engine::setMouseMode(bool mode) {
+void redengine::Engine::GetMouseMode(bool mode) {
     if (mode) {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     } else {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }
 
-auto RedEngine::Engine::getIsRunning() const -> bool {
-    return this->isRunning;
+auto redengine::Engine::GetIsRunning() const -> bool {
+    return this->is_running_;
 }
 
-auto RedEngine::Engine::endEngine() -> void {
-    isRunning = false;
+auto redengine::Engine::EndEngine() -> void {
+    is_running_ = false;
 }
 
-auto RedEngine::Engine::setBasePath() -> void {
-    basepath = cpplocate::getExecutablePath();
-    basepath.remove_filename();
+auto redengine::Engine::SetupBasePath() -> void {
+    base_path_ = cpplocate::getExecutablePath();
+    base_path_.remove_filename();
 }
 
-void RedEngine::Engine::SettingMenu() {
+void redengine::Engine::SettingMenu() {
     ImVec2 buttonSize(150, 30);
 
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-    auto &mainWindow = RedEngine::Engine::get().window;
+    auto &mainWindow = redengine::Engine::get().window_;
 
     ImGui::SetNextWindowFocus();
     ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
-    ImGui::Begin("Settings", &showSettingsMenu,
+    ImGui::Begin("Settings", &show_settings_menu_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
     ImGui::Text("Window Settings");
     if (ImGui::Button("Borderless Windowed", buttonSize)) {
-        lastWindowXSize = mode->width / 2;
-        lastWindowYSize = mode->height / 2;
-        glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, lastWindowXSize, lastWindowYSize, mode->refreshRate);
-        this->renderer.UpdateViewPort(0, 0, lastWindowXSize, lastWindowYSize);
-        glfwSetWindowPos(mainWindow, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
+        last_window_x_size_ = mode->width / 2;
+        last_window_y_size_ = mode->height / 2;
+        glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, last_window_x_size_, last_window_y_size_, mode->refreshRate);
+        this->renderer_.UpdateViewPort(0, 0, last_window_x_size_, last_window_y_size_);
+        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2, last_window_y_size_ - last_window_y_size_ / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Windowed", buttonSize)) {
-        lastWindowXSize = mode->width / 2;
-        lastWindowYSize = mode->height / 2;
-        glfwSetWindowMonitor(window, nullptr, 0, 0, lastWindowXSize, lastWindowYSize, mode->refreshRate);
-        this->renderer.UpdateViewPort(0, 0, lastWindowXSize, lastWindowYSize);
-        glfwSetWindowPos(mainWindow, lastWindowXSize - lastWindowXSize / 2, lastWindowYSize - lastWindowYSize / 2);
+        last_window_x_size_ = mode->width / 2;
+        last_window_y_size_ = mode->height / 2;
+        glfwSetWindowMonitor(window_, nullptr, 0, 0, last_window_x_size_, last_window_y_size_, mode->refreshRate);
+        this->renderer_.UpdateViewPort(0, 0, last_window_x_size_, last_window_y_size_);
+        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2, last_window_y_size_ - last_window_y_size_ / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Borderless Fullscreen", buttonSize)) {
         glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
-        this->renderer.UpdateViewPort(0, 0, mode->width, mode->height);
+        this->renderer_.UpdateViewPort(0, 0, mode->width, mode->height);
     }
 
     if (ImGui::Button("Fullscreen", buttonSize)) {
         glfwSetWindowMonitor(mainWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-        this->renderer.UpdateViewPort(0, 0, mode->width, mode->height);
+        this->renderer_.UpdateViewPort(0, 0, mode->width, mode->height);
     }
     ImGui::Separator();
     ImGui::Text("Brightness");
-    if (ImGui::SliderFloat("Gamma Correction", &gammaCorrection, 0.1f, 2.f,
+    if (ImGui::SliderFloat("Gamma Correction", &gamma_correction_, 0.1f, 2.f,
                            "Gamma = %.1f")) {
-        //SDL_SetWindowBrightness(this->window.get(), gammaCorrection);
-        glfwSetGamma(monitor, gammaCorrection);
+        glfwSetGamma(monitor, gamma_correction_);
     }
     ImGui::End();
 }
 
-int RedEngine::Engine::getLastWindowXSize() const {
-    return lastWindowXSize;
+int redengine::Engine::GetLastWindowXSize() const {
+    return last_window_x_size_;
 }
 
-void RedEngine::Engine::setLastWindowXSize(int newLastWindowXSize) {
-    Engine::lastWindowXSize = newLastWindowXSize;
+void redengine::Engine::SetLastWindowXSize(int last_window_x_size) {
+    Engine::last_window_x_size_ = last_window_x_size;
 }
 
-int RedEngine::Engine::getLastWindowYSize() const {
-    return lastWindowYSize;
+int redengine::Engine::GetLastWindowYSize() const {
+    return last_window_y_size_;
 }
 
-void RedEngine::Engine::setLastWindowYSize(int newLastWindowYSize) {
-    Engine::lastWindowYSize = newLastWindowYSize;
+void redengine::Engine::SetLastWindowYSize(int last_window_y_size) {
+    Engine::last_window_y_size_ = last_window_y_size;
 }
-double RedEngine::Engine::getT() const {
-    return t;
+double redengine::Engine::GetT() const {
+    return t_;
 }
-double RedEngine::Engine::getDt() const {
-    return dt;
-}
-
-double RedEngine::Engine::getFrameTime() const {
-    return EngineFrameTime;
+double redengine::Engine::GetDt() const {
+    return dt_;
 }
 
-auto RedEngine::Engine::getBasePath() const -> std::filesystem::path {
-    return this->basepath;
+double redengine::Engine::GetFrameTime() const {
+    return engine_frame_time_;
+}
+
+auto redengine::Engine::GetBasePath() const -> std::filesystem::path {
+    return this->base_path_;
 }

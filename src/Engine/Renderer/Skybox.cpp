@@ -19,7 +19,7 @@ void View::Skybox::Init() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-    auto basepath = RedEngine::Engine::get().getBasePath();
+    auto basepath = redengine::Engine::get().GetBasePath();
 
     faces.emplace_back(basepath / "res" / "images" / "skybox" / "right.jpg");
     faces.emplace_back(basepath / "res" / "images" / "skybox" / "left.jpg");

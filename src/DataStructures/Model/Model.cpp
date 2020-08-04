@@ -22,7 +22,7 @@ model::Model::Model(const string& path, bool gamma = false) : gamma_correction_(
 }
 
 void model::Model::Draw(Shader& shader) {
-    auto cameraPos = RedEngine::Engine::get().renderer.GetActiveCamera()->Position;
+    auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->Position;
     shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
     shader.setVec3("viewPos", cameraPos);
@@ -189,7 +189,7 @@ std::vector<TextureB> model::Model::LoadMaterialTextures(aiMaterial *mat, aiText
         }
         if (!skip) { // if texture hasn't been loaded already, load it
             TextureB texture = {};
-            texture.id   = RedEngine::Engine::get().renderer.TextureFromFile(str.C_Str(), this->directory_, false);
+            texture.id   = redengine::Engine::get().renderer_.TextureFromFile(str.C_Str(), this->directory_, false);
             texture.type = type_name;
             texture.path = str.C_Str();
             textures.push_back(texture);

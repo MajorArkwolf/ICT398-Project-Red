@@ -29,7 +29,7 @@ void System::Draw(entt::registry& registry, const glm::mat4& projection, const g
             mod.shader_->setBool("isAnimated", false);
         }
 
-        auto& model_manager = RedEngine::Engine::get().modelManager;
+        auto& model_manager = redengine::Engine::get().model_manager_;
         model_manager.Draw(mod.id_, mod.shader_.get());
     }
 }

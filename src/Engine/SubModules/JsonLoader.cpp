@@ -23,7 +23,7 @@ nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &filepath) {
 std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesystem::path& filepath, ECS& ecs) {
     json j = LoadJson(filepath);
     std::optional<std::shared_ptr<Entity>> entity = {};
-    auto basepath = RedEngine::Engine::get().getBasePath();
+    auto basepath = redengine::Engine::get().GetBasePath();
     auto fullPath = basepath / "res" / "Entity" / filepath;
     entity = std::make_shared<Entity>(ecs.CreateEntity());
     if (j.contains("Model")) {
@@ -71,7 +71,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesys
 }
 
 void JSONLoader::LoadScene(const std::filesystem::path &filepath, ECS &ecs) {
-    auto basepath = RedEngine::Engine::get().getBasePath();
+    auto basepath = redengine::Engine::get().GetBasePath();
     auto fullPath = basepath / "res" / "Entity" / filepath;
     auto j = LoadJson(fullPath);
     if (j.contains("Entity")) {

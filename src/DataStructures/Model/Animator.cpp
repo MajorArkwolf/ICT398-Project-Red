@@ -127,5 +127,5 @@ bool model::Animator::IsAnimationedEnded() const {
     return clipEnded;
 }
 void model::Animator::LinkToModel(size_t modelID) {
-    animatedModel = RedEngine::Engine::get().modelManager.getModel(modelID);
+    animatedModel = redengine::Engine::get().model_manager_.getModel(modelID);
 }

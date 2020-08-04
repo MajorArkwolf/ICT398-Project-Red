@@ -114,7 +114,7 @@ void Model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenComp
     }
     if (index == std::string::npos) {
         animationTime = 0.0;
-        loadedAnimation = animatedModel->getAnimation(newAnim);
+        loadedAnimation = animatedModel->GetAnimation(newAnim);
         endWhenCompleted = endWhenCompletedFlag;
         clipEnded = false;
     }

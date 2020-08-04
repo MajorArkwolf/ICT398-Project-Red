@@ -15,6 +15,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
     Engine/SubModules/JsonLoader.cpp
+    #--Physics
+    Engine/Physics/PhysicsEngine.cpp
+    Engine/Physics/CollisionDetection.cpp
 
     #Game
     #--MainMenu

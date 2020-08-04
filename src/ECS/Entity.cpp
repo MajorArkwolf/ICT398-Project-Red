@@ -1,8 +1,8 @@
 #include "Entity.hpp"
 
 
-Entity::Entity(entt::entity entityId, ECS *ecsObject) {
-    this->entityHandle = entityId;
-    this->ecs = ecsObject;
+Entity::Entity(entt::entity entity_id, ECS *ecs_object) {
+    this->entity_handle_ = entity_id;
+    this->ecs_ = ecs_object;
 }
 

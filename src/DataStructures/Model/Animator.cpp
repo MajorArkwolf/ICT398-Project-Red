@@ -1,7 +1,7 @@
 #include "Animator.hpp"
 #include "Engine/Engine.hpp"
 
-void Model::Animator::BoneTransform(double TimeInSeconds) {
+void model::Animator::BoneTransform(double TimeInSeconds) {
     Transforms.resize(100);
     animationTime += TimeInSeconds;
     if (animatedModel != nullptr) {
@@ -28,8 +28,8 @@ void Model::Animator::BoneTransform(double TimeInSeconds) {
         }
     }
 }
-void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
-                       const glm::mat4 &ParentTransform) {
+void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
+                                        const glm::mat4 &ParentTransform) {
     glm::mat4 NodeTransformation(jN.Transform);
 
     const auto* pNodeAnim = loadedAnimation->FindNodeAnim(jN.name);
@@ -65,7 +65,7 @@ void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
     }
 }
 
-glm::quat Model::Animator::CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim) {
+glm::quat model::Animator::CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim) {
     glm::quat Out;
     // we need at least two values to interpolate...
     if (pNodeAnim->num_rot_keys == 1) {
@@ -84,7 +84,7 @@ glm::quat Model::Animator::CalcInterpolatedRotation(double AnimationTime, const 
     Out = glm::normalize(Out);
     return Out;
 }
-glm::vec3 Model::Animator::CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim) {
+glm::vec3 model::Animator::CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim) {
     glm::vec3 Out;
     if (pNodeAnim->num_pos_keys == 1) {
         Out = pNodeAnim->pos_key[0].second;
@@ -105,7 +105,7 @@ glm::vec3 Model::Animator::CalcInterpolatedPosition(double AnimationTime, const 
 }
 
 //ALL CHECKS WITH THE STRING MUST BE UPPERCASE
-void Model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
+void model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
     size_t index = 0;
     if (loadedAnimation != nullptr) {
         index = loadedAnimation->GetName().find(newAnim);
@@ -120,12 +120,12 @@ void Model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenComp
     }
 }
 
-void Model::Animator::ResetAnimationTime() {
+void model::Animator::ResetAnimationTime() {
     animationTime = 0.0;
 }
-bool Model::Animator::IsAnimationedEnded() const {
+bool model::Animator::IsAnimationedEnded() const {
     return clipEnded;
 }
-void Model::Animator::LinkToModel(size_t modelID) {
+void model::Animator::LinkToModel(size_t modelID) {
     animatedModel = RedEngine::Engine::get().modelManager.getModel(modelID);
 }

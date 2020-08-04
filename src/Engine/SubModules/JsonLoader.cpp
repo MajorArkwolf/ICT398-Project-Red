@@ -26,7 +26,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesys
     auto basepath = RedEngine::Engine::get().getBasePath();
     auto fullPath = basepath / "res" / "Entity" / filepath;
     entity = std::make_shared<Entity>(ecs.CreateEntity());
-    auto &ent = entity.value();
     if (j.contains("Model")) {
         try {
             auto model = j.at("Model");
@@ -36,15 +35,16 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesys
             fragShader.append(model.at("FragShader").get<std::string>());
             auto modelFilepath = basepath;
             modelFilepath.append(model.at("ModelFilePath").get<std::string>());
-            ent->AddComponent<Component::Model>(modelFilepath,
+            entity->get()->AddComponent<component::Model>(modelFilepath,
                                                 std::make_shared<Shader>(vertShader, fragShader, std::filesystem::path{}));
+            assert(entity->get()->HasComponent<component::Model>());
         } catch (const std::exception& e) {
-            std::cerr << "JSON Model failed: " << e.what() << '\n';
+            std::cerr << "JSON model failed: " << e.what() << '\n';
         }
     }
     if (j.contains("Transform")) {
         try {
-            auto &trans = ent->AddComponent<Component::Transform>();
+            auto &trans = entity->get()->AddComponent<component::Transform>();
             auto transform = j.at("Transform");
             auto position = transform.at("Position");
             auto rotation = transform.at("Rotation");
@@ -57,11 +57,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesys
             std::cerr << "JSON Transform failed: " << e.what() << '\n';
         }
     }
-    if (j.contains("Animation")) {
+    if (j.contains("Animation") && entity->get()->HasComponent<component::Model>()) {
         try {
-            auto &anim = ent->AddComponent<Component::Animation>(ent->GetComponent<Component::Model>().id);
+            assert(entity->get()->HasComponent<component::Model>());
+            auto &anim = entity->get()->AddComponent<component::Animation>(entity->get()->GetComponent<component::Model>().id_);
             auto idle = j.at("Animation").at("IDLE").get<std::string>();
-            anim.animator.LoadAnimation(idle);
+            anim.animator_.LoadAnimation(idle);
         } catch (const std::exception& e) {
             std::cerr << "JSON Animation failed: " << e.what() << '\n';
         }

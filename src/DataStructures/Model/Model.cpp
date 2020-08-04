@@ -9,19 +9,19 @@ static inline glm::vec2 vec2_cast(const aiVector3D &v) { return glm::vec2(v.x, v
 static inline glm::quat quat_cast(const aiQuaternion &q) { return glm::quat(q.w, q.x, q.y, q.z); }
 static inline glm::mat4 mat4_cast(const aiMatrix4x4 &m) { return glm::transpose(glm::make_mat4(&m.a1)); }
 
-Model::Model::Model(char *path, bool gamma = false) : gamma_correction_(gamma) {
+model::Model::Model(char *path, bool gamma = false) : gamma_correction_(gamma) {
     LoadModel(path);
 }
 
-Model::Model::Model(const std::filesystem::path &path, bool gamma) : gamma_correction_(gamma){
+model::Model::Model(const std::filesystem::path &path, bool gamma) : gamma_correction_(gamma){
     LoadModel(path);
 }
 
-Model::Model::Model(const string& path, bool gamma = false) : gamma_correction_(gamma) {
+model::Model::Model(const string& path, bool gamma = false) : gamma_correction_(gamma) {
     LoadModel(path);
 }
 
-void Model::Model::Draw(Shader& shader) {
+void model::Model::Draw(Shader& shader) {
     auto cameraPos = RedEngine::Engine::get().renderer.GetActiveCamera()->Position;
     shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
@@ -35,7 +35,7 @@ static inline bool CheckFileType(const std::filesystem::path& dir) {
     return !(dir == "fbx" || dir == "obj");
 }
 
-void Model::Model::LoadModel(const std::filesystem::path &path) {
+void model::Model::LoadModel(const std::filesystem::path &path) {
     // read file via ASSIMP
     directory_ = path;
     Assimp::Importer importer;
@@ -63,7 +63,7 @@ void Model::Model::LoadModel(const std::filesystem::path &path) {
     }
 }
 
-void Model::Model::ProcessNode(aiNode *node, const aiScene *scene) {
+void model::Model::ProcessNode(aiNode *node, const aiScene *scene) {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         // the node object only contains indices to index the actual objects in the scene.
@@ -83,7 +83,7 @@ void Model::Model::ProcessNode(aiNode *node, const aiScene *scene) {
     }
 }
 
-Mesh Model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
+Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     // data to fill
     std::vector<Vertex> vertices = {};
     std::vector<unsigned int> indices = {};
@@ -171,7 +171,7 @@ Mesh Model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<TextureB> Model::Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
+std::vector<TextureB> model::Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
                                                          const string& type_name) {
     std::vector<TextureB> textures = {};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
@@ -200,7 +200,7 @@ std::vector<TextureB> Model::Model::LoadMaterialTextures(aiMaterial *mat, aiText
     return textures;
 }
 
-void Model::Model::Update(float t, float dt) {
+void model::Model::Update(float t, float dt) {
 
 }
 
@@ -211,7 +211,7 @@ static inline void ToUpperString(std::string& string) {
     });
 }
 
-void Model::Model::LoadAnimations(const aiScene* scene) {
+void model::Model::LoadAnimations(const aiScene* scene) {
     for (size_t i = 0; i < scene->mNumAnimations; ++i) {
         std::string anim_name = scene->mAnimations[i]->mName.C_Str();
         ToUpperString(anim_name);
@@ -238,7 +238,7 @@ void Model::Model::LoadAnimations(const aiScene* scene) {
     }
 }
 
-void Model::Model::LoadBones(unsigned mesh_index, const aiMesh* ai_mesh)
+void model::Model::LoadBones(unsigned mesh_index, const aiMesh* ai_mesh)
 {
     for (unsigned i = 0 ; i < ai_mesh->mNumBones; ++i) {
         unsigned boneIndex = 0;
@@ -289,7 +289,7 @@ static inline aiNode* FindRootJoint(aiMesh* mesh, aiNode* root) {
     return nullptr;
 }
 
-void Model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
+void model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
     auto root_bone = FindRootJoint(mesh, root);
     if (root_bone == nullptr) {
         std::cerr << "ERROR: ROOT JOINT NOT FOUND";
@@ -298,7 +298,7 @@ void Model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
     root_joint_ = RecurseJoints(root_bone, root);
 }
 
-Animation* Model::Model::GetAnimation(const string &anim_name) {
+Animation* model::Model::GetAnimation(const string &anim_name) {
     Animation* idle = nullptr;
     for (auto &anim : animation_) {
         std::string animNameStored = anim.GetName();

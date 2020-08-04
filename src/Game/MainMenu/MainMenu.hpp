@@ -55,7 +55,7 @@ public:
     /**
      * Function to start our game.
      */
-    //void startGame(Model::Difficulty newDifficulty);
+    //void startGame(model::Difficulty newDifficulty);
 
     /**
      * Starts the GUI

@@ -110,7 +110,7 @@ RedEngine::Engine::Engine(){
     GUIManager::initialiseImGUI(window);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
-    modelManager.GetModelID("res/model/error.fbx");
+    modelManager.GetModelID(basepath / "res" / "model" / "error.fbx");
 }
 
 RedEngine::Engine::~Engine() {

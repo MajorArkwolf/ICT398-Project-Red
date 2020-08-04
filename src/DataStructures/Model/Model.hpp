@@ -17,7 +17,7 @@
 #include "DataStructures/Model/DataTypes.hpp"
 #include "Engine/Renderer/Shader.hpp"
 
-namespace Model {
+namespace model {
     class Model {
       public:
         Model() = default;

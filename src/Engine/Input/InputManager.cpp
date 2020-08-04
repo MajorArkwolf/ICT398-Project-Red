@@ -1,4 +1,5 @@
 #include "InputManager.hpp"
+#include <variant>
 
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 template<class... Ts> overload(Ts...)->overload<Ts...>;
@@ -6,21 +7,90 @@ template<class... Ts> overload(Ts...)->overload<Ts...>;
 input::InputManager::InputManager()
 {
 }
- 
+
 input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent& event)
 {
+
 	input::InputEvent input_event;
-	std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> data = {};
-	std::visit(overload(
-		[](const std::monostate& i) {; },
-		[](const GLFWEvent::Position& keyboard) {; },
-		[](const GLFWEvent::Size& keyboard) {; },
-		[](const GLFWEvent::Scroll& keyboard) {; },
-		[](const GLFWEvent::Keyboard& keyboard) {;  },
-		[](const GLFWEvent::Mouse& keyboard) {; },
-		[](const GLFWEvent::File& keyboard) {; },
-		[](const GLFWEvent::Scale& keyboard) {; }
-		),event.data);
+
+	std::visit(overload{
+	[&](input::GLFWEvent::Position)
+		{
+			switch (event.type)
+			{
+
+			}
+		},
+	[&](input::GLFWEvent::Size)
+		{
+			switch (event.type)
+			{
+
+			}
+		},
+	[&](input::GLFWEvent::Scroll)
+		{
+			switch (event.type)
+			{
+
+			}
+		},
+	[&](input::GLFWEvent::Keyboard keyboard)
+		{
+			auto key = ConvertGLFWKey(keyboard.key);
+			auto mod = std::invoke([&]()
+				{
+					switch (keyboard.mods)
+					{
+					case GLFW_MOD_ALT: return PhysicalKey::kLeftAlt;
+					case GLFW_MOD_CONTROL: return PhysicalKey::kLeftControl;
+					case GLFW_MOD_SHIFT: return PhysicalKey::kLeftShift;
+					default: return PhysicalKey::kNone;
+					}
+
+				});
+
+			switch (event.type)
+			{
+				case GLFWEventType::kKeyPressed: {
+					input_event.type = InputType::kKeyPressed;
+				} break;		
+				case GLFWEventType::kKeyReleased : {
+					input_event.type = InputType::kKeyReleased;
+				} break;
+			};
+
+		},
+	[&](input::GLFWEvent::Mouse)
+		{
+			switch (event.type)
+			{
+				case GLFWEventType::kButtonPressed: {
+
+				} break;
+				case GLFWEventType::kButtonReleased: {
+
+				} break;
+			};
+		},
+	[&](input::GLFWEvent::File)
+		{
+			switch (event.type)
+			{
+
+			}
+		},
+	[&](input::GLFWEvent::Scale)
+		{
+			switch (event.type)
+			{
+
+			}
+		}
+		}, event.data);
+
+	return input_event;
+
 }
 
 void input::InputManager::RecordKeyStates(const InputEvent& event)
@@ -36,6 +106,14 @@ void input::InputManager::RecordKeyStates(const InputEvent& event)
 		key_states[static_cast<int>(keyboard.key)] = false;
 	}
 
+}
+
+input::VirtualKey input::InputManager::ConvertGLFWKey(int key)
+{
+	if (glfw_key_map.find(key) != glfw_key_map.end())
+	{
+		return glfw_key_map.at(key);
+	}
 }
 
 input::InputManager::~InputManager()
@@ -130,4 +208,84 @@ void input::InputManager::PopulateInputMap()
 	input_map.emplace(PhysicalKey::kNumPad8, VirtualKey::kNumPad8);
 	input_map.emplace(PhysicalKey::kNumPad9, VirtualKey::kNumPad9);
 	input_map.emplace(PhysicalKey::kKeyLast, VirtualKey::kKeyLast);
+}
+
+void input::InputManager::PopulateGLFWKeyMap()
+{
+	glfw_key_map.emplace(GLFW_KEY_A, VirtualKey::A);
+	glfw_key_map.emplace(GLFW_KEY_B, VirtualKey::B);
+	glfw_key_map.emplace(GLFW_KEY_C, VirtualKey::C);
+	glfw_key_map.emplace(GLFW_KEY_D, VirtualKey::D);
+	glfw_key_map.emplace(GLFW_KEY_E, VirtualKey::E);
+	glfw_key_map.emplace(GLFW_KEY_F, VirtualKey::F);
+	glfw_key_map.emplace(GLFW_KEY_G, VirtualKey::G);
+	glfw_key_map.emplace(GLFW_KEY_H, VirtualKey::H);
+	glfw_key_map.emplace(GLFW_KEY_I, VirtualKey::I);
+	glfw_key_map.emplace(GLFW_KEY_J, VirtualKey::J);
+	glfw_key_map.emplace(GLFW_KEY_K, VirtualKey::K);
+	glfw_key_map.emplace(GLFW_KEY_L, VirtualKey::L);
+	glfw_key_map.emplace(GLFW_KEY_M, VirtualKey::M);
+	glfw_key_map.emplace(GLFW_KEY_N, VirtualKey::N);
+	glfw_key_map.emplace(GLFW_KEY_O, VirtualKey::O);
+	glfw_key_map.emplace(GLFW_KEY_P, VirtualKey::P);
+	glfw_key_map.emplace(GLFW_KEY_Q, VirtualKey::Q);
+	glfw_key_map.emplace(GLFW_KEY_R, VirtualKey::R);
+	glfw_key_map.emplace(GLFW_KEY_S, VirtualKey::S);
+	glfw_key_map.emplace(GLFW_KEY_T, VirtualKey::T);
+	glfw_key_map.emplace(GLFW_KEY_U, VirtualKey::U);
+	glfw_key_map.emplace(GLFW_KEY_V, VirtualKey::V);
+	glfw_key_map.emplace(GLFW_KEY_W, VirtualKey::W);
+	glfw_key_map.emplace(GLFW_KEY_X, VirtualKey::X);
+	glfw_key_map.emplace(GLFW_KEY_Y, VirtualKey::Y);
+	glfw_key_map.emplace(GLFW_KEY_Z, VirtualKey::Z);
+	glfw_key_map.emplace(GLFW_KEY_1, VirtualKey::k1);
+	glfw_key_map.emplace(GLFW_KEY_2, VirtualKey::k2);
+	glfw_key_map.emplace(GLFW_KEY_3, VirtualKey::k3);
+	glfw_key_map.emplace(GLFW_KEY_4, VirtualKey::k4);
+	glfw_key_map.emplace(GLFW_KEY_5, VirtualKey::k5);
+	glfw_key_map.emplace(GLFW_KEY_6, VirtualKey::k6);
+	glfw_key_map.emplace(GLFW_KEY_7, VirtualKey::k7);
+	glfw_key_map.emplace(GLFW_KEY_8, VirtualKey::k8);
+	glfw_key_map.emplace(GLFW_KEY_9, VirtualKey::k9);
+	glfw_key_map.emplace(GLFW_KEY_0, VirtualKey::k0);
+	glfw_key_map.emplace(GLFW_KEY_F1, VirtualKey::F1);
+	glfw_key_map.emplace(GLFW_KEY_F2, VirtualKey::F2);
+	glfw_key_map.emplace(GLFW_KEY_F3, VirtualKey::F3);
+	glfw_key_map.emplace(GLFW_KEY_F4, VirtualKey::F4);
+	glfw_key_map.emplace(GLFW_KEY_F5, VirtualKey::F5);
+	glfw_key_map.emplace(GLFW_KEY_F6, VirtualKey::F6);
+	glfw_key_map.emplace(GLFW_KEY_F7, VirtualKey::F7);
+	glfw_key_map.emplace(GLFW_KEY_F8, VirtualKey::F8);
+	glfw_key_map.emplace(GLFW_KEY_F9, VirtualKey::F9);
+	glfw_key_map.emplace(GLFW_KEY_F10, VirtualKey::F10);
+	glfw_key_map.emplace(GLFW_KEY_F11, VirtualKey::F11);
+	glfw_key_map.emplace(GLFW_KEY_F12, VirtualKey::F12);
+	glfw_key_map.emplace(GLFW_KEY_TAB, VirtualKey::kTab);
+	glfw_key_map.emplace(GLFW_KEY_LEFT_SHIFT, VirtualKey::kLeftShift);
+	glfw_key_map.emplace(GLFW_KEY_LEFT_CONTROL, VirtualKey::kLeftControl);
+	glfw_key_map.emplace(GLFW_KEY_LEFT_ALT, VirtualKey::kLeftAlt);
+	glfw_key_map.emplace(GLFW_KEY_RIGHT_SHIFT, VirtualKey::kRightShift);
+	glfw_key_map.emplace(GLFW_KEY_RIGHT_CONTROL, VirtualKey::kRightControl);
+	glfw_key_map.emplace(GLFW_KEY_RIGHT_ALT, VirtualKey::kRightAlt);
+	glfw_key_map.emplace(GLFW_KEY_ENTER, VirtualKey::kEnter);
+	glfw_key_map.emplace(GLFW_KEY_COMMA, VirtualKey::kComma);
+	glfw_key_map.emplace(GLFW_KEY_PERIOD, VirtualKey::kFullStop);
+	glfw_key_map.emplace(GLFW_KEY_SLASH, VirtualKey::kForwardSlash);
+	glfw_key_map.emplace(GLFW_KEY_BACKSLASH, VirtualKey::kBackSlash);
+	glfw_key_map.emplace(GLFW_KEY_SEMICOLON, VirtualKey::kColon);
+	glfw_key_map.emplace(GLFW_KEY_SEMICOLON, VirtualKey::kSemiColon);
+	glfw_key_map.emplace(GLFW_KEY_APOSTROPHE, VirtualKey::kApostrophe);
+	glfw_key_map.emplace(GLFW_KEY_BACKSPACE, VirtualKey::kBackspace);
+	glfw_key_map.emplace(GLFW_KEY_EQUAL, VirtualKey::kEqual);
+	glfw_key_map.emplace(GLFW_KEY_MINUS, VirtualKey::kHyphen);
+	glfw_key_map.emplace(GLFW_KEY_GRAVE_ACCENT, VirtualKey::kTilde);
+	glfw_key_map.emplace(GLFW_KEY_LEFT_BRACKET, VirtualKey::kLeftSquareBracket);
+	glfw_key_map.emplace(GLFW_KEY_RIGHT_BRACKET, VirtualKey::kRightSquareBracket);
+	glfw_key_map.emplace(GLFW_KEY_INSERT, VirtualKey::kInsert);
+	glfw_key_map.emplace(GLFW_KEY_HOME, VirtualKey::kHome);
+	glfw_key_map.emplace(GLFW_KEY_DELETE, VirtualKey::kDelete);
+	glfw_key_map.emplace(GLFW_KEY_PAGE_UP, VirtualKey::kPageUp);
+	glfw_key_map.emplace(GLFW_KEY_END, VirtualKey::kEnd);
+	glfw_key_map.emplace(GLFW_KEY_PAGE_DOWN, VirtualKey::kPageDown);
+	glfw_key_map.emplace(GLFW_KEY_LAST, VirtualKey::kKeyLast);
 }

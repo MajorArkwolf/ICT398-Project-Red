@@ -70,7 +70,7 @@ namespace input
 		};
 		struct File
 		{
-			std::vector<std::string> paths;
+			std::vector<std::string> paths = {};
 		};
 		struct Scale
 		{
@@ -79,7 +79,7 @@ namespace input
 		};
 
 		GLFWEventType type = GLFWEventType::kNone;
-		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> data = {};
+		std::variant<Position, Size, Scroll, Keyboard, Mouse, File, Scale> data = {};
 		GLFWwindow* window = nullptr;
 	};
 

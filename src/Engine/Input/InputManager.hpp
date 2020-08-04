@@ -49,16 +49,19 @@ namespace input
 		InputManager& operator = (InputManager&& rhs) = delete;
 		InputEvent ConvertEvent(const GLFWEvent& event);
 		void RecordKeyStates(const InputEvent& event);
+		VirtualKey ConvertGLFWKey(int key);
 		~InputManager();
 
 		
 	private:
 
 		void PopulateInputMap();
+		void PopulateGLFWKeyMap();
 		/**
 		 *Maps a physical key to a virtual key
 		 */
 		std::map<PhysicalKey, VirtualKey> input_map;
+		std::map<int, PhysicalKey> glfw_key_map;
 
 		bool key_states[static_cast<int>(VirtualKey::kKeyLast)] = { false };
 

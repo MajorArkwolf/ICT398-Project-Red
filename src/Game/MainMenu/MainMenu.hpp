@@ -71,12 +71,12 @@ private:
     /**
      * Handles window events.
      */
-    void handleWindowEvent();
+    void HandleWindowEvent();
 
     /// Camera for the scene
     //Engine::Camera camera;
     void MainMenuGUI();
-    bool displayDifficultyMenu = false;
+    bool display_difficulty_menu = false;
     ECS ecs = {};
 };
 

@@ -20,7 +20,7 @@ MainMenu::~MainMenu() = default;
 void MainMenu::Init() {
     camera = Engine::Camera();
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-    auto basepath = redengine::Engine::get().GetBasePath();
+    auto base_path = redengine::Engine::get().GetBasePath();
     JSONLoader::LoadScene("MainScreen/Scene.json", ecs);
     camera.Pitch -= 20.0;
     camera.updateCameraVectors();
@@ -45,7 +45,7 @@ void MainMenu::UnInit() {
 
 }
 
-void MainMenu::handleWindowEvent() {
+void MainMenu::HandleWindowEvent() {
     auto &engine = redengine::Engine::get();
     engine.renderer_.ResizeWindow();
 }

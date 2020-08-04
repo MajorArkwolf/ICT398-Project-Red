@@ -7,8 +7,8 @@
 
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
-    if (!windowMinimized()) {
-        camera = &engine.game_stack_.getTop()->camera;
+    if (!WindowMinimized()) {
+        camera_ = &engine.game_stack_.getTop()->camera;
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -16,13 +16,13 @@ void view::OpenGL::Draw() {
         int width = 0, height = 0;
         glfwGetWindowSize(engine.window_, &width, &height);
         glm::mat4 projection =
-                glm::perspective(glm::radians(camera->Zoom),
+                glm::perspective(glm::radians(camera_->Zoom),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
-        glm::mat4 view = camera->GetViewMatrix();
-        glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+        glm::mat4 view = camera_->GetViewMatrix();
+        glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
         engine.game_stack_.getTop()->Display(projection, view);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        skyBox.draw(skyboxView, projection);
+        sky_box.draw(skybox_view, projection);
         engine.game_stack_.getTop()->GUIEnd();
     }
     glfwSwapBuffers(engine.window_);
@@ -40,7 +40,7 @@ void view::OpenGL::Init() {
     glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    skyBox.Init();
+    sky_box.Init();
 
 }
 void view::OpenGL::DeInit() {
@@ -50,24 +50,24 @@ void view::OpenGL::DeInit() {
 void view::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vector<TextureB> &textures,
                              const std::vector<unsigned int> &indices) {
     // bind appropriate textures
-    unsigned int diffuseNr  = 1;
-    unsigned int specularNr = 1;
-    unsigned int normalNr   = 1;
-    unsigned int heightNr   = 1;
+    unsigned int diffuse_nr  = 1;
+    unsigned int specular_nr = 1;
+    unsigned int normal_nr   = 1;
+    unsigned int height_nr   = 1;
     for (unsigned int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
         std::string number;
         std::string name = textures[i].type;
         if (name == "texture_diffuse")
-            number = std::to_string(diffuseNr++);
+            number = std::to_string(diffuse_nr++);
         else if (name == "texture_specular")
             number =
-                    std::to_string(specularNr++); // transfer unsigned int to stream
+                    std::to_string(specular_nr++); // transfer unsigned int to stream
         else if (name == "texture_normal")
-            number = std::to_string(normalNr++); // transfer unsigned int to stream
+            number = std::to_string(normal_nr++); // transfer unsigned int to stream
         else if (name == "texture_height")
-            number = std::to_string(heightNr++); // transfer unsigned int to stream
+            number = std::to_string(height_nr++); // transfer unsigned int to stream
 
         // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(shader.getId(), (name + number).c_str()), i);
@@ -147,8 +147,8 @@ unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesys
                                            [[maybe_unused]] bool gamma) {
     std::filesystem::path filename = directory.remove_filename() / path;
 
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+    unsigned int texture_id;
+    glGenTextures(1, &texture_id);
 
     int width, height, nrComponents;
     // filename to C string may not work on other OS's please verify it does.
@@ -163,7 +163,7 @@ unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesys
         else if (nrComponents == 4)
             format = GL_RGBA;
 
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
                      GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -184,10 +184,10 @@ unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesys
         std::cout << "Texture failed to load at path: " << filename << std::endl;
         stbi_image_free(data);
     }
-    return textureID;
+    return texture_id;
 }
-void view::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
-    camera = &mainCamera;
+void view::OpenGL::SetCameraOnRender(Engine::Camera &main_camera) {
+    camera_ = &main_camera;
 }
 
 //void View::OpenGL::sortDrawDistance() {
@@ -202,10 +202,10 @@ void view::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
 //}
 
 void view::OpenGL::ToggleWireFrame() {
-    wireFrame = !wireFrame;
+    wire_frame_ = !wire_frame_;
 }
 
-bool view::OpenGL::windowMinimized() {
+bool view::OpenGL::WindowMinimized() {
     auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
     glfwGetWindowSize(engine.window_, &width, &height);

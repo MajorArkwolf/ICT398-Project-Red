@@ -14,11 +14,11 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--SubModules
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
+    Engine/SubModules/JsonLoader.cpp
 
     #Game
     #--MainMenu
     Game/MainMenu/MainMenu.cpp
-    Game/MainMenu/StaticModel.cpp
     #--Demo Scene
     Game/Demo/Demo.cpp
 

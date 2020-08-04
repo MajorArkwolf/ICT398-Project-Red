@@ -19,22 +19,24 @@ void View::Skybox::Init() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-    faces.emplace_back("./res/images/skybox/right.jpg");
-    faces.emplace_back("./res/images/skybox/left.jpg");
-    faces.emplace_back("./res/images/skybox/top.jpg");
-    faces.emplace_back("./res/images/skybox/bottom.jpg");
-    faces.emplace_back("./res/images/skybox/front.jpg");
-    faces.emplace_back("./res/images/skybox/back.jpg");
+    auto basepath = RedEngine::Engine::get().getBasePath();
+
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "right.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "left.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "top.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "bottom.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "front.jpg");
+    faces.emplace_back(basepath / "res" / "images" / "skybox" / "back.jpg");
     cubemapTexture = loadCubemap(faces);
 
-    auto vs = string("./res/shader/skybox_vert.vs");
-    auto fs = string("./res/shader/skybox_frag.fv");
-    shader = std::make_unique<Shader>(vs.c_str(), fs.c_str());
+    auto vs = basepath / "res" / "shader" / "skybox_vert.vs";
+    auto fs = basepath / "res" / "shader" / "skybox_frag.fv";
+    shader = std::make_unique<Shader>(vs, fs, "");
     shader->use();
     shader->setInt("skybox", 0);
 }
 
-unsigned int View::Skybox::loadCubemap(vector<string> mFaces) {
+unsigned int View::Skybox::loadCubemap(const std::vector<std::filesystem::path>& mFaces) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -42,7 +44,7 @@ unsigned int View::Skybox::loadCubemap(vector<string> mFaces) {
     int width, height, nrChannels;
     for (unsigned int i = 0; i < mFaces.size(); i++) {
         unsigned char *data =
-            stbi_load(mFaces[i].c_str(), &width, &height, &nrChannels, 0);
+            stbi_load(mFaces[i].string().c_str(), &width, &height, &nrChannels, 0);
         if (data) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width,
                          height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

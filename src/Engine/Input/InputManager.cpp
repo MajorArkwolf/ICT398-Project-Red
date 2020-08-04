@@ -6,20 +6,28 @@ template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 input::InputManager::InputManager()
 {
+	PopulateGLFWKeyMap();
+	PopulateInputMap();
 }
 
 input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent& event)
 {
 
-	input::InputEvent input_event;
+	input::InputEvent input_event = std::invoke([&]()
+		{
+			return input::InputEvent();
+		});
 
 	std::visit(overload{
-	[&](input::GLFWEvent::Position)
+	[&](input::GLFWEvent::Position position)
 		{
+			InputEvent::iVector2 pos = {position.x, position.y};
 			switch (event.type)
 			{
-
+			case GLFWEventType::kCursorMoved: {input_event.type = InputType::kCursorMoved; }break;
+			case GLFWEventType::kWindowMoved: {input_event.type = InputType::kWindowMoved; }break;
 			}
+			input_event.data.emplace<InputEvent::iVector2>(pos);
 		},
 	[&](input::GLFWEvent::Size)
 		{
@@ -28,12 +36,17 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent& event)
 
 			}
 		},
-	[&](input::GLFWEvent::Scroll)
+	[&](input::GLFWEvent::Scroll scroll)
 		{
 			switch (event.type)
 			{
+			case GLFWEventType::kMouseScrolled: input_event.type = InputType::kMouseScrolled;
+				break;
+
 
 			}
+			InputEvent::iVector2 vec = { scroll.x, scroll.y };
+			input_event.data.emplace<InputEvent::iVector2>(vec);
 		},
 	[&](input::GLFWEvent::Keyboard keyboard)
 		{
@@ -54,24 +67,51 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent& event)
 			{
 				case GLFWEventType::kKeyPressed: {
 					input_event.type = InputType::kKeyPressed;
-				} break;		
-				case GLFWEventType::kKeyReleased : {
+				} break;
+				case GLFWEventType::kKeyReleased: {
 					input_event.type = InputType::kKeyReleased;
 				} break;
 			};
 
+			input::InputEvent::KeyboardEvent keyEvent = { key, mod };
+			input_event.data.emplace<input::InputEvent::KeyboardEvent>(keyEvent);
 		},
-	[&](input::GLFWEvent::Mouse)
+	[&](input::GLFWEvent::Mouse mouse)
 		{
+			auto mod = std::invoke([&]()
+				{
+					switch (mouse.mods)
+					{
+					case GLFW_MOD_ALT: return PhysicalKey::kLeftAlt;
+					case GLFW_MOD_CONTROL: return PhysicalKey::kLeftControl;
+					case GLFW_MOD_SHIFT: return PhysicalKey::kLeftShift;
+					default: return PhysicalKey::kNone;
+					}
+
+				});
+
+			auto mouse_event = std::invoke([&]()
+				{
+					switch (mouse.button)
+					{
+					case GLFW_MOUSE_BUTTON_LEFT: return MouseButton::kLeft;
+					case GLFW_MOUSE_BUTTON_RIGHT: return MouseButton::kRight;
+					case GLFW_MOUSE_BUTTON_MIDDLE: return MouseButton::kMiddle;
+					default: return MouseButton::kNone;
+					}
+
+				});
 			switch (event.type)
 			{
 				case GLFWEventType::kButtonPressed: {
-
+					input_event.type = InputType::kButtonPressed;
 				} break;
 				case GLFWEventType::kButtonReleased: {
-
+					input_event.type = InputType::kButtonReleased;
 				} break;
 			};
+			InputEvent::MouseEvent m_event = { mouse_event, mod };
+			input_event.data.emplace<InputEvent::MouseEvent>(m_event);
 		},
 	[&](input::GLFWEvent::File)
 		{
@@ -108,7 +148,7 @@ void input::InputManager::RecordKeyStates(const InputEvent& event)
 
 }
 
-input::VirtualKey input::InputManager::ConvertGLFWKey(int key)
+input::PhysicalKey input::InputManager::ConvertGLFWKey(int key)
 {
 	if (glfw_key_map.find(key) != glfw_key_map.end())
 	{

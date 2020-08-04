@@ -7,7 +7,7 @@
 namespace input
 {
 	using PhysicalKey = VirtualKey;
-	
+
 	struct InputEvent
 	{
 		struct MouseEvent
@@ -21,7 +21,7 @@ namespace input
 			PhysicalKey key = PhysicalKey::kKeyLast;
 			PhysicalKey mods = PhysicalKey::kKeyLast;
 		};
-		
+
 		struct iVector2
 		{
 			int x = 0;
@@ -33,11 +33,11 @@ namespace input
 			double x = 0;
 			double y = 0;
 		};
-		
-		InputType type = InputType::kNone;
-		std::variant<std::monostate, MouseEvent, KeyboardEvent, iVector2, dVector2> data;
-	};
 
+		InputType type = InputType::kNone;
+		using Data = std::variant<std::monostate, MouseEvent, KeyboardEvent, iVector2, dVector2>;
+		Data data;
+	};
 
 	class InputManager
 	{
@@ -49,10 +49,10 @@ namespace input
 		InputManager& operator = (InputManager&& rhs) = delete;
 		InputEvent ConvertEvent(const GLFWEvent& event);
 		void RecordKeyStates(const InputEvent& event);
-		VirtualKey ConvertGLFWKey(int key);
+		PhysicalKey ConvertGLFWKey(int key);
 		~InputManager();
 
-		
+
 	private:
 
 		void PopulateInputMap();

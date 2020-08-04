@@ -220,19 +220,19 @@ void Model::Model::LoadAnimations(const aiScene* scene) {
         for (size_t ii = 0; ii < scene->mAnimations[i]->mNumChannels; ++ii) {
             AnimJointNode anim = {};
             auto channel = scene->mAnimations[i]->mChannels[ii];
-            anim.numPosKeys = channel->mNumPositionKeys;
-            anim.numRotKeys = channel->mNumRotationKeys;
+            anim.num_pos_keys = channel->mNumPositionKeys;
+            anim.num_rot_keys = channel->mNumRotationKeys;
             //anim.numScaleKeys = channel->mNumScalekeys;
             for (size_t x = 0; x < channel->mNumRotationKeys; ++x) {
-                anim.rotKey.emplace_back(channel->mRotationKeys[x].mTime, quat_cast(channel->mRotationKeys[x].mValue));
+                anim.rot_key.emplace_back(channel->mRotationKeys[x].mTime, quat_cast(channel->mRotationKeys[x].mValue));
             }
             for (size_t x = 0; x < channel->mNumPositionKeys; ++x) {
-                anim.posKey.emplace_back(channel->mRotationKeys[x].mTime, vec3_cast(channel->mPositionKeys[x].mValue));
+                anim.pos_key.emplace_back(channel->mRotationKeys[x].mTime, vec3_cast(channel->mPositionKeys[x].mValue));
             }
 //            for (size_t x = 0; x < channel->mNumScalingKeys; ++x) {
-//                anim.posKey.emplace_back(vec3_cast(channel->mScalingKeys[x]));
+//                anim.pos_key.emplace_back(vec3_cast(channel->mScalingKeys[x]));
 //            }
-            newAnimation.animMap.emplace(channel->mNodeName.C_Str(), anim);
+            newAnimation.anim_map_.emplace(channel->mNodeName.C_Str(), anim);
         }
         animation.emplace_back(newAnimation);
     }
@@ -301,7 +301,7 @@ void Model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
 Animation* Model::Model::getAnimation(const string &animName) {
     Animation* idle = nullptr;
     for (auto &anim : animation) {
-        std::string animNameStored = anim.getName();
+        std::string animNameStored = anim.GetName();
         size_t index = animNameStored.find(animName);
         if (index != std::string::npos) {
             return &anim;

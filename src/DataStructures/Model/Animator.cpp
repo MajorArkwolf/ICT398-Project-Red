@@ -7,17 +7,17 @@ void Model::Animator::BoneTransform(double TimeInSeconds) {
     if (animatedModel != nullptr) {
         if (loadedAnimation != nullptr) {
             if (animatedModel->isAnimated) {
-                double TicksPerSecond = loadedAnimation->getTicksPerSecond();
+                double TicksPerSecond = loadedAnimation->GetTicksPerSecond();
                 double TimeInTicks    = animationTime * TicksPerSecond;
                 if (endWhenCompleted) {
-                    if (TimeInTicks >= loadedAnimation->getDuration()) {
+                    if (TimeInTicks >= loadedAnimation->GetDuration()) {
                         clipEnded = true;
                         return;
                     }
                 }
                 glm::mat4 Identity(1.0f);
 
-                double AnimationTime = fmod(TimeInTicks, loadedAnimation->getDuration());
+                double AnimationTime = fmod(TimeInTicks, loadedAnimation->GetDuration());
 
                 ReadNodeHeirarchy(AnimationTime, animatedModel->rootJoint, Identity);
             }
@@ -68,37 +68,37 @@ void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
 glm::quat Model::Animator::CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim) {
     glm::quat Out;
     // we need at least two values to interpolate...
-    if (pNodeAnim->numRotKeys == 1) {
-        Out = pNodeAnim->rotKey[0].second;
+    if (pNodeAnim->num_rot_keys == 1) {
+        Out = pNodeAnim->rot_key[0].second;
         return Out;
     }
     unsigned RotationIndex = loadedAnimation->FindRotation(AnimationTime, pNodeAnim);
     unsigned NextRotationIndex = (RotationIndex + 1);
-    assert(NextRotationIndex < pNodeAnim->numRotKeys);
-    double DeltaTime = pNodeAnim->rotKey[NextRotationIndex].first - pNodeAnim->rotKey[RotationIndex].first;
-    double Factor = (AnimationTime - pNodeAnim->rotKey[RotationIndex].first) / DeltaTime;
+    assert(NextRotationIndex < pNodeAnim->num_rot_keys);
+    double DeltaTime = pNodeAnim->rot_key[NextRotationIndex].first - pNodeAnim->rot_key[RotationIndex].first;
+    double Factor = (AnimationTime - pNodeAnim->rot_key[RotationIndex].first) / DeltaTime;
     //assert(Factor >= 0.0f && Factor <= 1.0f);
-    const glm::quat& StartRotationQ = pNodeAnim->rotKey[RotationIndex].second;
-        const glm::quat& EndRotationQ = pNodeAnim->rotKey[NextRotationIndex].second;
+    const glm::quat& StartRotationQ = pNodeAnim->rot_key[RotationIndex].second;
+        const glm::quat& EndRotationQ = pNodeAnim->rot_key[NextRotationIndex].second;
     Out = glm::slerp(StartRotationQ, EndRotationQ, static_cast<float>(Factor));
     Out = glm::normalize(Out);
     return Out;
 }
 glm::vec3 Model::Animator::CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim) {
     glm::vec3 Out;
-    if (pNodeAnim->numPosKeys == 1) {
-        Out = pNodeAnim->posKey[0].second;
+    if (pNodeAnim->num_pos_keys == 1) {
+        Out = pNodeAnim->pos_key[0].second;
         return Out;
     }
 
     unsigned PositionIndex = loadedAnimation->FindPosition(AnimationTime, pNodeAnim);
     unsigned NextPositionIndex = (PositionIndex + 1);
-    assert(NextPositionIndex < pNodeAnim->numPosKeys);
-    double DeltaTime = pNodeAnim->posKey[NextPositionIndex].first - pNodeAnim->posKey[PositionIndex].first;
-    double Factor = (AnimationTime - pNodeAnim->posKey[PositionIndex].first) / DeltaTime;
+    assert(NextPositionIndex < pNodeAnim->num_pos_keys);
+    double DeltaTime = pNodeAnim->pos_key[NextPositionIndex].first - pNodeAnim->pos_key[PositionIndex].first;
+    double Factor = (AnimationTime - pNodeAnim->pos_key[PositionIndex].first) / DeltaTime;
     //assert(Factor >= 0.0f && Factor <= 1.0f);
-    const glm::vec3& Start = pNodeAnim->posKey[PositionIndex].second;
-    const glm::vec3& End = pNodeAnim->posKey[NextPositionIndex].second;
+    const glm::vec3& Start = pNodeAnim->pos_key[PositionIndex].second;
+    const glm::vec3& End = pNodeAnim->pos_key[NextPositionIndex].second;
     glm::vec3 Delta = End - Start;
     Out = Start + static_cast<float>(Factor) * Delta;
     return Out;
@@ -108,7 +108,7 @@ glm::vec3 Model::Animator::CalcInterpolatedPosition(double AnimationTime, const 
 void Model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
     size_t index = 0;
     if (loadedAnimation != nullptr) {
-        index = loadedAnimation->getName().find(newAnim);
+        index = loadedAnimation->GetName().find(newAnim);
     } else {
         index = std::string::npos;
     }

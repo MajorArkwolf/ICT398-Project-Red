@@ -6,7 +6,7 @@ void Model::Animator::BoneTransform(double TimeInSeconds) {
     animationTime += TimeInSeconds;
     if (animatedModel != nullptr) {
         if (loadedAnimation != nullptr) {
-            if (animatedModel->isAnimated) {
+            if (animatedModel->is_animated_) {
                 double TicksPerSecond = loadedAnimation->GetTicksPerSecond();
                 double TimeInTicks    = animationTime * TicksPerSecond;
                 if (endWhenCompleted) {
@@ -19,7 +19,7 @@ void Model::Animator::BoneTransform(double TimeInSeconds) {
 
                 double AnimationTime = fmod(TimeInTicks, loadedAnimation->GetDuration());
 
-                ReadNodeHeirarchy(AnimationTime, animatedModel->rootJoint, Identity);
+                ReadNodeHeirarchy(AnimationTime, animatedModel->root_joint_, Identity);
             }
         } else {
             for (unsigned i = 0; i < 100; i++) {
@@ -54,10 +54,10 @@ void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
 
     glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
 
-    if (animatedModel->boneMapping.find(jN.name) != animatedModel->boneMapping.end()) {
-        unsigned BoneIndex = animatedModel->boneMapping[jN.name];
-       Transforms[BoneIndex] = animatedModel->globalInverseTransform * GlobalTransformation *
-                                                                 animatedModel->boneInfo[BoneIndex].BoneOffset;
+    if (animatedModel->bone_mapping_.find(jN.name) != animatedModel->bone_mapping_.end()) {
+        unsigned BoneIndex = animatedModel->bone_mapping_[jN.name];
+       Transforms[BoneIndex] = animatedModel->global_inverse_transform_ * GlobalTransformation *
+                               animatedModel->bone_info_[BoneIndex].BoneOffset;
     }
 
     for (auto &child : jN.children) {

@@ -20,8 +20,10 @@ MainMenu::~MainMenu() = default;
 void MainMenu::Init() {
     camera = Engine::Camera();
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-    auto base_path = redengine::Engine::get().GetBasePath();
-    JSONLoader::LoadScene("MainScreen/Scene.json", ecs);
+    std::filesystem::path path = "";
+    path.append("MainScreen");
+    path.append("Scene.json");
+    JSONLoader::LoadScene(path, ecs);
     camera.Pitch -= 20.0;
     camera.updateCameraVectors();
 }

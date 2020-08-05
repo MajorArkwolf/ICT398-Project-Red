@@ -109,27 +109,27 @@ void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
     // vertex normals
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, Normal)));
+                          reinterpret_cast<void*>(offsetof(Vertex, normal)));
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, TexCoords)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tex_coords)));
     // vertex tangent
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Tangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tangent)));
     // vertex bitangent
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Bitangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bitangent)));
     // BoneID's
     glEnableVertexAttribArray(5);
     glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex),
-                           reinterpret_cast<void *>(offsetof(Vertex, BoneIDs)));
+                           reinterpret_cast<void *>(offsetof(Vertex, bone_ids)));
     //Bone Weights
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, BoneWeight)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bone_weight)));
 
     glBindVertexArray(0);
 }

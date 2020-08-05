@@ -1,15 +1,16 @@
 #pragma once
-#include <vector>
-#include <glm/glm.hpp>
 #include <filesystem>
-#include "Renderer.hpp"
-#include "Shader.hpp"
-#include "DrawStruct.hpp"
-#include "DataStructures/Model/DataTypes.hpp"
-#include "Skybox.hpp"
-#include "Engine/EulerCamera.hpp"
+#include <glm/glm.hpp>
+#include <vector>
+
 #include "DataStructures/Model/Model.hpp"
 #include "DataStructures/Model/Vertix.hpp"
+#include "DataStructures/Model/data_types.h"
+#include "DrawStruct.hpp"
+#include "Engine/EulerCamera.hpp"
+#include "Renderer.hpp"
+#include "Shader.hpp"
+#include "Skybox.hpp"
 
 namespace View {
     class OpenGL: public Renderer {

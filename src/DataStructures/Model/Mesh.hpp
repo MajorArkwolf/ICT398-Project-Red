@@ -8,7 +8,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include "DataStructures/Model/DataTypes.hpp"
+#include "DataStructures/Model/data_types.h"
 #include "Engine/Renderer/DrawStruct.hpp"
 #include "Engine/Renderer/Shader.hpp"
 

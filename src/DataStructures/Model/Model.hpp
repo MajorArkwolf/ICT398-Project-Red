@@ -14,7 +14,7 @@
 
 #include "Mesh.hpp"
 #include "DataStructures/Model/Animation.hpp"
-#include "DataStructures/Model/DataTypes.hpp"
+#include "DataStructures/Model/data_types.h"
 #include "Engine/Renderer/Shader.hpp"
 
 namespace Model {

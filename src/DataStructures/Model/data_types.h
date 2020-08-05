@@ -10,7 +10,7 @@
 
 struct Vertex {
   glm::vec3 position = {};
-  glm::vec3 bit_angent = {};
+  glm::vec3 bitangent = {};
   glm::vec3 tangent = {};
   glm::vec2 normal = {};
   glm::vec2 tex_coords = {};

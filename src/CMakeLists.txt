@@ -30,12 +30,12 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-    ECS/Ecs.cpp
+    ECS/ecs.cc
     ECS/Entity.cpp
     #--Components
     ECS/Component/Model.cpp
     #--Systems
-        ECS/System/System.cpp
+    ECS/System/System.cpp
 )
 
 # Include project header files.

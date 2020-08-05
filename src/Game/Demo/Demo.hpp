@@ -8,7 +8,7 @@ public:
     ~Demo() override = default;
     void Init() override;
     void UnInit() override;
-    void Display(glm::mat4 projection, glm::mat4 view) override;
+    void Display(const glm::mat4& projection, const glm::mat4& view) override;
     void GUIStart() override;
     void GUIEnd() override;
     void Update(double t, double dt) override;

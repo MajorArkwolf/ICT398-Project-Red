@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Game/Demo/Demo.hpp"
+#include "Engine/SubModules/JsonLoader.hpp"
 
 //using Controller::Input::BLUE_InputAction;
 //using Controller::Input::BLUE_InputType;
@@ -19,40 +20,27 @@ MainMenu::~MainMenu() = default;
 void MainMenu::Init() {
     camera = Engine::Camera();
     camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-    auto basepath = RedEngine::Engine::get().getBasePath();
-    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
-    sModels.emplace_back(std::filesystem::path{basepath / "res" / "model" / "ClothedMan.gltf"});
-    sModels.at(0).position.x = 20.0f;
-    sModels.at(0).position.z = 2.0f;
-    sModels.at(0).animator = std::make_shared<Model::Animator>();
-    sModels.at(0).animator->LinkToModel(static_cast<unsigned>(sModels.at(0).getModel()));
-    sModels.at(0).animator->LoadAnimation("PUNCH");
-    sModels.at(0).rotation = glm::quat(glm::vec3(0.0f, glm::radians(180.0f) ,0.0f));
-    sModels.at(1).position.x = 20.5f;
-    sModels.at(1).position.z = -2.0f;
-    sModels.at(1).animator = std::make_shared<Model::Animator>();
-    sModels.at(1).animator->LinkToModel(static_cast<unsigned>(sModels.at(1).getModel()));
-    sModels.at(1).animator->LoadAnimation("PUNCH");
-    sModels.at(1).rotation = glm::quat(glm::vec3(0.0f, 0.0f ,0.0f));
+    std::filesystem::path path = "";
+    path.append("MainScreen");
+    path.append("Scene.json");
+    JSONLoader::LoadScene(path, ecs);
     camera.Pitch -= 20.0;
     camera.updateCameraVectors();
 }
 
-auto MainMenu::Display(glm::mat4 projection, glm::mat4 view) -> void {
+auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
     auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
-    for (auto& m : sModels) {
-        m.Draw(projection, view);
-    }
+    ecs.Draw(projection, view, camera.getLocation());
 }
 
-auto MainMenu::FixedUpdate(double t, double dt) -> void {}
+auto MainMenu::FixedUpdate(double t, double dt) -> void {
+    ecs.FixedUpdate(t, dt);
+}
 
 auto MainMenu::Update(double t, double dt) -> void {
-    for (auto & m : sModels) {
-        m.Update(t, dt);
-    }
+    ecs.Update(t, dt);
 }
 
 void MainMenu::UnInit() {

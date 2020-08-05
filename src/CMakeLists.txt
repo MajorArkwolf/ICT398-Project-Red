@@ -14,6 +14,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--SubModules
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
+    Engine/SubModules/JsonLoader.cpp
     #- InputManagement
     Engine/SubModules/Input/InputManager.cpp
     Engine/SubModules/Input/GLFWInputWrangler.cpp

@@ -2,7 +2,7 @@
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
 #include "Engine/EulerCamera.hpp"
-#include "Game/MainMenu/StaticModel.hpp"
+#include "ECS/Ecs.hpp"
 
 class MainMenu : public BaseState {
 public:
@@ -19,7 +19,7 @@ public:
     /**
      * Display method for the scene.
      */
-    auto Display(glm::mat4 projection, glm::mat4 view) -> void override;
+    auto Display(const glm::mat4& projection, const glm::mat4& view) -> void override;
 
     /**
      * Update function for main menu.
@@ -77,11 +77,9 @@ private:
 
     /// Camera for the scene
     //Engine::Camera camera;
-
-    /// models used inside of the scene.
-    std::vector<MainMenuObject::StaticModel> sModels = {};
     void MainMenuGUI();
     bool displayDifficultyMenu = false;
+    ECS ecs = {};
 };
 
 

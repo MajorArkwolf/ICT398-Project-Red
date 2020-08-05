@@ -9,7 +9,7 @@
 
 
 
-namespace Model {
+namespace model {
     class Model;
     class Animator {
       public:

@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "DataStructures/Model/Model.hpp"
-#include "DataStructures/Model/Vertix.hpp"
 #include "DataStructures/Model/data_types.h"
+#include "DataStructures/Model/vertix.h"
 #include "DrawStruct.hpp"
 #include "Engine/EulerCamera.hpp"
 #include "Renderer.hpp"

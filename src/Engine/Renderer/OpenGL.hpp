@@ -7,7 +7,7 @@
 #include "DataStructures/Model/data_types.h"
 #include "DataStructures/Model/vertix.h"
 #include "DrawStruct.hpp"
-#include "Engine/EulerCamera.hpp"
+#include "Engine/euler_camera.h"
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "Skybox.hpp"
@@ -75,7 +75,7 @@ namespace View {
          * Sets the camera to the renderer for the render pass. Required for lighting.
          * @param mainCamera the active camera in the scene.
          */
-        void SetCameraOnRender(Engine::Camera &mainCamera);
+        void SetCameraOnRender(engine::Camera &mainCamera);
         /**
          * Updates the viewport.
          * @param bl Bottom left, should be 0.
@@ -85,13 +85,13 @@ namespace View {
          */
         void UpdateViewPort(int bl, int br, int tl, int tr) override;
 
-        Engine::Camera* GetActiveCamera() {return camera;}
+        engine::Camera* GetActiveCamera() {return camera;}
 
     private:
         /// Decides if the renderer should be in wire frame mode or not.
         bool wireFrame = false;
         /// The active camera on the draw pass.
-        Engine::Camera *camera = nullptr;
+        engine::Camera *camera = nullptr;
         /// The sky box for the scene.
         Skybox skyBox = {};
         /**

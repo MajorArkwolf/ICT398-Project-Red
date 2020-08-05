@@ -10,8 +10,8 @@
 #include "Engine/Engine.hpp"
 
 Demo::Demo() {
-    camera = Engine::Camera();
-    camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
+    camera = engine::Camera();
+    camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     auto entity = JSONLoader::LoadEntity("./res/Entity/Test.json", this->ecs);
     auto entity2 = JSONLoader::LoadEntity("./res/Entity/Test2.json", this->ecs);
@@ -28,7 +28,7 @@ void Demo::UnInit() {
 void Demo::Display(const glm::mat4& projection, const glm::mat4& view) {
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
-    ecs.Draw(projection, view, camera.getLocation());
+    ecs.Draw(projection, view, camera.GetLocation());
 }
 
 void Demo::GUIStart() {

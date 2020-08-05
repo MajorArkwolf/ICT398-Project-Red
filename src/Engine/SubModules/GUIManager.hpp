@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 
 
-#include "Engine/EulerCamera.hpp"
+#include "Engine/euler_camera.h"
 
 class GUIManager {
   public:
@@ -49,7 +49,7 @@ class GUIManager {
     /**
      * @brief Displays the dev screen
      */
-    void displayDevScreen(Engine::Camera &camera);
+    void displayDevScreen(engine::Camera &camera);
 
     /**
      * @brief Displays the texture manager

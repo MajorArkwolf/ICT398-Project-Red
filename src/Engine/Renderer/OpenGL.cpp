@@ -16,7 +16,7 @@ void View::OpenGL::Draw() {
         int width = 0, height = 0;
         glfwGetWindowSize(engine.window, &width, &height);
         glm::mat4 projection =
-                glm::perspective(glm::radians(camera->Zoom),
+                glm::perspective(glm::radians(camera->zoom_),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera->GetViewMatrix();
         glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
@@ -186,7 +186,7 @@ unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesys
     }
     return textureID;
 }
-void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
+void View::OpenGL::SetCameraOnRender(engine::Camera &mainCamera) {
     camera = &mainCamera;
 }
 

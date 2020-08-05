@@ -2,7 +2,7 @@
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
 #include "ECS/ecs.h"
-#include "Engine/EulerCamera.hpp"
+#include "Engine/euler_camera.h"
 
 class MainMenu : public BaseState {
 public:

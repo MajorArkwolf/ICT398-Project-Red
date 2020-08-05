@@ -22,7 +22,7 @@ Model::Model::Model(const string& path, bool gamma = false) : gammaCorrection(ga
 }
 
 void Model::Model::Draw(Shader& shader) {
-    auto cameraPos = RedEngine::Engine::get().renderer.GetActiveCamera()->Position;
+    auto cameraPos = RedEngine::Engine::get().renderer.GetActiveCamera()->position_;
     shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
     shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
     shader.setVec3("viewPos", cameraPos);

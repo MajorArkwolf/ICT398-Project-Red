@@ -18,21 +18,21 @@ MainMenu::MainMenu() {
 MainMenu::~MainMenu() = default;
 
 void MainMenu::Init() {
-    camera = Engine::Camera();
-    camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
+    camera = engine::Camera();
+    camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     std::filesystem::path path = "";
     path.append("MainScreen");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, ecs);
-    camera.Pitch -= 20.0;
-    camera.updateCameraVectors();
+    camera.pitch_ -= 20.0;
+    camera.UpdateCameraVectors();
 }
 
 auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
     auto &engine   = RedEngine::Engine::get();
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
-    ecs.Draw(projection, view, camera.getLocation());
+    ecs.Draw(projection, view, camera.GetLocation());
 }
 
 auto MainMenu::FixedUpdate(double t, double dt) -> void {

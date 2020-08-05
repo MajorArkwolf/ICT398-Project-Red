@@ -4,7 +4,7 @@
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Basic.hpp"
 
-
+#include <iostream>
 // TEST
 #include "Engine/Engine.hpp"
 
@@ -46,5 +46,11 @@ void Demo::FixedUpdate(double t, double dt) {
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime)
 {
-
+    switch(inputData.type)
+    {
+        case input::InputType::kButtonPressed :
+        {
+            std::cout << "asd";
+        }
+    }
 }

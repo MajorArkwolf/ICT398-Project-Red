@@ -6,7 +6,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     #Engine
     Engine/Engine.cpp
-    Engine/EulerCamera.cpp
+    Engine/euler_camera.cc
     #--Renderer
     Engine/Renderer/OpenGL.cpp
     Engine/Renderer/Shader.cpp

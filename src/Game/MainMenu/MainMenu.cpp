@@ -11,7 +11,7 @@
 //using Controller::Input::BLUE_InputType;
 
 MainMenu::MainMenu() {
-    auto &window = RedEngine::Engine::get().window;
+    auto &window = redengine::Engine::get().window_;
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
@@ -29,8 +29,8 @@ void MainMenu::Init() {
 }
 
 auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
-    auto &engine   = RedEngine::Engine::get();
-    auto &renderer = RedEngine::Engine::get().renderer;
+    auto &engine   = redengine::Engine::get();
+    auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs.Draw(projection, view, camera.getLocation());
 }
@@ -47,13 +47,13 @@ void MainMenu::UnInit() {
 
 }
 
-void MainMenu::handleWindowEvent() {
-    auto &engine = RedEngine::Engine::get();
-    engine.renderer.ResizeWindow();
+void MainMenu::HandleWindowEvent() {
+    auto &engine = redengine::Engine::get();
+    engine.renderer_.ResizeWindow();
 }
 
 //void MainMenu::handleInputData(Controller::Input::InputData inputData, double deltaTime) {
-//    auto &engine      = RedEngine::Engine::get();
+//    auto &engine      = redengine::Engine::get();
 //    auto &guiManager  = engine.getGuiManager();
 //    auto handledMouse = false;
 //
@@ -96,7 +96,7 @@ void MainMenu::handleWindowEvent() {
 //            }
 //        } break;
 //        case BLUE_InputType::MOUSE_MOTION: { // Mouse motion event
-//            if (!engine.getMouseMode()) {
+//            if (!engine.GetMouseMode()) {
 ////                 auto x = static_cast<double>(inputData.mouseMotionRelative.x);
 ////                 auto y = static_cast<double>(inputData.mouseMotionRelative.y);
 ////                 y      = y * -1.0;
@@ -119,13 +119,13 @@ void MainMenu::handleWindowEvent() {
 //}
 
 void MainMenu::GUIStart() {
-    auto &engine  = RedEngine::Engine::get();
+    auto &engine  = redengine::Engine::get();
     GUIManager::startWindowFrame();
     MainMenuGUI();
 }
 
 void MainMenu::MainMenuGUI() {
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     ImGui::SetNextWindowSize(ImVec2(300, 500), 1);
     //ImGui::SetNextWindowPosCenter(1);
 
@@ -135,19 +135,19 @@ void MainMenu::MainMenuGUI() {
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        engine.gameStack.AddToStack(std::make_shared<Demo>());
+        engine.game_stack_.AddToStack(std::make_shared<Demo>());
     }
     ImGui::Separator();
 
     ImGui::Text("Other options");
     if (ImGui::Button("Settings", ImVec2(285, 40))) {
-        engine.showSettingsMenu = !engine.showSettingsMenu;
+        engine.show_settings_menu_ = !engine.show_settings_menu_;
     }
     if (ImGui::Button("Quit", ImVec2(285, 40))) {
-        engine.endEngine();
+        engine.EndEngine();
     }
 
-    if (engine.showSettingsMenu) {
+    if (engine.show_settings_menu_) {
         engine.SettingMenu();
     }
 

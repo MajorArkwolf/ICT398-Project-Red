@@ -2,22 +2,22 @@
 #include <utility>
 #include "Engine/Renderer/OpenGL.hpp"
 
-Mesh::Mesh(std::vector<Vertex> newVertices, std::vector<unsigned int> newIndices,
-           std::vector<TextureB> newTextures) {
-    this->vertices = std::move(newVertices);
-    this->indices  = std::move(newIndices);
-    this->textures = std::move(newTextures);
+Mesh::Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indices,
+           std::vector<TextureB> new_textures) {
+    this->vertices_ = std::move(new_vertices);
+    this->indices_  = std::move(new_indices);
+    this->textures_ = std::move(new_textures);
 
 }
 
 void Mesh::Draw(Shader& shader) {
-    View::OpenGL::DrawModel(shader, VAO, textures, indices);
+    view::OpenGL::DrawModel(shader, vao_, textures_, indices_);
 }
-void Mesh::AddBoneData(unsigned VectorID, int BoneID, float Weight) {
+void Mesh::AddBoneData(unsigned vector_id, int bone_id, float weight) {
     for (int x = 0; x < 4; ++x) {
-        if (vertices.at(VectorID).BoneWeight[x] == 0.0f) {
-            vertices.at(VectorID).BoneIDs[x]    = BoneID;
-            vertices.at(VectorID).BoneWeight[x] = Weight;
+        if (vertices_.at(vector_id).BoneWeight[x] == 0.0f) {
+            vertices_.at(vector_id).BoneIDs[x]    = bone_id;
+            vertices_.at(vector_id).BoneWeight[x] = weight;
             return;
         }
     }
@@ -25,5 +25,5 @@ void Mesh::AddBoneData(unsigned VectorID, int BoneID, float Weight) {
 }
 
 void Mesh::MoveToGPU() {
-    View::OpenGL::SetupMesh(VAO, VBO, EBO, this->vertices, this->indices);
+    view::OpenGL::SetupMesh(vao_, vbo_, ebo_, this->vertices_, this->indices_);
 }

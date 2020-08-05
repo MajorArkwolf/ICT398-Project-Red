@@ -11,7 +11,7 @@
 #include "DataStructures/Model/Model.hpp"
 #include "DataStructures/Model/Vertix.hpp"
 
-namespace View {
+namespace view {
     class OpenGL: public Renderer {
       public:
         /**
@@ -72,9 +72,9 @@ namespace View {
                               const std::vector<unsigned int> &indices);
         /**
          * Sets the camera to the renderer for the render pass. Required for lighting.
-         * @param mainCamera the active camera in the scene.
+         * @param main_camera the active camera in the scene.
          */
-        void SetCameraOnRender(Engine::Camera &mainCamera);
+        void SetCameraOnRender(Engine::Camera &main_camera);
         /**
          * Updates the viewport.
          * @param bl Bottom left, should be 0.
@@ -84,19 +84,19 @@ namespace View {
          */
         void UpdateViewPort(int bl, int br, int tl, int tr) override;
 
-        Engine::Camera* GetActiveCamera() {return camera;}
+        Engine::Camera* GetActiveCamera() {return camera_;}
 
     private:
         /// Decides if the renderer should be in wire frame mode or not.
-        bool wireFrame = false;
+        bool wire_frame_ = false;
         /// The active camera on the draw pass.
-        Engine::Camera *camera = nullptr;
+        Engine::Camera *camera_ = nullptr;
         /// The sky box for the scene.
-        Skybox skyBox = {};
+        Skybox sky_box = {};
         /**
          * Checks to see if the window is in a minimized state.
          * @return true if minimized.
          */
-        bool windowMinimized();
+        bool WindowMinimized();
     };
 }

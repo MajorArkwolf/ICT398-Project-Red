@@ -1,7 +1,8 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include "ECS/Ecs.hpp"
+
+#include "ECS/ecs.h"
 
 class Entity {
 public:

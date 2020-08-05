@@ -1,6 +1,6 @@
 #pragma once
+#include "ECS/ecs.h"
 #include "Game/BaseState.hpp"
-#include "ECS/Ecs.hpp"
 
 class Demo : public BaseState {
 public:

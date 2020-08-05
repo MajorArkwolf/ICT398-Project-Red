@@ -52,12 +52,12 @@ void MainMenu::handleWindowEvent() {
     engine.renderer.ResizeWindow();
 }
 
-//void MainMenu::handleInputData(Controller::Input::InputData inputData, double deltaTime) {
-//    auto &engine      = RedEngine::Engine::get();
-//    auto &guiManager  = engine.getGuiManager();
-//    auto handledMouse = false;
-//
-//    switch (inputData.inputType) {
+void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
+    auto &engine      = RedEngine::Engine::get();
+    auto &guiManager  = engine.getGuiManager();
+    auto handledMouse = false;
+
+//    switch (inputData.type) {
 //        case BLUE_InputType::KEY_PRESS: { //  Key Press events
 //
 //            switch (inputData.inputAction) {
@@ -113,10 +113,10 @@ void MainMenu::handleWindowEvent() {
 //        } break;
 //        default: break;
 //    }
-//    if (!handledMouse) {
-//        engine.mouse = {0.0f, 0.0f};
-//    }
-//}
+    if (!handledMouse) {
+        engine.mouse = {0.0f, 0.0f};
+    }
+}
 
 void MainMenu::GUIStart() {
     auto &engine  = RedEngine::Engine::get();

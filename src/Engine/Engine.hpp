@@ -12,6 +12,9 @@
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
+#include "Engine/SubModules/Input/InputManager.hpp"
+#include "Engine/SubModules/Input/RedEventManager.hpp"
+
 
 namespace RedEngine {
 
@@ -161,5 +164,6 @@ namespace RedEngine {
          * Gets the basepath of the executable
          */
         auto getBasePath() const -> std::filesystem::path;
+        input::InputManager input_manager;
     };
 }

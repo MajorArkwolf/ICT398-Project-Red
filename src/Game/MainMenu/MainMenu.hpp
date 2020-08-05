@@ -50,7 +50,7 @@ public:
      * @param inputData events
      * @param deltaTime delta time
      */
-    //void handleInputData(Controller::Input::InputData inputData, double deltaTime) override;
+    void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
     /**
      * Function to start our game.

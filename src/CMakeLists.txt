@@ -9,7 +9,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/euler_camera.cc
     #--Renderer
     Engine/Renderer/OpenGL.cpp
-    Engine/Renderer/Shader.cpp
+    Engine/Renderer/shader.cc
     Engine/Renderer/Skybox.cpp
     #--SubModules
     Engine/SubModules/ModelManager.cpp

@@ -16,10 +16,10 @@ class ECS {
   void FixedUpdate(double t, double dt);
   void Update(double t, double dt);
   void Draw(const glm::mat4& projection, const glm::mat4& view,
-            const glm::dvec2& cameraPos);
+            const glm::dvec2& camera_pos);
 
  protected:
-  entt::registry registry = {};
-  std::vector<std::shared_ptr<Entity>> entity_register = {};
+  entt::registry registry_ = {};
+  std::vector<std::shared_ptr<Entity>> entity_register_ = {};
   friend Entity;
 };

@@ -70,7 +70,8 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
       std::cerr << "JSON Transform failed: " << e.what() << '\n';
     }
   }
-  if (j.contains("Animation") && entity->get()->HasComponent<component::Model>()) {
+  if (j.contains("Animation")
+      && entity->get()->HasComponent<component::Model>()) {
     try {
       assert(ent->HasComponent<component::Model>());
       auto &anim =

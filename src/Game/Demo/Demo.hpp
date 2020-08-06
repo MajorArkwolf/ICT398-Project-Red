@@ -16,5 +16,5 @@ class Demo : public BaseState {
   void FixedUpdate(double t, double dt) override;
 
  private:
-  ECS ecs = {};
+  ECS ecs_ = {};
 };

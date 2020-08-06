@@ -7,7 +7,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-namespace Blue {
+namespace blue {
+
 /// Used for the terrain model generation.
 struct Vertex {
   glm::vec3 position = {};
@@ -19,6 +20,7 @@ struct Perlin {
   float height = 0;
   glm::vec3 color = {};
 };
+
 /// Used to transfer information from terrain to react.
 struct HeightRange {
   float min = 0.0f;
@@ -30,4 +32,5 @@ struct SimpleMesh {
   std::vector<glm::vec3> vertex = {};
   std::vector<unsigned int> indices = {};
 };
+
 }  // namespace Blue

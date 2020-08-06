@@ -5,7 +5,10 @@
 #include "ECS/Component/Basic.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template<class... Ts>
+struct overload : Ts ... {
+    using Ts::operator()...;
+};
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 // TEST
 #include "Engine/Engine.hpp"
@@ -26,7 +29,7 @@ void Demo::UnInit() {
 
 }
 
-void Demo::Display(const glm::mat4& projection, const glm::mat4& view) {
+void Demo::Display(const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = RedEngine::Engine::get().renderer;
     renderer.SetCameraOnRender(camera);
     ecs.Draw(projection, view, camera.getLocation());
@@ -42,6 +45,7 @@ void Demo::GUIEnd() {
 
 void Demo::Update(double t, double dt) {
     ecs.Update(t, dt);
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
@@ -50,104 +54,89 @@ void Demo::FixedUpdate(double t, double dt) {
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
-    auto &engine      = RedEngine::Engine::get();
-    auto &guiManager  = engine.getGuiManager();
+    auto &engine = RedEngine::Engine::get();
+    auto &guiManager = engine.getGuiManager();
     auto handledMouse = false;
     std::visit(overload{
-            [&](std::monostate)
-            {
+            [&](std::monostate) {
 
-            },[&](InputEvent::MouseEvent mouse)
-            {
+            }, [&](InputEvent::MouseEvent mouse) {
 
             },
-            [&](InputEvent::KeyboardEvent keyboard)
-            {
+            [&](InputEvent::KeyboardEvent keyboard) {
+
+                switch (inputData.type) {
+                    case input::InputType::kKeyPressed:
+                        {
+                            switch (keyboard.key) {
+                                case input::VirtualKey::W: {
+                                    forward_ = true;
+                                }
+                                    break;
+                                case input::VirtualKey::A: {
+                                    left_ = true;
+                                }
+                                    break;
+                                case input::VirtualKey::S: {
+                                    backward_ = true;
+                                }
+                                    break;
+                                case input::VirtualKey::D: {
+                                    right_ = true;
+                                }
+                                    break;
+                            }
+                        }
+                        break;
+                    case input::InputType::kKeyReleased:
+                        {
+                            switch (keyboard.key) {
+                                case input::VirtualKey::W: {
+                                    forward_ = false;
+                                }
+                                    break;
+                                case input::VirtualKey::A: {
+                                    left_ = false;
+                                }
+                                    break;
+                                case input::VirtualKey::S: {
+                                    backward_ = false;
+                                }
+                                    break;
+                                case input::VirtualKey::D: {
+                                    right_ = false;
+                                }
+                                    break;
+                            }
+                        }
+                        break;
+                }
 
             },
-            [&](InputEvent::dVector2 vec)
-            {
+            [&](InputEvent::dVector2 vec) {
 
             },
-            [&](InputEvent::iVector2 vec)
-            {
+            [&](InputEvent::iVector2 vec) {
 
-                switch(inputData.type)
-                {
-                    case input::InputType::kCursorMoved:
-                    {
+                switch (inputData.type) {
+                    case input::InputType::kCursorMoved: {
                         static int prev_x = 0;
                         static int prev_y = 0;
 
                         auto x = static_cast<double>(vec.x);
                         auto y = static_cast<double>(vec.y);
-                        x     = x * -1.0;
+                        x = x * -1.0;
                         camera.ProcessMouseMovement(prev_x - x, prev_y - y);
                         handledMouse = true;
                         prev_x = x;
                         prev_y = y;
-                    }break;
-                    default:break;
+                    }
+                        break;
+                    default:
+                        break;
                 }
             }
     }, inputData.data);
-
-//    switch (inputData.type) {
-//        case BLUE_InputType::KEY_PRESS: { //  Key Press events
-//
-//            switch (inputData.inputAction) {
-//                case BLUE_InputAction::INPUT_MOVE_FORWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_BACKWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_LEFT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_RIGHT: {
-//                } break;
-//                default: break;
-//            }
-//        } break;
-//        case BLUE_InputType::KEY_RELEASE: { // Key Release events
-//            switch (inputData.inputAction) {
-//                case BLUE_InputAction::INPUT_MOVE_FORWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_BACKWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_LEFT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_RIGHT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_JUMP: {
-//                } break;
-//                case BLUE_InputAction::INPUT_CROUCH: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_2: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_3: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_4: {
-//                } break;
-//                default: break;
-//            }
-//        } break;
-//        case BLUE_InputType::MOUSE_MOTION: { // Mouse motion event
-//            if (!engine.getMouseMode()) {
-////                 auto x = static_cast<double>(inputData.mouseMotionRelative.x);
-////                 auto y = static_cast<double>(inputData.mouseMotionRelative.y);
-////                 y      = y * -1.0;
-////                 camera.ProcessMouseMovement(x, y);
-////                 handledMouse = true;
-//            }
-//        } break;
-//        case BLUE_InputType::MOUSE_WHEEL: { // Mouse Wheel event
-//            auto amountScrolledY = static_cast<double>(inputData.mouseWheelMotion);
-//            //camera.ProcessMouseScroll(amountScrolledY);
-//        } break;
-//        case BLUE_InputType::WINDOW_RESIZE: {
-//            this->handleWindowEvent();
-//        } break;
-//        default: break;
-//    }
     if (!handledMouse) {
         engine.mouse = {0.0f, 0.0f};
     }

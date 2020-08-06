@@ -79,7 +79,8 @@ namespace input
 		};
 
 		GLFWEventType type = GLFWEventType::kNone;
-		std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale> data = {};
+		using Data = std::variant<std::monostate, Position, Size, Scroll, Keyboard, Mouse, File, Scale>;
+		Data data = {};
 		GLFWwindow* window = nullptr;
 	};
 

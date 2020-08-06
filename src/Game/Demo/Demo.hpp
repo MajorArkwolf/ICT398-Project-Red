@@ -17,5 +17,6 @@ public:
 
 private:
     ECS ecs = {};
+    bool forward_ = false, backward_ = false, left_ = false, right_ = false;
 };
 

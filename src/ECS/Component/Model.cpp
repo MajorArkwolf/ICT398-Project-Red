@@ -3,8 +3,8 @@
 #include <utility>
 #include "Engine/Engine.hpp"
 
-Component::Model::Model(const std::filesystem::path &model, std::shared_ptr<Shader> newShader) {
-    auto &engine = RedEngine::Engine::get();
-    id = engine.modelManager.GetModelID(model);
-    shader = std::move(newShader);
+component::Model::Model(const std::filesystem::path &model, std::shared_ptr<Shader> new_shader) {
+    auto &engine = redengine::Engine::get();
+    id_ = engine.model_manager_.GetModelID(model);
+    shader_ = std::move(new_shader);
 }

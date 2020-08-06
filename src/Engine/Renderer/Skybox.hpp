@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include <filesystem>
-namespace View {
+namespace view {
     /**
      * Basic OpenGL Sky box.
      */
@@ -22,21 +22,21 @@ namespace View {
         /**
          * Deleted copy constructor.
          */
-        Skybox(const View::Skybox &) = delete;
+        Skybox(const view::Skybox &) = delete;
         /**
          * Deleted move constructor.
          */
-        Skybox(View::Skybox &&) = delete;
+        Skybox(view::Skybox &&) = delete;
         /**
          * Deleted copy assignment.
          * @return
          */
-        Skybox& operator=(const View::Skybox &) = delete;
+        Skybox& operator=(const view::Skybox &) = delete;
         /**
          * Deleted move assignment.
          * @return
          */
-        Skybox&& operator=(View::Skybox &&) = delete;
+        Skybox&& operator=(view::Skybox &&) = delete;
         /**
          * Initialises the Sky box.
          */

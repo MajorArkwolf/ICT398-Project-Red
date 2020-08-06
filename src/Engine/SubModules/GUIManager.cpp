@@ -73,7 +73,7 @@ void GUIManager::displayEscapeMenu() {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     bool &windowOpen = windowOpenMap.at("menu");
     //auto &resManager = ResourceManager::getInstance();
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
 
     if (windowOpen) {
         ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
@@ -95,7 +95,7 @@ void GUIManager::displayEscapeMenu() {
 //            toggleWindow("terrainSettings");
 //        }
 //        if (ImGui::Button("Settings")) {
-//            engine.showSettingsMenu = true;
+//            engine.show_settings_menu_ = true;
 //        }
 //        if (ImGui::Button("Exit")) {
 //            toggleWindow("exit");

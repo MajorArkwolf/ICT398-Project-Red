@@ -24,7 +24,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
     const std::filesystem::path &file_path, ECS &ecs) {
   nlohmann::json j = LoadJson(file_path);
   std::optional<std::shared_ptr<Entity>> entity = {};
-  auto base_path = RedEngine::Engine::get().getBasePath();
+  auto base_path = redengine::Engine::get().GetBasePath();
   auto full_path = base_path / "res" / "Entity" / file_path;
   entity = std::make_shared<Entity>(ecs.CreateEntity());
   auto &ent = entity.value();
@@ -37,18 +37,19 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
       frag_shader.append(model.at("FragShader").get<std::string>());
       auto model_file_path = base_path;
       model_file_path.append(model.at("ModelFilePath").get<std::string>());
-      ent->AddComponent<Component::Model>(model_file_path,
+      ent->AddComponent<component::Model>(model_file_path,
                                           std::make_shared<Shader>(
                                               vert_shader,
                                               frag_shader,
                                               std::filesystem::path{}));
+      assert(entity->get()->HasComponent<component::Model>());
     } catch (const std::exception &e) {
       std::cerr << "JSON Model failed: " << e.what() << '\n';
     }
   }
   if (j.contains("Transform")) {
     try {
-      auto &trans = ent->AddComponent<Component::Transform>();
+      auto &trans = ent->AddComponent<component::Transform>();
       auto transform = j.at("Transform");
       auto position = transform.at("Position");
       auto rotation = transform.at("Rotation");
@@ -69,13 +70,14 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
       std::cerr << "JSON Transform failed: " << e.what() << '\n';
     }
   }
-  if (j.contains("Animation")) {
+  if (j.contains("Animation") && entity->get()->HasComponent<component::Model>()) {
     try {
+      assert(ent->HasComponent<component::Model>());
       auto &anim =
-          ent->AddComponent<Component::Animation>(
-              ent->GetComponent<Component::Model>().id);
+          ent->AddComponent<component::Animation>(
+              ent->GetComponent<component::Model>().id);
       auto idle = j.at("Animation").at("IDLE").get<std::string>();
-      anim.animator.LoadAnimation(idle);
+      anim.animator_.LoadAnimation(idle);
     } catch (const std::exception &e) {
       std::cerr << "JSON Animation failed: " << e.what() << '\n';
     }
@@ -84,7 +86,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
 }
 
 void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS &ecs) {
-  auto base_path = RedEngine::Engine::get().getBasePath();
+  auto base_path = redengine::Engine::get().GetBasePath();
   auto full_path = base_path / "res" / "Entity" / file_path;
   auto j = LoadJson(full_path);
   if (j.contains("Entity")) {

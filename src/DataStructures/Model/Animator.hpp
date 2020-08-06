@@ -1,13 +1,13 @@
 #pragma once
+
 #include <map>
 #include <string>
 #include <vector>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "DataStructures/Model/Animation.hpp"
 #include "DataStructures/Model/DataTypes.hpp"
-
-
 
 namespace model {
     class Model;

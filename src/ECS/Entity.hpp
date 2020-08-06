@@ -1,7 +1,8 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include "ECS/Ecs.hpp"
+
+#include "ECS/ECS.hpp"
 
 class Entity {
 public:
@@ -21,7 +22,7 @@ public:
      */
     template<typename T, typename... Args>
     T &AddComponent(Args &&... args) {
-        return ecs_->registry.emplace<T>(this->entity_handle_, std::forward<Args>(args)...);
+        return ecs_->registry_.emplace<T>(this->entity_handle_, std::forward<Args>(args)...);
     }
 
     /**
@@ -31,7 +32,7 @@ public:
      */
     template<typename T>
     T &GetComponent() {
-        return ecs_->registry.get<T>(this->entity_handle_);
+        return ecs_->registry_.get<T>(this->entity_handle_);
     }
 
     /**
@@ -41,7 +42,7 @@ public:
      */
     template<typename T>
     bool HasComponent() {
-        return ecs_->registry.has<T>(this->entity_handle_);
+        return ecs_->registry_.has<T>(this->entity_handle_);
     }
 
     /**
@@ -50,13 +51,13 @@ public:
      */
     template<typename T>
     void RemoveComponent() {
-        ecs_->registry.remove<T>(this->entity_handle_);
+        ecs_->registry_.remove<T>(this->entity_handle_);
     }
 
 private:
     /// The id of the given reference.
     entt::entity entity_handle_ = entt::entity{0};
-    /// The ecs system that it refeers to. Passed in by reference.
+    /// The ecs system that it refers to. Passed in by reference.
     ECS* ecs_ = nullptr;
 };
 

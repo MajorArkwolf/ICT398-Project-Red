@@ -6,7 +6,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     #Engine
     Engine/Engine.cpp
-    Engine/EulerCamera.cpp
+        Engine/EulerCamera.cpp
     #--Renderer
     Engine/Renderer/OpenGL.cpp
     Engine/Renderer/Shader.cpp
@@ -30,12 +30,12 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-    ECS/Ecs.cpp
+        ECS/ECS.cpp
     ECS/Entity.cpp
     #--Components
     ECS/Component/Model.cpp
     #--Systems
-        ECS/System/System.cpp
+    ECS/System/System.cpp
 )
 
 # Include project header files.

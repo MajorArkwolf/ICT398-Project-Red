@@ -17,15 +17,15 @@ model::Model::Model(const std::filesystem::path &path, bool gamma) : gamma_corre
     LoadModel(path);
 }
 
-model::Model::Model(const string& path, bool gamma = false) : gamma_correction_(gamma) {
+model::Model::Model(const std::string& path, bool gamma = false) : gamma_correction_(gamma) {
     LoadModel(path);
 }
 
 void model::Model::Draw(Shader& shader) {
-    auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->Position;
-    shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
-    shader.setVec3("viewPos", cameraPos);
+    auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->position_;
+    shader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader.SetVec3("lightPos", 1.0f, 400.0f, 1.0f);
+    shader.SetVec3("viewPos", cameraPos);
     for (auto &mesh : meshes_) {
         mesh.Draw(shader);
     }
@@ -47,7 +47,7 @@ void model::Model::LoadModel(const std::filesystem::path &path) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode) // if is Not Zero
     {
-        string error = importer.GetErrorString();
+        std::string error = importer.GetErrorString();
         std::cout << "ERROR::ASSIMP:: " << error << std::endl;
         return;
     }
@@ -102,14 +102,14 @@ Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
             vector.x        = mesh->mVertices[i].x;
             vector.y        = mesh->mVertices[i].y;
             vector.z        = mesh->mVertices[i].z;
-            vertex.Position = vector;
+            vertex.position = vector;
         }
         // normals
         if (mesh->HasNormals()) {
             vector.x      = mesh->mNormals[i].x;
             vector.y      = mesh->mNormals[i].y;
             vector.z      = mesh->mNormals[i].z;
-            vertex.Normal = vector;
+            vertex.normal = vector;
         }
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
@@ -119,20 +119,20 @@ Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
             // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
             vec.x            = mesh->mTextureCoords[0][i].x;
             vec.y            = mesh->mTextureCoords[0][i].y;
-            vertex.TexCoords = vec;
+            vertex.tex_coords = vec;
         } else
-            vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+            vertex.tex_coords = glm::vec2(0.0f, 0.0f);
         // tangent
         if (mesh->HasTangentsAndBitangents()) {
             vector.x       = mesh->mTangents[i].x;
             vector.y       = mesh->mTangents[i].y;
             vector.z       = mesh->mTangents[i].z;
-            vertex.Tangent = vector;
+            vertex.tangent = vector;
             // bitangent
             vector.x         = mesh->mBitangents[i].x;
             vector.y         = mesh->mBitangents[i].y;
             vector.z         = mesh->mBitangents[i].z;
-            vertex.Bitangent = vector;
+            vertex.bitangent = vector;
         }
         vertices.push_back(vertex);
     }
@@ -172,7 +172,7 @@ Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
 }
 
 std::vector<TextureB> model::Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                                                         const string& type_name) {
+                                                         const std::string& type_name) {
     std::vector<TextureB> textures = {};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str = {};
@@ -242,7 +242,7 @@ void model::Model::LoadBones(unsigned mesh_index, const aiMesh* ai_mesh)
 {
     for (unsigned i = 0 ; i < ai_mesh->mNumBones; ++i) {
         unsigned boneIndex = 0;
-        string boneName(ai_mesh->mBones[i]->mName.data);
+        std::string boneName(ai_mesh->mBones[i]->mName.data);
 
         if (bone_mapping_.find(boneName) == bone_mapping_.end()) {
             boneIndex = num_bones_;
@@ -255,7 +255,7 @@ void model::Model::LoadBones(unsigned mesh_index, const aiMesh* ai_mesh)
         }
 
         bone_mapping_[boneName] = boneIndex;
-        bone_info_[boneIndex].BoneOffset = mat4_cast(ai_mesh->mBones[i]->mOffsetMatrix);
+        bone_info_[boneIndex].bone_offset = mat4_cast(ai_mesh->mBones[i]->mOffsetMatrix);
 
         for (unsigned j = 0 ; j < ai_mesh->mBones[i]->mNumWeights; ++j) {
             unsigned VertexID = ai_mesh->mBones[i]->mWeights[j].mVertexId;
@@ -271,7 +271,7 @@ static inline JointsName RecurseJoints(aiNode* node, aiNode* rootScene) {
         parent.children.push_back(RecurseJoints(rootScene->FindNode(node->mChildren[i]->mName), rootScene));
     }
     parent.name = std::string(node->mName.C_Str());
-    parent.Transform = mat4_cast(node->mTransformation);
+    parent.transform = mat4_cast(node->mTransformation);
     return parent;
 }
 static inline aiNode* FindRootJoint(aiMesh* mesh, aiNode* root) {
@@ -298,7 +298,7 @@ void model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
     root_joint_ = RecurseJoints(root_bone, root);
 }
 
-Animation* model::Model::GetAnimation(const string &anim_name) {
+Animation* model::Model::GetAnimation(const std::string &anim_name) {
     Animation* idle = nullptr;
     for (auto &anim : animation_) {
         std::string animNameStored = anim.GetName();

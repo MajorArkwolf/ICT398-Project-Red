@@ -16,7 +16,7 @@ void view::OpenGL::Draw() {
         int width = 0, height = 0;
         glfwGetWindowSize(engine.window_, &width, &height);
         glm::mat4 projection =
-                glm::perspective(glm::radians(camera_->Zoom),
+                glm::perspective(glm::radians(camera_->zoom_),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera_->GetViewMatrix();
         glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
@@ -70,7 +70,7 @@ void view::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vecto
             number = std::to_string(height_nr++); // transfer unsigned int to stream
 
         // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(shader.getId(), (name + number).c_str()), i);
+        glUniform1i(glGetUniformLocation(shader.GetID(), (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -109,27 +109,27 @@ void view::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
     // vertex normals
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, Normal)));
+                          reinterpret_cast<void*>(offsetof(Vertex, normal)));
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, TexCoords)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tex_coords)));
     // vertex tangent
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Tangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tangent)));
     // vertex bitangent
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Bitangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bitangent)));
     // BoneID's
     glEnableVertexAttribArray(5);
     glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex),
-                           reinterpret_cast<void *>(offsetof(Vertex, BoneIDs)));
+                           reinterpret_cast<void *>(offsetof(Vertex, bone_ids)));
     //Bone Weights
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, BoneWeight)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bone_weight)));
 
     glBindVertexArray(0);
 }
@@ -186,7 +186,7 @@ unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesys
     }
     return texture_id;
 }
-void view::OpenGL::SetCameraOnRender(Engine::Camera &main_camera) {
+void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
     camera_ = &main_camera;
 }
 

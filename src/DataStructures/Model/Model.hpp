@@ -1,20 +1,20 @@
 #pragma once
+#include <assimp/matrix4x4.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <assimp/Importer.hpp>
+#include <filesystem>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
-#include <filesystem>
 
-#include <assimp/Importer.hpp>
-#include <assimp/matrix4x4.h>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "Mesh.hpp"
 #include "DataStructures/Model/Animation.hpp"
 #include "DataStructures/Model/DataTypes.hpp"
+#include "DataStructures/Model/Mesh.hpp"
 #include "Engine/Renderer/Shader.hpp"
 
 namespace model {

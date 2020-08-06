@@ -32,8 +32,8 @@ void view::Skybox::Init() {
     auto vs = basepath / "res" / "shader" / "skybox_vert.vs";
     auto fs = basepath / "res" / "shader" / "skybox_frag.fv";
     shader = std::make_unique<Shader>(vs, fs, "");
-    shader->use();
-    shader->setInt("skybox", 0);
+    shader->Use();
+    shader->SetInt("skybox", 0);
 }
 
 unsigned int view::Skybox::loadCubemap(const std::vector<std::filesystem::path>& mFaces) {
@@ -66,9 +66,9 @@ unsigned int view::Skybox::loadCubemap(const std::vector<std::filesystem::path>&
 
 void view::Skybox::draw(const glm::mat4& view, const glm::mat4& projection) const {
     glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
-    shader->use();
-    shader->setMat4("sk_view", view);
-    shader->setMat4("sk_projection", projection);
+    shader->Use();
+    shader->SetMat4("sk_view", view);
+    shader->SetMat4("sk_projection", projection);
     // skybox cube
     glBindVertexArray(skyboxVAO);
     glActiveTexture(GL_TEXTURE0);

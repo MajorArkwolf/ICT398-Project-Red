@@ -5,10 +5,10 @@
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
-#include "ECS/ecs.h"
 #include "Engine/Engine.hpp"
-#include "Engine/Renderer/shader.h"
+#include "Engine/Renderer/Shader.hpp"
 
 using namespace nlohmann;
 

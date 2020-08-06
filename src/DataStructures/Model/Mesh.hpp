@@ -1,16 +1,16 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include <assimp/anim.h>
+
 #include <glm/fwd.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <string>
+#include <vector>
 
-#include "DataStructures/Model/data_types.h"
+#include "DataStructures/Model/DataTypes.hpp"
 #include "Engine/Renderer/DrawStruct.hpp"
-#include "Engine/Renderer/shader.h"
+#include "Engine/Renderer/Shader.hpp"
 
 class Mesh {
   public:

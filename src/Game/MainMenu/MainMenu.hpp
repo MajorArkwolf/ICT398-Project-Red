@@ -1,8 +1,8 @@
 #pragma once
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
-#include "ECS/ecs.h"
-#include "Engine/euler_camera.h"
+#include "ECS/ECS.hpp"
+#include "Engine/EulerCamera.hpp"
 
 class MainMenu : public BaseState {
 public:

@@ -6,10 +6,10 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     #Engine
     Engine/Engine.cpp
-    Engine/euler_camera.cc
+        Engine/EulerCamera.cpp
     #--Renderer
     Engine/Renderer/OpenGL.cpp
-    Engine/Renderer/shader.cc
+    Engine/Renderer/Shader.cpp
     Engine/Renderer/Skybox.cpp
     #--SubModules
     Engine/SubModules/ModelManager.cpp
@@ -30,7 +30,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-    ECS/ecs.cc
+        ECS/ECS.cpp
     ECS/Entity.cpp
     #--Components
     ECS/Component/Model.cpp

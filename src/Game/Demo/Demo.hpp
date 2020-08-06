@@ -1,5 +1,5 @@
 #pragma once
-#include "ECS/ecs.h"
+#include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
 
 class Demo : public BaseState {

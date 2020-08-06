@@ -3,14 +3,14 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "DataStructures/Model/DataTypes.hpp"
 #include "DataStructures/Model/Model.hpp"
-#include "DataStructures/Model/data_types.h"
-#include "DataStructures/Model/vertix.h"
+#include "DataStructures/Model/Vertix.hpp"
 #include "DrawStruct.hpp"
-#include "Engine/euler_camera.h"
+#include "Engine/EulerCamera.hpp"
 #include "Renderer.hpp"
-#include "shader.h"
 #include "Skybox.hpp"
+#include "Engine/Renderer/Shader.hpp"
 
 namespace View {
     class OpenGL: public Renderer {

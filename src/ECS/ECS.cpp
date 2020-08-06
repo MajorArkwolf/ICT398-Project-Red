@@ -1,4 +1,4 @@
-#include "ecs.h"
+#include "ECS.hpp"
 
 #include "ECS/Entity.hpp"
 #include "ECS/System/System.hpp"

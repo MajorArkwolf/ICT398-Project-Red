@@ -2,7 +2,7 @@
 
 #include <entt/entt.hpp>
 
-#include "ECS/ecs.h"
+#include "ECS/ECS.hpp"
 
 class Entity {
 public:

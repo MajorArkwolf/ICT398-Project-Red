@@ -5,8 +5,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-
-#include "Engine/euler_camera.h"
+#include "Engine/EulerCamera.hpp"
 
 class GUIManager {
   public:

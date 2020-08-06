@@ -1,6 +1,6 @@
-#include <glm/gtc/matrix_transform.hpp>
+#include "EulerCamera.hpp"
 
-#include "euler_camera.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace engine {
 

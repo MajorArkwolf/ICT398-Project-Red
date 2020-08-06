@@ -1,8 +1,9 @@
 #pragma once
 
 //#include "Controller/InputManager.hpp"
-#include "Engine/euler_camera.h"
 #include <glm/matrix.hpp>
+
+#include "Engine/EulerCamera.hpp"
 
 /**
  * @class BaseState

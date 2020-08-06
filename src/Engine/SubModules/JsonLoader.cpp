@@ -75,7 +75,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
       assert(ent->HasComponent<component::Model>());
       auto &anim =
           ent->AddComponent<component::Animation>(
-              ent->GetComponent<component::Model>().id);
+              ent->GetComponent<component::Model>().id_);
       auto idle = j.at("Animation").at("IDLE").get<std::string>();
       anim.animator_.LoadAnimation(idle);
     } catch (const std::exception &e) {

@@ -8,7 +8,7 @@
 #include "ECS/Entity.hpp"
 #include "ECS/ecs.h"
 #include "Engine/Engine.hpp"
-#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/shader.h"
 
 using namespace nlohmann;
 

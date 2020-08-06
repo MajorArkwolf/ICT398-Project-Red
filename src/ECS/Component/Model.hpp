@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <filesystem>
-#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/shader.h"
 
 namespace Component {
     struct Model {

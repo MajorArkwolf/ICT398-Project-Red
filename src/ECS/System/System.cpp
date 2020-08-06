@@ -16,17 +16,17 @@ void System::Draw(entt::registry& registry, const glm::mat4& projection, const g
         model_matrix = glm::scale(model_matrix, tran.scale);
         model_matrix = model_matrix * glm::mat4_cast(tran.rot);
 
-        mod.shader->use();
-        mod.shader->setMat4("projection", projection);
-        mod.shader->setMat4("view", view);
-        mod.shader->setMat4("model", model_matrix);
+        mod.shader->Use();
+        mod.shader->SetMat4("projection", projection);
+        mod.shader->SetMat4("view", view);
+        mod.shader->SetMat4("model", model_matrix);
 
         if (registry.has<Component::Animation>(e)) {
             auto &anim = registry.get<Component::Animation>(e);
-            mod.shader->setMat4Array("jointTransforms", anim.animator.Transforms);
-            mod.shader->setBool("isAnimated", true);
+            mod.shader->SetMat4Array("jointTransforms", anim.animator.Transforms);
+            mod.shader->SetBool("isAnimated", true);
         } else {
-            mod.shader->setBool("isAnimated", false);
+            mod.shader->SetBool("isAnimated", false);
         }
 
         auto& model_manager = RedEngine::Engine::get().modelManager;

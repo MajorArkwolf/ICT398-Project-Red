@@ -17,15 +17,15 @@ Model::Model::Model(const std::filesystem::path &path, bool gamma) : gammaCorrec
     loadModel(path);
 }
 
-Model::Model::Model(const string& path, bool gamma = false) : gammaCorrection(gamma) {
+Model::Model::Model(const std::string& path, bool gamma = false) : gammaCorrection(gamma) {
     loadModel(path);
 }
 
 void Model::Model::Draw(Shader& shader) {
     auto cameraPos = RedEngine::Engine::get().renderer.GetActiveCamera()->position_;
-    shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("lightPos", 1.0f, 400.0f, 1.0f);
-    shader.setVec3("viewPos", cameraPos);
+    shader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader.SetVec3("lightPos", 1.0f, 400.0f, 1.0f);
+    shader.SetVec3("viewPos", cameraPos);
     for (auto &mesh : meshes) {
         mesh.Draw(shader);
     }
@@ -47,7 +47,7 @@ void Model::Model::loadModel(const std::filesystem::path &path) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode) // if is Not Zero
     {
-        string error = importer.GetErrorString();
+        std::string error = importer.GetErrorString();
         std::cout << "ERROR::ASSIMP:: " << error << std::endl;
         return;
     }
@@ -172,7 +172,7 @@ Mesh Model::Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 }
 
 std::vector<TextureB> Model::Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                                            const string& typeName) {
+                                            const std::string& typeName) {
     std::vector<TextureB> textures = {};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str = {};
@@ -242,7 +242,7 @@ void Model::Model::LoadBones(unsigned MeshIndex, const aiMesh* pMesh)
 {
     for (unsigned i = 0 ; i < pMesh->mNumBones; ++i) {
         unsigned boneIndex = 0;
-        string boneName(pMesh->mBones[i]->mName.data);
+        std::string boneName(pMesh->mBones[i]->mName.data);
 
         if (boneMapping.find(boneName) == boneMapping.end()) {
             boneIndex = numBones;
@@ -298,7 +298,7 @@ void Model::Model::LoadJoints(aiMesh* mesh, aiNode* root) {
     rootJoint = RecurseJoints(rootBone, root);
 }
 
-Animation* Model::Model::getAnimation(const string &animName) {
+Animation* Model::Model::getAnimation(const std::string &animName) {
     Animation* idle = nullptr;
     for (auto &anim : animation) {
         std::string animNameStored = anim.getName();

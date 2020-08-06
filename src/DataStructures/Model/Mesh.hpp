@@ -10,7 +10,7 @@
 
 #include "DataStructures/Model/data_types.h"
 #include "Engine/Renderer/DrawStruct.hpp"
-#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Renderer/shader.h"
 
 class Mesh {
   public:

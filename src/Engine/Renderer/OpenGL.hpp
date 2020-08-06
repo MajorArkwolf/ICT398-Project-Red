@@ -9,7 +9,7 @@
 #include "DrawStruct.hpp"
 #include "Engine/euler_camera.h"
 #include "Renderer.hpp"
-#include "Shader.hpp"
+#include "shader.h"
 #include "Skybox.hpp"
 
 namespace View {

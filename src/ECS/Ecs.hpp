@@ -17,6 +17,5 @@ public:
 protected:
     entt::registry registry = {};
     std::vector<std::shared_ptr<Entity>> entityRegister = {};
-
     friend Entity;
 };

@@ -6,6 +6,12 @@
 
 class ECS;
 
+class RedEngineEventListener : public reactphysics3d::EventListener {
+public:
+    RedEngineEventListener() = default;
+    virtual void onContact(const reactphysics3d::CollisionCallback::CallbackData& callbackData);
+};
+
 class CollisionDetection {
 public:
     /**
@@ -14,11 +20,14 @@ public:
     CollisionDetection();
     ~CollisionDetection();
 
-    void AddCollisionBody(entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
-    void UpdateCollisionBody(entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
+    void AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
+    void UpdateCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
+    void DeleteCollisionBody(const entt::entity& entity_id);
+
 private:
-    reactphysics3d::PhysicsCommon physicsCommon_{};
+    reactphysics3d::PhysicsCommon physics_common_{};
     reactphysics3d::PhysicsWorld* world_ = nullptr;
+    RedEngineEventListener event_listener = {};
     std::unordered_map<entt::entity, reactphysics3d::CollisionBody*> entity_collision_coupling_ = {};
     std::unordered_map<reactphysics3d::CollisionBody*, entt::entity> collision_entity_coupling_ = {};
 

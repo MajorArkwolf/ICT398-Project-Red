@@ -16,4 +16,8 @@ namespace component {
         }
         ::model::Animator animator_ = {};
     };
+
+    struct PhysicBody {
+        size_t id = 0;
+    };
 }

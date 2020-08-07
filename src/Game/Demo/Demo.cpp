@@ -26,9 +26,9 @@ void Demo::UnInit() {
 }
 
 void Demo::Display(const glm::mat4& projection, const glm::mat4& view) {
-	auto& renderer = RedEngine::Engine::get().renderer;
+	auto& renderer = redengine::Engine::get().renderer_;
 	renderer.SetCameraOnRender(camera);
-	ecs.Draw(projection, view, camera.getLocation());
+	ecs_.Draw(projection, view, camera.GetLocation());
 }
 
 void Demo::GUIStart() {
@@ -38,7 +38,8 @@ void Demo::GUIEnd() {
 }
 
 void Demo::Update(double t, double dt) {
-	ecs.Update(t, dt);
+	ecs_.Update(t, dt);
+  camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
@@ -47,8 +48,8 @@ void Demo::FixedUpdate(double t, double dt) {
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
 	using namespace input;
-	auto& engine = RedEngine::Engine::get();
-	auto& guiManager = engine.getGuiManager();
+	auto& engine = redengine::Engine::get();
+	auto& guiManager = engine.GetGuiManager();
 	auto handledMouse = false;
 	std::visit(overload{
 			[&](std::monostate) {
@@ -131,6 +132,6 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
 			}
 		}, inputData.data);
 	if (!handledMouse) {
-		engine.mouse = { 0.0f, 0.0f };
+		engine.mouse_ = { 0.0f, 0.0f };
 	}
 }

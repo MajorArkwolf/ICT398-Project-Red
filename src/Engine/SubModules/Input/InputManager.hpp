@@ -54,7 +54,7 @@ namespace input
 
 
 	private:
-
+        VirtualKey ConvertPhysicalToVirtual(PhysicalKey key);
 		void PopulateInputMap();
 		void PopulateGLFWKeyMap();
 		/**

@@ -106,8 +106,8 @@ redengine::Engine::Engine(){
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
-    input::GLFWInputWrangler::Init(window);
-    GUIManager::initialiseImGUI(window);
+    input::GLFWInputWrangler::Init(window_);
+    GUIManager::initialiseImGUI(window_);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");
@@ -136,24 +136,24 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
             case InputType::kKeyPressed: {
                 auto keyboard = std::get<InputEvent::KeyboardEvent>(event.data);
                 if (keyboard.key == PhysicalKey::F1) {
-                    auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
+                    auto mouseMode = glfwGetInputMode(window_, GLFW_CURSOR);
                     if (mouseMode == GLFW_CURSOR_NORMAL) {
-                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                     } else {
-                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                     }
                 }
             } break;
             case InputType::kWindowClosed: {
-                this->endEngine();
+                this->EndEngine();
             } break;
             default: break;
         }
 
-        gameStack.getTop()->HandleInputData(event, dt);
+        game_stack_.getTop()->HandleInputData(event, deltaTime);
     }
     if (!handledMouse) {
-        this->mouse = {0.0f, 0.0f};
+        this->mouse_ = {0.0f, 0.0f};
     }
 }
 

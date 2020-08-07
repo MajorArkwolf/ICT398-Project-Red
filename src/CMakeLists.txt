@@ -14,7 +14,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Input
     Engine/SubModules/Input/GLFWInputWrangler.cpp
     Engine/SubModules/Input/InputManager.cpp
-    Engine/SubModules/Input/RedEventManager.cpp
 
     #--SubModules
     Engine/SubModules/ModelManager.cpp

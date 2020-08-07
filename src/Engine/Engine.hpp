@@ -13,7 +13,6 @@
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Engine/SubModules/Input/InputManager.hpp"
-#include "Engine/SubModules/Input/RedEventManager.hpp"
 
 namespace redengine {
 

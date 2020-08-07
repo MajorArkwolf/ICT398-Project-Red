@@ -12,6 +12,7 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
         collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
     }
 
+    //collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
 }
 
 void PhysicsEngine::Update(double t, double dt) {

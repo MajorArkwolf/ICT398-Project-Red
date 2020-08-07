@@ -24,6 +24,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     Game/MainMenu/MainMenu.cpp
     #--Demo Scene
     Game/Demo/Demo.cpp
+    #--Physics Demo Scene
+    Game/PhysicsDemo/PhysicsDemo.cpp
 
     #DataStructures
     #--Model

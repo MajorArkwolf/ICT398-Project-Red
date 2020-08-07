@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Game/Demo/Demo.hpp"
+#include "Game/PhysicsDemo/PhysicsDemo.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
 //using Controller::Input::BLUE_InputAction;
@@ -136,6 +137,9 @@ void MainMenu::MainMenuGUI() {
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<Demo>());
+    }
+    if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
+        engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
     }
     ImGui::Separator();
 

@@ -3,13 +3,19 @@
 #include <entt/entt.hpp>
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <queue>
+#include "Engine/Physics/PhysicsData.hpp"
 
 class ECS;
 
 class RedEngineEventListener : public reactphysics3d::EventListener {
 public:
     RedEngineEventListener() = default;
-    virtual void onContact(const reactphysics3d::CollisionCallback::CallbackData& callbackData);
+    RedEngineEventListener(std::unordered_map<reactphysics3d::CollisionBody*, entt::entity>* c_e_c);
+    void onContact(const reactphysics3d::CollisionCallback::CallbackData& callbackData) override;
+    std::queue<PhysicsCollisionData>& GetPhysicsQueue ();
+    std::unordered_map<reactphysics3d::CollisionBody*, entt::entity>* collision_entity_coupling_ = nullptr;
+    std::queue<PhysicsCollisionData> physics_que_ = {};
 };
 
 class CollisionDetection {
@@ -23,11 +29,12 @@ public:
     void AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
     void UpdateCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
     void DeleteCollisionBody(const entt::entity& entity_id);
+    std::queue<PhysicsCollisionData>& GetCollisions();
 
 private:
     reactphysics3d::PhysicsCommon physics_common_{};
     reactphysics3d::PhysicsWorld* world_ = nullptr;
-    RedEngineEventListener event_listener = {};
+    RedEngineEventListener event_listener_;
     std::unordered_map<entt::entity, reactphysics3d::CollisionBody*> entity_collision_coupling_ = {};
     std::unordered_map<reactphysics3d::CollisionBody*, entt::entity> collision_entity_coupling_ = {};
 

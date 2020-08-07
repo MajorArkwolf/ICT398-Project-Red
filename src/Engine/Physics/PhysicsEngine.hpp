@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Physics/CollisionDetection.hpp"
+#include "Engine/Physics/CollisionResolution.hpp"
 
 class ECS;
 
@@ -21,5 +22,6 @@ public:
 private:
     ECS* ecs_ = nullptr;
     CollisionDetection collision_detection_ = {};
+    CollisionResolution collision_resolution_ = {};
 };
 

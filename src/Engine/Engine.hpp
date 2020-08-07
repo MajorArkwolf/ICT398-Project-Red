@@ -15,8 +15,7 @@
 #include "Engine/SubModules/Input/InputManager.hpp"
 #include "Engine/SubModules/Input/RedEventManager.hpp"
 
-
-namespace RedEngine {
+namespace redengine {
 
     /**
      * @class Engine
@@ -24,49 +23,42 @@ namespace RedEngine {
      */
     class Engine {
       public:
-        static constexpr auto FPS_UPDATE_INTERVAL = 0.5;
-
         /// Mouse movement.
-        glm::vec2 mouse = {};
+        glm::vec2 mouse_ = {};
 
         /// GLFW handles.
-        GLFWwindow *window = nullptr;
+        GLFWwindow *window_ = nullptr;
 
         /// Renderer for OpenGL
-        View::OpenGL renderer = {};
-
-        /// The current FPS
-        double fps           = 0.0;
+        view::OpenGL renderer_ = {};
 
         /// The game stack to allow to switch between scenes.
         ///
-        GameStack<std::shared_ptr<BaseState>> gameStack;
+        GameStack<std::shared_ptr<BaseState>> game_stack_;
       private:
         /// GUI Manager for our GUI interface.
-        GUIManager guiManager;
+        GUIManager gui_manager_;
         /// Flag used to determine if the engine should shutdown.
-        bool isRunning = true;
+        bool is_running_ = true;
         /**
          * Sets the basepath of where the engine is running.
          */
-        auto setBasePath() -> void;
+        auto SetupBasePath() -> void;
         /**
          * Privatised constructor due to the engine being a singleton.
          */
         Engine();
 
         /// Testing values
-        int lastWindowXSize     = 800;
-        int lastWindowYSize     = 600;
+        int last_window_x_size_     = 800;
+        int last_window_y_size_     = 600;
 
-        double t  = 0.0;
-        double dt = 0.01;
-        double EngineFrameTime   = 0.0;
-        std::string glsl_version = "";
+        double t_  = 0.0;
+        double dt_ = 0.01;
+        double engine_frame_time_   = 0.0;
+        std::string glsl_version_ = "";
         /// Base path to the program.
-        std::filesystem::path basepath = {};
-
-
+        std::filesystem::path base_path_ = {};
       public:
         /**
          * Deleted move constructor due to unique pointers being used.
@@ -92,13 +84,13 @@ namespace RedEngine {
         /**
          * @brief The game engine main loop
          */
-        static auto run() -> void;
+        static auto Run() -> void;
 
         /**
          * Gets the GUI manager interface.
          * @return the GUIManager object.
          */
-        GUIManager &getGuiManager();
+        GUIManager &GetGuiManager();
 
         /**
          * @brief Overloaded assignment operator, set to default overload
@@ -114,56 +106,57 @@ namespace RedEngine {
          * Check to see if the engine is running.
          * @return the current state of the engine.
          */
-        auto getIsRunning() const -> bool;
+        auto GetIsRunning() const -> bool;
 
         /**
          * Tells the engine the program is requesting termination.
          */
-        auto endEngine() -> void;
+        auto EndEngine() -> void;
 
         /**
          * Process the input from our 3rd party library.
          */
-        void processInput(double deltaTime);
+        void ProcessInput(double deltaTime);
 
         /**
          * Checks to see what type of mouse mode the engine has set.
          * @return the value of the mouse.
          */
-        bool getMouseMode();
+        bool GetMouseMode();
 
         /**
          * Sets the mouse mode
          * @param mode sets the mouse mode.
          */
-        void setMouseMode(bool mode);
+        void GetMouseMode(bool mode);
 
 
         void SettingMenu();
 
         ///Engine Sub Modules
-        ModelManager modelManager = {};
+        ModelManager model_manager_ = {};
 
         ///Engine Variables
 
-        float gammaCorrection = 1.f;
-        bool showSettingsMenu = false;
+        float gamma_correction_ = 1.f;
+        bool show_settings_menu_ = false;
 
-        int getLastWindowXSize() const;
+        int GetLastWindowXSize() const;
 
-        void setLastWindowXSize(int lastWindowXSize);
+        void SetLastWindowXSize(int last_window_x_size);
 
-        int getLastWindowYSize() const;
+        int GetLastWindowYSize() const;
 
-        void setLastWindowYSize(int lastWindowYSize);
+        void SetLastWindowYSize(int last_window_y_size);
 
-        double getT() const;
-        double getDt() const;
-        double getFrameTime() const;
+        double GetT() const;
+        double GetDt() const;
+        double GetFrameTime() const;
+
         /**
          * Gets the basepath of the executable
          */
-        auto getBasePath() const -> std::filesystem::path;
         input::InputManager input_manager;
+        auto GetBasePath() const -> std::filesystem::path;
     };
 }

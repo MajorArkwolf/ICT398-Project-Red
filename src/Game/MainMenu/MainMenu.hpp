@@ -1,8 +1,8 @@
 #pragma once
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
+#include "ECS/ECS.hpp"
 #include "Engine/EulerCamera.hpp"
-#include "ECS/Ecs.hpp"
 
 class MainMenu : public BaseState {
 public:
@@ -55,7 +55,7 @@ public:
     /**
      * Function to start our game.
      */
-    //void startGame(Model::Difficulty newDifficulty);
+    //void startGame(model::Difficulty newDifficulty);
 
     /**
      * Starts the GUI
@@ -71,12 +71,12 @@ private:
     /**
      * Handles window events.
      */
-    void handleWindowEvent();
+    void HandleWindowEvent();
 
     /// Camera for the scene
     //Engine::Camera camera;
     void MainMenuGUI();
-    bool displayDifficultyMenu = false;
+    bool display_difficulty_menu = false;
     ECS ecs = {};
 };
 

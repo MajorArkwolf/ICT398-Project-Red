@@ -5,7 +5,6 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-
 #include "Engine/EulerCamera.hpp"
 
 class GUIManager {
@@ -49,7 +48,7 @@ class GUIManager {
     /**
      * @brief Displays the dev screen
      */
-    void displayDevScreen(Engine::Camera &camera);
+    void displayDevScreen(engine::Camera &camera);
 
     /**
      * @brief Displays the texture manager

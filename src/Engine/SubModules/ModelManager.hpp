@@ -10,10 +10,10 @@ class ModelManager {
   private:
     size_t size = 0;
     std::map<std::filesystem::path, size_t> nameToId = {};
-    std::array<Model::Model, 1000> m;
+    std::array<model::Model, 1000> m;
   public:
-    auto ModelRepo() -> std::array<Model::Model, 1000> &;
+    auto ModelRepo() -> std::array<model::Model, 1000> &;
     auto GetModelID(const std::filesystem::path& filename) -> size_t;
     void Draw(size_t id, Shader *ourShader);
-    Model::Model* getModel(size_t modelID);
+    model::Model* getModel(size_t modelID);
 };

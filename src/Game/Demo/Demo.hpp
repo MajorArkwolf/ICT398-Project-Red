@@ -1,6 +1,7 @@
 #pragma once
+
+#include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
-#include "ECS/Ecs.hpp"
 
 class Demo : public BaseState {
 public:
@@ -16,7 +17,6 @@ public:
     void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
 private:
-    ECS ecs = {};
+    ECS ecs_ = {};
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
 };
-

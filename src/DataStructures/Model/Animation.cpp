@@ -1,27 +1,27 @@
 #include "Animation.hpp"
 
-Animation::Animation(double newDuration, double TPS){
-    duration = newDuration;
-    ticksPerSecond = TPS;
+Animation::Animation(double new_duration, double TPS){
+    duration_ = new_duration;
+    ticks_per_second_ = TPS;
 }
 
-Animation::Animation(const std::string& newName, double newDuration, double TPS){
-    name = newName;
-    duration = newDuration;
-    ticksPerSecond = TPS;
+Animation::Animation(const std::string& new_name, double new_duration, double TPS){
+    name_ = new_name;
+    duration_ = new_duration;
+    ticks_per_second_ = TPS;
 }
 
-AnimJointNode* Animation::FindNodeAnim(const std::string& NodeName)
+AnimJointNode* Animation::FindNodeAnim(const std::string& node_name)
 {
-    if (animMap.count(NodeName)) {
-        return &animMap.at(NodeName);
+    if (anim_map_.count(node_name)) {
+        return &anim_map_.at(node_name);
     }
     return nullptr;
 }
 
-unsigned Animation::FindRotation(double AnimationTime, const AnimJointNode* pNodeAnim){
-    for (unsigned i = 0 ; i < pNodeAnim->numRotKeys; ++i) {
-        if (AnimationTime < pNodeAnim->rotKey[i + 1].first) {
+unsigned Animation::FindRotation(double animation_time, const AnimJointNode* anim_joint){
+    for (unsigned i = 0 ; i < anim_joint->num_rot_keys; ++i) {
+        if (animation_time < anim_joint->rot_key[i + 1].first) {
             return i;
         }
     }
@@ -29,10 +29,10 @@ unsigned Animation::FindRotation(double AnimationTime, const AnimJointNode* pNod
     return 0;
 }
 
-unsigned Animation::FindPosition(double AnimationTime, const AnimJointNode* pNodeAnim)
+unsigned Animation::FindPosition(double animation_time, const AnimJointNode* anim_joint)
 {
-    for (unsigned i = 0 ; i < pNodeAnim->numPosKeys ; ++i) {
-        if (AnimationTime < pNodeAnim->posKey[i + 1].first) {
+    for (unsigned i = 0 ; i < anim_joint->num_pos_keys ; ++i) {
+        if (animation_time < anim_joint->pos_key[i + 1].first) {
             return i;
         }
     }
@@ -40,7 +40,7 @@ unsigned Animation::FindPosition(double AnimationTime, const AnimJointNode* pNod
     return 0;
 }
 
-unsigned Animation::FindScaling(double AnimationTime, const AnimJointNode* pNodeAnim)
+unsigned Animation::FindScaling(double animation_time, const AnimJointNode* anim_joint)
 {
 //    assert(pNodeAnim->mNumScalingKeys > 0);
 //    for (unsigned i = 0 ; i < pNodeAnim->mNumScalingKeys - 1 ; i++) {
@@ -52,13 +52,13 @@ unsigned Animation::FindScaling(double AnimationTime, const AnimJointNode* pNode
     return 0;
 }
 
-double Animation::getTicksPerSecond() const {
-    return ticksPerSecond;
+double Animation::GetTicksPerSecond() const {
+    return ticks_per_second_;
 }
 
-double Animation::getDuration() const {
-    return duration;
+double Animation::GetDuration() const {
+    return duration_;
 }
-const std::string &Animation::getName() const {
-    return name;
+const std::string &Animation::GetName() const {
+    return name_;
 }

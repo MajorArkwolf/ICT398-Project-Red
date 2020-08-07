@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/SubModules/Input/InputManager.hpp"
-#include "Engine/EulerCamera.hpp"
 #include <glm/matrix.hpp>
+#include "Engine/EulerCamera.hpp"
 
 /**
  * @class BaseState
@@ -71,5 +71,5 @@ class BaseState {
      */
     virtual void GUIEnd() = 0;
 
-    Engine::Camera camera;
+    engine::Camera camera;
 };

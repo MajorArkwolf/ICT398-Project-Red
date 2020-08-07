@@ -1,15 +1,16 @@
 #pragma once
-#include <vector>
-#include <glm/glm.hpp>
 #include <filesystem>
-#include "Renderer.hpp"
-#include "Shader.hpp"
-#include "DrawStruct.hpp"
+#include <glm/glm.hpp>
+#include <vector>
+
 #include "DataStructures/Model/DataTypes.hpp"
-#include "Skybox.hpp"
-#include "Engine/EulerCamera.hpp"
 #include "DataStructures/Model/Model.hpp"
 #include "DataStructures/Model/Vertix.hpp"
+#include "DrawStruct.hpp"
+#include "Engine/EulerCamera.hpp"
+#include "Renderer.hpp"
+#include "Skybox.hpp"
+#include "Engine/Renderer/Shader.hpp"
 
 namespace view {
     class OpenGL: public Renderer {
@@ -74,7 +75,7 @@ namespace view {
          * Sets the camera to the renderer for the render pass. Required for lighting.
          * @param main_camera the active camera in the scene.
          */
-        void SetCameraOnRender(Engine::Camera &main_camera);
+        void SetCameraOnRender(engine::Camera &main_camera);
         /**
          * Updates the viewport.
          * @param bl Bottom left, should be 0.
@@ -84,13 +85,13 @@ namespace view {
          */
         void UpdateViewPort(int bl, int br, int tl, int tr) override;
 
-        Engine::Camera* GetActiveCamera() {return camera_;}
+        engine::Camera* GetActiveCamera() {return camera_;}
 
     private:
         /// Decides if the renderer should be in wire frame mode or not.
         bool wire_frame_ = false;
         /// The active camera on the draw pass.
-        Engine::Camera *camera_ = nullptr;
+        engine::Camera *camera_ = nullptr;
         /// The sky box for the scene.
         Skybox sky_box = {};
         /**

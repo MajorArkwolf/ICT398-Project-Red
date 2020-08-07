@@ -30,7 +30,7 @@ void model::Animator::BoneTransform(double TimeInSeconds) {
 }
 void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
                                         const glm::mat4 &ParentTransform) {
-    glm::mat4 NodeTransformation(jN.Transform);
+    glm::mat4 NodeTransformation(jN.transform);
 
     const auto* pNodeAnim = loadedAnimation->FindNodeAnim(jN.name);
 
@@ -57,7 +57,7 @@ void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
     if (animatedModel->bone_mapping_.find(jN.name) != animatedModel->bone_mapping_.end()) {
         unsigned BoneIndex = animatedModel->bone_mapping_[jN.name];
        Transforms[BoneIndex] = animatedModel->global_inverse_transform_ * GlobalTransformation *
-                               animatedModel->bone_info_[BoneIndex].BoneOffset;
+                               animatedModel->bone_info_[BoneIndex].bone_offset;
     }
 
     for (auto &child : jN.children) {

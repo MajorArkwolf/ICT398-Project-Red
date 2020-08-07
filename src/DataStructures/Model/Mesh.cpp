@@ -15,9 +15,9 @@ void Mesh::Draw(Shader& shader) {
 }
 void Mesh::AddBoneData(unsigned vector_id, int bone_id, float weight) {
     for (int x = 0; x < 4; ++x) {
-        if (vertices_.at(vector_id).BoneWeight[x] == 0.0f) {
-            vertices_.at(vector_id).BoneIDs[x]    = bone_id;
-            vertices_.at(vector_id).BoneWeight[x] = weight;
+        if (vertices_.at(vector_id).bone_weight[x] == 0.0f) {
+            vertices_.at(vector_id).bone_ids[x]    = bone_id;
+            vertices_.at(vector_id).bone_weight[x] = weight;
             return;
         }
     }

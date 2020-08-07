@@ -111,14 +111,14 @@ void GUIManager::displayQuitScreen() {
 
 }
 
-void GUIManager::displayDevScreen(Engine::Camera &camera) {
+void GUIManager::displayDevScreen(engine::Camera &camera) {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     bool &windowOpen = windowOpenMap.at("dev");
     if (windowOpen) {
-        auto key = camera.getLocation();
+        auto key = camera.GetLocation();
         ImGui::Begin("Dev Menu", &windowOpen, ImGuiWindowFlags_NoCollapse);
-        ImGui::Text("Camera Position: %f, %f, %f", camera.Position.x, camera.Position.y,
-                    camera.Position.z);
+        ImGui::Text("Camera Position: %f, %f, %f", camera.position_.x, camera.position_.y,
+                    camera.position_.z);
         //ImGui::SliderFloat("Camera Speed", &camera.MovementSpeed, 0.001, 2.0);
         ImGui::Text("Camera Location Key: %d, %d", key.x, key.y);
         ImGui::End();

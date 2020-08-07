@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include <assimp/anim.h>
+
 #include <glm/fwd.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <string>
+#include <vector>
 
 #include "DataStructures/Model/DataTypes.hpp"
 #include "Engine/Renderer/DrawStruct.hpp"

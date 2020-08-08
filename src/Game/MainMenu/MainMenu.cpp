@@ -53,7 +53,7 @@ void MainMenu::HandleWindowEvent() {
     engine.renderer_.ResizeWindow();
 }
 
-//void MainMenu::handleInputData(Controller::Input::InputData inputData, double deltaTime) {
+void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
 //    auto &engine      = redengine::Engine::get();
 //    auto &guiManager  = engine.getGuiManager();
 //    auto handledMouse = false;
@@ -114,10 +114,10 @@ void MainMenu::HandleWindowEvent() {
 //        } break;
 //        default: break;
 //    }
-//    if (!handledMouse) {
-//        engine.mouse = {0.0f, 0.0f};
-//    }
-//}
+    //if (!handledMouse) {
+    //    engine.mouse = {0.0f, 0.0f};
+    //}
+}
 
 void MainMenu::GUIStart() {
     auto &engine  = redengine::Engine::get();

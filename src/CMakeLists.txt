@@ -1,7 +1,7 @@
 
 # Add source files.
 target_sources(${PROJECT_NAME} PRIVATE
-    #This thing goes brrrrr
+    #This thing goes brrrrrooooooooommmmmmmm
     main.cpp
 
     #Engine
@@ -11,6 +11,10 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/Renderer/OpenGL.cpp
     Engine/Renderer/Shader.cpp
     Engine/Renderer/Skybox.cpp
+    #--Input
+    Engine/SubModules/Input/GLFWInputWrangler.cpp
+    Engine/SubModules/Input/InputManager.cpp
+
     #--SubModules
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp

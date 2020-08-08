@@ -1,5 +1,5 @@
 #include "Engine/Engine.hpp"
-
+#include "Engine/SubModules/Input/GLFWInputWrangler.hpp"
 #include <iostream>
 #include <imgui.h>
 // Game States
@@ -106,7 +106,7 @@ redengine::Engine::Engine(){
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
-
+    input::GLFWInputWrangler::Init(window_);
     GUIManager::initialiseImGUI(window_);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
@@ -123,37 +123,38 @@ auto redengine::Engine::get() -> Engine & {
 }
 
 auto redengine::Engine::ProcessInput(double deltaTime) -> void {
-//    GLEQevent event;
-//    auto handledMouse  = true;
-//    auto &inputManager = Controller::Input::InputManager::getInstance();
-//
-//    while (gleqNextEvent(&event)) {
-//        if (event.type == GLEQ_KEY_PRESSED || event.type == GLEQ_KEY_RELEASED) {
-//            inputManager.recordKeyStates(event);
-//        }
-//        switch (event.type) {
-//            case GLEQ_KEY_PRESSED: {
-//                if (event.keyboard.key == GLFW_KEY_F1) {
-//                    auto mouseMode = glfwGetInputMode(window, GLFW_CURSOR);
-//                    if (mouseMode == GLFW_CURSOR_NORMAL) {
-//                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//                    } else {
-//                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-//                    }
-//                }
-//            } break;
-//            case GLEQ_WINDOW_CLOSED: {
-//                this->endEngine();
-//            } break;
-//            default: break;
-//        }
-//
-//        gameStack.getTop()->handleInputData(inputManager.ProcessInput(event), dt);
-//        gleqFreeEvent(&event);
-//    }
-//    if (!handledMouse) {
-//        this->mouse = {0.0f, 0.0f};
-//    }
+    using namespace input;
+     GLFWEvent glfw_event;
+    auto handledMouse  = true;
+
+    while (GLFWInputWrangler::PollEvent(glfw_event)) {
+        auto event = input_manager.ConvertEvent(glfw_event);
+        if (event.type == InputType::kKeyPressed || event.type == input::InputType::kKeyReleased) {
+            input_manager.RecordKeyStates(event);
+        }
+        switch (event.type) {
+            case InputType::kKeyPressed: {
+                auto keyboard = std::get<InputEvent::KeyboardEvent>(event.data);
+                if (keyboard.key == PhysicalKey::F1) {
+                    auto mouseMode = glfwGetInputMode(window_, GLFW_CURSOR);
+                    if (mouseMode == GLFW_CURSOR_NORMAL) {
+                        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    } else {
+                        glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    }
+                }
+            } break;
+            case InputType::kWindowClosed: {
+                this->EndEngine();
+            } break;
+            default: break;
+        }
+
+        game_stack_.getTop()->HandleInputData(event, deltaTime);
+    }
+    if (!handledMouse) {
+        this->mouse_ = {0.0f, 0.0f};
+    }
 }
 
 bool redengine::Engine::GetMouseMode() {

@@ -17,7 +17,7 @@ PhysicsDemo::PhysicsDemo() {
     std::filesystem::path path = "";
     path.append("PhysicsDemo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, ecs_);
+    JSONLoader::LoadScene(path, &ecs_, nullptr);
 }
 
 void PhysicsDemo::Display(const glm::mat4& projection, const glm::mat4& view) {

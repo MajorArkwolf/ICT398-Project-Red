@@ -19,7 +19,7 @@ void MainMenu::Init() {
     std::filesystem::path path = "";
     path.append("MainScreen");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, ecs);
+    JSONLoader::LoadScene(path, &ecs, nullptr);
     camera.pitch_ -= 20.0;
     camera.UpdateCameraVectors();
 }

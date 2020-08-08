@@ -9,6 +9,7 @@
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Physics/PhysicsEngine.hpp"
 
 nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
   nlohmann::json j = {};
@@ -21,12 +22,16 @@ nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
 }
 
 std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
-    const std::filesystem::path &file_path, ECS &ecs) {
+    const std::filesystem::path &file_path, ECS *ecs= nullptr, PhysicsEngine *pe = nullptr) {
+
   nlohmann::json j = LoadJson(file_path);
   std::optional<std::shared_ptr<Entity>> entity = {};
+    if (ecs == nullptr) {
+        return entity;
+    }
   auto base_path = redengine::Engine::get().GetBasePath();
   auto full_path = base_path / "res" / "Entity" / file_path;
-  entity = std::make_shared<Entity>(ecs.CreateEntity());
+  entity = std::make_shared<Entity>(ecs->CreateEntity());
   auto &ent = entity.value();
   if (j.contains("Model")) {
     try {
@@ -86,7 +91,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
   return entity;
 }
 
-void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS &ecs) {
+void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs= nullptr, PhysicsEngine *pe = nullptr) {
   auto base_path = redengine::Engine::get().GetBasePath();
   auto full_path = base_path / "res" / "Entity" / file_path;
   auto j = LoadJson(full_path);
@@ -95,7 +100,9 @@ void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS &ecs) {
     for (auto &e : entities) {
       auto file = e.get<std::string>();
       auto file_name = full_path.remove_filename().append(file);
-      LoadEntity(file_name, ecs);
+      if (ecs != nullptr) {
+        LoadEntity(file_name, *ecs);
+      }
     }
   }
 }

@@ -42,12 +42,12 @@ void model::Model::LoadModel(const std::filesystem::path &path) {
     auto *scene =
         importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs |
                                     aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights | aiProcess_GenSmoothNormals);
-
     // check for errors
+
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode) // if is Not Zero
     {
-        std::string error = importer.GetErrorString();
+        std::string error = static_cast<std::string>(importer.GetErrorString());
         std::cout << "ERROR::ASSIMP:: " << error << std::endl;
         return;
     }

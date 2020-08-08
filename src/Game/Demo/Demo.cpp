@@ -8,8 +8,6 @@
 
 template<class... Ts> struct overload : Ts ... {	using Ts::operator()...;};
 template<class... Ts> overload(Ts...)->overload<Ts...>;
-// TEST
-#include "Engine/Engine.hpp"
 
 Demo::Demo() {
 	camera = engine::Camera();

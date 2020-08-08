@@ -1,15 +1,10 @@
 #include <Engine/Renderer/OpenGL.hpp>
 #include <Engine/Engine.hpp>
 #include "MainMenu.hpp"
-#include "DataStructures/Model/Animation.hpp"
 #include <imgui.h>
-#include "Engine/SubModules/GUIManager.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
-
-//using Controller::Input::BLUE_InputAction;
-//using Controller::Input::BLUE_InputType;
 
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;

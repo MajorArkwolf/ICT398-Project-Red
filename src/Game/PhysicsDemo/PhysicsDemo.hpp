@@ -15,8 +15,10 @@ class PhysicsDemo : public BaseState {
     void GUIEnd() override;
     void Update(double t, double dt) override;
     void FixedUpdate(double t, double dt) override;
+    void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
  private:
+    bool forward_ = false, backward_ = false, left_ = false, right_ = false;
     ECS ecs_ = {};
     PhysicsEngine physics_engine_ = {};
 };

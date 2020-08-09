@@ -1,4 +1,5 @@
 #include "CollisionDetection.hpp"
+#include "Engine/Engine.hpp"
 
 static inline glm::vec3 ConvertPosition(const reactphysics3d::Vector3& r_vec) {
     glm::vec3 pos = {};
@@ -67,6 +68,10 @@ CollisionDetection::CollisionDetection() {
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
     world_ = physics_common_.createPhysicsWorld();
     world_->setEventListener(&event_listener_);
+    auto base_path = redengine::Engine::get().GetBasePath();
+    auto vs = base_path / "res" / "shader" / "react_shader.vs";
+    auto fs = base_path / "res" / "shader" / "react_shader.fv";
+    shader_ = std::make_unique<Shader>(vs, fs, "");
 
     //Generate line buffers for test renderer
     glGenVertexArrays(1, &l_vao_);
@@ -134,13 +139,14 @@ void CollisionDetection::ToggleRenderer() {
 }
 
 void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
-    if (renderer_) {
+    if (renderer_ && false) {
+        //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // Lines
         if (line_num_ > 0) {
-            line_shader_->Use();
-            line_shader_->SetMat4("view", view);
-            line_shader_->SetMat4("projection", projection);
+            shader_->Use();
+            shader_->SetMat4("view", view);
+            shader_->SetMat4("projection", projection);
 
             // Bind the VAO
             glBindVertexArray(l_vao_);

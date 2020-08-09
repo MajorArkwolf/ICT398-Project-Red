@@ -41,8 +41,8 @@ private:
     unsigned int l_vbo_ = 0, l_vao_ = 0;
     unsigned int t_vbo_ = 0, t_vao_ = 0;
     unsigned int line_num_ = 0, triag_num_ = 0;
-    std::unique_ptr<Shader> line_shader_ = nullptr;
-    std::unique_ptr<Shader> triangle_shader_ = nullptr;
+    std::unique_ptr<Shader> shader_ = nullptr;
+
 
     reactphysics3d::PhysicsCommon physics_common_{};
     reactphysics3d::PhysicsWorld* world_ = nullptr;

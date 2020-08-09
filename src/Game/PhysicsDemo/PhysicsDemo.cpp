@@ -17,7 +17,7 @@ PhysicsDemo::PhysicsDemo() {
     std::filesystem::path path = "";
     path.append("PhysicsDemo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, nullptr);
+    JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
 }
 
 void PhysicsDemo::Display(const glm::mat4& projection, const glm::mat4& view) {
@@ -34,6 +34,7 @@ void PhysicsDemo::GUIEnd() {
 }
 
 void PhysicsDemo::Update(double t, double dt) {
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     ecs_.Update(t, dt);
     physics_engine_.Update(t, dt);
 }

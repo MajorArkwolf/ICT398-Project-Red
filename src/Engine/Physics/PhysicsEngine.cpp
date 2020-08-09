@@ -20,7 +20,7 @@ void PhysicsEngine::Update(double t, double dt) {
 }
 
 void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::dvec2& cameraPos) {
-
+    collision_detection_.Draw(projection, view);
 }
 
 void PhysicsEngine::SetECS(ECS *ecs) {

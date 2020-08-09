@@ -105,3 +105,25 @@ void CollisionDetection::DeleteCollisionBody(const entt::entity &entity_id) {
 std::queue<PhysicsCollisionData> &CollisionDetection::GetCollisions() {
     return event_listener_.GetPhysicsQueue();
 }
+
+void CollisionDetection::ToggleRenderer() {
+    renderer_ = !renderer_;
+    world_->setIsDebugRenderingEnabled(renderer_);
+    if (renderer_) {
+        // Get a reference to the debug renderer
+        reactphysics3d::DebugRenderer& debugRenderer = world_->getDebugRenderer();
+        // Select the contact points and contact normals to be displayed
+        debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
+        debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+    }
+}
+
+void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
+    if (renderer_) {
+        reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
+        auto line_num = debug_renderer.getNbLines();
+        auto triag_num = debug_renderer.getNbTriangles();
+        auto line_array = debug_renderer.getLinesArray();
+        auto triangle_array = debug_renderer.getTrianglesArray();
+    }
+}

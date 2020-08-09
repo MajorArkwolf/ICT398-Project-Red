@@ -88,6 +88,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
       std::cerr << "JSON Animation failed: " << e.what() << '\n';
     }
   }
+  if (j.contains("Physics") && pe != nullptr) {
+      //TODO implement this
+  }
   return entity;
 }
 
@@ -101,7 +104,7 @@ void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs= nul
       auto file = e.get<std::string>();
       auto file_name = full_path.remove_filename().append(file);
       if (ecs != nullptr) {
-        LoadEntity(file_name, *ecs);
+        LoadEntity(file_name, ecs);
       }
     }
   }

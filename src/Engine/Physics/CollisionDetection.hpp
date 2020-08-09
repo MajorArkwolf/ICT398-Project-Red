@@ -25,13 +25,15 @@ public:
      */
     CollisionDetection();
     ~CollisionDetection();
-
+    void ToggleRenderer();
     void AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
     void UpdateCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
     void DeleteCollisionBody(const entt::entity& entity_id);
+    void Draw(const glm::mat4& projection, const glm::mat4& view);
     std::queue<PhysicsCollisionData>& GetCollisions();
 
 private:
+    bool renderer_ = false;
     reactphysics3d::PhysicsCommon physics_common_{};
     reactphysics3d::PhysicsWorld* world_ = nullptr;
     RedEngineEventListener event_listener_;

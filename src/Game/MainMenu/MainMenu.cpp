@@ -1,14 +1,10 @@
 #include <Engine/Renderer/OpenGL.hpp>
 #include <Engine/Engine.hpp>
 #include "MainMenu.hpp"
-#include "DataStructures/Model/Animation.hpp"
 #include <imgui.h>
-#include "Engine/SubModules/GUIManager.hpp"
 #include "Game/Demo/Demo.hpp"
+#include "Game/PhysicsDemo/PhysicsDemo.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
-
-//using Controller::Input::BLUE_InputAction;
-//using Controller::Input::BLUE_InputType;
 
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;
@@ -23,7 +19,7 @@ void MainMenu::Init() {
     std::filesystem::path path = "";
     path.append("MainScreen");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, ecs);
+    JSONLoader::LoadScene(path, &ecs, nullptr);
     camera.pitch_ -= 20.0;
     camera.UpdateCameraVectors();
 }
@@ -136,6 +132,9 @@ void MainMenu::MainMenuGUI() {
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<Demo>());
+    }
+    if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
+        engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
     }
     ImGui::Separator();
 

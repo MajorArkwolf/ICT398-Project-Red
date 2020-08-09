@@ -19,12 +19,17 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
     Engine/SubModules/JsonLoader.cpp
+    #--Physics
+    Engine/Physics/PhysicsEngine.cpp
+    Engine/Physics/CollisionDetection.cpp
 
     #Game
     #--MainMenu
     Game/MainMenu/MainMenu.cpp
     #--Demo Scene
     Game/Demo/Demo.cpp
+    #--Physics Demo Scene
+    Game/PhysicsDemo/PhysicsDemo.cpp
 
     #DataStructures
     #--Model
@@ -34,10 +39,11 @@ target_sources(${PROJECT_NAME} PRIVATE
     DataStructures/Model/Animator.cpp
 
     #ECS
-        ECS/ECS.cpp
+    ECS/ECS.cpp
     ECS/Entity.cpp
     #--Components
     ECS/Component/Model.cpp
+    ECS/Component/Basic.cpp
     #--Systems
     ECS/System/System.cpp
 )

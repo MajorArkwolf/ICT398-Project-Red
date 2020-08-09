@@ -16,4 +16,16 @@ namespace component {
         }
         ::model::Animator animator_ = {};
     };
+
+    class PhysicBody {
+        bool static_object = false;
+    private:
+        size_t id = 0;
+        glm::dvec3 velocity = {};
+        double mass = 1;
+    public:
+        void AddForce(glm::dvec3 additional_force);
+        void SetVelocity(glm::dvec3 new_velocity);
+        glm::dvec3 GetVelocity() const;
+    };
 }

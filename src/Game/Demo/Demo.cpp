@@ -8,15 +8,13 @@
 
 template<class... Ts> struct overload : Ts ... {	using Ts::operator()...;};
 template<class... Ts> overload(Ts...)->overload<Ts...>;
-// TEST
-#include "Engine/Engine.hpp"
 
 Demo::Demo() {
 	camera = engine::Camera();
 	camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
 	relativeMouse = true;
-	auto entity = JSONLoader::LoadEntity("./res/Entity/Test.json", this->ecs_);
-	auto entity2 = JSONLoader::LoadEntity("./res/Entity/Test2.json", this->ecs_);
+	auto entity = JSONLoader::LoadEntity("./res/Entity/Test.json", &this->ecs_, nullptr);
+	auto entity2 = JSONLoader::LoadEntity("./res/Entity/Test2.json", &this->ecs_, nullptr);
 }
 
 void Demo::Init() {

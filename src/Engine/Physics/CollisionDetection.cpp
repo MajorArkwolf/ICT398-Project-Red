@@ -1,6 +1,5 @@
 #include "CollisionDetection.hpp"
 
-
 static inline glm::vec3 ConvertPosition(const reactphysics3d::Vector3& r_vec) {
     glm::vec3 pos = {};
     pos.x = r_vec.x;
@@ -64,9 +63,22 @@ std::queue<PhysicsCollisionData> &RedEngineEventListener::GetPhysicsQueue() {
 }
 
 CollisionDetection::CollisionDetection() {
+    using reactphysics3d::DebugRenderer;
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
     world_ = physics_common_.createPhysicsWorld();
     world_->setEventListener(&event_listener_);
+
+    //Generate line buffers for test renderer
+    glGenVertexArrays(1, &l_vao_);
+    glGenBuffers(1, &l_vbo_);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    //Generate triangle buffers for test renderer
+    glGenVertexArrays(1, &t_vao_);
+    glGenBuffers(1, &t_vbo_);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 CollisionDetection::~CollisionDetection() {
@@ -109,21 +121,78 @@ std::queue<PhysicsCollisionData> &CollisionDetection::GetCollisions() {
 void CollisionDetection::ToggleRenderer() {
     renderer_ = !renderer_;
     world_->setIsDebugRenderingEnabled(renderer_);
+    // Get a reference to the debug renderer
+    reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
     if (renderer_) {
-        // Get a reference to the debug renderer
-        reactphysics3d::DebugRenderer& debugRenderer = world_->getDebugRenderer();
         // Select the contact points and contact normals to be displayed
-        debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
-        debugRenderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+    } else {
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, false);
     }
 }
 
 void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
     if (renderer_) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // Lines
+        if (line_num_ > 0) {
+            line_shader_->Use();
+            line_shader_->SetMat4("view", view);
+            line_shader_->SetMat4("projection", projection);
+
+            // Bind the VAO
+            glBindVertexArray(l_vao_);
+            glBindVertexArray(l_vbo_);
+
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*)nullptr);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*)sizeof(rp3d::Vector3));
+
+            // Draw the lines geometry
+            glDrawArrays(GL_LINES, 0, line_num_ * 2);
+
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
+        }
+
+        if (triag_num_ > 0) {
+
+            // Bind the VAO
+            glBindVertexArray(t_vao_);
+            glBindVertexArray(t_vbo_);
+
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*)nullptr);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*)sizeof(rp3d::Vector3));
+
+            // Draw the triangles geometry
+            glDrawArrays(GL_TRIANGLES, 0, triag_num_ * 3);
+
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
+        }
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+}
+
+void CollisionDetection::Update(double t, double dt) {
+    if (renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
-        auto line_num = debug_renderer.getNbLines();
-        auto triag_num = debug_renderer.getNbTriangles();
-        auto line_array = debug_renderer.getLinesArray();
-        auto triangle_array = debug_renderer.getTrianglesArray();
+
+        line_num_ = debug_renderer.getNbLines();
+        glBufferData(GL_ARRAY_BUFFER, line_num_ * sizeof(reactphysics3d::DebugRenderer::DebugLine), debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+
+        triag_num_ = debug_renderer.getNbTriangles();
+        glBufferData(GL_ARRAY_BUFFER, triag_num_ * sizeof(reactphysics3d::DebugRenderer::DebugTriangle), debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
     }
 }

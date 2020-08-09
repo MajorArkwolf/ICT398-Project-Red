@@ -16,7 +16,7 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
 }
 
 void PhysicsEngine::Update(double t, double dt) {
-
+    collision_detection_.Update(t, dt);
 }
 
 void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::dvec2& cameraPos) {

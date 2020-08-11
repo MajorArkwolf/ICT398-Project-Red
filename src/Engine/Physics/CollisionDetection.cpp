@@ -70,7 +70,7 @@ CollisionDetection::CollisionDetection() {
     world_->setEventListener(&event_listener_);
     auto base_path = redengine::Engine::get().GetBasePath();
     auto vs = base_path / "res" / "shader" / "react_shader.vs";
-    auto fs = base_path / "res" / "shader" / "react_shader.fv";
+    auto fs = base_path / "res" / "shader" / "react_shader.fs";
     shader_ = std::make_unique<Shader>(vs, fs, "");
 
     //Generate line buffers for test renderer
@@ -139,15 +139,18 @@ void CollisionDetection::ToggleRenderer() {
 }
 
 void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
-    if (renderer_ && false) {
+    if (renderer_) {
         //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        shader_->Use();
+        shader_->SetMat4("view", view);
+        shader_->SetMat4("projection", projection);
+        auto model = glm::transpose(glm::inverse(view));
+        shader_->SetMat4("model", model);
+
         // Lines
         if (line_num_ > 0) {
-            shader_->Use();
-            shader_->SetMat4("view", view);
-            shader_->SetMat4("projection", projection);
-
             // Bind the VAO
             glBindVertexArray(l_vao_);
             glBindVertexArray(l_vbo_);
@@ -194,11 +197,13 @@ void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view
 void CollisionDetection::Update(double t, double dt) {
     if (renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
-
-        line_num_ = debug_renderer.getNbLines();
-        glBufferData(GL_ARRAY_BUFFER, line_num_ * sizeof(reactphysics3d::DebugRenderer::DebugLine), debug_renderer.getLinesArray(), GL_STREAM_DRAW);
-
-        triag_num_ = debug_renderer.getNbTriangles();
-        glBufferData(GL_ARRAY_BUFFER, triag_num_ * sizeof(reactphysics3d::DebugRenderer::DebugTriangle), debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+        if (debug_renderer.getNbLines() > 0) {
+            line_num_ = debug_renderer.getNbLines();
+            glBufferData(GL_ARRAY_BUFFER, line_num_ * sizeof(reactphysics3d::DebugRenderer::DebugLine), debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+        }
+        if (debug_renderer.getNbTriangles() > 0) {
+            triag_num_ = debug_renderer.getNbTriangles();
+            glBufferData(GL_ARRAY_BUFFER, triag_num_ * sizeof(reactphysics3d::DebugRenderer::DebugTriangle), debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+        }
     }
 }

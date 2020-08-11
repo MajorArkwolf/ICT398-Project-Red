@@ -35,7 +35,7 @@ public:
     std::queue<PhysicsCollisionData>& GetCollisions();
 
 private:
-    bool renderer_ = false;
+    bool renderer_ = true;
 
     //Test Renderer Values
     unsigned int l_vbo_ = 0, l_vao_ = 0;

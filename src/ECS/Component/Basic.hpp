@@ -23,6 +23,7 @@ namespace component {
         size_t id = 0;
         glm::dvec3 velocity = {};
         double mass = 1;
+        //tensorflow mat3
     public:
         void AddForce(glm::dvec3 additional_force);
         void SetVelocity(glm::dvec3 new_velocity);

@@ -18,55 +18,55 @@ namespace model {
          */
         Animator() = default;
         /// animation that will be played.
-        Animation* loadedAnimation = nullptr;
+        Animation* loaded_animation = nullptr;
         /// The transforms after they have been updated.
-        std::vector<glm::mat4> Transforms = {};
+        std::vector<glm::mat4> transforms = {};
         /// Animated model.
-        Model* animatedModel = nullptr;
+        Model* animated_model = nullptr;
 
         /**
          * Function that will update bones based on time.
-         * @param TimeInSeconds Delta time variable should be passed in.
+         * @param time_seconds Delta time variable should be passed in.
          */
-        void BoneTransform(double TimeInSeconds);
+        void BoneTransform(double time_seconds);
 
         /**
          * Find the node that will
-         * @param AnimationTime animation time since start
+         * @param animation_time animation time since start
          * @param jN joint being animated
-         * @param ParentTransform the current transform of the parent
+         * @param parent_transform the current transform of the parent
          */
-        void ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
-                               const glm::mat4 &ParentTransform);
+        void ReadNodeHeirarchy(const double &animation_time, const JointsName& jN,
+                               const glm::mat4 &parent_transform);
 
         /**
          * Calculate the position between two points.
-         * @param AnimationTime time passed between key 1 and key 2.
+         * @param animation_time time passed between key 1 and key 2.
          * @param pNodeAnim next animation.
          * @return the resultant vector.
          */
-        glm::vec3 CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim);
+        glm::vec3 CalcInterpolatedPosition(double animation_time, const AnimJointNode *pNodeAnim);
 
         /**
          * Calculate the position between two points.
-         * @param AnimationTime time passed between key 1 and key 2.
+         * @param animation_time time passed between key 1 and key 2.
          * @param pNodeAnim next animation.
          * @return the resultant quat.
          */
-        glm::quat CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim);
+        glm::quat CalcInterpolatedRotation(double animation_time, const AnimJointNode *pNodeAnim);
 
         /**
          * Load animation
-         * @param newAnim string name being loaded
-         * @param endWhenCompletedFlag should the animation end of completion
+         * @param new_anim string name being loaded
+         * @param end_when_completed_flag should the animation end of completion
          */
-        void LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag = false);
+        void LoadAnimation(const std::string& new_anim, bool end_when_completed_flag = false);
 
         /**
          * load the model based of the models id.
-         * @param modelID model ID it should be linked to
+         * @param model_ID model ID it should be linked to
          */
-        void LinkToModel(size_t modelID);
+        void LinkToModel(size_t model_ID);
 
         /**
          * Reset the animation time back to zero.
@@ -80,11 +80,11 @@ namespace model {
         bool IsAnimationedEnded() const;
       private:
         /// Animation time
-        double animationTime = 0.0;
+        double animation_time = 0.0;
         /// Checks to see if the animation should loop or end
-        bool endWhenCompleted = false;
+        bool end_when_completed = false;
         /// True if the clip has ended.
-        bool clipEnded = false;
+        bool clip_ended = false;
     };
 }
 

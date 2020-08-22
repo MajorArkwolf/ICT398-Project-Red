@@ -2,28 +2,28 @@
 #include "Engine/Engine.hpp"
 
 void model::Animator::BoneTransform(double TimeInSeconds) {
-    Transforms.resize(100);
-    animationTime += TimeInSeconds;
-    if (animatedModel != nullptr) {
-        if (loadedAnimation != nullptr) {
-            if (animatedModel->is_animated_) {
-                double TicksPerSecond = loadedAnimation->GetTicksPerSecond();
-                double TimeInTicks    = animationTime * TicksPerSecond;
-                if (endWhenCompleted) {
-                    if (TimeInTicks >= loadedAnimation->GetDuration()) {
-                        clipEnded = true;
+    transforms.resize(100);
+    animation_time += TimeInSeconds;
+    if (animated_model != nullptr) {
+        if (loaded_animation != nullptr) {
+            if (animated_model->is_animated_) {
+                double TicksPerSecond = loaded_animation->GetTicksPerSecond();
+                double TimeInTicks    = animation_time * TicksPerSecond;
+                if (end_when_completed) {
+                    if (TimeInTicks >= loaded_animation->GetDuration()) {
+                        clip_ended = true;
                         return;
                     }
                 }
                 glm::mat4 Identity(1.0f);
 
-                double AnimationTime = fmod(TimeInTicks, loadedAnimation->GetDuration());
+                double AnimationTime = fmod(TimeInTicks, loaded_animation->GetDuration());
 
-                ReadNodeHeirarchy(AnimationTime, animatedModel->root_joint_, Identity);
+                ReadNodeHeirarchy(AnimationTime, animated_model->root_joint_, Identity);
             }
         } else {
             for (unsigned i = 0; i < 100; i++) {
-                Transforms[i] = glm::mat4(1.0f);
+                transforms[i] = glm::mat4(1.0f);
             }
         }
     }
@@ -32,7 +32,7 @@ void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
                                         const glm::mat4 &ParentTransform) {
     glm::mat4 NodeTransformation(jN.transform);
 
-    const auto* pNodeAnim = loadedAnimation->FindNodeAnim(jN.name);
+    const auto* pNodeAnim = loaded_animation->FindNodeAnim(jN.name);
 
     if (pNodeAnim) {
         // Interpolate scaling and generate scaling transformation matrix
@@ -54,10 +54,10 @@ void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
 
     glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
 
-    if (animatedModel->bone_mapping_.find(jN.name) != animatedModel->bone_mapping_.end()) {
-        unsigned BoneIndex = animatedModel->bone_mapping_[jN.name];
-       Transforms[BoneIndex] = animatedModel->global_inverse_transform_ * GlobalTransformation *
-                               animatedModel->bone_info_[BoneIndex].bone_offset;
+    if (animated_model->bone_mapping_.find(jN.name) != animated_model->bone_mapping_.end()) {
+        unsigned BoneIndex = animated_model->bone_mapping_[jN.name];
+       transforms[BoneIndex] = animated_model->global_inverse_transform_ * GlobalTransformation *
+                               animated_model->bone_info_[BoneIndex].bone_offset;
     }
 
     for (auto &child : jN.children) {
@@ -72,7 +72,7 @@ glm::quat model::Animator::CalcInterpolatedRotation(double AnimationTime, const 
         Out = pNodeAnim->rot_key[0].second;
         return Out;
     }
-    unsigned RotationIndex = loadedAnimation->FindRotation(AnimationTime, pNodeAnim);
+    unsigned RotationIndex = loaded_animation->FindRotation(AnimationTime, pNodeAnim);
     unsigned NextRotationIndex = (RotationIndex + 1);
     assert(NextRotationIndex < pNodeAnim->num_rot_keys);
     double DeltaTime = pNodeAnim->rot_key[NextRotationIndex].first - pNodeAnim->rot_key[RotationIndex].first;
@@ -91,7 +91,7 @@ glm::vec3 model::Animator::CalcInterpolatedPosition(double AnimationTime, const 
         return Out;
     }
 
-    unsigned PositionIndex = loadedAnimation->FindPosition(AnimationTime, pNodeAnim);
+    unsigned PositionIndex = loaded_animation->FindPosition(AnimationTime, pNodeAnim);
     unsigned NextPositionIndex = (PositionIndex + 1);
     assert(NextPositionIndex < pNodeAnim->num_pos_keys);
     double DeltaTime = pNodeAnim->pos_key[NextPositionIndex].first - pNodeAnim->pos_key[PositionIndex].first;
@@ -107,25 +107,25 @@ glm::vec3 model::Animator::CalcInterpolatedPosition(double AnimationTime, const 
 //ALL CHECKS WITH THE STRING MUST BE UPPERCASE
 void model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
     size_t index = 0;
-    if (loadedAnimation != nullptr) {
-        index = loadedAnimation->GetName().find(newAnim);
+    if (loaded_animation != nullptr) {
+        index = loaded_animation->GetName().find(newAnim);
     } else {
         index = std::string::npos;
     }
     if (index == std::string::npos) {
-        animationTime = 0.0;
-        loadedAnimation = animatedModel->GetAnimation(newAnim);
-        endWhenCompleted = endWhenCompletedFlag;
-        clipEnded = false;
+        animation_time = 0.0;
+        loaded_animation = animated_model->GetAnimation(newAnim);
+        end_when_completed = endWhenCompletedFlag;
+        clip_ended = false;
     }
 }
 
 void model::Animator::ResetAnimationTime() {
-    animationTime = 0.0;
+    animation_time = 0.0;
 }
 bool model::Animator::IsAnimationedEnded() const {
-    return clipEnded;
+    return clip_ended;
 }
 void model::Animator::LinkToModel(size_t modelID) {
-    animatedModel = redengine::Engine::get().model_manager_.getModel(modelID);
+    animated_model = redengine::Engine::get().model_manager_.getModel(modelID);
 }

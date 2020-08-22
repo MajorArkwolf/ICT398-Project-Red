@@ -9,7 +9,7 @@ class Shader;
 class ModelManager {
   private:
     size_t size = 0;
-    std::map<std::filesystem::path, size_t> nameToId = {};
+    std::map<std::filesystem::path, size_t> name_to_id = {};
     std::array<model::Model, 1000> m;
   public:
     auto ModelRepo() -> std::array<model::Model, 1000> &;

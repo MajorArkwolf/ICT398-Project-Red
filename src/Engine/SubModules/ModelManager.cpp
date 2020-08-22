@@ -3,10 +3,10 @@
 #include <map>
 
 auto ModelManager::GetModelID(const std::filesystem::path& filename) -> size_t {
-    auto id = nameToId.find(filename);
-    if (id == nameToId.end()) { // file not loaded yet
+    auto id = name_to_id.find(filename);
+    if (id == name_to_id.end()) { // file not loaded yet
         m[size] = model::Model(filename, false);
-        nameToId.emplace(filename, size);
+        name_to_id.emplace(filename, size);
         ++size;
         return size - 1;
     } else {

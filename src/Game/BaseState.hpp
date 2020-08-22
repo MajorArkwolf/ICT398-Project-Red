@@ -39,10 +39,10 @@ class BaseState {
     /**
      * @brief Virtual function for handling input events encased within a a custom Input Event
      * All input events will be sent to the current game state at the top of the stack
-     * @param inputData The InputData event that contains the user input
+     * @param input_data The InputData event that contains the user input
      * @param deltaTime time since last frame
      */
-    virtual void HandleInputData(input::InputEvent inputData, double deltaTime) = 0;
+    virtual void HandleInputData(input::InputEvent input_data, double delta_time) = 0;
 
     /**
      * @brief Virtual update function for updating physics within a game state

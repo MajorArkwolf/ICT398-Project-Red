@@ -46,10 +46,10 @@ class GameStack {
 
     /**
      * Add a new state onto the stack.
-     * @param newState the state to be added onto the stack.
+     * @param new_state the state to be added onto the stack.
      */
-    void AddToStack(T newState) {
-        gameStack.push(newState);
+    void AddToStack(T new_state) {
+        game_stack_.push(new_state);
     }
 
     /**
@@ -57,36 +57,36 @@ class GameStack {
      * @return the top element
      */
     T& getTop() {
-        return gameStack.top();
+        return game_stack_.top();
     }
     /**
      * Deletes the top element
      */
     void popTop() {
-        removeTopFlag = true;
+        remove_top_flag_ = true;
     }
 
     void checkTop() {
-        if (removeTopFlag) {
+        if (remove_top_flag_) {
             removeTop();
         }
     }
 
     bool isRemoveTopFlag() const {
-        return removeTopFlag;
+        return remove_top_flag_;
     }
 
 private:
-    bool removeTopFlag = false;
-    size_t size = 0;
+    bool remove_top_flag_ = false;
+    size_t size_ = 0;
     /// The stack itself.
-    std::stack<T> gameStack;
+    std::stack<T> game_stack_;
 
     /*
      * Finds an element on the stack.
      */
     void removeTop() {
-        gameStack.pop();
-        removeTopFlag = false;
+        game_stack_.pop();
+        remove_top_flag_ = false;
     }
 };

@@ -154,5 +154,5 @@ void MainMenu::MainMenuGUI() {
 }
 
 void MainMenu::GUIEnd() {
-    GUIManager::endWindowFrame();
+    GUIManager::EndWindowFrame();
 }

@@ -107,7 +107,7 @@ redengine::Engine::Engine(){
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
     input::GLFWInputWrangler::Init(window_);
-    GUIManager::initialiseImGUI(window_);
+    GUIManager::InitialiseImGUI(window_);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");

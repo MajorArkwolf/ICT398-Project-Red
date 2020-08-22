@@ -26,11 +26,11 @@ void GUIManager::InitialiseImGUI(GLFWwindow *window) {
 void GUIManager::DisplayInputRebindWindow() {
     //auto &inputManager = Controller::Input::InputManager::getInstance();
     //auto &inputMap     = inputManager.getInputMap();
-    auto &windowOpen   = window_open_map.at("controls");
+    auto &window_open   = window_open_map.at("controls");
     //auto &resManager   = ResourceManager::getInstance();
     //const auto *state        = inputManager.getKeyStates();
 
-    if (windowOpen) {
+    if (window_open) {
 //
 //        ImGui::Begin(resManager.getString("ControlMenu_title").c_str(), &window_open_map.at("controls"),
 //                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
@@ -71,11 +71,11 @@ void GUIManager::DisplayInputRebindWindow() {
 
 void GUIManager::DisplayEscapeMenu() {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    bool &windowOpen = window_open_map.at("menu");
+    bool &window_open = window_open_map.at("menu");
     //auto &resManager = ResourceManager::getInstance();
     auto &engine = redengine::Engine::get();
 
-    if (windowOpen) {
+    if (window_open) {
         ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
 //        ImGui::Begin(resManager.getString("OptionMenu_title").c_str(), &windowOpen,
 //                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
@@ -113,10 +113,10 @@ void GUIManager::DisplayQuitScreen() {
 
 void GUIManager::DisplayDevScreen(engine::Camera &camera) {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    bool &windowOpen = window_open_map.at("dev");
-    if (windowOpen) {
+    bool &window_open = window_open_map.at("dev");
+    if (window_open) {
         auto key = camera.GetLocation();
-        ImGui::Begin("Dev Menu", &windowOpen, ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("Dev Menu", &window_open, ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Camera Position: %f, %f, %f", camera.position_.x, camera.position_.y,
                     camera.position_.z);
         //ImGui::SliderFloat("Camera Speed", &camera.MovementSpeed, 0.001, 2.0);

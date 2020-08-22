@@ -23,7 +23,7 @@ void System::Draw(entt::registry& registry, const glm::mat4& projection, const g
 
         if (registry.has<component::Animation>(e)) {
             auto &anim = registry.get<component::Animation>(e);
-            mod.shader_->SetMat4Array("jointTransforms", anim.animator_.transforms);
+            mod.shader_->SetMat4Array("jointTransforms", anim.animator_.transforms_);
             mod.shader_->SetBool("isAnimated", true);
         } else {
             mod.shader_->SetBool("isAnimated", false);

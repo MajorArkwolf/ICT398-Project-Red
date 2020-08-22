@@ -18,17 +18,17 @@ namespace model {
          */
         Animator() = default;
         /// animation that will be played.
-        Animation* loaded_animation = nullptr;
+        Animation* loaded_animation_ = nullptr;
         /// The transforms after they have been updated.
-        std::vector<glm::mat4> transforms = {};
+        std::vector<glm::mat4> transforms_ = {};
         /// Animated model.
-        Model* animated_model = nullptr;
+        Model* animated_model_ = nullptr;
 
         /**
          * Function that will update bones based on time.
-         * @param time_seconds Delta time variable should be passed in.
+         * @param time_in_seconds Delta time variable should be passed in.
          */
-        void BoneTransform(double time_seconds);
+        void BoneTransform(double time_in_seconds);
 
         /**
          * Find the node that will
@@ -80,11 +80,11 @@ namespace model {
         bool IsAnimationedEnded() const;
       private:
         /// Animation time
-        double animation_time = 0.0;
+        double animation_time_ = 0.0;
         /// Checks to see if the animation should loop or end
-        bool end_when_completed = false;
+        bool end_when_completed_ = false;
         /// True if the clip has ended.
-        bool clip_ended = false;
+        bool clip_ended_ = false;
     };
 }
 

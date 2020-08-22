@@ -8,9 +8,9 @@ class Shader;
 
 class ModelManager {
   private:
-    size_t size = 0;
-    std::map<std::filesystem::path, size_t> name_to_id = {};
-    std::array<model::Model, 1000> m;
+    size_t size_ = 0;
+    std::map<std::filesystem::path, size_t> name_to_id_ = {};
+    std::array<model::Model, 1000> m_;
   public:
     auto ModelRepo() -> std::array<model::Model, 1000> &;
     auto GetModelID(const std::filesystem::path& filename) -> size_t;

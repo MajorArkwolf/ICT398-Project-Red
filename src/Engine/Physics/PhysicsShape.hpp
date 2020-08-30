@@ -2,6 +2,10 @@
 #include <variant>
 #include <reactphysics3d/reactphysics3d.h>
 
+/**
+* @class Physics Shape
+* @brief Class used to represent a particular react shape
+*/
 class PhysicsShape {
     friend class CollisionDetection;
    public:

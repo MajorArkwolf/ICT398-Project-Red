@@ -33,6 +33,7 @@ public:
     void Draw(const glm::mat4& projection, const glm::mat4& view);
     void Update(double t, double dt);
     std::queue<PhysicsCollisionData>& GetCollisions();
+    bool GetRendererStatus() const;
 
 private:
     bool renderer_ = true;

@@ -22,7 +22,7 @@ void view::OpenGL::Draw() {
         glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
         engine.game_stack_.getTop()->Display(projection, view);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        sky_box.draw(skybox_view, projection);
+        sky_box_.draw(skybox_view, projection);
         engine.game_stack_.getTop()->GUIEnd();
     }
     glfwSwapBuffers(engine.window_);
@@ -40,7 +40,7 @@ void view::OpenGL::Init() {
     glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    sky_box.Init();
+    sky_box_.Init();
 
 }
 void view::OpenGL::DeInit() {

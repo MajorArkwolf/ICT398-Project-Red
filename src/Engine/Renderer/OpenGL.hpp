@@ -93,7 +93,7 @@ namespace view {
         /// The active camera on the draw pass.
         engine::Camera *camera_ = nullptr;
         /// The sky box for the scene.
-        Skybox sky_box = {};
+        Skybox sky_box_ = {};
         /**
          * Checks to see if the window is in a minimized state.
          * @return true if minimized.

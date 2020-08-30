@@ -207,3 +207,7 @@ void CollisionDetection::Update(double t, double dt) {
         }
     }
 }
+
+bool CollisionDetection::GetRendererStatus() const {
+    return renderer_;
+}

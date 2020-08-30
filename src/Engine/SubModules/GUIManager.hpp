@@ -60,6 +60,8 @@ class GUIManager {
      */
     void DisplayTerrainSettings();
 
+    void DisplayConsoleLog();
+
     /**
      * @brief Starts an Imgui Window frame, must be called at the beginning of a display loop
      */
@@ -69,6 +71,8 @@ class GUIManager {
      * @brief Ends an Imgui window frame, must be called at the end of a display loop before swapping window
      */
     static void EndWindowFrame();
+
+
 
     /**
      * @brief Toggles a window given its name in the map

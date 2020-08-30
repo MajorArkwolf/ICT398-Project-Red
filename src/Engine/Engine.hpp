@@ -13,6 +13,7 @@
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Engine/SubModules/Input/InputManager.hpp"
+#include "SubModules/ConsoleLog.hpp"
 
 namespace redengine {
 
@@ -58,6 +59,7 @@ namespace redengine {
         std::string glsl_version_ = "";
         /// Base path to the program.
         std::filesystem::path base_path_ = {};
+        ConsoleLog log_;
       public:
         /**
          * Deleted move constructor due to unique pointers being used.
@@ -157,5 +159,6 @@ namespace redengine {
          */
         input::InputManager input_manager;
         auto GetBasePath() const -> std::filesystem::path;
+        ConsoleLog &GetLog();
     };
 }

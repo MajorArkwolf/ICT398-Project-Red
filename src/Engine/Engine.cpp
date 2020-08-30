@@ -65,8 +65,11 @@ GUIManager &redengine::Engine::GetGuiManager() {
     return gui_manager_;
 }
 
-redengine::Engine::Engine(){
+redengine::Engine::Engine() 
+{
     SetupBasePath();
+    log_.StartLog(GetBasePath().u8string());
+
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }
@@ -111,6 +114,7 @@ redengine::Engine::Engine(){
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");
+    log_.AddLog(ConsoleLog::LogType::Engine, "Engine Successfully Initialised", __LINE__, __FILE__);
 }
 
 redengine::Engine::~Engine() {
@@ -258,4 +262,8 @@ double redengine::Engine::GetFrameTime() const {
 
 auto redengine::Engine::GetBasePath() const -> std::filesystem::path {
     return this->base_path_;
+}
+
+ConsoleLog &redengine::Engine::GetLog() {
+    return log_;
 }

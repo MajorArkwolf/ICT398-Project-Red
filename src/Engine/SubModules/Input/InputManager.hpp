@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <variant>
+#include <array>
 #include "InputEnums.hpp"
 #include "GLFWInputWrangler.hpp"
 
@@ -50,6 +51,8 @@ namespace input
 		InputEvent ConvertEvent(const GLFWEvent& event);
 		void RecordKeyStates(const InputEvent& event);
 		PhysicalKey ConvertGLFWKey(int key);
+        std::map<PhysicalKey, VirtualKey>& GetInputMap();
+        std::array<bool, static_cast<int>(VirtualKey::kKeyLast)>& GetKeyStates();
 		~InputManager();
 
 
@@ -63,7 +66,7 @@ namespace input
 		std::map<PhysicalKey, VirtualKey> input_map;
 		std::map<int, PhysicalKey> glfw_key_map;
 
-		bool key_states[static_cast<int>(VirtualKey::kKeyLast)] = { false };
+		std::array<bool, static_cast<int>(VirtualKey::kKeyLast)> key_states = {false};
 
 
 	};

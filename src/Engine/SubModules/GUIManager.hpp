@@ -1,5 +1,6 @@
 #pragma once
 #include <imgui.h>
+
 #include <map>
 #include <string>
 #define GLFW_INCLUDE_NONE
@@ -8,7 +9,7 @@
 #include "Engine/EulerCamera.hpp"
 
 class GUIManager {
-  public:
+   public:
     /**
      * @brief GUIManager default constructor
      */
@@ -36,19 +37,24 @@ class GUIManager {
     void DisplayEscapeMenu();
 
     /**
-     * @brief Displays the instruction menu
-     */
-    void DisplayInstructionMenu();
-
-    /**
-     * @brief Displays the quit screen
-     */
-    void DisplayQuitScreen();
-
-    /**
      * @brief Displays the dev screen
      */
     void DisplayDevScreen(engine::Camera &camera);
+
+    /**
+     * @brief Displays the texture manager
+     */
+    void DisplayTextureManager();
+
+    /**
+     * @brief Displays the terrain settings
+     */
+    void DisplayTerrainSettings();
+
+    /**
+     * @brief Displays the log console
+     */
+    void DisplayConsoleLog();
 
     /**
      * @brief Starts an Imgui Window frame, must be called at the beginning of a display loop
@@ -65,7 +71,7 @@ class GUIManager {
      */
     void ToggleWindow(const std::string &windowName);
 
-  private:
+   private:
     /// A mapping of a window name to a location in the window open array
     std::map<std::string, bool> window_open_map;
 

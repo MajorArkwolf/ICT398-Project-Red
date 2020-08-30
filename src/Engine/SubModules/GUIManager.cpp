@@ -125,13 +125,6 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
     }
 }
 
-void GUIManager::DisplayTextureManager() {
-}
-
-void GUIManager::DisplayTerrainSettings() {
-
-}
-
 void GUIManager::startWindowFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

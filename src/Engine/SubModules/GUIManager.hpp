@@ -51,16 +51,6 @@ class GUIManager {
     void DisplayDevScreen(engine::Camera &camera);
 
     /**
-     * @brief Displays the texture manager
-     */
-    void DisplayTextureManager();
-
-    /**
-     * @brief Displays the terrain settings
-     */
-    void DisplayTerrainSettings();
-
-    /**
      * @brief Starts an Imgui Window frame, must be called at the beginning of a display loop
      */
     static void startWindowFrame();

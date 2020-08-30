@@ -1,6 +1,7 @@
 #include "ConsoleLog.hpp"
 #include <sstream>
-#include <direct.h>
+#include <filesystem>
+
 
 void ConsoleLog::AddLog(LogType type, const std::string& text, int line_number, std::string file) {
     time_t ttime = time(0);
@@ -37,7 +38,8 @@ void ConsoleLog::StartLog(std::string base_path) {
     strftime(buffer, 99, "%d-%m-%y_%H-%M-%S_RedEngineLog.txt", local_time);
 
     stream_file_path << base_path << "logs/" << buffer;
-    mkdir("logs");
+    std::filesystem::create_directory("logs");
+    //mkdir("logs");
     file_path = stream_file_path.str();
     outfile.open(file_path.c_str());
     outfile.close();

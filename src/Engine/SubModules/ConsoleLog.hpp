@@ -5,6 +5,10 @@
 #include <ctime>
 #include <fstream>
 
+/**
+* @class ConsoleLog
+* @brief A log console for logging things
+*/
 class ConsoleLog {
    public:
     enum class LogType {
@@ -16,13 +20,12 @@ class ConsoleLog {
     };
     using LogLine = std::tuple<LogType, std::string, int, std::string, std::string>;
 
-    ConsoleLog();
+    ConsoleLog() = default;
     ~ConsoleLog() = default;
 
     void AddLog(LogType type, const std::string& text, int line_number = -1, std::string file = "");
     const std::vector<LogLine>& GetLogFile();
-    void SetBasePath(std::string base_path);
-    void StartLog();
+    void StartLog(std::string base_path);
 
     ConsoleLog(const ConsoleLog&) = delete;
     ConsoleLog& operator=(const ConsoleLog&) = delete;

@@ -68,12 +68,12 @@ void GUIManager::DisplayInputRebindWindow() {
 
 void GUIManager::DisplayEscapeMenu() {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    bool &window_open = window_open_map.at("menu");
+    bool &window_open = window_open_map.at("escapeMenu");
     auto &engine = redengine::Engine::get();
 
     if (window_open) {
         ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
-        ImGui::Begin("Menu", &window_open,
+        ImGui::Begin("Escape Menu", &window_open,
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
         if (ImGui::Button("Controls")) {
             ToggleWindow("controls");
@@ -91,16 +91,10 @@ void GUIManager::DisplayEscapeMenu() {
             engine.show_settings_menu_ = true;
         }
         if (ImGui::Button("Exit")) {
-            ToggleWindow("exit");
+            engine.EndEngine();
         }
         ImGui::End();
     }
-}
-
-void GUIManager::DisplayInstructionMenu() {
-}
-
-void GUIManager::DisplayQuitScreen() {
 }
 
 void GUIManager::DisplayDevScreen(engine::Camera &camera) {
@@ -172,14 +166,6 @@ void GUIManager::DisplayConsoleLog() {
         ImGui::SameLine();
         ImGui::Checkbox("Display Timestamp", &time_stamp);
 
-        if (ImGui::Button("Generate Test Logs")) {
-            auto &logs = engine.GetLog();
-            logs.AddLog(ConsoleLog::LogType::Engine, "engine log", __LINE__, __FILE__);
-            logs.AddLog(ConsoleLog::LogType::Warning, "warning log", __LINE__, __FILE__);
-            logs.AddLog(ConsoleLog::LogType::Error, "error log", __LINE__, __FILE__);
-            logs.AddLog(ConsoleLog::LogType::Collision, "collision log", __LINE__, __FILE__);
-        }
-
         ImGui::Separator();
         ImGui::BeginChild("Scrolling");
         for (auto &n : engine.GetLog().GetLogFile()) {
@@ -203,6 +189,9 @@ void GUIManager::DisplayConsoleLog() {
                     if (error_logs) {
                         PrintLog(n);
                     }
+                } break;
+                default: {
+                    PrintLog(n);
                 } break;
             }
         }
@@ -233,7 +222,7 @@ void GUIManager::ToggleWindow(const std::string &windowName) {
 }
 
 void GUIManager::InitialiseWindowOpenMap() {
-    window_open_map.insert(std::make_pair(std::string("menu"), false));
+    window_open_map.insert(std::make_pair(std::string("escapeMenu"), false));
     window_open_map.insert(std::make_pair(std::string("controls"), false));
     window_open_map.insert(std::make_pair(std::string("instructions"), false));
     window_open_map.insert(std::make_pair(std::string("exit"), false));

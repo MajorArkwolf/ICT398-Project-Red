@@ -75,7 +75,7 @@ void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            case input::InputType::kKeyReleased: {
                                switch (keyboard.key) {
                                    case input::VirtualKey::kEscape:
-                                       gui_manager.ToggleWindow("menu");
+                                       gui_manager.ToggleWindow("escapeMenu");
                                }
                            } break;
                        }

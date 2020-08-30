@@ -68,8 +68,7 @@ GUIManager &redengine::Engine::GetGuiManager() {
 redengine::Engine::Engine() 
 {
     SetupBasePath();
-    log_.SetBasePath(GetBasePath().u8string());
-    log_.StartLog();
+    log_.StartLog(GetBasePath().u8string());
 
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";

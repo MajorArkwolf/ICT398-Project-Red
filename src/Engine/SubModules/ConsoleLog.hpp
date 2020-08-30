@@ -22,6 +22,7 @@ class ConsoleLog {
     void AddLog(LogType type, const std::string& text, int line_number = -1, std::string file = "");
     const std::vector<LogLine>& GetLogFile();
     void SetBasePath(std::string base_path);
+    void StartLog();
 
     ConsoleLog(const ConsoleLog&) = delete;
     ConsoleLog& operator=(const ConsoleLog&) = delete;
@@ -30,7 +31,6 @@ class ConsoleLog {
 
    private:
     std::string file_path = " ";
-    void StartLog();
     std::vector<LogLine> log_repo_;
     std::ofstream outfile;
 };

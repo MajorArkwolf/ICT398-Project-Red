@@ -69,6 +69,8 @@ redengine::Engine::Engine()
 {
     SetupBasePath();
     log_.SetBasePath(GetBasePath().u8string());
+    log_.StartLog();
+
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }

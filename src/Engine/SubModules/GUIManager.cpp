@@ -111,6 +111,7 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
     }
 }
 
+
 void GUIManager::DisplayTextureManager() {
 }
 

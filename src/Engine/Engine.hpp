@@ -13,6 +13,8 @@
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Engine/SubModules/Input/InputManager.hpp"
+#include "Engine/SubModules/PrefabRepo.hpp"
+#include "Engine/SubModules/ShaderRepo.hpp"
 
 namespace redengine {
 
@@ -55,6 +57,8 @@ namespace redengine {
         double t_  = 0.0;
         double dt_ = 0.01;
         double engine_frame_time_   = 0.0;
+        PrefabRepo prefabRepo_ = {};
+        ShaderRepo shaderRepo_ = {};
         std::string glsl_version_ = "";
         /// Base path to the program.
         std::filesystem::path base_path_ = {};
@@ -155,7 +159,19 @@ namespace redengine {
         /**
          * Gets the basepath of the executable
          */
-        input::InputManager input_manager;
+        input::InputManager input_manager_;
         auto GetBasePath() const -> std::filesystem::path;
+
+        /**
+         * Gets the prefab repo from the engine.
+         * @return a reference to the prefab repo.
+         */
+        PrefabRepo& GetPrefabRepo();
+
+        /**
+         * Gets the shader repo from the engine.
+         * @return a reference to the shader repo.
+         */
+        ShaderRepo& GetShaderRepo();
     };
 }

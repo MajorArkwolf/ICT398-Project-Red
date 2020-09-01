@@ -1,6 +1,11 @@
 #include "PrefabRepo.hpp"
+#include "Engine/SubModules/JsonLoader.hpp"
 
-redengine::prefab& redengine::PrefabRepo::AddNewPrefab() {
-    prefab_list.emplace_back();
-    return prefab_list.at(prefab_list.size() - 1);
+redengine::prefab& redengine::PrefabRepo::AddNewPrefab(const std::string& key) {
+    prefabMap_.emplace(key, prefab());
+    return prefabMap_.at(key);
+}
+
+redengine::PrefabRepo::PrefabRepo() {
+    JSONLoader::LoadPrefabList();
 }

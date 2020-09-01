@@ -128,9 +128,9 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
     auto handledMouse  = true;
 
     while (GLFWInputWrangler::PollEvent(glfw_event)) {
-        auto event = input_manager.ConvertEvent(glfw_event);
+        auto event = input_manager_.ConvertEvent(glfw_event);
         if (event.type == InputType::kKeyPressed || event.type == input::InputType::kKeyReleased) {
-            input_manager.RecordKeyStates(event);
+            input_manager_.RecordKeyStates(event);
         }
         switch (event.type) {
             case InputType::kKeyPressed: {
@@ -258,4 +258,12 @@ double redengine::Engine::GetFrameTime() const {
 
 auto redengine::Engine::GetBasePath() const -> std::filesystem::path {
     return this->base_path_;
+}
+
+redengine::PrefabRepo &redengine::Engine::GetPrefabRepo() {
+    return prefabRepo_;
+}
+
+ShaderRepo &redengine::Engine::GetShaderRepo() {
+    return shaderRepo_;
 }

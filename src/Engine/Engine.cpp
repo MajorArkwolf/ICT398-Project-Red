@@ -2,7 +2,6 @@
 #include "Engine/SubModules/Input/GLFWInputWrangler.hpp"
 #include <iostream>
 #include <imgui.h>
-// Game States
 #include "Game/MainMenu/MainMenu.hpp"
 #include <cpplocate/cpplocate.h>
 

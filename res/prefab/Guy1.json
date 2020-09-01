@@ -2,8 +2,7 @@
   "Name": "Guy1",
   "Model": {
     "ModelFilePath": "res/model/ClothedMan.gltf",
-    "VertShader": "res/shader/model_shader.vs",
-    "FragShader": "res/shader/model_shader.fs"
+    "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {
     "Position": {
@@ -21,8 +20,5 @@
       "Y": 1.0,
       "Z": 1.0
     }
-  },
-  "Animation": {
-    "IDLE": "PUNCH"
   }
 }

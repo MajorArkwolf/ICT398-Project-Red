@@ -54,7 +54,7 @@ namespace model {
          * Draw call for the model
          * @param shader used to draw the model.
          */
-        void Draw(Shader& shader);
+        void Draw(std::shared_ptr<Shader> shader);
 
         void Update(float t, float dt);
 

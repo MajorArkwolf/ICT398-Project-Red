@@ -30,7 +30,7 @@ void System::Draw(entt::registry& registry, const glm::mat4& projection, const g
         }
 
         auto& model_manager = redengine::Engine::get().model_manager_;
-        model_manager.Draw(mod.id_, mod.shader_.get());
+        model_manager.Draw(mod.id_, mod.shader_);
     }
 }
 

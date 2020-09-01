@@ -21,11 +21,11 @@ model::Model::Model(const std::string& path, bool gamma = false) : gamma_correct
     LoadModel(path);
 }
 
-void model::Model::Draw(Shader& shader) {
+void model::Model::Draw(std::shared_ptr<Shader> shader) {
     auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->position_;
-    shader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.SetVec3("lightPos", 1.0f, 400.0f, 1.0f);
-    shader.SetVec3("viewPos", cameraPos);
+    shader->SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader->SetVec3("lightPos", 1.0f, 400.0f, 1.0f);
+    shader->SetVec3("viewPos", cameraPos);
     for (auto &mesh : meshes_) {
         mesh.Draw(shader);
     }

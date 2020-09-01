@@ -24,6 +24,7 @@ namespace redengine{
         PrefabRepo(PrefabRepo&& prefabRepo) = default;
         PrefabRepo& operator=(PrefabRepo& prefabRepo) = delete;
         PrefabRepo& operator=(PrefabRepo&& prefabRepo) = default;
+        void Init();
         prefab& AddNewPrefab(const std::string& key);
     private:
         std::unordered_map<std::string,prefab> prefabMap_ = {};

@@ -7,5 +7,9 @@ redengine::prefab& redengine::PrefabRepo::AddNewPrefab(const std::string& key) {
 }
 
 redengine::PrefabRepo::PrefabRepo() {
+
+}
+
+void redengine::PrefabRepo::Init() {
     JSONLoader::LoadPrefabList();
 }

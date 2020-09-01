@@ -47,7 +47,7 @@ void view::OpenGL::DeInit() {
 
 }
 
-void view::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vector<TextureB> &textures,
+void view::OpenGL::DrawModel(std::shared_ptr<Shader> shader, unsigned int &VAO, const std::vector<TextureB> &textures,
                              const std::vector<unsigned int> &indices) {
     // bind appropriate textures
     unsigned int diffuse_nr  = 1;
@@ -70,7 +70,7 @@ void view::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vecto
             number = std::to_string(height_nr++); // transfer unsigned int to stream
 
         // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(shader.GetID(), (name + number).c_str()), i);
+        glUniform1i(glGetUniformLocation(shader->GetID(), (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }

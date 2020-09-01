@@ -2,8 +2,8 @@
   "Name": "Guy1",
   "Model": {
     "ModelFilePath": "res/model/ClothedMan.gltf",
-    "VertShader": "res/shader/vertshader.vs",
-    "FragShader": "res/shader/fragshader.fs"
+    "VertShader": "res/shader/model_shader.vs",
+    "FragShader": "res/shader/model_shader.fs"
   },
   "Transform": {
     "Position": {

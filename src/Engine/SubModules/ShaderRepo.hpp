@@ -12,6 +12,8 @@ public:
     ShaderRepo(ShaderRepo&& shaderRepo) = default;
     ShaderRepo& operator=(ShaderRepo& shaderRepo) = delete;
     ShaderRepo& operator=(ShaderRepo&& shaderRepo) = default;
+    std::shared_ptr<Shader> ImportShader(const std::filesystem::path& filepath);
+    std::optional<std::shared_ptr<Shader>> GetShader(const std::filesystem::path& filepath);
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> prefabMap_ = {};
 };

@@ -11,6 +11,7 @@ using std::string;
 
 auto redengine::Engine::Run() -> void {
     auto &engine = redengine::Engine::get();
+    engine.prefabRepo_.Init();
 
     //ResourceManager::getInstance().loadResources();
     engine.game_stack_.AddToStack(std::make_shared<MainMenu>());

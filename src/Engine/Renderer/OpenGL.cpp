@@ -1,9 +1,11 @@
 #include "OpenGL.hpp"
 #include <iostream>
 #include "Engine/Engine.hpp"
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <algorithm>
+
+#define STB_IMAGE_IMPLEMENTATION
+
 
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
@@ -20,18 +22,20 @@ void view::OpenGL::Draw() {
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera_->GetViewMatrix();
         glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
-        engine.game_stack_.getTop()->Display(projection, view);
+        engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         sky_box_.draw(skybox_view, projection);
         engine.game_stack_.getTop()->GUIEnd();
     }
     glfwSwapBuffers(engine.window_);
 }
+
 void view::OpenGL::Init() {
-    int width  = 0;
+    int width = 0;
     int height = 0;
 
     auto &engine = redengine::Engine::get();
+    auto base_path = engine.GetBasePath();
     glfwGetWindowSize(engine.window_, &width, &height);
     glViewport(0, 0, width, height);
     glEnable(GL_BLEND);
@@ -42,7 +46,17 @@ void view::OpenGL::Init() {
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     sky_box_.Init();
 
+
+    auto model_vert = base_path / "res" / "shader" / "model_shader.vs";
+    auto model_frag = base_path / "res" / "shader" / "model_shader.fs";
+    model_shader_ = std::make_shared<Shader>(model_vert, model_frag, "");
+
+    auto lighting_vert = base_path / "res" / "shader" / "lighting_shader.vs";
+    auto lighting_frag = base_path / "res" / "shader" / "lighting_shader.fs";
+    light_shader_ = std::make_shared<Shader>(lighting_vert, lighting_frag, "");
+
 }
+
 void view::OpenGL::DeInit() {
 
 }
@@ -50,10 +64,10 @@ void view::OpenGL::DeInit() {
 void view::OpenGL::DrawModel(std::shared_ptr<Shader> shader, unsigned int &VAO, const std::vector<TextureB> &textures,
                              const std::vector<unsigned int> &indices) {
     // bind appropriate textures
-    unsigned int diffuse_nr  = 1;
+    unsigned int diffuse_nr = 1;
     unsigned int specular_nr = 1;
-    unsigned int normal_nr   = 1;
-    unsigned int height_nr   = 1;
+    unsigned int normal_nr = 1;
+    unsigned int height_nr = 1;
     for (unsigned int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
@@ -109,7 +123,7 @@ void view::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
     // vertex normals
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, normal)));
+                          reinterpret_cast<void *>(offsetof(Vertex, normal)));
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -143,19 +157,20 @@ void view::OpenGL::ResizeWindow() {
     UpdateViewPort(0, 0, width, height);
 }
 
-unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesystem::path directory,
+unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
-    std::filesystem::path filename = directory.remove_filename() / path;
+    auto new_dir = directory;
+    std::filesystem::path filename = new_dir.remove_filename() / path;
 
-    unsigned int texture_id;
+    unsigned int texture_id = 0;
     glGenTextures(1, &texture_id);
 
-    int width, height, nrComponents;
+    int width = 0, height = 0, nrComponents = 0;
     // filename to C string may not work on other OS's please verify it does.
     unsigned char *data =
             stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
     if (data) {
-        GLenum format = 1;
+        GLenum format = GL_RED;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
@@ -186,6 +201,7 @@ unsigned int view::OpenGL::TextureFromFile(const std::string& path, std::filesys
     }
     return texture_id;
 }
+
 void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
     camera_ = &main_camera;
 }

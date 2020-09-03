@@ -3,6 +3,7 @@
 #include "Engine/SubModules/Input/InputManager.hpp"
 #include <glm/matrix.hpp>
 #include "Engine/EulerCamera.hpp"
+#include "Engine/Renderer/Shader.hpp"
 
 /**
  * @class BaseState
@@ -28,7 +29,7 @@ class BaseState {
      * @brief Virtual soft initialisation function for a game state
      * Used separately from a hard init to reset variables needed for games tate function
      */
-    virtual void Display(const glm::mat4& projection, const glm::mat4& view) = 0;
+    virtual void Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) = 0;
 
     /**
      * @brief Virtual un-initialisation function for a game state

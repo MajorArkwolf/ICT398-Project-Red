@@ -1,9 +1,8 @@
 {
-  "Name": "Guy1",
+  "Name": "Classroom",
   "Model": {
-    "ModelFilePath": "res/model/ClothedMan.gltf",
-    "VertShader": "res/shader/model_shader.vs",
-    "FragShader": "res/shader/model_shader.fs"
+    "ModelFilePath": "res/model/Classroom.fbx",
+    "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {
     "Position": {

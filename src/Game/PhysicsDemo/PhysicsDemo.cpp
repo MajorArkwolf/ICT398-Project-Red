@@ -20,7 +20,7 @@ PhysicsDemo::PhysicsDemo() {
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
 }
 
-void PhysicsDemo::Display(const glm::mat4& projection, const glm::mat4& view) {
+void PhysicsDemo::Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto& renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(projection, view, camera.GetLocation());

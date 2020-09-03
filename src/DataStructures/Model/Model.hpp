@@ -18,6 +18,12 @@
 #include "Engine/Renderer/Shader.hpp"
 
 namespace model {
+    struct Material {
+        glm::vec3 Diffuse;
+        glm::vec3 Specular;
+        glm::vec3 Ambient;
+        float Shininess;
+    };
     class Model {
       public:
         Model() = default;

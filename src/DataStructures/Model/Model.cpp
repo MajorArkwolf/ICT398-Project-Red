@@ -319,3 +319,23 @@ Animation* model::Model::GetAnimation(const std::string &anim_name) {
     }
     return nullptr;
 }
+
+model::Material loadMaterial(aiMaterial* mat) {
+    model::Material material = {};
+    aiColor3D color(0.f, 0.f, 0.f);
+    float shininess = 0.0f;
+
+    mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+    material.Diffuse = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+    material.Ambient = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+    material.Specular = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_SHININESS, shininess);
+    material.Shininess = shininess;
+
+    return material;
+}

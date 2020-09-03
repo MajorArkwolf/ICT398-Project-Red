@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "Engine/Renderer/Shader.hpp"
 #include <memory>
+#include <optional>
 
 class ShaderRepo {
 public:

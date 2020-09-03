@@ -19,7 +19,7 @@ public:
     /**
      * Display method for the scene.
      */
-    auto Display(const glm::mat4& projection, const glm::mat4& view) -> void override;
+    auto Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) -> void override;
 
     /**
      * Update function for main menu.

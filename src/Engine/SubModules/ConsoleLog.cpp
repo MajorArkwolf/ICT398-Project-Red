@@ -3,8 +3,8 @@
 #include <filesystem>
 
 
-void ConsoleLog::AddLog(LogType type, const std::string& text, int line_number, std::string file) {
-    time_t ttime = time(0);
+void ConsoleLog::AddLog(LogType type, const std::string& text, int line_number, const std::string& file) {
+    time_t ttime = time(nullptr);
     tm* local_time = localtime(&ttime);
     char buffer[99];
 
@@ -29,10 +29,10 @@ const std::vector<ConsoleLog::LogLine>& ConsoleLog::GetLogFile() {
     return log_repo_;
 }
 
-void ConsoleLog::StartLog(std::string base_path) {
-    std::stringstream stream_file_path;
+void ConsoleLog::StartLog(const std::string& base_path) {
+    std::stringstream stream_file_path = std::stringstream();
 
-    time_t ttime = time(0);
+    time_t ttime = time(nullptr);
     tm* local_time = localtime(&ttime);
     char buffer[99];
     strftime(buffer, 99, "%d-%m-%y_%H-%M-%S_RedEngineLog.txt", local_time);

@@ -1,10 +1,11 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #include "OpenGL.hpp"
 #include <iostream>
 #include "Engine/Engine.hpp"
-#include "stb_image.h"
 #include <algorithm>
 
-#define STB_IMAGE_IMPLEMENTATION
+
 
 
 void view::OpenGL::Draw() {

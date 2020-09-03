@@ -16,7 +16,7 @@ auto redengine::Engine::Run() -> void {
     engine.game_stack_.AddToStack(std::make_shared<MainMenu>());
     engine.game_stack_.getTop()->Init();
 
-    engine.t_  = 0.0;
+    engine.t_ = 0.0;
     engine.dt_ = 0.01;
 
     double current_time = glfwGetTime();
@@ -30,7 +30,7 @@ auto redengine::Engine::Run() -> void {
 
 
     while (engine.GetIsRunning()) {
-        double new_time   = glfwGetTime();
+        double new_time = glfwGetTime();
         double frame_time = new_time - current_time;
         engine.engine_frame_time_ = frame_time;
 
@@ -65,8 +65,10 @@ GUIManager &redengine::Engine::GetGuiManager() {
     return gui_manager_;
 }
 
-redengine::Engine::Engine(){
+redengine::Engine::Engine() {
     SetupBasePath();
+    log_.StartLog(GetBasePath().u8string());
+
     if (!glfwInit()) {
         std::cerr << "GLFW FAILED TO INIT \n";
     }
@@ -86,7 +88,7 @@ redengine::Engine::Engine(){
 
     // glfw window creation
     // --------------------
-    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     last_window_x_size_ = mode->width / 2;
     last_window_y_size_ = mode->height / 2;
     window_ = glfwCreateWindow(last_window_x_size_, last_window_y_size_, "Project Blue", nullptr, nullptr);
@@ -103,14 +105,15 @@ redengine::Engine::Engine(){
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
     input::GLFWInputWrangler::Init(window_);
-    GUIManager::initialiseImGUI(window_);
+    GUIManager::InitialiseImGUI(window_);
     // This allows us to use model 0 as an error model.
     // Are we industry pros yet?
     model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");
+    log_.AddLog(ConsoleLog::LogType::Engine, "Engine Successfully Initialised", __LINE__, __FILE__);
 }
 
 redengine::Engine::~Engine() {
@@ -124,8 +127,8 @@ auto redengine::Engine::get() -> Engine & {
 
 auto redengine::Engine::ProcessInput(double deltaTime) -> void {
     using namespace input;
-     GLFWEvent glfw_event;
-    auto handledMouse  = true;
+    GLFWEvent glfw_event;
+    auto handledMouse = true;
 
     while (GLFWInputWrangler::PollEvent(glfw_event)) {
         auto event = input_manager_.ConvertEvent(glfw_event);
@@ -143,11 +146,14 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
                         glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                     }
                 }
-            } break;
+            }
+                break;
             case InputType::kWindowClosed: {
                 this->EndEngine();
-            } break;
-            default: break;
+            }
+                break;
+            default:
+                break;
         }
 
         game_stack_.getTop()->HandleInputData(event, deltaTime);
@@ -201,7 +207,8 @@ void redengine::Engine::SettingMenu() {
         last_window_y_size_ = mode->height / 2;
         glfwSetWindowMonitor(mainWindow, nullptr, 0, 0, last_window_x_size_, last_window_y_size_, mode->refreshRate);
         this->renderer_.UpdateViewPort(0, 0, last_window_x_size_, last_window_y_size_);
-        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2, last_window_y_size_ - last_window_y_size_ / 2);
+        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2,
+                         last_window_y_size_ - last_window_y_size_ / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Windowed", buttonSize)) {
@@ -209,7 +216,8 @@ void redengine::Engine::SettingMenu() {
         last_window_y_size_ = mode->height / 2;
         glfwSetWindowMonitor(window_, nullptr, 0, 0, last_window_x_size_, last_window_y_size_, mode->refreshRate);
         this->renderer_.UpdateViewPort(0, 0, last_window_x_size_, last_window_y_size_);
-        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2, last_window_y_size_ - last_window_y_size_ / 2);
+        glfwSetWindowPos(mainWindow, last_window_x_size_ - last_window_x_size_ / 2,
+                         last_window_y_size_ - last_window_y_size_ / 2);
     }
     ImGui::SameLine();
     if (ImGui::Button("Borderless Fullscreen", buttonSize)) {
@@ -245,9 +253,11 @@ int redengine::Engine::GetLastWindowYSize() const {
 void redengine::Engine::SetLastWindowYSize(int last_window_y_size) {
     Engine::last_window_y_size_ = last_window_y_size;
 }
+
 double redengine::Engine::GetT() const {
     return t_;
 }
+
 double redengine::Engine::GetDt() const {
     return dt_;
 }
@@ -260,10 +270,15 @@ auto redengine::Engine::GetBasePath() const -> std::filesystem::path {
     return this->base_path_;
 }
 
+
 redengine::PrefabRepo &redengine::Engine::GetPrefabRepo() {
     return prefabRepo_;
 }
 
 ShaderRepo &redengine::Engine::GetShaderRepo() {
     return shaderRepo_;
+}
+
+ConsoleLog &redengine::Engine::GetLog() {
+    return log_;
 }

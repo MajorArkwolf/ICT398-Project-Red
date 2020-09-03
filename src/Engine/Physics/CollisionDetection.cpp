@@ -208,6 +208,27 @@ void CollisionDetection::Update(double t, double dt) {
     }
 }
 
+
 bool CollisionDetection::GetRendererStatus() const {
     return renderer_;
+}
+
+PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
+    return PhysicsShape(physics_common_.createBoxShape(ConvertPosition(extents)));
+}
+
+PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
+    return PhysicsShape(physics_common_.createCapsuleShape(radius, height));
+}
+
+PhysicsShape CollisionDetection::CreateSphereShape(double radius) {
+    return PhysicsShape(physics_common_.createSphereShape(radius));
+}
+
+int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
+    auto* body = entity_collision_coupling_.at(entity_id);
+    rp3d::Transform transform(ConvertPosition(relative_position), ConvertRotation(rotation));
+    body->addCollider(shape.shape_, transform);
+    return body->getNbColliders();
+
 }

@@ -93,6 +93,7 @@ namespace input
 		F11,
 		F12,
 		kTab,
+		kEscape,
 		kLeftShift,
 		kLeftControl,
 		kLeftAlt,

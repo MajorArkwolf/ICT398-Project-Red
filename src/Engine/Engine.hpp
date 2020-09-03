@@ -15,6 +15,7 @@
 #include "Engine/SubModules/Input/InputManager.hpp"
 #include "Engine/SubModules/PrefabRepo.hpp"
 #include "Engine/SubModules/ShaderRepo.hpp"
+#include "SubModules/ConsoleLog.hpp"
 
 namespace redengine {
 
@@ -61,6 +62,7 @@ namespace redengine {
         std::string glsl_version_ = "";
         /// Base path to the program.
         std::filesystem::path base_path_ = {};
+        ConsoleLog log_;
       public:
         /**
          * Deleted move constructor due to unique pointers being used.
@@ -195,7 +197,6 @@ namespace redengine {
          * @return file address
          */
         auto GetBasePath() const -> std::filesystem::path;
-
         /**
          * Gets the prefab repo from the engine.
          * @return a reference to the prefab repo.
@@ -207,5 +208,7 @@ namespace redengine {
          * @return a reference to the shader repo.
          */
         ShaderRepo& GetShaderRepo();
+
+        ConsoleLog &GetLog();
     };
 }

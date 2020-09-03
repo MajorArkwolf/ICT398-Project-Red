@@ -6,6 +6,7 @@
 #include <queue>
 #include "Engine/Physics/PhysicsData.hpp"
 #include "Engine/Renderer/Shader.hpp"
+#include "PhysicsShape.hpp"
 
 class ECS;
 
@@ -31,7 +32,14 @@ public:
     void UpdateCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
     void DeleteCollisionBody(const entt::entity& entity_id);
     void Draw(const glm::mat4& projection, const glm::mat4& view);
+
     void Update(double t, double dt);
+
+    PhysicsShape CreateBoxShape(glm::vec3 extents);
+    PhysicsShape CreateCapsuleShape(double radius, double height);
+    PhysicsShape CreateSphereShape(double radius);
+    int AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation);
+
     std::queue<PhysicsCollisionData>& GetCollisions();
     bool GetRendererStatus() const;
 

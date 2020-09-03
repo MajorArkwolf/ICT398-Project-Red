@@ -21,9 +21,11 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/JsonLoader.cpp
     Engine/SubModules/PrefabRepo.cpp
     Engine/SubModules/ShaderRepo.cpp
+    Engine/SubModules/ConsoleLog.cpp
     #--Physics
     Engine/Physics/PhysicsEngine.cpp
     Engine/Physics/CollisionDetection.cpp
+    Engine/Physics/PhysicsShape.cpp
 
     #Game
     #--MainMenu

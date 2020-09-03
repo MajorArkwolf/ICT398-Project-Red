@@ -275,10 +275,6 @@ redengine::PrefabRepo &redengine::Engine::GetPrefabRepo() {
     return prefabRepo_;
 }
 
-ShaderRepo &redengine::Engine::GetShaderRepo() {
-    return shaderRepo_;
-}
-
 ConsoleLog &redengine::Engine::GetLog() {
     return log_;
 }

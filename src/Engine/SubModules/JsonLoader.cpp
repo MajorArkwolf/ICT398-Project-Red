@@ -37,7 +37,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             auto &prefab = prefabRepo.GetPrefab(prefab_key);
             entity = std::make_shared<Entity>(ecs->CreateEntity());
             auto &ent = entity.value();
-            ent->AddComponent<component::Model>(prefab.model_id, prefab.model_shader);
+            ent->AddComponent<component::Model>(prefab.model_id);
             if (j.contains("Transform")) {
                 try {
                     auto &trans = ent->AddComponent<component::Transform>();
@@ -110,7 +110,6 @@ void JSONLoader::LoadPrefabList() {
     auto &engine = redengine::Engine::get();
     auto base_path = redengine::Engine::get().GetBasePath();
     auto &prefabRepo = redengine::Engine::get().GetPrefabRepo();
-    auto &shaderRepo = redengine::Engine::get().GetShaderRepo();
     auto full_path = base_path / "res" / "prefab";
     auto prefab_list_path = full_path / "prefablist.json";
     auto j = LoadJson(prefab_list_path);
@@ -127,10 +126,7 @@ void JSONLoader::LoadPrefabList() {
                     prefab.has_model = true;
                     std::filesystem::path m_path =  p.at("Model").at("ModelFilePath").get<std::string>();
                     auto model_file_path = base_path / m_path;
-                    std::filesystem::path s_path = p.at("Model").at("ShaderFilePath").get<std::string>();
-                    auto shader_file_path = base_path / s_path;
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);
-                    prefab.model_shader = shaderRepo.ImportShader(shader_file_path);
                 }
                 if (p.contains("Transform")) {
                     try {

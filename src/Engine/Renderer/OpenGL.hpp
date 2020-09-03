@@ -79,7 +79,7 @@ namespace view {
          * @param textures required to draw the model
          * @param indices how many indices are needed to draw the model.
          */
-        static void DrawModel(std::shared_ptr<Shader> shader, unsigned int &VAO, const std::vector<TextureB> &textures,
+        static void DrawModel(Shader* shader, unsigned int &VAO, const std::vector<TextureB> &textures,
                               const std::vector<unsigned int> &indices);
 
         /**

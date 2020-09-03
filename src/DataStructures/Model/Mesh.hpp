@@ -36,7 +36,7 @@ class Mesh {
      * Draw function for the model.
      * @param shader used to draw the model.
      */
-    void Draw(std::shared_ptr<Shader> shader);
+    void Draw(Shader* shader);
 
     /**
      * Add bone data to the the given vertix.

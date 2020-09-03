@@ -8,6 +8,8 @@
 
 class Entity;
 
+class Shader;
+
 class ECS {
 public:
     ECS() = default;
@@ -15,7 +17,7 @@ public:
     Entity& CreateEntity();
     void FixedUpdate(double t, double dt);
     void Update(double t, double dt);
-    void Draw(const glm::mat4& projection, const glm::mat4& view,
+    void Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view,
               const glm::dvec2& camera_pos);
 
     entt::registry& GetRegistry() {return registry_;};

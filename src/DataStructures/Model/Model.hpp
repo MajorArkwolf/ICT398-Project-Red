@@ -15,7 +15,8 @@
 #include "DataStructures/Model/Animation.hpp"
 #include "DataStructures/Model/DataTypes.hpp"
 #include "DataStructures/Model/Mesh.hpp"
-#include "Engine/Renderer/Shader.hpp"
+
+class Shader;
 
 namespace model {
     struct Material {
@@ -60,7 +61,7 @@ namespace model {
          * Draw call for the model
          * @param shader used to draw the model.
          */
-        void Draw(std::shared_ptr<Shader> shader);
+        void Draw(Shader* shader);
 
         void Update(float t, float dt);
 

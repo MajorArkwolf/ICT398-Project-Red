@@ -203,12 +203,6 @@ namespace redengine {
          */
         PrefabRepo& GetPrefabRepo();
 
-        /**
-         * Gets the shader repo from the engine.
-         * @return a reference to the shader repo.
-         */
-        ShaderRepo& GetShaderRepo();
-
         ConsoleLog &GetLog();
     };
 }

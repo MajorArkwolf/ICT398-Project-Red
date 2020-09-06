@@ -53,7 +53,7 @@ private:
     std::unique_ptr<Shader> shader_ = nullptr;
 
 
-    reactphysics3d::PhysicsCommon physics_common_{};
+    reactphysics3d::PhysicsCommon* physics_common_ = nullptr;
     reactphysics3d::PhysicsWorld* world_ = nullptr;
     RedEngineEventListener event_listener_;
     std::unordered_map<entt::entity, reactphysics3d::CollisionBody*> entity_collision_coupling_ = {};

@@ -19,12 +19,6 @@
 class Shader;
 
 namespace model {
-    struct Material {
-        glm::vec3 Diffuse;
-        glm::vec3 Specular;
-        glm::vec3 Ambient;
-        float Shininess;
-    };
     class Model {
       public:
         Model() = default;
@@ -131,6 +125,13 @@ namespace model {
          * @param root node of the joint
          */
         void LoadJoints(aiMesh* mesh, aiNode* root);
+
+        /**
+         * Loads the material information into the mesh.
+         * @param mat the assimp material information.
+         * @return material to be passed to the renderer.
+         */
+        Material LoadMaterial(aiMaterial* mat);
 
         /// root joint.
         JointsName root_joint_;

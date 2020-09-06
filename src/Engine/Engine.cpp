@@ -146,12 +146,19 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
                         glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                     }
                 }
-            }
                 break;
+            }
+
             case InputType::kWindowClosed: {
                 this->EndEngine();
-            }
                 break;
+            }
+
+            case InputType::kWindowResized: {
+                renderer_.ResizeWindow();
+                break;
+            }
+
             default:
                 break;
         }

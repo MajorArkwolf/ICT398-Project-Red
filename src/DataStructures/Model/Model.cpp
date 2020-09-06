@@ -21,11 +21,8 @@ model::Model::Model(const std::string& path, bool gamma = false) : gamma_correct
     LoadModel(path);
 }
 
-void model::Model::Draw(Shader& shader) {
+void model::Model::Draw(Shader* shader) {
     auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->position_;
-    shader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.SetVec3("lightPos", 1.0f, 400.0f, 1.0f);
-    shader.SetVec3("viewPos", cameraPos);
     for (auto &mesh : meshes_) {
         mesh.Draw(shader);
     }
@@ -318,4 +315,24 @@ Animation* model::Model::GetAnimation(const std::string &anim_name) {
         return &animation_.at(0);
     }
     return nullptr;
+}
+
+model::Material loadMaterial(aiMaterial* mat) {
+    model::Material material = {};
+    aiColor3D color(0.f, 0.f, 0.f);
+    float shininess = 0.0f;
+
+    mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+    material.Diffuse = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+    material.Ambient = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+    material.Specular = glm::vec3(color.r, color.b, color.g);
+
+    mat->Get(AI_MATKEY_SHININESS, shininess);
+    material.Shininess = shininess;
+
+    return material;
 }

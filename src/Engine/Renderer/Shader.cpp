@@ -28,6 +28,12 @@ Shader::Shader(const std::filesystem::path &vertex,
     vShaderFile.open(vertex);
     fShaderFile.open(fragment);
 
+    if (!vShaderFile.is_open() || !fShaderFile.is_open()) {
+        std::cout << "Failed to open shader files\n";
+        std::cout << "Vertix: " << vShaderFile.is_open() << '\n';
+        std::cout << "Frag: " << fShaderFile.is_open() << '\n' << '\n';
+    }
+
     // read file's buffer contents into streams
     vShaderStream << vShaderFile.rdbuf();
     fShaderStream << fShaderFile.rdbuf();

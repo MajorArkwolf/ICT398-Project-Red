@@ -6,7 +6,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     #Engine
     Engine/Engine.cpp
-        Engine/EulerCamera.cpp
+    Engine/EulerCamera.cpp
     #--Renderer
     Engine/Renderer/OpenGL.cpp
     Engine/Renderer/Shader.cpp
@@ -19,6 +19,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/ModelManager.cpp
     Engine/SubModules/GUIManager.cpp
     Engine/SubModules/JsonLoader.cpp
+    Engine/SubModules/PrefabRepo.cpp
+    Engine/SubModules/ShaderRepo.cpp
     Engine/SubModules/ConsoleLog.cpp
     #--Physics
     Engine/Physics/PhysicsEngine.cpp

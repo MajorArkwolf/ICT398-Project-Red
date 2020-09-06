@@ -16,7 +16,8 @@ public:
     void FixedUpdate(double t, double dt);
     void Update(double t, double dt);
     void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::dvec2& cameraPos);
-
+    void ToggleRenderer();
+    bool GetRendererStatus();
     void SetECS(ECS * ecs);
 
 private:

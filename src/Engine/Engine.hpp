@@ -13,6 +13,8 @@
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
 #include "Engine/SubModules/Input/InputManager.hpp"
+#include "Engine/SubModules/PrefabRepo.hpp"
+#include "Engine/SubModules/ShaderRepo.hpp"
 #include "SubModules/ConsoleLog.hpp"
 
 namespace redengine {
@@ -33,7 +35,6 @@ namespace redengine {
         view::OpenGL renderer_ = {};
 
         /// The game stack to allow to switch between scenes.
-        ///
         GameStack<std::shared_ptr<BaseState>> game_stack_;
       private:
         /// GUI Manager for our GUI interface.
@@ -56,6 +57,8 @@ namespace redengine {
         double t_  = 0.0;
         double dt_ = 0.01;
         double engine_frame_time_   = 0.0;
+        PrefabRepo prefabRepo_ = {};
+        ShaderRepo shaderRepo_ = {};
         std::string glsl_version_ = "";
         /// Base path to the program.
         std::filesystem::path base_path_ = {};
@@ -142,23 +145,64 @@ namespace redengine {
         float gamma_correction_ = 1.f;
         bool show_settings_menu_ = false;
 
+        /**
+         * Gets the last known size of a window.
+         * @return Gets the last known size of the given window.
+         */
         int GetLastWindowXSize() const;
 
+        /**
+         * Set the Screen X size.
+         * @param last_window_x_size set the X size of the window.
+         */
         void SetLastWindowXSize(int last_window_x_size);
 
+        /**
+         * Gets the last known size of a window.
+         * @return Gets the last known size of the given window.
+         */
         int GetLastWindowYSize() const;
 
+        /**
+         * Set the Screen Y size.
+         * @param last_window_y_size set the Y size of the window.
+         */
         void SetLastWindowYSize(int last_window_y_size);
 
+        /**
+         * Get the time since the engine executed.
+         * @return the time since engine loop began.
+         */
         double GetT() const;
+
+        /**
+         * Returns the Delta time, this is a fixed time step so you should expect consistent values.
+         * @return Delta time, fixed time step.
+         */
         double GetDt() const;
+
+        /**
+         * Returns the delta time for a given frame.
+         * @return Delta time relative to the frame.
+         */
         double GetFrameTime() const;
 
         /**
          * Gets the basepath of the executable
          */
-        input::InputManager input_manager;
+        input::InputManager input_manager_;
+
+        /**
+         * Get the basepath relative to the executable.
+         * @return file address
+         */
         auto GetBasePath() const -> std::filesystem::path;
+        /**
+         * Gets the prefab repo from the engine.
+         * @return a reference to the prefab repo.
+         */
+        PrefabRepo& GetPrefabRepo();
+
         ConsoleLog &GetLog();
     };
 }

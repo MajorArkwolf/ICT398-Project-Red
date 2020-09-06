@@ -29,11 +29,11 @@ void MainMenu::Init() {
     camera.UpdateCameraVectors();
 }
 
-auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
+auto MainMenu::Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) -> void {
     auto &engine   = redengine::Engine::get();
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
-    ecs.Draw(projection, view, camera.GetLocation());
+    ecs.Draw(shader, projection, view, camera.GetLocation());
 }
 
 auto MainMenu::FixedUpdate(double t, double dt) -> void {

@@ -14,8 +14,8 @@ auto ModelManager::GetModelID(const std::filesystem::path& filename) -> size_t {
     }
 }
 
-void ModelManager::Draw(size_t id, Shader *ourShader) {
-    ModelRepo().at(id).Draw(*ourShader);
+void ModelManager::Draw(size_t id, Shader *shader) {
+    ModelRepo().at(id).Draw(shader);
 }
 
 auto ModelManager::ModelRepo() -> std::array<model::Model, 1000> & {

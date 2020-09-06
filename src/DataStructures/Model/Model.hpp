@@ -15,9 +15,16 @@
 #include "DataStructures/Model/Animation.hpp"
 #include "DataStructures/Model/DataTypes.hpp"
 #include "DataStructures/Model/Mesh.hpp"
-#include "Engine/Renderer/Shader.hpp"
+
+class Shader;
 
 namespace model {
+    struct Material {
+        glm::vec3 Diffuse;
+        glm::vec3 Specular;
+        glm::vec3 Ambient;
+        float Shininess;
+    };
     class Model {
       public:
         Model() = default;
@@ -54,7 +61,7 @@ namespace model {
          * Draw call for the model
          * @param shader used to draw the model.
          */
-        void Draw(Shader& shader);
+        void Draw(Shader* shader);
 
         void Update(float t, float dt);
 

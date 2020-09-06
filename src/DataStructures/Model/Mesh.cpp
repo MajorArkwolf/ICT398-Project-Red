@@ -10,7 +10,7 @@ Mesh::Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indic
 
 }
 
-void Mesh::Draw(Shader& shader) {
+void Mesh::Draw(Shader* shader) {
     view::OpenGL::DrawModel(shader, vao_, textures_, indices_);
 }
 void Mesh::AddBoneData(unsigned vector_id, int bone_id, float weight) {

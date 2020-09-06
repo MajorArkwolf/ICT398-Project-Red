@@ -2,6 +2,7 @@
 
 #include "ECS/Entity.hpp"
 #include "ECS/System/System.hpp"
+#include "Engine/Renderer/Shader.hpp"
 
 void ECS::FixedUpdate(double t, double dt) {
 }
@@ -10,9 +11,9 @@ void ECS::Update(double t, double dt) {
   System::UpdateAnimation(registry_, t, dt);
 }
 
-void ECS::Draw(const glm::mat4& projection, const glm::mat4& view,
+void ECS::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view,
                const glm::dvec2& camera_pos) {
-  System::Draw(registry_, projection, view);
+  System::Draw(registry_, shader, projection, view);
 }
 
 Entity& ECS::CreateEntity() {

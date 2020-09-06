@@ -5,7 +5,7 @@
 #include <glm/matrix.hpp>
 
 
-void System::Draw(entt::registry& registry, const glm::mat4& projection, const glm::mat4& view) {
+void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto entities = registry.view<component::Model, component::Transform>();
 
     for (auto &e : entities) {
@@ -16,21 +16,21 @@ void System::Draw(entt::registry& registry, const glm::mat4& projection, const g
         model_matrix = glm::scale(model_matrix, tran.scale);
         model_matrix = model_matrix * glm::mat4_cast(tran.rot);
 
-        mod.shader_->Use();
-        mod.shader_->SetMat4("projection", projection);
-        mod.shader_->SetMat4("view", view);
-        mod.shader_->SetMat4("model", model_matrix);
+        shader->Use();
+        shader->SetMat4("projection", projection);
+        shader->SetMat4("view", view);
+        shader->SetMat4("model", model_matrix);
 
         if (registry.has<component::Animation>(e)) {
             auto &anim = registry.get<component::Animation>(e);
-            mod.shader_->SetMat4Array("jointTransforms", anim.animator_.transforms_);
-            mod.shader_->SetBool("isAnimated", true);
+            shader->SetMat4Array("jointTransforms", anim.animator_.transforms_);
+            shader->SetBool("isAnimated", true);
         } else {
-            mod.shader_->SetBool("isAnimated", false);
+            shader->SetBool("isAnimated", false);
         }
 
         auto& model_manager = redengine::Engine::get().model_manager_;
-        model_manager.Draw(mod.id_, mod.shader_.get());
+        model_manager.Draw(mod.id_, shader);
     }
 }
 

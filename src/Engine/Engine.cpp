@@ -180,6 +180,14 @@ auto redengine::Engine::GetIsRunning() const -> bool {
     return this->is_running_;
 }
 
+auto redengine::Engine::CloseScene() -> void {
+    if (!game_stack_.WillBeEmpty()) {
+        game_stack_.popTop();
+    } else {
+        EndEngine();
+    }
+}
+
 auto redengine::Engine::EndEngine() -> void {
     is_running_ = false;
 }

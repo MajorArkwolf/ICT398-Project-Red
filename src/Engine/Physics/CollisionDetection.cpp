@@ -216,15 +216,15 @@ bool CollisionDetection::GetRendererStatus() const {
 }
 
 PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
-    return PhysicsShape(physics_common_->createBoxShape(ConvertPosition(extents)));
+    return PhysicsShape(physics_common_->createBoxShape(ConvertPosition(extents)), PhysicsShape::ShapeType::Box);
 }
 
 PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
-    return PhysicsShape(physics_common_->createCapsuleShape(radius, height));
+    return PhysicsShape(physics_common_->createCapsuleShape(radius, height), PhysicsShape::ShapeType::Capsule);
 }
 
 PhysicsShape CollisionDetection::CreateSphereShape(double radius) {
-    return PhysicsShape(physics_common_->createSphereShape(radius));
+    return PhysicsShape(physics_common_->createSphereShape(radius), PhysicsShape::ShapeType::Sphere);
 }
 
 int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {

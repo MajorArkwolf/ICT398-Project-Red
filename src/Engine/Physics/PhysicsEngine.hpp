@@ -19,7 +19,11 @@ public:
     void ToggleRenderer();
     bool GetRendererStatus();
     void SetECS(ECS * ecs);
-private:
+    PhysicsShape CreateBoxShape(glm::vec3 extents);
+    PhysicsShape CreateCapsuleShape(double radius, double height);
+    PhysicsShape CreateSphereShape(double radius);
+
+   private:
     ECS* ecs_ = nullptr;
     CollisionDetection collision_detection_ = {};
     CollisionResolution collision_resolution_ = {};

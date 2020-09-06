@@ -26,6 +26,18 @@ void PhysicsEngine::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
 }
 
+PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
+    return collision_detection_.CreateBoxShape(extents);
+}
+
+PhysicsShape PhysicsEngine::CreateCapsuleShape(double radius, double height) {
+    return collision_detection_.CreateCapsuleShape(radius, height);
+}
+
+PhysicsShape PhysicsEngine::CreateSphereShape(double radius) {
+    return collision_detection_.CreateSphereShape(radius);
+}
+
 void PhysicsEngine::ToggleRenderer() {
     collision_detection_.ToggleRenderer();
 }

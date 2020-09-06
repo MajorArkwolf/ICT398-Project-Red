@@ -152,7 +152,7 @@ void JSONLoader::LoadPrefabList() {
                 }
                 if (p.contains("Physics")) {
                     prefab.has_physics = true;
-                    auto physics = j.at("Physics");
+                    auto physics = p.at("Physics");
                     if (physics.contains("Static")) {
                         prefab.is_static = physics.at("Static").get<bool>();
                     }

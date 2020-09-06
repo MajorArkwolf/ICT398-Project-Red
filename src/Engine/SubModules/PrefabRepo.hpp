@@ -6,6 +6,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <unordered_map>
 #include <Engine/Renderer/Shader.hpp>
+#include <Engine/Physics/CollisionShapes.hpp>
 
 namespace redengine{
     struct prefab {
@@ -18,7 +19,8 @@ namespace redengine{
         glm::vec3 scale_local = {1.0f, 1.0f, 1.0f};
         bool has_animation = false;
         bool has_physics = false;
-        //std::vector<>
+        bool is_static = false;
+        std::vector<CollisionShape> collision_shapes = {};
     };
 
     class PrefabRepo {

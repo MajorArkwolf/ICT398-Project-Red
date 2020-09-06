@@ -77,8 +77,8 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         std::cerr << "JSON Animation failed: " << e.what() << '\n';
                     }
                 }
-                if (j.contains("Physics") && pe != nullptr) {
-                    //TODO implement this
+                if (prefab.has_physics && pe != nullptr) {
+
                 }
             } else {
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
@@ -100,7 +100,7 @@ void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nu
             auto file = e.get<std::string>();
             auto file_name = full_path.remove_filename().append(file);
             if (ecs != nullptr) {
-                LoadEntity(file_name, ecs);
+                LoadEntity(file_name, ecs, pe);
             }
         }
     }
@@ -151,7 +151,11 @@ void JSONLoader::LoadPrefabList() {
                     }
                 }
                 if (p.contains("Physics")) {
-                    auto physics = p.at("Physics");
+                    prefab.has_physics = true;
+                    auto physics = j.at("Physics");
+                    if (physics.contains("Static")) {
+                        prefab.is_static = physics.at("Static").get<bool>();
+                    }
                 }
             }
         }

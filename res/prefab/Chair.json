@@ -20,5 +20,9 @@
       "Y": 1.0,
       "Z": 1.0
     }
+  },
+  "Physics": {
+    "Static": false,
+    "Collision_Shapes": "Yes"
   }
 }

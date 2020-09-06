@@ -28,42 +28,42 @@ void GUIManager::InitialiseImGUI(GLFWwindow *window) {
 }
 
 void GUIManager::DisplayInputRebindWindow() {
-    //auto &input_manager = redengine::Engine::get().input_manager;
-    //auto &input_map = input_manager.GetInputMap();
-    //auto &window_open = window_open_map.at("controls");
-    //const auto &state = input_manager.GetKeyStates();
+    auto &input_manager = redengine::Engine::get().input_manager_;
+    auto &input_map = input_manager.GetInputMap();
+    auto &window_open = window_open_map.at("controls");
+    const auto &state = input_manager.GetKeyStates();
 
-    //if (window_open) {
+    if (window_open) {
 
-    //    ImGui::Begin("Rebind Controls", &window_open_map.at("controls"),
-    //                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-    //    ImGui::Text("Click on a button while holding a key to map an action to that key");
-    //    ImGui::Separator();
+        ImGui::Begin("Rebind Controls", &window_open_map.at("controls"),
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+        ImGui::Text("Click on a button while holding a key to map an action to that key");
+        ImGui::Separator();
 
-    //    for (auto &n : input_map) {
-    //        switch (n.first) {
-    //            default: {
-    //                auto scancodeString = input_manager.hashGLFWKeyToString(n.second);
-    //                auto actionString = input_manager.hashInputActionToString(n.first);
-    //                ImGui::Text(actionString.c_str());
-    //                ImGui::SameLine(ImGui::GetWindowWidth() - 80);
+        for (auto &n : input_map) {
+            switch (n.first) {
+                default: {
+                    auto scancodeString = input_manager.HashKeyToString(n.second);
+                    auto actionString = input_manager.HashKeyToString(n.first);
+                    ImGui::Text(actionString.c_str());
+                    ImGui::SameLine(ImGui::GetWindowWidth() - 80);
 
-    //                if (ImGui::Button(scancodeString.c_str())) {
-    //                    const auto &scancodePairs = input_manager.getStringScancodePairs();
-    //                    for (const auto &i : scancodePairs) {
-    //                        if (state[i.second]) {
-    //                            input_manager.bindKey(n.first, i.second);
-    //                            break;
-    //                        }
-    //                    }
-    //                }
+                    //if (ImGui::Button(scancodeString.c_str())) {
+                    //    const auto &scancodePairs = input_manager.GetStringMap();
+                    //    for (const auto &i : scancodePairs) {
+                    //        if (state[i.second]) {
+                    //            input_manager.bindKey(n.first, i.second);
+                    //            break;
+                    //        }
+                    //    }
+                    //}
 
-    //            } break;
-    //        }
-    //    }
+                } break;
+            }
+        }
 
-    //    ImGui::End();
-    //}
+        ImGui::End();
+    }
 }
 
 void GUIManager::DisplayEscapeMenu() {
@@ -101,21 +101,12 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     bool &window_open = window_open_map.at("dev");
     if (window_open) {
-        auto key = camera.GetLocation();
         ImGui::Begin("Dev Menu", &window_open, ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Camera Position: %f, %f, %f", camera.position_.x, camera.position_.y,
                     camera.position_.z);
-        //ImGui::SliderFloat("Camera Speed", &camera.MovementSpeed, 0.001, 2.0);
-        ImGui::Text("Camera Location Key: %d, %d", key.x, key.y);
+        ImGui::SliderFloat("Camera Speed", &camera.movement_speed_, 0.001, 2.0);
         ImGui::End();
     }
-}
-
-
-void GUIManager::DisplayTextureManager() {
-}
-
-void GUIManager::DisplayTerrainSettings() {
 }
 
 void GUIManager::DisplayConsoleLog() {
@@ -223,11 +214,11 @@ void GUIManager::ToggleWindow(const std::string &windowName) {
 }
 
 void GUIManager::InitialiseWindowOpenMap() {
-    window_open_map.insert(std::make_pair(std::string("escapeMenu"), false));
-    window_open_map.insert(std::make_pair(std::string("controls"), false));
-    window_open_map.insert(std::make_pair(std::string("instructions"), false));
-    window_open_map.insert(std::make_pair(std::string("exit"), false));
-    window_open_map.insert(std::make_pair(std::string("dev"), false));
-    window_open_map.insert(std::make_pair(std::string("textureRebind"), false));
-    window_open_map.insert(std::make_pair(std::string("consoleLog"), false));
+    window_open_map.emplace(std::make_pair(std::string("escapeMenu"), false));
+    window_open_map.emplace(std::make_pair(std::string("controls"), false));
+    window_open_map.emplace(std::make_pair(std::string("instructions"), false));
+    window_open_map.emplace(std::make_pair(std::string("exit"), false));
+    window_open_map.emplace(std::make_pair(std::string("dev"), false));
+    window_open_map.emplace(std::make_pair(std::string("textureRebind"), false));
+    window_open_map.emplace(std::make_pair(std::string("consoleLog"), false));
 }

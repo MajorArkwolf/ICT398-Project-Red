@@ -35,9 +35,17 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
 }
 
 void Demo::GUIStart() {
+    auto &engine = redengine::Engine::get();
+    GUIManager::startWindowFrame();
+    engine.GetGuiManager().DisplayEscapeMenu();
+    engine.GetGuiManager().DisplayConsoleLog();
+    engine.GetGuiManager().DisplayDevScreen(camera);
+    engine.GetGuiManager().DisplayInputRebindWindow();
+
 }
 
 void Demo::GUIEnd() {
+    GUIManager::EndWindowFrame();
 }
 
 void Demo::Update(double t, double dt) {
@@ -52,7 +60,7 @@ void Demo::FixedUpdate(double t, double dt) {
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
     auto &engine = redengine::Engine::get();
-    auto &guiManager = engine.GetGuiManager();
+    auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
             [&](std::monostate) {
@@ -81,6 +89,9 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                 right_ = true;
                             }
                                 break;
+                            case input::VirtualKey::kEscape: {
+                                gui_manager.ToggleWindow("escapeMenu");
+                            } break;
                         }
                     }
                         break;

@@ -42,16 +42,6 @@ class GUIManager {
     void DisplayDevScreen(engine::Camera &camera);
 
     /**
-     * @brief Displays the texture manager
-     */
-    void DisplayTextureManager();
-
-    /**
-     * @brief Displays the terrain settings
-     */
-    void DisplayTerrainSettings();
-
-    /**
      * @brief Displays the log console
      */
     void DisplayConsoleLog();

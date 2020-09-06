@@ -82,6 +82,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             } else {
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
+            if (j.contains("Physics") && prefab.has_physics) {
+                ent->AddComponent<component::PhysicBody>();
+            }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";
         }

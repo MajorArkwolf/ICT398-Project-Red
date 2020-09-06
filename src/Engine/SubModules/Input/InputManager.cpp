@@ -156,12 +156,20 @@ input::PhysicalKey input::InputManager::ConvertGLFWKey(int key) {
     return PhysicalKey::kNone;
 }
 
+std::string &input::InputManager::HashKeyToString(VirtualKey key) {
+    return key_string_map.at(key);
+}
+
 std::map<input::PhysicalKey, input::VirtualKey> &input::InputManager::GetInputMap() {
     return input_map;
 }
 
 std::array<bool, static_cast<int>(input::VirtualKey::kKeyLast)> &input::InputManager::GetKeyStates() {
     return key_states;
+}
+
+std::map<input::PhysicalKey, std::string> &input::InputManager::GetStringMap() {
+    return key_string_map;
 }
 
 input::InputManager::~InputManager() {
@@ -342,4 +350,94 @@ void input::InputManager::PopulateGLFWKeyMap() {
     glfw_key_map.emplace(GLFW_KEY_END, VirtualKey::kEnd);
     glfw_key_map.emplace(GLFW_KEY_PAGE_DOWN, VirtualKey::kPageDown);
     glfw_key_map.emplace(GLFW_KEY_LAST, VirtualKey::kKeyLast);
+}
+
+void input::InputManager::PopulateStringMap() {
+    key_string_map.emplace(VirtualKey::A, "A");
+    key_string_map.emplace(PhysicalKey::B, "B");
+    key_string_map.emplace(PhysicalKey::C, "C");
+    key_string_map.emplace(PhysicalKey::D, "D");
+    key_string_map.emplace(PhysicalKey::E, "E");
+    key_string_map.emplace(PhysicalKey::F, "F");
+    key_string_map.emplace(PhysicalKey::G, "G");
+    key_string_map.emplace(PhysicalKey::H, "H");
+    key_string_map.emplace(PhysicalKey::I, "I");
+    key_string_map.emplace(PhysicalKey::J, "J");
+    key_string_map.emplace(PhysicalKey::K, "K");
+    key_string_map.emplace(PhysicalKey::L, "L");
+    key_string_map.emplace(PhysicalKey::M, "M");
+    key_string_map.emplace(PhysicalKey::N, "N");
+    key_string_map.emplace(PhysicalKey::O, "O");
+    key_string_map.emplace(PhysicalKey::P, "P");
+    key_string_map.emplace(PhysicalKey::Q, "Q");
+    key_string_map.emplace(PhysicalKey::R, "R");
+    key_string_map.emplace(PhysicalKey::S, "S");
+    key_string_map.emplace(PhysicalKey::T, "T");
+    key_string_map.emplace(PhysicalKey::U, "U");
+    key_string_map.emplace(PhysicalKey::V, "V");
+    key_string_map.emplace(PhysicalKey::W, "W");
+    key_string_map.emplace(PhysicalKey::X, "X");
+    key_string_map.emplace(PhysicalKey::Y, "Y");
+    key_string_map.emplace(PhysicalKey::Z, "Z");
+    key_string_map.emplace(PhysicalKey::k1, "1");
+    key_string_map.emplace(PhysicalKey::k2, "2");
+    key_string_map.emplace(PhysicalKey::k3, "3");
+    key_string_map.emplace(PhysicalKey::k4, "4");
+    key_string_map.emplace(PhysicalKey::k5, "5");
+    key_string_map.emplace(PhysicalKey::k6, "6");
+    key_string_map.emplace(PhysicalKey::k7, "7");
+    key_string_map.emplace(PhysicalKey::k8, "8");
+    key_string_map.emplace(PhysicalKey::k9, "9");
+    key_string_map.emplace(PhysicalKey::k0, "0");
+    key_string_map.emplace(PhysicalKey::F1, "F1");
+    key_string_map.emplace(PhysicalKey::F2, "F2");
+    key_string_map.emplace(PhysicalKey::F3, "F3");
+    key_string_map.emplace(PhysicalKey::F4, "F4");
+    key_string_map.emplace(PhysicalKey::F5, "F5");
+    key_string_map.emplace(PhysicalKey::F6, "F6");
+    key_string_map.emplace(PhysicalKey::F7, "F7");
+    key_string_map.emplace(PhysicalKey::F8, "F8");
+    key_string_map.emplace(PhysicalKey::F9, "F9");
+    key_string_map.emplace(PhysicalKey::F10, "F10");
+    key_string_map.emplace(PhysicalKey::F11, "F11");
+    key_string_map.emplace(PhysicalKey::F12, "F12");
+    key_string_map.emplace(PhysicalKey::kTab, "Tab");
+    key_string_map.emplace(PhysicalKey::kEscape, "Escape");
+    key_string_map.emplace(PhysicalKey::kLeftShift, "LeftShift");
+    key_string_map.emplace(PhysicalKey::kLeftControl, "LeftControl");
+    key_string_map.emplace(PhysicalKey::kLeftAlt, "LeftAlt");
+    key_string_map.emplace(PhysicalKey::kRightShift, "RightShift");
+    key_string_map.emplace(PhysicalKey::kRightControl, "RightControl");
+    key_string_map.emplace(PhysicalKey::kRightAlt, "RightAlt");
+    key_string_map.emplace(PhysicalKey::kEnter, "Enter");
+    key_string_map.emplace(PhysicalKey::kComma, "Comma");
+    key_string_map.emplace(PhysicalKey::kFullStop, "FullStop");
+    key_string_map.emplace(PhysicalKey::kForwardSlash, "ForwardSlash");
+    key_string_map.emplace(PhysicalKey::kBackSlash, "BackSlash");
+    key_string_map.emplace(PhysicalKey::kColon, "Colon");
+    key_string_map.emplace(PhysicalKey::kSemiColon, "SemiColon");
+    key_string_map.emplace(PhysicalKey::kApostrophe, "Apostrophe");
+    key_string_map.emplace(PhysicalKey::kBackspace, "Backspace");
+    key_string_map.emplace(PhysicalKey::kEqual, "Equal");
+    key_string_map.emplace(PhysicalKey::kHyphen, "Hyphen");
+    key_string_map.emplace(PhysicalKey::kTilde, "Tilde");
+    key_string_map.emplace(PhysicalKey::kLeftSquareBracket, "LeftSquareBracket");
+    key_string_map.emplace(PhysicalKey::kRightSquareBracket, "RightSquareBracket");
+    key_string_map.emplace(PhysicalKey::kInsert, "Insert");
+    key_string_map.emplace(PhysicalKey::kHome, "Home");
+    key_string_map.emplace(PhysicalKey::kDelete, "Delete");
+    key_string_map.emplace(PhysicalKey::kPageUp, "PageUp");
+    key_string_map.emplace(PhysicalKey::kEnd, "End");
+    key_string_map.emplace(PhysicalKey::kPageDown, "PageDown");
+    key_string_map.emplace(PhysicalKey::kNumPad0, "NumPad0");
+    key_string_map.emplace(PhysicalKey::kNumPad1, "NumPad1");
+    key_string_map.emplace(PhysicalKey::kNumPad2, "NumPad2");
+    key_string_map.emplace(PhysicalKey::kNumPad3, "NumPad3");
+    key_string_map.emplace(PhysicalKey::kNumPad4, "NumPad4");
+    key_string_map.emplace(PhysicalKey::kNumPad5, "NumPad5");
+    key_string_map.emplace(PhysicalKey::kNumPad6, "NumPad6");
+    key_string_map.emplace(PhysicalKey::kNumPad7, "NumPad7");
+    key_string_map.emplace(PhysicalKey::kNumPad8, "NumPad8");
+    key_string_map.emplace(PhysicalKey::kNumPad9, "NumPad9");
+    key_string_map.emplace(PhysicalKey::kKeyLast, "KeyLast");
 }

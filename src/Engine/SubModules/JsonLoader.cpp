@@ -123,7 +123,8 @@ void JSONLoader::LoadPrefabList() {
             auto p = LoadJson(prefab_full_path);
             if (p.contains("Name")) {
                 auto &prefab = prefabRepo.AddNewPrefab(p.at("Name").get<std::string>());
-                prefab.name = p.at("Name").get<std::string>();
+                name = p.at("Name").get<std::string>();
+                prefab.name = name;
                 if (p.contains("Model")) {
                     prefab.has_model = true;
                     std::filesystem::path m_path =  p.at("Model").at("ModelFilePath").get<std::string>();
@@ -163,14 +164,38 @@ void JSONLoader::LoadPrefabList() {
                             auto base_shapes = physics.at("BaseShapes");
                             if (base_shapes.is_array()) {
                                 for (auto &element : base_shapes) {
-                                    if
+                                    if (element.contains("Name") && element.contains("Type")) {
+                                        auto shape_name = element.at("name");
+                                        if (element.at("Type") == "Box") {
+                                            
+                                        }
+                                        else if(element.at("Type") == "Capsule") {
+                                        
+                                        }
+                                        else if (element.at("Type") == "Sphere") {
+                                        
+                                        }
+                                    
+                                    } else {
+                                        std::stringstream error;
+                                        error << name
+                                              << " BaseShapes field does not contain \"Name\" and \"Type\"";
+                                        console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    }
                                 }
+                            }
+                            auto colliders = physics.at("Colliders");
+                            if (colliders.is_array()) {
+                            
                             }
                         } catch (const std::exception &e) {
                             std::cerr << "BaseShapes does not conain readable information: " << e.what() << '\n';
                         }
                     } else {
-                        console_log.AddLog(ConsoleLog::LogType::Collision, )
+                        std::stringstream error;
+                        error << name
+                              << " does not contain a 'BaseShapes' array";
+                        console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                     }
                 }
             }

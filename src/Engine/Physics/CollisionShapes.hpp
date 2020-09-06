@@ -2,7 +2,7 @@
 #include <glm/vec3.hpp>
 
 enum class CollisionShapeIdentity {
-    Square,
+    Box,
     Sphere,
     Capsule
 };

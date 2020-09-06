@@ -112,7 +112,9 @@ void JSONLoader::LoadPrefabList() {
     auto &prefabRepo = redengine::Engine::get().GetPrefabRepo();
     auto full_path = base_path / "res" / "prefab";
     auto prefab_list_path = full_path / "prefablist.json";
+    auto& console_log = engine.GetLog();
     auto j = LoadJson(prefab_list_path);
+    std::string name = "Unknown";
     if (j.contains("Prefab")) {
         auto prefabs = j.at("Prefab");
         for (auto &prefab_path : prefabs) {
@@ -155,6 +157,20 @@ void JSONLoader::LoadPrefabList() {
                     auto physics = p.at("Physics");
                     if (physics.contains("Static")) {
                         prefab.is_static = physics.at("Static").get<bool>();
+                    }
+                    if (physics.contains("BaseShapes")) {
+                        try {
+                            auto base_shapes = physics.at("BaseShapes");
+                            if (base_shapes.is_array()) {
+                                for (auto &element : base_shapes) {
+                                    if
+                                }
+                            }
+                        } catch (const std::exception &e) {
+                            std::cerr << "BaseShapes does not conain readable information: " << e.what() << '\n';
+                        }
+                    } else {
+                        console_log.AddLog(ConsoleLog::LogType::Collision, )
                     }
                 }
             }

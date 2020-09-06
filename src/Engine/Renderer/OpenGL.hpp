@@ -73,16 +73,6 @@ namespace view {
                                             [[maybe_unused]] bool gamma);
 
         /**
-         * Draws a generic OpenGL Model.
-         * @param shader the shader used to draw the model.
-         * @param VAO index to the VAO buffer.
-         * @param textures required to draw the model
-         * @param indices how many indices are needed to draw the model.
-         */
-        static void DrawModel(Shader* shader, unsigned int &VAO, const std::vector<TextureB> &textures,
-                              const std::vector<unsigned int> &indices);
-
-        /**
          * Sets the camera to the renderer for the render pass. Required for lighting.
          * @param main_camera the active camera in the scene.
          */

@@ -153,6 +153,7 @@ void JSONLoader::LoadPrefabList() {
                     }
                 }
                 if (p.contains("Physics")) {
+                    auto e = PhysicsEngine();
                     prefab.has_physics = true;
                     auto physics = p.at("Physics");
                     if (physics.contains("Static")) {
@@ -163,14 +164,14 @@ void JSONLoader::LoadPrefabList() {
                             auto base_shapes = physics.at("BaseShapes");
                             if (base_shapes.is_array()) {
                                 for (auto &element : base_shapes) {
-                                    if
+
                                 }
                             }
                         } catch (const std::exception &e) {
                             std::cerr << "BaseShapes does not conain readable information: " << e.what() << '\n';
                         }
                     } else {
-                        console_log.AddLog(ConsoleLog::LogType::Collision, )
+                        //console_log.AddLog(ConsoleLog::LogType::Collision, )
                     }
                 }
             }

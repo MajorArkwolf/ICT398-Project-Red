@@ -19,7 +19,6 @@ public:
     void ToggleRenderer();
     bool GetRendererStatus();
     void SetECS(ECS * ecs);
-
 private:
     ECS* ecs_ = nullptr;
     CollisionDetection collision_detection_ = {};

@@ -30,7 +30,7 @@ namespace redengine{
         bool has_animation = false;
         bool has_physics = false;
         bool is_static = false;
-        std::map<std::string, PhysicsShape> collision_shapes = {};
+        std::map<std::string, physics::PhysicsShape> collision_shapes = {};
         std::vector<Collider> colliders_;
     };
 

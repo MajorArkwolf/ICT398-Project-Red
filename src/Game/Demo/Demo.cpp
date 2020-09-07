@@ -19,7 +19,7 @@ Demo::Demo() {
     std::filesystem::path path = "";
     path.append("Demo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, nullptr);
+    JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
 }
 
 void Demo::Init() {
@@ -51,10 +51,12 @@ void Demo::GUIEnd() {
 void Demo::Update(double t, double dt) {
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    physics_engine_.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
+    physics_engine_.FixedUpdate(t, dt);
 }
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {

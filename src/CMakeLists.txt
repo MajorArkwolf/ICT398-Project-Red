@@ -26,6 +26,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/Physics/PhysicsEngine.cpp
     Engine/Physics/CollisionDetection.cpp
     Engine/Physics/PhysicsShape.cpp
+    Engine/Physics/Logger.cpp
 
     #Game
     #--MainMenu

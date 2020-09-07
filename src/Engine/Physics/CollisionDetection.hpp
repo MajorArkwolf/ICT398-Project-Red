@@ -7,6 +7,7 @@
 #include "Engine/Physics/PhysicsData.hpp"
 #include "Engine/Renderer/Shader.hpp"
 #include "PhysicsShape.hpp"
+#include "Logger.hpp"
 
 class ECS;
 
@@ -82,5 +83,7 @@ namespace physics {
          * @param coll_body pointer to the react physics body
          */
         void AddBodyAndEntt(entt::entity &entity, reactphysics3d::CollisionBody *coll_body);
+
+        Logger logger_ = {};
     };
 }

@@ -69,6 +69,7 @@ std::queue<PhysicsCollisionData>& RedEngineEventListener::GetPhysicsQueue() {
 
 CollisionDetection::CollisionDetection() {
     physics_common_ = &PhysicsCommon::GetInstance().physics_common_;
+    physics_common_->setLogger(&logger_);
     world_ = PhysicsCommon::GetInstance().physics_common_.createPhysicsWorld();
     using reactphysics3d::DebugRenderer;
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);

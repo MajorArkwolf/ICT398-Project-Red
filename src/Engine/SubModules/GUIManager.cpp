@@ -84,6 +84,9 @@ void GUIManager::DisplayEscapeMenu() {
         if (ImGui::Button("Dev Menu")) {
             ToggleWindow("dev");
         }
+        if (ImGui::Button("Toggle Debug Renderer")) {
+            renderer_ = !renderer_;
+        }
         if (ImGui::Button("Console Log")) {
             ToggleWindow("consoleLog");
         }
@@ -91,7 +94,8 @@ void GUIManager::DisplayEscapeMenu() {
             engine.show_settings_menu_ = true;
         }
         if (ImGui::Button("Exit")) {
-            engine.EndEngine();
+            engine.CloseScene();
+            window_open = !window_open;
         }
         ImGui::End();
     }

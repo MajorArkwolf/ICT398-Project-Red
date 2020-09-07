@@ -6,6 +6,13 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
+static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
+    if (pe.GetRendererStatus() != val) {
+        pe.ToggleRenderer();
+        std::cout << "toggle\n";
+    }
+}
+
 template<class... Ts>
 struct overload : Ts ... {
     using Ts::operator()...;
@@ -17,6 +24,7 @@ Demo::Demo() {
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
+    physics_engine_.SetECS(&ecs_);
     std::filesystem::path path = "";
     path.append("Demo");
     path.append("Scene.json");
@@ -31,8 +39,12 @@ void Demo::UnInit() {
 
 void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
     renderer.SetCameraOnRender(camera);
+    ToggleRenderer(physics_engine_, gui_manager.renderer_);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
+    physics_engine_.Draw(projection, view);
 }
 
 void Demo::GUIStart() {
@@ -92,9 +104,6 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                 right_ = true;
                             }
                                 break;
-                            case input::VirtualKey::kEscape: {
-                                gui_manager.ToggleWindow("escapeMenu");
-                            } break;
                         }
                     }
                         break;
@@ -116,7 +125,11 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                 right_ = false;
                             }
                                 break;
-                        }
+                            case input::VirtualKey::kEscape:
+                                gui_manager.ToggleWindow("escapeMenu");
+                        } break;
+                        default:
+                            break;
                     }
                         break;
                 }

@@ -7,7 +7,9 @@
 #include "Engine/SubModules/JsonLoader.hpp"
 
 template<class... Ts>
-struct overload : Ts... { using Ts::operator()...; };
+struct overload : Ts ... {
+    using Ts::operator()...;
+};
 template<class... Ts>
 overload(Ts...) -> overload<Ts...>;
 
@@ -29,8 +31,8 @@ void MainMenu::Init() {
     camera.UpdateCameraVectors();
 }
 
-auto MainMenu::Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) -> void {
-    auto &engine   = redengine::Engine::get();
+auto MainMenu::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) -> void {
+    auto &engine = redengine::Engine::get();
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs.Draw(shader, projection, view, camera.GetLocation());
@@ -59,33 +61,35 @@ void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
     auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
-                   [&](std::monostate) {
+                       [&](std::monostate) {
 
-                   },
-                   [&](InputEvent::MouseEvent mouse) {
+                       },
+                       [&](InputEvent::MouseEvent mouse) {
 
-                   },
-                   [&](InputEvent::KeyboardEvent keyboard) {
-                       switch (inputData.type) {
-                           case input::InputType::kKeyPressed: {
-                               switch (keyboard.key) {
-                                 
+                       },
+                       [&](InputEvent::KeyboardEvent keyboard) {
+                           switch (inputData.type) {
+                               case input::InputType::kKeyPressed: {
+                                   switch (keyboard.key) {
+
+                                   }
                                }
-                           } break;
-                           case input::InputType::kKeyReleased: {
-                               switch (keyboard.key) {
-                                   case input::VirtualKey::kEscape:
-                                       gui_manager.ToggleWindow("escapeMenu");
+                                   break;
+                               case input::InputType::kKeyReleased: {
+                                   switch (keyboard.key) {
+                                       case input::VirtualKey::kEscape:
+                                           gui_manager.ToggleWindow("escapeMenu");
+                                   }
                                }
-                           } break;
-                       }
-                   },
-                   [&](InputEvent::dVector2 vec) {
+                                   break;
+                           }
+                       },
+                       [&](InputEvent::dVector2 vec) {
 
-                   },
-                   [&](InputEvent::iVector2 vec) {
-                      
-                   }},
+                       },
+                       [&](InputEvent::iVector2 vec) {
+
+                       }},
                inputData.data);
     if (!handledMouse) {
         engine.mouse_ = {0.0f, 0.0f};
@@ -93,7 +97,7 @@ void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
 }
 
 void MainMenu::GUIStart() {
-    auto &engine  = redengine::Engine::get();
+    auto &engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     MainMenuGUI();
 }

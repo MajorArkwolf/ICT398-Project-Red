@@ -24,7 +24,7 @@ class PhysicsEngine {
 
     void Update(double t, double dt);
 
-    void Draw(const glm::mat4 &projection, const glm::mat4 &view, const glm::dvec2 &cameraPos);
+        void Draw(const glm::mat4 &projection, const glm::mat4 &view);
 
     void ToggleRenderer();
 

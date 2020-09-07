@@ -1,5 +1,8 @@
 #include "CollisionDetection.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Physics/PhysicsCommon.hpp"
+
+using namespace physics;
 
 static inline glm::vec3 ConvertPosition(const reactphysics3d::Vector3& r_vec) {
     glm::vec3 pos = {};
@@ -64,9 +67,10 @@ std::queue<PhysicsCollisionData> &RedEngineEventListener::GetPhysicsQueue() {
 }
 
 CollisionDetection::CollisionDetection() {
+    physics_common_ = &PhysicsCommon::GetInstance().physics_common_;
     using reactphysics3d::DebugRenderer;
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
-    world_ = physics_common_.createPhysicsWorld();
+    world_ = physics_common_->createPhysicsWorld();
     world_->setEventListener(&event_listener_);
     auto base_path = redengine::Engine::get().GetBasePath();
     auto vs = base_path / "res" / "shader" / "react_shader.vs";
@@ -87,7 +91,7 @@ CollisionDetection::CollisionDetection() {
 }
 
 CollisionDetection::~CollisionDetection() {
-    physics_common_.destroyPhysicsWorld(world_);
+    physics_common_->destroyPhysicsWorld(world_);
 }
 
 void CollisionDetection::AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot) {
@@ -107,9 +111,11 @@ void CollisionDetection::AddBodyAndEntt(entt::entity &entity, reactphysics3d::Co
 }
 
 void CollisionDetection::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
-    auto body = entity_collision_coupling_.at(entity_id);
-    reactphysics3d::Transform new_transform(ConvertPosition(pos), ConvertRotation(rot));
-    body->setTransform(new_transform);
+    if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
+        auto body = entity_collision_coupling_.at(entity_id);
+        reactphysics3d::Transform new_transform(ConvertPosition(pos), ConvertRotation(rot));
+        body->setTransform(new_transform);
+    }
 }
 
 void CollisionDetection::DeleteCollisionBody(const entt::entity &entity_id) {
@@ -214,15 +220,15 @@ bool CollisionDetection::GetRendererStatus() const {
 }
 
 PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
-    return PhysicsShape(physics_common_.createBoxShape(ConvertPosition(extents)));
+    return PhysicsShape(physics_common_->createBoxShape(ConvertPosition(extents)), ShapeType::Box);
 }
 
 PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
-    return PhysicsShape(physics_common_.createCapsuleShape(radius, height));
+    return PhysicsShape(physics_common_->createCapsuleShape(radius, height), ShapeType::Capsule);
 }
 
 PhysicsShape CollisionDetection::CreateSphereShape(double radius) {
-    return PhysicsShape(physics_common_.createSphereShape(radius));
+    return PhysicsShape(physics_common_->createSphereShape(radius), ShapeType::Sphere);
 }
 
 int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
@@ -230,5 +236,4 @@ int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape&
     rp3d::Transform transform(ConvertPosition(relative_position), ConvertRotation(rotation));
     body->addCollider(shape.shape_, transform);
     return body->getNbColliders();
-
 }

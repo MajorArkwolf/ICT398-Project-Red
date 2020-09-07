@@ -51,8 +51,10 @@ namespace input
 		InputEvent ConvertEvent(const GLFWEvent& event);
 		void RecordKeyStates(const InputEvent& event);
 		PhysicalKey ConvertGLFWKey(int key);
+        std::string& HashKeyToString(VirtualKey key);
         std::map<PhysicalKey, VirtualKey>& GetInputMap();
         std::array<bool, static_cast<int>(VirtualKey::kKeyLast)>& GetKeyStates();
+        std::map<PhysicalKey, std::string>& GetStringMap();
 		~InputManager();
 
 
@@ -60,11 +62,13 @@ namespace input
         VirtualKey ConvertPhysicalToVirtual(PhysicalKey key);
 		void PopulateInputMap();
 		void PopulateGLFWKeyMap();
+        void PopulateStringMap();
 		/**
 		 *Maps a physical key to a virtual key
 		 */
 		std::map<PhysicalKey, VirtualKey> input_map;
 		std::map<int, PhysicalKey> glfw_key_map;
+        std::map<PhysicalKey, std::string> key_string_map;
 
 		std::array<bool, static_cast<int>(VirtualKey::kKeyLast)> key_states = {false};
 

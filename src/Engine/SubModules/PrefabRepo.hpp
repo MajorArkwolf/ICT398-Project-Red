@@ -6,9 +6,19 @@
 #include <glm/gtc/quaternion.hpp>
 #include <unordered_map>
 #include <Engine/Renderer/Shader.hpp>
-#include <Engine/Physics/CollisionShapes.hpp>
+#include <Engine/Physics/PhysicsShape.hpp>
+#include <map>
 
 namespace redengine{
+    struct Collider {
+        std::string part_name;
+        std::string base_shape_name;
+        glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
+        glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
+        double mass = 0.0;
+        glm::vec3 centre_of_mass = {0.0f, 0.0f, 0.0f};
+    };
+
     struct prefab {
         std::string name;
         bool has_model = false;
@@ -20,7 +30,8 @@ namespace redengine{
         bool has_animation = false;
         bool has_physics = false;
         bool is_static = false;
-        std::vector<CollisionShape> collision_shapes = {};
+        std::map<std::string, physics::PhysicsShape> collision_shapes = {};
+        std::vector<Collider> colliders_;
     };
 
     class PrefabRepo {

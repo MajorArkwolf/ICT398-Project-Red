@@ -23,6 +23,63 @@
   },
   "Physics": {
     "Static": false,
-    "Collision_Shapes": "Yes"
+    "Collision_Shapes": "Yes",
+    "BaseShapes": [
+      {
+        "Name": "Leg",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 0.1,
+          "Y": 0.5,
+          "Z": 0.1
+        }
+      },
+      {
+        "Name": "Seat",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 0.5,
+          "Y": 0.1,
+          "Z": 0.5
+        }
+      },
+      {
+        "Name": "Back",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 0.1,
+          "Y": 0.5,
+          "Z": 0.1
+        }
+      }
+    ],
+    "Colliders": [
+      {
+        "Name": "Leg1",
+        "BaseShape": "Leg",
+        "Position": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Mass": 0.0,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      }
+    ]
+  }
   }
 }

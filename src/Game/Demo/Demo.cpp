@@ -6,6 +6,13 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
+static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
+    if (pe.GetRendererStatus() != val) {
+        pe.ToggleRenderer();
+        std::cout << "toggle\n";
+    }
+}
+
 template<class... Ts>
 struct overload : Ts ... {
     using Ts::operator()...;
@@ -16,10 +23,11 @@ Demo::Demo() {
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
+    physics_engine_.SetECS(&ecs_);
     std::filesystem::path path = "";
     path.append("Demo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, nullptr);
+    JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
 }
 
 void Demo::Init() {
@@ -30,14 +38,22 @@ void Demo::UnInit() {
 
 void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
     renderer.SetCameraOnRender(camera);
+    ToggleRenderer(physics_engine_, gui_manager.renderer_);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
+    physics_engine_.Draw(projection, view);
 }
 
 void Demo::GUIStart() {
-    auto &engine  = redengine::Engine::get();
+    auto &engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
+    engine.GetGuiManager().DisplayConsoleLog();
+    engine.GetGuiManager().DisplayDevScreen(camera);
+    engine.GetGuiManager().DisplayInputRebindWindow();
+
 }
 
 void Demo::GUIEnd() {
@@ -47,10 +63,12 @@ void Demo::GUIEnd() {
 void Demo::Update(double t, double dt) {
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    physics_engine_.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
+    physics_engine_.FixedUpdate(t, dt);
 }
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {

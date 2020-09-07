@@ -42,16 +42,6 @@ class GUIManager {
     void DisplayDevScreen(engine::Camera &camera);
 
     /**
-     * @brief Displays the texture manager
-     */
-    void DisplayTextureManager();
-
-    /**
-     * @brief Displays the terrain settings
-     */
-    void DisplayTerrainSettings();
-
-    /**
      * @brief Displays the log console
      */
     void DisplayConsoleLog();
@@ -70,6 +60,8 @@ class GUIManager {
      * @brief Toggles a window given its name in the map
      */
     void ToggleWindow(const std::string &windowName);
+
+    bool renderer_ = false;
 
    private:
     /// A mapping of a window name to a location in the window open array

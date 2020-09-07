@@ -25,7 +25,6 @@ void view::OpenGL::Draw() {
         model_shader_->SetMat4("projection", projection);
         model_shader_->SetMat4("view", view);
         engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
-
         // be sure to activate shader when setting uniforms/drawing objects
         glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
         light_shader_->Use();
@@ -148,7 +147,8 @@ void view::OpenGL::ResizeWindow() {
 unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
     auto new_dir = directory;
-    std::filesystem::path filename = new_dir.remove_filename() / path;
+    std::filesystem::path ext = path;
+    std::filesystem::path filename = new_dir.remove_filename() / ext.filename();
 
     unsigned int texture_id = 0;
     glGenTextures(1, &texture_id);

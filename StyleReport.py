@@ -4,7 +4,7 @@ import sys
 
 # Set the (order-critical) configuration flags for running cpplint on this repository
 config = [sys.executable]
-config.append("./cpplint.py")
+config.append("./lib/cpplint/cpplint.py")
 config.append("--verbose=0")
 config.append("--output=emacs")
 #config.append("--filter=")

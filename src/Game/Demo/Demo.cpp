@@ -13,6 +13,7 @@ struct overload : Ts ... {
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 Demo::Demo() {
+    physics_engine_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;

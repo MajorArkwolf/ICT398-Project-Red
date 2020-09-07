@@ -92,7 +92,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
 
                 for (auto& n : prefab.colliders_) {
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
-                        pe->AddCollider(ent->GetID(), const_cast<PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
+                        pe->AddCollider(ent->GetID(), const_cast<physics::PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
                     }
                     else {
                         ///Prefab name not found

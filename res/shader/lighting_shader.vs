@@ -11,6 +11,9 @@ layout (location = 6) in vec4 aJointWeights;
 out vec3 Normals;
 out vec3 FragPos;
 
+//Test data
+out vec2 TexCoords;
+
 uniform bool isAnimated;
 uniform mat4 model;
 uniform mat4 view;
@@ -33,5 +36,6 @@ void main()
 
     Normals = mat3(transpose(inverse(model))) * aNormal;
     FragPos = vec3(model * boned_position);
+    TexCoords = aTexCoords;
     gl_Position = projection * view * model * boned_position;
 }

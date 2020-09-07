@@ -20,6 +20,7 @@ void view::OpenGL::Draw() {
                 glm::perspective(glm::radians(camera_->zoom_),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera_->GetViewMatrix();
+
         model_shader_->Use();
         model_shader_->SetMat4("projection", projection);
         model_shader_->SetMat4("view", view);
@@ -27,6 +28,8 @@ void view::OpenGL::Draw() {
         // be sure to activate shader when setting uniforms/drawing objects
         glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
         light_shader_->Use();
+        light_shader_->SetMat4("projection", projection);
+        light_shader_->SetMat4("view", view);
         light_shader_->SetVec3("light.position", lightPos);
         light_shader_->SetVec3("viewPos", camera_->position_);
 
@@ -41,8 +44,7 @@ void view::OpenGL::Draw() {
         light_shader_->SetVec3("light.ambient", ambientColor);
         light_shader_->SetVec3("light.diffuse", diffuseColor);
         light_shader_->SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
-        engine.game_stack_.getTop()->Display(light_shader_.get(), projection, view);
-
+        //engine.game_stack_.getTop()->Display(light_shader_.get(), projection, view);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));

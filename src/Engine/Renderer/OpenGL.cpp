@@ -145,7 +145,8 @@ void view::OpenGL::ResizeWindow() {
 unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
     auto new_dir = directory;
-    std::filesystem::path filename = new_dir.remove_filename() / path;
+    std::filesystem::path ext = path;
+    std::filesystem::path filename = new_dir.remove_filename() / ext.filename();
 
     unsigned int texture_id = 0;
     glGenTextures(1, &texture_id);

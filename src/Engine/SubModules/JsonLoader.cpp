@@ -87,7 +87,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             if (j.contains("Physics") && prefab.has_physics) {
                 component::PhysicBody phys_body;
 
-                //TODO create collision body here
                 pe->AddCollisionBody(ent->GetID(), {0.f, 0.f, 0.f}, glm::quat(1.0f, 0.f, 0.f, 0.f));
 
                 for (auto& n : prefab.colliders_) {
@@ -211,8 +210,8 @@ void JSONLoader::LoadPrefabList() {
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, "Collider does not contain \"Name\" field", __LINE__, __FILE__);
                                     }
-                                    if (n.contains("Name")) {
-                                        collider.part_name = n.at("Name").get<std::string>();
+                                    if (n.contains("BaseShape")) {
+                                        collider.base_shape_name = n.at("BaseShape").get<std::string>();
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"BaseShape\" field"), __LINE__, __FILE__);
                                     }

@@ -11,6 +11,7 @@ static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
         pe.ToggleRenderer();
         std::cout << "toggle\n";
     }
+    std::cout << pe.GetRendererStatus() << std::endl;
 }
 
 template<class... Ts>

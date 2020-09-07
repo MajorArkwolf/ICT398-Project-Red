@@ -82,13 +82,17 @@ CollisionDetection::CollisionDetection() {
 
     //Generate line buffers for test renderer
     glGenVertexArrays(1, &l_vao_);
+    assert(l_vao_ != 0);
     glGenBuffers(1, &l_vbo_);
+    assert(l_vbo_ != 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     //Generate triangle buffers for test renderer
     glGenVertexArrays(1, &t_vao_);
+    assert(t_vao_ != 0);
     glGenBuffers(1, &t_vbo_);
+    assert(t_vbo_ != 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
@@ -140,9 +144,15 @@ void CollisionDetection::ToggleRenderer() {
         // Select the contact points and contact normals to be displayed
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
     } else {
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, false);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
     }
 }
 
@@ -161,7 +171,7 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
         if (line_num_ > 0) {
             // Bind the VAO
             glBindVertexArray(l_vao_);
-            glBindVertexArray(l_vbo_);
+            glBindBuffer(GL_ARRAY_BUFFER, l_vbo_);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*) nullptr);
@@ -182,7 +192,7 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
 
             // Bind the VAO
             glBindVertexArray(t_vao_);
-            glBindVertexArray(t_vbo_);
+            glBindBuffer(GL_ARRAY_BUFFER, t_vbo_);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*) nullptr);
@@ -203,6 +213,7 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
 }
 
 void CollisionDetection::Update(double t, double dt) {
+    world_->update(dt);
     if (renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
         if (debug_renderer.getNbLines() > 0) {

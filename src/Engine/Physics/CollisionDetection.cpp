@@ -85,16 +85,13 @@ CollisionDetection::CollisionDetection() {
     assert(l_vao_ != 0);
     glGenBuffers(1, &l_vbo_);
     assert(l_vbo_ != 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+
 
     //Generate triangle buffers for test renderer
     glGenVertexArrays(1, &t_vao_);
     assert(t_vao_ != 0);
     glGenBuffers(1, &t_vbo_);
     assert(t_vbo_ != 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 }
 
 CollisionDetection::~CollisionDetection() {
@@ -161,11 +158,14 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
         //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        shader_->Use();
-        shader_->SetMat4("view", view);
-        shader_->SetMat4("projection", projection);
-        auto model = glm::transpose(glm::inverse(view));
-        shader_->SetMat4("model", model);
+        const glm::mat4 localToCameraMatrix = view;
+        const glm::mat4 normalMatrix = glm::transpose(glm::inverse(localToCameraMatrix));
+        shader_->SetMat4("normalMatrix", normalMatrix);
+
+        // Set the model to camera matrix
+        shader_->SetMat4("localToWorldMatrix", glm::mat4());
+        shader_->SetMat4("worldToCameraMatrix", view);
+        shader_->SetBool("isGlobalVertexColorEnabled", false);
 
         // Lines
         if (line_num_ > 0) {
@@ -216,13 +216,19 @@ void CollisionDetection::Update(double t, double dt) {
     world_->update(dt);
     if (renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
-        if (debug_renderer.getNbLines() > 0) {
-            line_num_ = debug_renderer.getNbLines();
-            glBufferData(GL_ARRAY_BUFFER, line_num_ * sizeof(reactphysics3d::DebugRenderer::DebugLine), debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+        line_num_ = debug_renderer.getNbLines();
+        if (line_num_ > 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, l_vbo_);
+            auto sizeVertices = static_cast<GLsizei>(line_num_ * sizeof(rp3d::DebugRenderer::DebugLine));
+            glBufferData(GL_ARRAY_BUFFER, sizeVertices, debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-        if (debug_renderer.getNbTriangles() > 0) {
-            triag_num_ = debug_renderer.getNbTriangles();
-            glBufferData(GL_ARRAY_BUFFER, triag_num_ * sizeof(reactphysics3d::DebugRenderer::DebugTriangle), debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+        triag_num_ = debug_renderer.getNbTriangles();
+        if (triag_num_ > 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, t_vbo_);
+            auto sizeVertices = static_cast<GLsizei>(triag_num_ * sizeof(rp3d::DebugRenderer::DebugTriangle));
+            glBufferData(GL_ARRAY_BUFFER, sizeVertices, debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     }
 }

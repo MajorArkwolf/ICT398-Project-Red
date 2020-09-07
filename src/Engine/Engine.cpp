@@ -139,9 +139,6 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
             input_manager_.RecordKeyStates(event);
         }
         switch (event.type) {
-            case InputType::kWindowResized: {
-
-            } break;
             case InputType::kKeyPressed: {
                 auto keyboard = std::get<InputEvent::KeyboardEvent>(event.data);
                 if (keyboard.key == PhysicalKey::F1) {

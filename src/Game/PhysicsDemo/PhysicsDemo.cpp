@@ -6,7 +6,10 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-template<class... Ts> struct overload : Ts ... {	using Ts::operator()...;};
+template<class... Ts>
+struct overload : Ts ... {
+    using Ts::operator()...;
+};
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 PhysicsDemo::PhysicsDemo() {
@@ -20,17 +23,21 @@ PhysicsDemo::PhysicsDemo() {
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
 }
 
-void PhysicsDemo::Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
-    auto& renderer = redengine::Engine::get().renderer_;
+void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
+    auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
 }
 
 void PhysicsDemo::GUIStart() {
+    auto &engine = redengine::Engine::get();
+    GUIManager::startWindowFrame();
+    engine.GetGuiManager().DisplayEscapeMenu();
 
 }
 
 void PhysicsDemo::GUIEnd() {
+    GUIManager::EndWindowFrame();
 }
 
 void PhysicsDemo::Update(double t, double dt) {
@@ -54,8 +61,8 @@ void PhysicsDemo::UnInit() {
 
 void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
-    auto& engine = redengine::Engine::get();
-    auto& guiManager = engine.GetGuiManager();
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
             [&](std::monostate) {
@@ -66,8 +73,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
             [&](InputEvent::KeyboardEvent keyboard) {
 
                 switch (inputData.type) {
-                    case input::InputType::kKeyPressed:
-                    {
+                    case input::InputType::kKeyPressed: {
                         switch (keyboard.key) {
                             case input::VirtualKey::W: {
                                 forward_ = true;
@@ -88,8 +94,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                         }
                     }
                         break;
-                    case input::InputType::kKeyReleased:
-                    {
+                    case input::InputType::kKeyReleased: {
                         switch (keyboard.key) {
                             case input::VirtualKey::W: {
                                 forward_ = false;
@@ -105,6 +110,10 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                 break;
                             case input::VirtualKey::D: {
                                 right_ = false;
+                            }
+                                break;
+                            case input::VirtualKey::kEscape: {
+                                gui_manager.ToggleWindow("escapeMenu");
                             }
                                 break;
                         }
@@ -138,6 +147,6 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
             }
     }, inputData.data);
     if (!handledMouse) {
-        engine.mouse_ = { 0.0f, 0.0f };
+        engine.mouse_ = {0.0f, 0.0f};
     }
 }

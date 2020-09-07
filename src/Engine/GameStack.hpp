@@ -76,9 +76,12 @@ class GameStack {
         return remove_top_flag_;
     }
 
+    bool WillBeEmpty() {
+        return game_stack_.size() <= 1;
+    }
+
 private:
     bool remove_top_flag_ = false;
-    size_t size_ = 0;
     /// The stack itself.
     std::stack<T> game_stack_;
 

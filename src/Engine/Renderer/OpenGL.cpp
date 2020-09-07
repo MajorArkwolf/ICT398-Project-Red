@@ -5,9 +5,6 @@
 #include "Engine/Engine.hpp"
 #include <algorithm>
 
-
-
-
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
     if (!WindowMinimized()) {
@@ -18,13 +15,37 @@ void view::OpenGL::Draw() {
         engine.game_stack_.getTop()->GUIStart();
         int width = 0, height = 0;
         glfwGetWindowSize(engine.window_, &width, &height);
+
         glm::mat4 projection =
                 glm::perspective(glm::radians(camera_->zoom_),
                                  static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
         glm::mat4 view = camera_->GetViewMatrix();
-        glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
+        model_shader_->Use();
+        model_shader_->SetMat4("projection", projection);
+        model_shader_->SetMat4("view", view);
         engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
+        // be sure to activate shader when setting uniforms/drawing objects
+        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+        light_shader_->Use();
+        light_shader_->SetVec3("light.position", lightPos);
+        light_shader_->SetVec3("viewPos", camera_->position_);
+
+        // light properties
+        glm::vec3 lightColor;
+
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+        light_shader_->SetVec3("light.ambient", ambientColor);
+        light_shader_->SetVec3("light.diffuse", diffuseColor);
+        light_shader_->SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        engine.game_stack_.getTop()->Display(light_shader_.get(), projection, view);
+
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
         sky_box_.draw(skybox_view, projection);
         engine.game_stack_.getTop()->GUIEnd();
     }
@@ -60,43 +81,6 @@ void view::OpenGL::Init() {
 
 void view::OpenGL::DeInit() {
 
-}
-
-void view::OpenGL::DrawModel(Shader* shader, unsigned int &VAO, const std::vector<TextureB> &textures,
-                             const std::vector<unsigned int> &indices) {
-    // bind appropriate textures
-    unsigned int diffuse_nr = 1;
-    unsigned int specular_nr = 1;
-    unsigned int normal_nr = 1;
-    unsigned int height_nr = 1;
-    for (unsigned int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
-        std::string number;
-        std::string name = textures[i].type;
-        if (name == "texture_diffuse")
-            number = std::to_string(diffuse_nr++);
-        else if (name == "texture_specular")
-            number =
-                    std::to_string(specular_nr++); // transfer unsigned int to stream
-        else if (name == "texture_normal")
-            number = std::to_string(normal_nr++); // transfer unsigned int to stream
-        else if (name == "texture_height")
-            number = std::to_string(height_nr++); // transfer unsigned int to stream
-
-        // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(shader->GetID(), (name + number).c_str()), i);
-        // and finally bind the texture
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-
-    // draw mesh
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-
-    // always good practice to set everything back to defaults once configured.
-    glActiveTexture(GL_TEXTURE0);
 }
 
 void view::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int &EBO,
@@ -161,7 +145,8 @@ void view::OpenGL::ResizeWindow() {
 unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
     auto new_dir = directory;
-    std::filesystem::path filename = new_dir.remove_filename() / path;
+    std::filesystem::path ext = path;
+    std::filesystem::path filename = new_dir.remove_filename() / ext.filename();
 
     unsigned int texture_id = 0;
     glGenTextures(1, &texture_id);

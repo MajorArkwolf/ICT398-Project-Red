@@ -12,6 +12,15 @@
 #include "Engine/Renderer/DrawStruct.hpp"
 #include "Engine/Renderer/Shader.hpp"
 
+namespace model {
+    struct Material {
+        glm::vec3 Diffuse;
+        glm::vec3 Specular;
+        glm::vec3 Ambient;
+        float Shininess;
+    };
+}
+
 class Mesh {
   public:
     /// Vertices used in the mesh.
@@ -22,6 +31,8 @@ class Mesh {
     std::vector<TextureB> textures_ = {};
     /// Index buffer location.
     unsigned int vao_ = {};
+    /// Materials
+    model::Material material_ = {};
 
     /**
      * Constructs a mesh object.
@@ -30,7 +41,7 @@ class Mesh {
      * @param new_textures textures used in a mesh.
      */
     Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indices,
-         std::vector<TextureB> new_textures);
+         std::vector<TextureB> new_textures, model::Material material);
 
     /**
      * Draw function for the model.

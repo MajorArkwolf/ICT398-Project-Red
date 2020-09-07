@@ -16,9 +16,6 @@ void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& pro
         model_matrix = glm::scale(model_matrix, tran.scale);
         model_matrix = model_matrix * glm::mat4_cast(tran.rot);
 
-        shader->Use();
-        shader->SetMat4("projection", projection);
-        shader->SetMat4("view", view);
         shader->SetMat4("model", model_matrix);
 
         if (registry.has<component::Animation>(e)) {

@@ -30,10 +30,10 @@ void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm
 }
 
 void PhysicsDemo::GUIStart() {
-    auto &engine = redengine::Engine::get();
+    auto& engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
-
+    engine.GetGuiManager().DisplayConsoleLog();
 }
 
 void PhysicsDemo::GUIEnd() {
@@ -61,8 +61,8 @@ void PhysicsDemo::UnInit() {
 
 void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
-    auto &engine = redengine::Engine::get();
-    auto &gui_manager = engine.GetGuiManager();
+    auto& engine = redengine::Engine::get();
+    auto& gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
             [&](std::monostate) {
@@ -91,6 +91,9 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                 right_ = true;
                             }
                                 break;
+                            case input::VirtualKey::kEscape: {
+                                gui_manager.ToggleWindow("escapeMenu");
+                            } break;
                         }
                     }
                         break;

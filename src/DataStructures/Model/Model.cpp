@@ -164,8 +164,9 @@ Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
             LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+    Material loaded_material = LoadMaterial(material);
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, loaded_material);
 }
 
 std::vector<TextureB> model::Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
@@ -317,7 +318,7 @@ Animation* model::Model::GetAnimation(const std::string &anim_name) {
     return nullptr;
 }
 
-model::Material loadMaterial(aiMaterial* mat) {
+model::Material model::Model::LoadMaterial(aiMaterial* mat) {
     model::Material material = {};
     aiColor3D color(0.f, 0.f, 0.f);
     float shininess = 0.0f;

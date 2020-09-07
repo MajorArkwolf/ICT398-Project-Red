@@ -39,7 +39,7 @@ class Camera {
   double pitch_ = {};
 
   /// Camera options
-  double movement_speed_ = {};
+  float movement_speed_ = {};
   double mouse_sensitivity_ = {};
   double zoom_ = {};
 

@@ -29,6 +29,5 @@ namespace physics {
 
         rp3d::ConvexShape *shape_;
         ShapeType type_;
-
     };
 }

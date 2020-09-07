@@ -54,6 +54,10 @@ public:
         ecs_->registry_.remove<T>(this->entity_handle_);
     }
 
+    entt::entity GetID() const {
+        return entity_handle_;
+    }
+
 private:
     /// The id of the given reference.
     entt::entity entity_handle_ = entt::entity{0};

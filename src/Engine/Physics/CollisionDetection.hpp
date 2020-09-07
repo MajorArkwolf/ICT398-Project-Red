@@ -61,7 +61,7 @@ namespace physics {
         bool GetRendererStatus() const;
 
     private:
-        bool renderer_ = true;
+        bool renderer_ = false;
 
         //Test Renderer Values
         unsigned int l_vbo_ = 0, l_vao_ = 0;

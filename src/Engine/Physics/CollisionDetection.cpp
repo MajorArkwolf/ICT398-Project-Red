@@ -111,9 +111,11 @@ void CollisionDetection::AddBodyAndEntt(entt::entity &entity, reactphysics3d::Co
 }
 
 void CollisionDetection::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
-    auto body = entity_collision_coupling_.at(entity_id);
-    reactphysics3d::Transform new_transform(ConvertPosition(pos), ConvertRotation(rot));
-    body->setTransform(new_transform);
+    if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
+        auto body = entity_collision_coupling_.at(entity_id);
+        reactphysics3d::Transform new_transform(ConvertPosition(pos), ConvertRotation(rot));
+        body->setTransform(new_transform);
+    }
 }
 
 void CollisionDetection::DeleteCollisionBody(const entt::entity &entity_id) {

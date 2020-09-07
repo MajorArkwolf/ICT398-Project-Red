@@ -84,6 +84,9 @@ void GUIManager::DisplayEscapeMenu() {
         if (ImGui::Button("Dev Menu")) {
             ToggleWindow("dev");
         }
+        if (ImGui::Button("Toggle Debug Renderer")) {
+            renderer_ = !renderer_;
+        }
         if (ImGui::Button("Console Log")) {
             ToggleWindow("consoleLog");
         }

@@ -61,6 +61,8 @@ class GUIManager {
      */
     void ToggleWindow(const std::string &windowName);
 
+    bool renderer_ = false;
+
    private:
     /// A mapping of a window name to a location in the window open array
     std::map<std::string, bool> window_open_map;

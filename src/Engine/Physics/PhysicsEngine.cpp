@@ -20,7 +20,7 @@ void PhysicsEngine::Update(double t, double dt) {
     //collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
 }
 
-void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::dvec2& cameraPos) {
+void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view) {
     collision_detection_.Draw(projection, view);
 }
 

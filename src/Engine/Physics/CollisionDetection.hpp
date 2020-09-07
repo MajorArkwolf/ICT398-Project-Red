@@ -39,7 +39,6 @@ public:
     PhysicsShape CreateCapsuleShape(double radius, double height);
     PhysicsShape CreateSphereShape(double radius);
     int AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation);
-
     std::queue<PhysicsCollisionData>& GetCollisions();
     bool GetRendererStatus() const;
 

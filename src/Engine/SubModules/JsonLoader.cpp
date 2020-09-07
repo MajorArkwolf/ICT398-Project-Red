@@ -21,8 +21,7 @@ nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
     return j;
 }
 
-std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
-    const std::filesystem::path &file_path, ECS *ecs = nullptr, PhysicsEngine *pe = nullptr) {
+std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesystem::path &file_path, ECS *ecs = nullptr, PhysicsEngine *pe = nullptr) {
     auto &prefabRepo = redengine::Engine::get().GetPrefabRepo();
     nlohmann::json j = LoadJson(file_path);
     std::optional<std::shared_ptr<Entity>> entity = {};
@@ -83,7 +82,21 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
             if (j.contains("Physics") && prefab.has_physics) {
-                ent->AddComponent<component::PhysicBody>();
+                component::PhysicBody phys_body;
+
+                //TODO create collision body here
+                pe->AddCollisionBody(ent->GetID(), {0.f, 0.f, 0.f}, glm::quat(1.0f, 0.f, 0.f, 0.f));
+
+                for (auto& n : prefab.colliders_) {
+                    if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
+                        pe->AddCollider(ent->GetID(), const_cast<PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
+                    }
+                    else {
+                        ///Prefab name not found
+                    }
+                }
+                component::PhysicBody physBody;
+                physBody.colliders = prefab.colliders_;
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";

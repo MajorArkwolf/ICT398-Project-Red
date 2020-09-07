@@ -2,6 +2,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "DataStructures/Model/Animator.hpp"
+#include "Engine/SubModules/PrefabRepo.hpp"
 
 namespace component {
     struct Transform {
@@ -18,13 +19,12 @@ namespace component {
     };
 
     class PhysicBody {
+       public:
         bool static_object = false;
-    private:
         size_t id = 0;
         glm::dvec3 velocity = {};
-        double mass = 1;
+        std::vector<redengine::Collider> colliders;
         //tensorflow mat3
-    public:
         void AddForce(glm::dvec3 additional_force);
         void SetVelocity(glm::dvec3 new_velocity);
         glm::dvec3 GetVelocity() const;

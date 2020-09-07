@@ -19,9 +19,14 @@ public:
     void ToggleRenderer();
     bool GetRendererStatus();
     void SetECS(ECS * ecs);
+    void AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
+    void UpdateCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot);
+    void DeleteCollisionBody(const entt::entity& entity_id);
+    int AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation);
     PhysicsShape CreateBoxShape(glm::vec3 extents);
     PhysicsShape CreateCapsuleShape(double radius, double height);
     PhysicsShape CreateSphereShape(double radius);
+
 
    private:
     ECS* ecs_ = nullptr;

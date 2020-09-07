@@ -94,7 +94,8 @@ void GUIManager::DisplayEscapeMenu() {
             engine.show_settings_menu_ = true;
         }
         if (ImGui::Button("Exit")) {
-            engine.EndEngine();
+            engine.CloseScene();
+            window_open = !window_open;
         }
         ImGui::End();
     }

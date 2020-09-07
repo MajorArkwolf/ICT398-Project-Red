@@ -204,5 +204,7 @@ namespace redengine {
         PrefabRepo& GetPrefabRepo();
 
         ConsoleLog &GetLog();
+
+        void CloseScene();
     };
 }

@@ -103,9 +103,6 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                 right_ = true;
                             }
                                 break;
-                            case input::VirtualKey::kEscape: {
-                                gui_manager.ToggleWindow("escapeMenu");
-                            } break;
                         }
                     }
                         break;
@@ -127,7 +124,11 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                 right_ = false;
                             }
                                 break;
-                        }
+                            case input::VirtualKey::kEscape:
+                                gui_manager.ToggleWindow("escapeMenu");
+                        } break;
+                        default:
+                            break;
                     }
                         break;
                 }

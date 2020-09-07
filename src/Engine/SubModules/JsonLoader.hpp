@@ -8,13 +8,15 @@
 
 class Entity;
 class ECS;
-class PhysicsEngine;
+namespace physics {
+    class PhysicsEngine;
+}
 
 class JSONLoader {
  public:
     static nlohmann::json LoadJson(const std::filesystem::path& file_path);
     static std::optional<std::shared_ptr<Entity>> LoadEntity(
-            const std::filesystem::path& file_path, ECS* ecs, PhysicsEngine *pe);  // NOLINT
-    static void LoadScene(const std::filesystem::path& file_path, ECS* ecs, PhysicsEngine *pe);  // NOLINT
+            const std::filesystem::path& file_path, ECS* ecs, physics::PhysicsEngine *pe);  // NOLINT
+    static void LoadScene(const std::filesystem::path& file_path, ECS* ecs, physics::PhysicsEngine *pe);  // NOLINT
     static void LoadPrefabList();
 };

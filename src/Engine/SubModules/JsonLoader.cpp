@@ -11,6 +11,8 @@
 #include "Engine/Engine.hpp"
 #include "Engine/Physics/PhysicsEngine.hpp"
 
+
+
 nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
     nlohmann::json j = {};
     std::ifstream i(file_path);
@@ -21,7 +23,8 @@ nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
     return j;
 }
 
-std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesystem::path &file_path, ECS *ecs = nullptr, PhysicsEngine *pe = nullptr) {
+std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
+    const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
     auto &prefabRepo = redengine::Engine::get().GetPrefabRepo();
     nlohmann::json j = LoadJson(file_path);
     std::optional<std::shared_ptr<Entity>> entity = {};
@@ -105,7 +108,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(const std::filesys
     return entity;
 }
 
-void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, PhysicsEngine *pe = nullptr) {
+void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
     auto base_path = redengine::Engine::get().GetBasePath();
     auto full_path = base_path / "res" / "Entity" / file_path;
     auto j = LoadJson(full_path);
@@ -169,7 +172,7 @@ void JSONLoader::LoadPrefabList() {
                     }
                 }
                 if (p.contains("Physics")) {
-                    auto e = PhysicsEngine();
+                    auto e = physics::PhysicsEngine();
                     prefab.has_physics = true;
                     auto physics = p.at("Physics");
                     if (physics.contains("Static")) {

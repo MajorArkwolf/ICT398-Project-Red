@@ -1,7 +1,10 @@
 #pragma once
 
-class CollisionResolution {
-public:
-    CollisionResolution() = default;
-    ~CollisionResolution() = default;
+namespace physics {
+
+    class CollisionResolution {
+    public:
+        CollisionResolution() = default;
+        ~CollisionResolution() = default;
 };
+}

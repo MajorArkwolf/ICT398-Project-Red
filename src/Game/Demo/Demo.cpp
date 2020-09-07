@@ -9,9 +9,7 @@
 static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
     if (pe.GetRendererStatus() != val) {
         pe.ToggleRenderer();
-        std::cout << "toggle\n";
     }
-    std::cout << pe.GetRendererStatus() << std::endl;
 }
 
 template<class... Ts>
@@ -46,6 +44,7 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
     ToggleRenderer(physics_engine_, gui_manager.renderer_);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
     physics_engine_.Draw(projection, view);
+    shader->Use();
 }
 
 void Demo::GUIStart() {

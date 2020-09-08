@@ -19,6 +19,7 @@ public:
     void Update(double t, double dt);
     void Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view,
               const glm::dvec2& camera_pos);
+    std::shared_ptr<Entity> GetEntity(entt::entity id);
 
     entt::registry& GetRegistry() {return registry_;};
 

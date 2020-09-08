@@ -8,16 +8,25 @@ void ECS::FixedUpdate(double t, double dt) {
 }
 
 void ECS::Update(double t, double dt) {
-  System::UpdateAnimation(registry_, t, dt);
+    System::UpdateAnimation(registry_, t, dt);
 }
 
-void ECS::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view,
+void ECS::Draw(Shader* shader, const glm::mat4& projection, const glm::mat4& view,
                const glm::dvec2& camera_pos) {
-  System::Draw(registry_, shader, projection, view);
+    System::Draw(registry_, shader, projection, view);
+}
+
+std::shared_ptr<Entity> ECS::GetEntity(entt::entity id) {
+    for (auto& n : entity_register_) {
+        if (n->GetID() == id) {
+            return n;
+        }
+    } 
+    return nullptr;
 }
 
 Entity& ECS::CreateEntity() {
-  this->entity_register_.emplace_back(
-      std::make_shared<Entity>(registry_.create(), this));
-  return *entity_register_.at(entity_register_.size() - 1).get();
+    this->entity_register_.emplace_back(
+        std::make_shared<Entity>(registry_.create(), this));
+    return *entity_register_.at(entity_register_.size() - 1).get();
 }

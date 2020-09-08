@@ -23,9 +23,9 @@ void PhysicsEngine::Update(double t, double dt) {
     auto players = registry.view<component::Player>();
     for (auto &e : players) {
         auto &p = players.get<component::Player>(e);
-       // collision_detection_.UpdateCollisionBody(e, playerComp.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+        collision_detection_.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
     }
-    //collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
+    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
 }
 
 void PhysicsEngine::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
@@ -34,6 +34,7 @@ void PhysicsEngine::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
 
 void PhysicsEngine::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
+    collision_resolution_.SetECS(ecs);
 }
 
 void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {

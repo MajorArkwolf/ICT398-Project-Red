@@ -24,6 +24,8 @@ Demo::Demo() {
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
+    auto &engine = redengine::Engine::get();
+    engine.GetMouseMode(relativeMouse);
     physics_engine_.SetECS(&ecs_);
     std::filesystem::path path = "";
     path.append("Demo");
@@ -39,6 +41,7 @@ Demo::Demo() {
     auto playerShape = physics_engine_.CreateCapsuleShape(50, 100);
     physics_engine_.AddCollider(player.GetID(), playerShape, {0.f, 25.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
 
+    player.GetComponent<component::Player>().camera.movement_speed_ = 0.15f;
 }
 
 void Demo::Init() {
@@ -67,6 +70,7 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayConsoleLog();
     engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
+
 }
 
 void Demo::GUIEnd() {

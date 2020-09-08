@@ -11,7 +11,7 @@ void main()
     if (has_texture) {
         color = texture(texture_diffuse1, TexCoords);
     } else {
-        color = vec4(0.5f, 0.5f, 0.5f, 0.5f);
+        color = vec4(0.5f, 0.5f, 0.5f, 1.0f);
     }
     FragColor = color;
 }

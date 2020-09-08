@@ -55,7 +55,7 @@ void Demo::GUIStart() {
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
     engine.GetGuiManager().DisplayConsoleLog();
-    engine.GetGuiManager().DisplayDevScreen(camera);
+    engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
 
 }

@@ -1,4 +1,5 @@
 #include "CollisionDetection.hpp"
+
 #include "Engine/Engine.hpp"
 #include "Engine/Physics/PhysicsCommon.hpp"
 
@@ -29,7 +30,7 @@ static inline reactphysics3d::Quaternion ConvertRotation(const glm::quat& glm_qu
     return rot;
 }
 
-void RedEngineEventListener::onContact(const reactphysics3d::CollisionCallback::CallbackData &callbackData) {
+void RedEngineEventListener::onContact(const reactphysics3d::CollisionCallback::CallbackData& callbackData) {
     using namespace reactphysics3d;
     // For each contact pair
     for (uint p = 0; p < callbackData.getNbContactPairs(); p++) {
@@ -58,19 +59,22 @@ void RedEngineEventListener::onContact(const reactphysics3d::CollisionCallback::
 }
 
 RedEngineEventListener::RedEngineEventListener(
-        std::unordered_map<reactphysics3d::CollisionBody *, entt::entity> *c_e_c) {
+    std::unordered_map<reactphysics3d::CollisionBody*, entt::entity>* c_e_c) {
     collision_entity_coupling_ = c_e_c;
 }
 
-std::queue<PhysicsCollisionData> &RedEngineEventListener::GetPhysicsQueue() {
+std::queue<PhysicsCollisionData>& RedEngineEventListener::GetPhysicsQueue() {
     return physics_que_;
 }
 
 CollisionDetection::CollisionDetection() {
     physics_common_ = &PhysicsCommon::GetInstance().physics_common_;
+    physics_common_->setLogger(&logger_);
+    world_ = PhysicsCommon::GetInstance().physics_common_.createPhysicsWorld();
     using reactphysics3d::DebugRenderer;
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
-    world_ = physics_common_->createPhysicsWorld();
+    reactphysics3d::Transform transform = {};
+    world_->createCollisionBody(transform);
     world_->setEventListener(&event_listener_);
     auto base_path = redengine::Engine::get().GetBasePath();
     auto vs = base_path / "res" / "shader" / "react_shader.vs";
@@ -79,15 +83,16 @@ CollisionDetection::CollisionDetection() {
 
     //Generate line buffers for test renderer
     glGenVertexArrays(1, &l_vao_);
+    assert(l_vao_ != 0);
     glGenBuffers(1, &l_vbo_);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    assert(l_vbo_ != 0);
+
 
     //Generate triangle buffers for test renderer
     glGenVertexArrays(1, &t_vao_);
+    assert(t_vao_ != 0);
     glGenBuffers(1, &t_vbo_);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    assert(t_vbo_ != 0);
 }
 
 CollisionDetection::~CollisionDetection() {
@@ -98,16 +103,15 @@ void CollisionDetection::AddCollisionBody(const entt::entity& entity_id, const g
     reactphysics3d::Transform transform = {};
     transform.setPosition(ConvertPosition(pos));
     transform.setOrientation(ConvertRotation(rot));
-    reactphysics3d::CollisionBody* body = world_->createCollisionBody(transform);
-    AddBodyAndEntt(const_cast<entt::entity &>(entity_id), body);
+    auto* body = world_->createCollisionBody(transform);
+    AddBodyAndEntt(const_cast<entt::entity&>(entity_id), body);
 }
 
-
-void CollisionDetection::AddBodyAndEntt(entt::entity &entity, reactphysics3d::CollisionBody* coll_body) {
+void CollisionDetection::AddBodyAndEntt(entt::entity& entity, reactphysics3d::CollisionBody* coll_body) {
     auto r = std::make_pair(entity, coll_body);
     auto y = std::make_pair(coll_body, entity);
-    entity_collision_coupling_.insert(r);
-    collision_entity_coupling_.insert(y);
+    entity_collision_coupling_.emplace(r);
+    collision_entity_coupling_.emplace(y);
 }
 
 void CollisionDetection::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
@@ -118,14 +122,14 @@ void CollisionDetection::UpdateCollisionBody(const entt::entity &entity_id, cons
     }
 }
 
-void CollisionDetection::DeleteCollisionBody(const entt::entity &entity_id) {
+void CollisionDetection::DeleteCollisionBody(const entt::entity& entity_id) {
     auto body = entity_collision_coupling_.at(entity_id);
     entity_collision_coupling_.erase(entity_id);
     collision_entity_coupling_.erase(body);
     world_->destroyCollisionBody(body);
 }
 
-std::queue<PhysicsCollisionData> &CollisionDetection::GetCollisions() {
+std::queue<PhysicsCollisionData>& CollisionDetection::GetCollisions() {
     return event_listener_.GetPhysicsQueue();
 }
 
@@ -138,34 +142,43 @@ void CollisionDetection::ToggleRenderer() {
         // Select the contact points and contact normals to be displayed
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
     } else {
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, false);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
     }
 }
 
-void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
+void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view) {
     if (renderer_) {
         //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        shader_->Use();
-        shader_->SetMat4("view", view);
-        shader_->SetMat4("projection", projection);
-        auto model = glm::transpose(glm::inverse(view));
-        shader_->SetMat4("model", model);
+        const glm::mat4 localToCameraMatrix = view;
+        const glm::mat4 normalMatrix = glm::transpose(glm::inverse(localToCameraMatrix));
+        shader_->SetMat4("normalMatrix", normalMatrix);
+
+        // Set the model to camera matrix
+        shader_->SetMat4("localToWorldMatrix", glm::mat4());
+        shader_->SetMat4("worldToCameraMatrix", view);
+        shader_->SetBool("isGlobalVertexColorEnabled", false);
 
         // Lines
         if (line_num_ > 0) {
             // Bind the VAO
             glBindVertexArray(l_vao_);
-            glBindVertexArray(l_vbo_);
+            glBindBuffer(GL_ARRAY_BUFFER, l_vbo_);
 
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*)nullptr);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*) nullptr);
 
             glEnableVertexAttribArray(1);
-            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*)sizeof(rp3d::Vector3));
+            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*) sizeof(rp3d::Vector3));
 
             // Draw the lines geometry
             glDrawArrays(GL_LINES, 0, line_num_ * 2);
@@ -180,13 +193,13 @@ void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view
 
             // Bind the VAO
             glBindVertexArray(t_vao_);
-            glBindVertexArray(t_vbo_);
+            glBindBuffer(GL_ARRAY_BUFFER, t_vbo_);
 
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*)nullptr);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (char*) nullptr);
 
             glEnableVertexAttribArray(1);
-            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*)sizeof(rp3d::Vector3));
+            glVertexAttribIPointer(1, 3, GL_UNSIGNED_INT, sizeof(rp3d::Vector3) + sizeof(rp3d::uint32), (void*) sizeof(rp3d::Vector3));
 
             // Draw the triangles geometry
             glDrawArrays(GL_TRIANGLES, 0, triag_num_ * 3);
@@ -201,19 +214,25 @@ void CollisionDetection::Draw(const glm::mat4 &projection, const glm::mat4 &view
 }
 
 void CollisionDetection::Update(double t, double dt) {
+    world_->update(dt);
     if (renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
-        if (debug_renderer.getNbLines() > 0) {
-            line_num_ = debug_renderer.getNbLines();
-            glBufferData(GL_ARRAY_BUFFER, line_num_ * sizeof(reactphysics3d::DebugRenderer::DebugLine), debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+        line_num_ = debug_renderer.getNbLines();
+        if (line_num_ > 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, l_vbo_);
+            auto sizeVertices = static_cast<GLsizei>(line_num_ * sizeof(rp3d::DebugRenderer::DebugLine));
+            glBufferData(GL_ARRAY_BUFFER, sizeVertices, debug_renderer.getLinesArray(), GL_STREAM_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-        if (debug_renderer.getNbTriangles() > 0) {
-            triag_num_ = debug_renderer.getNbTriangles();
-            glBufferData(GL_ARRAY_BUFFER, triag_num_ * sizeof(reactphysics3d::DebugRenderer::DebugTriangle), debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+        triag_num_ = debug_renderer.getNbTriangles();
+        if (triag_num_ > 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, t_vbo_);
+            auto sizeVertices = static_cast<GLsizei>(triag_num_ * sizeof(rp3d::DebugRenderer::DebugTriangle));
+            glBufferData(GL_ARRAY_BUFFER, sizeVertices, debug_renderer.getTrianglesArray(), GL_STREAM_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     }
 }
-
 
 bool CollisionDetection::GetRendererStatus() const {
     return renderer_;

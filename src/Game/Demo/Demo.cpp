@@ -9,7 +9,6 @@
 static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
     if (pe.GetRendererStatus() != val) {
         pe.ToggleRenderer();
-        std::cout << "toggle\n";
     }
 }
 
@@ -20,6 +19,7 @@ struct overload : Ts ... {
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 Demo::Demo() {
+    physics_engine_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
@@ -48,6 +48,7 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
     renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
     physics_engine_.Draw(projection, view);
+    shader->Use();
 }
 
 void Demo::GUIStart() {

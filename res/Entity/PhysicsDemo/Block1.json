@@ -1,9 +1,5 @@
 {
-  "Model": {
-    "ModelFilePath": "res/model/PhysicTestObjects/morgwall.fbx",
-    "VertShader": "res/shader/model_shader.vs",
-    "FragShader": "res/shader/model_shader.fs"
-  },
+  "Prefab": "Block",
   "Transform": {
     "Position": {
       "X": 20.0,

@@ -89,6 +89,8 @@ namespace view {
 
         engine::Camera *GetActiveCamera() { return camera_; }
 
+        void ClearCamera();
+
     private:
         /// Decides if the renderer should be in wire frame mode or not.
         bool wire_frame_ = false;

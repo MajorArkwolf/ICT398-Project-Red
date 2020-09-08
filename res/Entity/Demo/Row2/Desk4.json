@@ -1,10 +1,10 @@
 {
-  "Prefab": "Chair",
+  "Prefab": "Desk",
   "Transform": {
     "Position": {
-      "X": 20.5,
+      "X": -271.0,
       "Y": 0.0,
-      "Z": -2.0
+      "Z": 150.0
     },
     "Rotation": {
       "X": 0.0,
@@ -16,7 +16,5 @@
       "Y": 0.0,
       "Z": 0.0
     }
-  },
-  "Physics":  true
-
+  }
 }

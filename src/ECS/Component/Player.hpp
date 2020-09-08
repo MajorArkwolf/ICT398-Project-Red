@@ -1,14 +1,16 @@
 #pragma once
 #include "Engine/EulerCamera.hpp"
 
-namespace component {
+namespace component{
     struct Player {
         engine::Camera camera{};
-        float height = 90;
+        float height = 90.f;
+
         void Update(double t, double dt) {
-            if(camera.position_.y > height || camera.position_.y < height) {
+            if (camera.position_.y != height) {
                 camera.position_.y = height;
             }
         }
     };
 }
+

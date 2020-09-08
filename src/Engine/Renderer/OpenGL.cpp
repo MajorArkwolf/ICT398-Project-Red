@@ -8,7 +8,9 @@
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
     if (!WindowMinimized()) {
-        camera_ = &engine.game_stack_.getTop()->camera;
+        if (camera_ == nullptr) {
+            camera_ = &engine.game_stack_.getTop()->camera;
+        }
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

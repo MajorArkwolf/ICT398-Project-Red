@@ -3,6 +3,7 @@
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
 #include "Engine/Physics/PhysicsEngine.hpp"
+#include "ECS/Entity.hpp"
 
 class Demo : public BaseState {
 public:
@@ -21,4 +22,5 @@ private:
     physics::PhysicsEngine physics_engine_ = {};
     ECS ecs_ = {};
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
+    Entity player;
 };

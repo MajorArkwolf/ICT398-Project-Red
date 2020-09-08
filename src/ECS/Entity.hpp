@@ -7,6 +7,10 @@
 class Entity {
 public:
     /**
+     * Default Constructor
+     */
+    Entity() = default;
+    /**
      * Creates an entity
      * @param entity_id the id for the entity being created.
      * @param ecs_object the entity object system.

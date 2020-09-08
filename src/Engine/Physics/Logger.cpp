@@ -27,7 +27,7 @@ void Logger::log(Level level, const std::string& physicsWorldName, Category cate
     });
 
     std::stringstream log_stream;
-    log_stream << "World: " << physicsWorldName << " Category: " << cat << " Message: " << message ;
+    log_stream << "[Category]: " << cat << " [Message]: " << message ;
     
     engine.GetLog().AddLog(ConsoleLog::LogType::Collision, log_stream.str(), lineNumber, filename);
 }

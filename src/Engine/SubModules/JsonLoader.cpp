@@ -86,8 +86,8 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             }
             if (j.contains("Physics") && prefab.has_physics) {
                 component::PhysicBody phys_body;
-
-                pe->AddCollisionBody(ent->GetID(), {0.f, 0.f, 0.f}, glm::quat(1.0f, 0.f, 0.f, 0.f));
+                auto &trans = ent->GetComponent<component::Transform>();
+                pe->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
                 for (auto& n : prefab.colliders_) {
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {

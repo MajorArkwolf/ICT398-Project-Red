@@ -23,6 +23,8 @@ Demo::Demo() {
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
+    auto &engine = redengine::Engine::get();
+    engine.GetMouseMode(relativeMouse);
     physics_engine_.SetECS(&ecs_);
     std::filesystem::path path = "";
     path.append("Demo");
@@ -30,6 +32,7 @@ Demo::Demo() {
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
     player = ecs_.CreateEntity();
     player.AddComponent<component::Player>();
+    player.GetComponent<component::Player>().camera.movement_speed_ = 0.15f;
 }
 
 void Demo::Init() {

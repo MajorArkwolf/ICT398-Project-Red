@@ -5,20 +5,10 @@
 #include "Engine/Engine.hpp"
 #include <algorithm>
 
-static std::filesystem::path FixWindowsPath(const std::string& file_path) {
-    auto path = file_path;
-#if defined(__APPLE__) || defined(__linux__)
-    std::replace(path.begin(), path.end(), '\\', '/');
-#endif
-    return std::filesystem::path{path};
-}
-
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
     if (!WindowMinimized()) {
-        if (camera_ == nullptr) {
-            camera_ = &engine.game_stack_.getTop()->camera;
-        }
+        camera_ = &engine.game_stack_.getTop()->camera;
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -156,12 +146,9 @@ void view::OpenGL::ResizeWindow() {
 
 unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
-
     auto new_dir = directory;
-    auto ext = FixWindowsPath(path);
-    ext.make_preferred();
-    ext = ext.filename();
-    auto filename = new_dir.remove_filename() / ext;
+    std::filesystem::path ext = path;
+    std::filesystem::path filename = new_dir.remove_filename() / ext.filename();
 
     unsigned int texture_id = 0;
     glGenTextures(1, &texture_id);
@@ -205,10 +192,6 @@ unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::f
 
 void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
     camera_ = &main_camera;
-}
-
-void view::OpenGL::ClearCamera() {
-    camera_ = nullptr;
 }
 
 //void View::OpenGL::sortDrawDistance() {

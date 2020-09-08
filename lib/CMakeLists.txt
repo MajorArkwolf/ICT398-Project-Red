@@ -36,8 +36,8 @@ add_subdirectory(json)
 add_subdirectory(cpplocate)
 
 # Puts a stop to the endlessly irritating practise postfixing 'd' onto debug libraries.
-set_target_properties(reactphysics3d PROPERTIES ENABLE_EXPORTS ON)
-set_target_properties(reactphysics3d PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+#set_target_properties(reactphysics3d PROPERTIES ENABLE_EXPORTS ON)
+#set_target_properties(reactphysics3d PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(assimp PROPERTIES DEBUG_POSTFIX "")
 set_target_properties(glad PROPERTIES DEBUG_POSTFIX "")
 set_target_properties(glfw PROPERTIES DEBUG_POSTFIX "")

@@ -2,14 +2,13 @@
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
-#include "ECS/Component/Player.hpp"
+#include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
     if (pe.GetRendererStatus() != val) {
         pe.ToggleRenderer();
-        std::cout << "toggle\n";
     }
 }
 
@@ -20,6 +19,7 @@ struct overload : Ts ... {
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 Demo::Demo() {
+    physics_engine_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
@@ -28,26 +28,23 @@ Demo::Demo() {
     path.append("Demo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
-    player = ecs_.CreateEntity();
-    player.AddComponent<component::Player>();
 }
 
 void Demo::Init() {
 }
 
 void Demo::UnInit() {
-    auto &renderer = redengine::Engine::get().renderer_;
-    renderer.ClearCamera();
 }
 
 void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     auto &engine = redengine::Engine::get();
     auto &gui_manager = engine.GetGuiManager();
+    renderer.SetCameraOnRender(camera);
     ToggleRenderer(physics_engine_, gui_manager.renderer_);
-    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
     physics_engine_.Draw(projection, view);
+    shader->Use();
 }
 
 void Demo::GUIStart() {
@@ -65,12 +62,8 @@ void Demo::GUIEnd() {
 }
 
 void Demo::Update(double t, double dt) {
-    auto &renderer = redengine::Engine::get().renderer_;
-    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().Update(t, dt);
     physics_engine_.Update(t, dt);
 }
 
@@ -155,7 +148,7 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                         auto x = static_cast<double>(vec.x);
                         auto y = static_cast<double>(vec.y);
                         x = x * -1.0;
-                        player.GetComponent<component::Player>().camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                        camera.ProcessMouseMovement(prev_x - x, prev_y - y);
                         handledMouse = true;
                         prev_x = x;
                         prev_y = y;

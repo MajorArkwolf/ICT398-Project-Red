@@ -1,6 +1,4 @@
-#pragma once
-#include <variant>
-#include <glm/vec3.hpp>
+#pragma once 
 #include <reactphysics3d/reactphysics3d.h>
 
 /**

@@ -6,41 +6,49 @@ class ECS;
 
 namespace physics {
 
-    class PhysicsEngine {
-    public:
-        PhysicsEngine() = default;
+class PhysicsEngine {
+   public:
+    PhysicsEngine() = default;
 
-        ~PhysicsEngine() = default;
+    ~PhysicsEngine() = default;
 
-        PhysicsEngine(PhysicsEngine &p) = delete;
+    PhysicsEngine(PhysicsEngine &p) = delete;
 
-        PhysicsEngine(PhysicsEngine &&p) = delete;
+    PhysicsEngine(PhysicsEngine &&p) = delete;
 
-        PhysicsEngine &operator=(PhysicsEngine p) = delete;
+    PhysicsEngine &operator=(PhysicsEngine p) = delete;
 
-        PhysicsEngine &operator=(PhysicsEngine &&p) = delete;
+    PhysicsEngine &operator=(PhysicsEngine &&p) = delete;
 
-        void FixedUpdate(double t, double dt);
+    void FixedUpdate(double t, double dt);
 
-        void Update(double t, double dt);
+    void Update(double t, double dt);
 
         void Draw(const glm::mat4 &projection, const glm::mat4 &view);
 
-        void ToggleRenderer();
+    void ToggleRenderer();
 
-        bool GetRendererStatus();
+    bool GetRendererStatus();
 
-        void SetECS(ECS *ecs);
+    void SetECS(ECS *ecs);
 
-        PhysicsShape CreateBoxShape(glm::vec3 extents);
+    void PhysicsEngine::DeleteCollisionBody(const entt::entity &entity_id);
 
-        PhysicsShape CreateCapsuleShape(double radius, double height);
+    void PhysicsEngine::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-        PhysicsShape CreateSphereShape(double radius);
+    void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-    private:
-        ECS *ecs_ = nullptr;
-        CollisionDetection collision_detection_ = {};
-        CollisionResolution collision_resolution_ = {};
-    };
-}
+    int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation);
+
+    PhysicsShape CreateBoxShape(glm::vec3 extents);
+
+    PhysicsShape CreateCapsuleShape(double radius, double height);
+
+    PhysicsShape CreateSphereShape(double radius);
+
+   private:
+    ECS *ecs_ = nullptr;
+    CollisionDetection collision_detection_ = {};
+    CollisionResolution collision_resolution_ = {};
+};
+}// namespace physics

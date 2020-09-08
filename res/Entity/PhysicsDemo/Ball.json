@@ -1,9 +1,5 @@
 {
-  "Model": {
-    "ModelFilePath": "res/model/PhysicTestObjects/ball.glb",
-    "VertShader": "res/shader/model_shader.vs",
-    "FragShader": "res/shader/model_shader.fs"
-  },
+  "Prefab": "Ball",
   "Transform": {
     "Position": {
       "X": 20.0,

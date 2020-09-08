@@ -61,6 +61,9 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayConsoleLog();
     engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
+    if (engine.show_settings_menu_) {
+        engine.SettingMenu();
+    }
 
 }
 

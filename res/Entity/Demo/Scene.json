@@ -1,5 +1,6 @@
 {
   "Entity": [ "Classroom.json",
+    "Guy1.json",
     "Row1/Chair.json",
     "Row1/Desk.json",
     "Row1/Chair2.json",

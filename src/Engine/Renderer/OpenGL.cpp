@@ -207,6 +207,10 @@ void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
     camera_ = &main_camera;
 }
 
+void view::OpenGL::ClearCamera() {
+    camera_ = nullptr;
+}
+
 //void View::OpenGL::sortDrawDistance() {
 //    glm::vec3 cpos = {camera->Position.x, static_cast<float>(camera->Position.y), static_cast<float>(camera->Position.z)};
 //    for (auto &e : drawQue) {

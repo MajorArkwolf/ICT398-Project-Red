@@ -36,6 +36,8 @@ void Demo::Init() {
 }
 
 void Demo::UnInit() {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.ClearCamera();
 }
 
 void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {

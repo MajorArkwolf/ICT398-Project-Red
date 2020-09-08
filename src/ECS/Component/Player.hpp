@@ -4,7 +4,7 @@
 namespace component{
     struct Player {
         engine::Camera camera{};
-        float height = 90.f;
+        float height = 170.f;
 
         void Update(double t, double dt) {
             if (camera.position_.y != height) {

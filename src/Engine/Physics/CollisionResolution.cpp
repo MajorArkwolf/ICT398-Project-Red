@@ -12,8 +12,8 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
             if (ecs_->GetRegistry().has<component::Player>(item.first_body)) {
                 auto& ref = ecs_->GetRegistry().get<component::Player>(item.first_body);
             }
-
         }
+        queue.pop();
     }
 }
 

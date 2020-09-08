@@ -32,11 +32,11 @@ class PhysicsEngine {
 
     void SetECS(ECS *ecs);
 
-    void PhysicsEngine::DeleteCollisionBody(const entt::entity &entity_id);
+    void DeleteCollisionBody(const entt::entity &entity_id);
 
-    void PhysicsEngine::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+    void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-    void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+    void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
     int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation);
 

@@ -22,8 +22,21 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
 
+//Hacked in
+in vec2 TexCoords;
+uniform sampler2D texture_diffuse1;
+uniform bool has_texture;
+
 void main()
 {
+    // Start of hack
+    vec4 color;
+    if (has_texture) {
+        color = texture(texture_diffuse1, TexCoords);
+    } else {
+        color = vec4(0.5f, 0.5f, 0.5f, 0.5f);
+    }
+    //End of hack
     // ambient
     vec3 ambient = light.ambient * material.ambient;
 
@@ -40,5 +53,5 @@ void main()
     vec3 specular = light.specular * (spec * material.specular);
 
     vec3 result = ambient + diffuse + specular;
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, 1.0) + color;
 }

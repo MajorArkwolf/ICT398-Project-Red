@@ -16,27 +16,33 @@ void Mesh::Draw(Shader* shader) {
     unsigned int specular_nr = 1;
     unsigned int normal_nr = 1;
     unsigned int height_nr = 1;
+    bool has_texture = false;
     for (unsigned int i = 0; i < textures_.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
         std::string number;
         std::string name = textures_[i].type;
-        if (name == "texture_diffuse")
+        if (name == "texture_diffuse") {
             number = std::to_string(diffuse_nr++);
-        else if (name == "texture_specular")
+            has_texture = true;
+        }
+        else if (name == "texture_specular") {
             number =
                     std::to_string(specular_nr++); // transfer unsigned int to stream
-        else if (name == "texture_normal")
+        }
+        else if (name == "texture_normal") {
             number = std::to_string(normal_nr++); // transfer unsigned int to stream
-        else if (name == "texture_height")
+        }
+        else if (name == "texture_height") {
             number = std::to_string(height_nr++); // transfer unsigned int to stream
-
+        }
         // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(shader->GetID(), (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures_[i].id);
     }
 
+    shader->SetBool("has_texture", has_texture);
     shader->SetVec3("material.ambient", material_.Ambient);
     shader->SetVec3("material.diffuse", material_.Diffuse);
     shader->SetVec3("material.specular", material_.Specular);

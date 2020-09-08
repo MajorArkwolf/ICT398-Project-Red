@@ -1,7 +1,7 @@
 {
   "Name": "Classroom",
   "Model": {
-    "ModelFilePath": "res/model/Classroom.fbx",
+    "ModelFilePath": "res/model/Classroom/Classroom.fbx",
     "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {

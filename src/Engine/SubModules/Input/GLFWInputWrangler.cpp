@@ -124,7 +124,7 @@ void input::GLFWInputWrangler::FramebufferSizeCallback(GLFWwindow* window, int w
 void input::GLFWInputWrangler::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	GLFWEvent event;
-	event.type = GLFWEventType::kWindowResized;
+	event.type = GLFWEventType::kButtonPressed;
 	GLFWEvent::Mouse mouse = { button, mods };
 
 	if (action == GLFW_PRESS)
@@ -155,7 +155,7 @@ void input::GLFWInputWrangler::CursorPositionCallback(GLFWwindow* window, double
 void input::GLFWInputWrangler::CursorEnterCallback(GLFWwindow* window, int entered)
 {
 	GLFWEvent event;
-	event.type = GLFWEventType::kWindowResized;
+	event.type = GLFWEventType::kCursorEnteredWindow;
 	if (entered == 1)
 	{
 		event.type = GLFWEventType::kCursorEnteredWindow;

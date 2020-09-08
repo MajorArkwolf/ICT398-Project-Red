@@ -19,17 +19,16 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent &event) {
     input::InputEvent input_event = {};
 
     std::visit(overload{
-                   [&](std::monostate) {
+                   [&](const std::monostate& mono) {
                        switch (event.type) {
                            case GLFWEventType::kWindowClosed: {
                                input_event.type = InputType::kWindowClosed;
                            } break;
-                           case GLFWEventType::kWindowResized: {
-                               input_event.type = InputType::kWindowResized;
-                           } break;
+                           default:
+                               break;
                        }
                    },
-                   [&](input::GLFWEvent::Position position) {
+                   [&](const input::GLFWEvent::Position& position) {
                        InputEvent::iVector2 pos = {position.x, position.y};
                        switch (event.type) {
                            case GLFWEventType::kCursorMoved: {
@@ -38,16 +37,21 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent &event) {
                            case GLFWEventType::kWindowMoved: {
                                input_event.type = InputType::kWindowMoved;
                            } break;
+                           default:
+                               break;
                        }
                        input_event.data.emplace<InputEvent::iVector2>(pos);
                    },
-                   [&](input::GLFWEvent::Size) {
+                   [&](const input::GLFWEvent::Size& size) {
                        switch (event.type) {
+                           case GLFWEventType::kWindowResized: {
+                               input_event.type = InputType::kWindowResized;
+                           } break;
                            default:
                                break;
                        }
                    },
-                   [&](input::GLFWEvent::Scroll scroll) {
+                   [&](const input::GLFWEvent::Scroll& scroll) {
                        switch (event.type) {
                            case GLFWEventType::kMouseScrolled: {
                                input_event.type = InputType::kMouseScrolled;
@@ -58,7 +62,7 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent &event) {
                        InputEvent::iVector2 vec = {scroll.x, scroll.y};
                        input_event.data.emplace<InputEvent::iVector2>(vec);
                    },
-                   [&](input::GLFWEvent::Keyboard keyboard) {
+                   [&](const input::GLFWEvent::Keyboard& keyboard) {
                        auto key = ConvertPhysicalToVirtual(ConvertGLFWKey(keyboard.key));
                        auto mod = std::invoke([&]() {
                            switch (keyboard.mods) {
@@ -80,12 +84,14 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent &event) {
                            case GLFWEventType::kKeyReleased: {
                                input_event.type = InputType::kKeyReleased;
                            } break;
+                           default:
+                               break;
                        };
 
                        input::InputEvent::KeyboardEvent keyEvent = {key, mod};
                        input_event.data.emplace<input::InputEvent::KeyboardEvent>(keyEvent);
                    },
-                   [&](input::GLFWEvent::Mouse mouse) {
+                   [&](const input::GLFWEvent::Mouse& mouse) {
                        auto mod = std::invoke([&]() {
                            switch (mouse.mods) {
                                case GLFW_MOD_ALT:
@@ -118,17 +124,19 @@ input::InputEvent input::InputManager::ConvertEvent(const GLFWEvent &event) {
                            case GLFWEventType::kButtonReleased: {
                                input_event.type = InputType::kButtonReleased;
                            } break;
+                           default:
+                               break;
                        };
                        InputEvent::MouseEvent m_event = {mouse_event, mod};
                        input_event.data.emplace<InputEvent::MouseEvent>(m_event);
                    },
-                   [&](input::GLFWEvent::File) {
+                   [&](const input::GLFWEvent::File&) {
                        switch (event.type) {
                            default:
                                break;
                        }
                    },
-                   [&](input::GLFWEvent::Scale) {
+                   [&](const input::GLFWEvent::Scale& scale) {
                        switch (event.type) {
                            default:
                                break;

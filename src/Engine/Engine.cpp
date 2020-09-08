@@ -139,9 +139,6 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
             input_manager_.RecordKeyStates(event);
         }
         switch (event.type) {
-            case InputType::kWindowResized: {
-
-            } break;
             case InputType::kKeyPressed: {
                 auto keyboard = std::get<InputEvent::KeyboardEvent>(event.data);
                 if (keyboard.key == PhysicalKey::F1) {
@@ -152,12 +149,19 @@ auto redengine::Engine::ProcessInput(double deltaTime) -> void {
                         glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                     }
                 }
-            }
                 break;
+            }
+
             case InputType::kWindowClosed: {
                 this->EndEngine();
-            }
                 break;
+            }
+
+            case InputType::kWindowResized: {
+                renderer_.ResizeWindow();
+                break;
+            }
+
             default:
                 break;
         }

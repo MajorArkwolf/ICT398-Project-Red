@@ -25,3 +25,6 @@
 [submodule "lib/cpplocate"]
 	path = lib/cpplocate
 	url = https://github.com/cginternals/cpplocate.git
+[submodule "lib/cpplint"]
+	path = lib/cpplint
+	url = https://github.com/cpplint/cpplint.git

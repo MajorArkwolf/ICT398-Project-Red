@@ -48,11 +48,11 @@ namespace physics {
 
         void Update(double t, double dt);
 
-        physics::PhysicsShape CreateBoxShape(glm::vec3 extents);
+        PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-        physics::PhysicsShape CreateCapsuleShape(double radius, double height);
+        PhysicsShape CreateCapsuleShape(double radius, double height);
 
-        physics::PhysicsShape CreateSphereShape(double radius);
+        PhysicsShape CreateSphereShape(double radius);
 
         int AddCollider(const entt::entity &entity_id, physics::PhysicsShape &shape, glm::vec3 relative_position,
                         glm::quat rotation);

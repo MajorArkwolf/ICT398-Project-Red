@@ -2,7 +2,7 @@
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
-#include "ECS/Entity.hpp"
+#include "ECS/Component/Player.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
@@ -28,20 +28,24 @@ Demo::Demo() {
     path.append("Demo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
+    player = ecs_.CreateEntity();
+    player.AddComponent<component::Player>();
 }
 
 void Demo::Init() {
 }
 
 void Demo::UnInit() {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.ClearCamera();
 }
 
 void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     auto &engine = redengine::Engine::get();
     auto &gui_manager = engine.GetGuiManager();
-    renderer.SetCameraOnRender(camera);
     ToggleRenderer(physics_engine_, gui_manager.renderer_);
+    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Draw(shader, projection, view, camera.GetLocation());
     physics_engine_.Draw(projection, view);
     shader->Use();
@@ -62,8 +66,12 @@ void Demo::GUIEnd() {
 }
 
 void Demo::Update(double t, double dt) {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player.GetComponent<component::Player>().Update(t, dt);
     physics_engine_.Update(t, dt);
 }
 
@@ -148,7 +156,7 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                         auto x = static_cast<double>(vec.x);
                         auto y = static_cast<double>(vec.y);
                         x = x * -1.0;
-                        camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                        player.GetComponent<component::Player>().camera.ProcessMouseMovement(prev_x - x, prev_y - y);
                         handledMouse = true;
                         prev_x = x;
                         prev_y = y;

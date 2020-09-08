@@ -6,10 +6,6 @@
 
 void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& queue, double t, double dt) {
 
-    auto HasComponent = [&](entt::entity id, auto arg) {
-        return ecs_->GetRegistry().has<arg>(id);
-    };
-
     while (!queue.empty()) {
         auto& item = queue.front();
         if (ecs_) {

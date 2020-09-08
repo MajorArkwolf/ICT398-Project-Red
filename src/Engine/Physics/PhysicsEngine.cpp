@@ -28,6 +28,22 @@ void PhysicsEngine::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
 }
 
+void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
+    collision_detection_.AddCollisionBody(entity_id, pos, rot);
+}
+
+void PhysicsEngine::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
+    collision_detection_.UpdateCollisionBody(entity_id, pos, rot);
+}
+
+void PhysicsEngine::DeleteCollisionBody(const entt::entity &entity_id) {
+    collision_detection_.DeleteCollisionBody(entity_id);
+}
+
+int PhysicsEngine::AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation) {
+    return collision_detection_.AddCollider(entity_id, shape, relative_position, rotation);
+}
+
 PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
     return collision_detection_.CreateBoxShape(extents);
 }

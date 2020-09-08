@@ -5,7 +5,7 @@
 #include "ECS/ECS.hpp"
 
 class Entity {
-public:
+   public:
     /**
      * Default Constructor
      */
@@ -15,7 +15,7 @@ public:
      * @param entity_id the id for the entity being created.
      * @param ecs_object the entity object system.
      */
-    Entity(entt::entity entity_id, ECS* ecs_object);
+    Entity(entt::entity entity_id, ECS *ecs_object);
 
     /**
      * Add a component to an entity.
@@ -62,10 +62,9 @@ public:
         return entity_handle_;
     }
 
-private:
+   private:
     /// The id of the given reference.
     entt::entity entity_handle_ = entt::entity{0};
     /// The ecs system that it refers to. Passed in by reference.
-    ECS* ecs_ = nullptr;
+    ECS *ecs_ = nullptr;
 };
-

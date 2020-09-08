@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/EulerCamera.hpp"
 
-namespace component{
+namespace component {
     struct Player {
         engine::Camera camera{};
         float height = 170.f;

@@ -6,17 +6,18 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-static inline void ToggleRenderer(physics::PhysicsEngine& pe, bool val) {
+static inline void ToggleRenderer(physics::PhysicsEngine &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
         pe.ToggleRenderer();
     }
 }
 
 template<class... Ts>
-struct overload : Ts ... {
+struct overload : Ts... {
     using Ts::operator()...;
 };
-template<class... Ts> overload(Ts...)->overload<Ts...>;
+template<class... Ts>
+overload(Ts...)->overload<Ts...>;
 
 Demo::Demo() {
     physics_engine_.SetECS(&ecs_);
@@ -30,6 +31,14 @@ Demo::Demo() {
     JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
     player = ecs_.CreateEntity();
     player.AddComponent<component::Player>();
+    auto playerComp = player.GetComponent<component::Player>();
+
+    player.AddComponent<component::PhysicBody>();
+    auto &phys = player.GetComponent<component::PhysicBody>();
+    physics_engine_.AddCollisionBody(player.GetID(), playerComp.camera.position_, glm::quat(glm::vec3(0, 0, 0)));
+    auto playerShape = physics_engine_.CreateCapsuleShape(50, 100);
+    physics_engine_.AddCollider(player.GetID(), playerShape, {0.f, 25.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+
 }
 
 void Demo::Init() {
@@ -58,7 +67,6 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayConsoleLog();
     engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
-
 }
 
 void Demo::GUIEnd() {
@@ -86,87 +94,75 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
     auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
-            [&](std::monostate) {
+                   [&](std::monostate) {
 
-            }, [&](InputEvent::MouseEvent mouse) {
+                   },
+                   [&](InputEvent::MouseEvent mouse) {
 
-            },
-            [&](InputEvent::KeyboardEvent keyboard) {
+                   },
+                   [&](InputEvent::KeyboardEvent keyboard) {
+                       switch (inputData.type) {
+                           case input::InputType::kKeyPressed: {
+                               switch (keyboard.key) {
+                                   case input::VirtualKey::W: {
+                                       forward_ = true;
+                                   } break;
+                                   case input::VirtualKey::A: {
+                                       left_ = true;
+                                   } break;
+                                   case input::VirtualKey::S: {
+                                       backward_ = true;
+                                   } break;
+                                   case input::VirtualKey::D: {
+                                       right_ = true;
+                                   } break;
+                               }
+                           } break;
+                           case input::InputType::kKeyReleased: {
+                               switch (keyboard.key) {
+                                   case input::VirtualKey::W: {
+                                       forward_ = false;
+                                   } break;
+                                   case input::VirtualKey::A: {
+                                       left_ = false;
+                                   } break;
+                                   case input::VirtualKey::S: {
+                                       backward_ = false;
+                                   } break;
+                                   case input::VirtualKey::D: {
+                                       right_ = false;
+                                   } break;
+                                   case input::VirtualKey::kEscape:
+                                       gui_manager.ToggleWindow("escapeMenu");
+                               }
+                               break;
+                               default:
+                                   break;
+                           } break;
+                       }
+                   },
+                   [&](InputEvent::dVector2 vec) {
 
-                switch (inputData.type) {
-                    case input::InputType::kKeyPressed: {
-                        switch (keyboard.key) {
-                            case input::VirtualKey::W: {
-                                forward_ = true;
-                            }
-                                break;
-                            case input::VirtualKey::A: {
-                                left_ = true;
-                            }
-                                break;
-                            case input::VirtualKey::S: {
-                                backward_ = true;
-                            }
-                                break;
-                            case input::VirtualKey::D: {
-                                right_ = true;
-                            }
-                                break;
-                        }
-                    }
-                        break;
-                    case input::InputType::kKeyReleased: {
-                        switch (keyboard.key) {
-                            case input::VirtualKey::W: {
-                                forward_ = false;
-                            }
-                                break;
-                            case input::VirtualKey::A: {
-                                left_ = false;
-                            }
-                                break;
-                            case input::VirtualKey::S: {
-                                backward_ = false;
-                            }
-                                break;
-                            case input::VirtualKey::D: {
-                                right_ = false;
-                            }
-                                break;
-                            case input::VirtualKey::kEscape:
-                                gui_manager.ToggleWindow("escapeMenu");
-                        } break;
-                        default:
-                            break;
-                    }
-                        break;
-                }
+                   },
+                   [&](InputEvent::iVector2 vec) {
+                       switch (inputData.type) {
+                           case input::InputType::kCursorMoved: {
+                               static int prev_x = 0;
+                               static int prev_y = 0;
 
-            },
-            [&](InputEvent::dVector2 vec) {
-
-            },
-            [&](InputEvent::iVector2 vec) {
-
-                switch (inputData.type) {
-                    case input::InputType::kCursorMoved: {
-                        static int prev_x = 0;
-                        static int prev_y = 0;
-
-                        auto x = static_cast<double>(vec.x);
-                        auto y = static_cast<double>(vec.y);
-                        x = x * -1.0;
-                        player.GetComponent<component::Player>().camera.ProcessMouseMovement(prev_x - x, prev_y - y);
-                        handledMouse = true;
-                        prev_x = x;
-                        prev_y = y;
-                    }
-                        break;
-                    default:
-                        break;
-                }
-            }
-    }, inputData.data);
+                               auto x = static_cast<double>(vec.x);
+                               auto y = static_cast<double>(vec.y);
+                               x = x * -1.0;
+                               player.GetComponent<component::Player>().camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                               handledMouse = true;
+                               prev_x = x;
+                               prev_y = y;
+                           } break;
+                           default:
+                               break;
+                       }
+                   }},
+               inputData.data);
     if (!handledMouse) {
         engine.mouse_ = {0.0f, 0.0f};
     }

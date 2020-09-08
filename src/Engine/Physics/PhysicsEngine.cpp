@@ -1,6 +1,8 @@
 #include "PhysicsEngine.hpp"
-#include "ECS/ECS.hpp"
+
+#include "ECS/Component/Player.hpp"
 #include "ECS/Component/Basic.hpp"
+#include "ECS/ECS.hpp"
 
 using namespace physics;
 
@@ -17,10 +19,16 @@ void PhysicsEngine::Update(double t, double dt) {
         auto &tran = entities.get<component::Transform>(e);
         collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
     }
+
+    auto players = registry.view<component::Player>();
+    for (auto &e : players) {
+        auto &p = entities.get<component::Player>(e);
+       // collision_detection_.UpdateCollisionBody(e, playerComp.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+    }
     //collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
 }
 
-void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view) {
+void PhysicsEngine::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
     collision_detection_.Draw(projection, view);
 }
 

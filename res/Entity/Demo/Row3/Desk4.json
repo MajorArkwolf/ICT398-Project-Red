@@ -2,9 +2,9 @@
   "Prefab": "Desk",
   "Transform": {
     "Position": {
-      "X": 20.5,
+      "X": -271.0,
       "Y": 0.0,
-      "Z": -2.0
+      "Z": 300.0
     },
     "Rotation": {
       "X": 0.0,

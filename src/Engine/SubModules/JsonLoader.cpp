@@ -109,13 +109,14 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
 
 void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
     auto base_path = redengine::Engine::get().GetBasePath();
-    auto full_path = base_path / "res" / "Entity" / file_path;
+    const auto full_path = base_path / "res" / "Entity" / file_path;
     auto j = LoadJson(full_path);
     if (j.contains("Entity")) {
         auto entities = j.at("Entity");
         for (auto &e : entities) {
             auto file = e.get<std::string>();
-            auto file_name = full_path.remove_filename().append(file);
+            auto file_name = full_path;
+            file_name.remove_filename().append(file);
             if (ecs != nullptr) {
                 LoadEntity(file_name, ecs, pe);
             }

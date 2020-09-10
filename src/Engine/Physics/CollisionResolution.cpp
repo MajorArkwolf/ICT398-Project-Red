@@ -8,11 +8,15 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
 
     while (!queue.empty()) {
         auto& item = queue.front();
+        int player = 0;
         if (ecs_) {
             if (ecs_->GetRegistry().has<component::Player>(item.first_body)) {
-                auto& ref = ecs_->GetRegistry().get<component::Player>(item.first_body);
+                player = 1;
+            } else if (ecs_->GetRegistry().has<component::Player>(item.second_body)) {
+                player = 2;
             }
         }
+
         queue.pop();
     }
 }

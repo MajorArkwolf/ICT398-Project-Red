@@ -2,22 +2,22 @@
   "Prefab": "Guy1",
   "Transform": {
     "Position": {
-      "X": 20.0,
+      "X": 35.0,
       "Y": 0.0,
-      "Z": 2.0
+      "Z": 650.0
     },
     "Rotation": {
       "X": 0.0,
-      "Y": 180.0,
+      "Y": 210.0,
       "Z": 0.0
     },
     "Scale": {
-      "X": 0.0,
-      "Y": 0.0,
-      "Z": 0.0
+      "X": 22.0,
+      "Y": 22.0,
+      "Z": 22.0
     }
   },
   "Animation": {
-    "IDLE": "PUNCH"
+    "IDLE": "IDLE"
   }
 }

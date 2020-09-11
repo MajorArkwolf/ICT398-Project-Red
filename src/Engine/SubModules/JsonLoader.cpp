@@ -85,7 +85,20 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
             if (j.contains("Physics") && prefab.has_physics) {
-                ent->AddComponent<component::PhysicBody>();
+                component::PhysicBody phys_body;
+                auto &trans = ent->GetComponent<component::Transform>();
+                pe->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
+
+                for (auto& n : prefab.colliders_) {
+                    if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
+                        pe->AddCollider(ent->GetID(), const_cast<physics::PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
+                    }
+                    else {
+                        ///Prefab name not found
+                    }
+                }
+                component::PhysicBody physBody;
+                physBody.colliders = prefab.colliders_;
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";
@@ -96,13 +109,14 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
 
 void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
     auto base_path = redengine::Engine::get().GetBasePath();
-    auto full_path = base_path / "res" / "Entity" / file_path;
+    const auto full_path = base_path / "res" / "Entity" / file_path;
     auto j = LoadJson(full_path);
     if (j.contains("Entity")) {
         auto entities = j.at("Entity");
         for (auto &e : entities) {
             auto file = e.get<std::string>();
-            auto file_name = full_path.remove_filename().append(file);
+            auto file_name = full_path;
+            file_name.remove_filename().append(file);
             if (ecs != nullptr) {
                 LoadEntity(file_name, ecs, pe);
             }
@@ -197,8 +211,8 @@ void JSONLoader::LoadPrefabList() {
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, "Collider does not contain \"Name\" field", __LINE__, __FILE__);
                                     }
-                                    if (n.contains("Name")) {
-                                        collider.part_name = n.at("Name").get<std::string>();
+                                    if (n.contains("BaseShape")) {
+                                        collider.base_shape_name = n.at("BaseShape").get<std::string>();
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"BaseShape\" field"), __LINE__, __FILE__);
                                     }

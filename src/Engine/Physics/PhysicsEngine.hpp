@@ -58,12 +58,14 @@ namespace physics {
          */
         void Update(double t, double dt);
 
+
         /**
          * Draws the physics world over the real world.
          * @param projection projection matrix of the camera.
          * @param view the view matrix of the camera.
          */
         void Draw(const glm::mat4 &projection, const glm::mat4 &view);
+
 
         /**
          * Toggles the debug renderer on or off.
@@ -82,15 +84,24 @@ namespace physics {
          */
         void SetECS(ECS *ecs);
 
-        PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-        PhysicsShape CreateCapsuleShape(double radius, double height);
+    void DeleteCollisionBody(const entt::entity &entity_id);
 
-        PhysicsShape CreateSphereShape(double radius);
+    void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-    private:
-        ECS *ecs_ = nullptr;
-        CollisionDetection collision_detection_ = {};
-        CollisionResolution collision_resolution_ = {};
-    };
-}
+    void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+
+    int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation);
+
+    PhysicsShape CreateBoxShape(glm::vec3 extents);
+
+    PhysicsShape CreateCapsuleShape(double radius, double height);
+
+    PhysicsShape CreateSphereShape(double radius);
+
+   private:
+    ECS *ecs_ = nullptr;
+    CollisionDetection collision_detection_ = {};
+    CollisionResolution collision_resolution_ = {};
+};
+}// namespace physics

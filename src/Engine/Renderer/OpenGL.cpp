@@ -5,10 +5,20 @@
 #include "Engine/Engine.hpp"
 #include <algorithm>
 
+static std::filesystem::path FixWindowsPath(const std::string& file_path) {
+    auto path = file_path;
+#if defined(__APPLE__) || defined(__linux__)
+    std::replace(path.begin(), path.end(), '\\', '/');
+#endif
+    return std::filesystem::path{path};
+}
+
 void view::OpenGL::Draw() {
     auto &engine = redengine::Engine::get();
     if (!WindowMinimized()) {
-        camera_ = &engine.game_stack_.getTop()->camera;
+        if (camera_ == nullptr) {
+            camera_ = &engine.game_stack_.getTop()->camera;
+        }
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -146,52 +156,56 @@ void view::OpenGL::ResizeWindow() {
 
 unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
+
     auto new_dir = directory;
-    std::filesystem::path ext = path;
-    std::filesystem::path filename = new_dir.remove_filename() / ext.filename();
+    auto ext = FixWindowsPath(path);
+    ext.make_preferred();
+    ext = ext.filename();
+    auto filename = new_dir.remove_filename() / ext;
 
-    unsigned int texture_id = 0;
-    glGenTextures(1, &texture_id);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
-    int width = 0, height = 0, nrComponents = 0;
-    // filename to C string may not work on other OS's please verify it does.
-    unsigned char *data =
-            stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
-    if (data) {
-        GLenum format = GL_RED;
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format = 3;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
             format = GL_RGB;
         else if (nrComponents == 4)
             format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
-                     GL_UNSIGNED_BYTE, data);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        if (nrComponents == 3) {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        // Enable should you need alpha, this will clamp textures to the edge to
-        // ensure that weird stuff doesnt happen.
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-    } else {
-        std::cout << "Texture failed to load at path: " << filename << std::endl;
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
-    return texture_id;
+
+    return textureID;
 }
 
 void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
     camera_ = &main_camera;
+}
+
+void view::OpenGL::ClearCamera() {
+    camera_ = nullptr;
 }
 
 //void View::OpenGL::sortDrawDistance() {

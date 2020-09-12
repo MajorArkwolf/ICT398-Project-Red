@@ -56,6 +56,7 @@ void RedEngineEventListener::onContact(const reactphysics3d::CollisionCallback::
 
             p_c_d.contact_points.push_back(c_p);
         }
+
         physics_que_.push(p_c_d);
     }
 }
@@ -75,8 +76,6 @@ CollisionDetection::CollisionDetection() {
     world_ = PhysicsCommon::GetInstance().physics_common_.createPhysicsWorld();
     using reactphysics3d::DebugRenderer;
     event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
-    reactphysics3d::Transform transform = {};
-    world_->createCollisionBody(transform);
     world_->setEventListener(&event_listener_);
     auto base_path = redengine::Engine::get().GetBasePath();
     auto vs = base_path / "res" / "shader" / "react_shader.vs";

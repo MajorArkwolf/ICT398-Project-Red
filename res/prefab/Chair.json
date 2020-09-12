@@ -29,9 +29,9 @@
         "Name": "Leg",
         "Type": "Box",
         "HalfExtents": {
-          "X": 0.1,
-          "Y": 0.5,
-          "Z": 0.1
+          "X": 50,
+          "Y": 50,
+          "Z": 50
         }
       },
       {
@@ -59,7 +59,7 @@
         "BaseShape": "Leg",
         "Position": {
           "X": 0.0,
-          "Y": 0.0,
+          "Y": 25,
           "Z": 0.0
         },
         "Rotation": {

@@ -1,13 +1,16 @@
-#include <Engine/Renderer/OpenGL.hpp>
-#include <Engine/Engine.hpp>
 #include "MainMenu.hpp"
+
 #include <imgui.h>
+
+#include <Engine/Engine.hpp>
+#include <Engine/Renderer/OpenGL.hpp>
+
+#include "Engine/SubModules/JsonLoader.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
-#include "Engine/SubModules/JsonLoader.hpp"
 
 template<class... Ts>
-struct overload : Ts ... {
+struct overload : Ts... {
     using Ts::operator()...;
 };
 template<class... Ts>
@@ -47,7 +50,6 @@ auto MainMenu::Update(double t, double dt) -> void {
 }
 
 void MainMenu::UnInit() {
-
 }
 
 void MainMenu::HandleWindowEvent() {
@@ -61,35 +63,30 @@ void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
     auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
-                       [&](std::monostate) {
+                   [&](std::monostate) {
 
-                       },
-                       [&](InputEvent::MouseEvent mouse) {
+                   },
+                   [&](InputEvent::MouseEvent mouse) {
 
-                       },
-                       [&](InputEvent::KeyboardEvent keyboard) {
-                           switch (inputData.type) {
-                               case input::InputType::kKeyPressed: {
-                                   switch (keyboard.key) {
-
-                                   }
+                   },
+                   [&](InputEvent::KeyboardEvent keyboard) {
+                       switch (inputData.type) {
+                           case input::InputType::kKeyPressed: {
+                               switch (keyboard.key) {
                                }
-                                   break;
-                               case input::InputType::kKeyReleased: {
-                                   switch (keyboard.key) {
-                                       case input::VirtualKey::kEscape:
-                                           gui_manager.ToggleWindow("escapeMenu");
-                                   }
+                           } break;
+                           case input::InputType::kKeyReleased: {
+                               switch (keyboard.key) {
                                }
-                                   break;
-                           }
-                       },
-                       [&](InputEvent::dVector2 vec) {
+                           } break;
+                       }
+                   },
+                   [&](InputEvent::dVector2 vec) {
 
-                       },
-                       [&](InputEvent::iVector2 vec) {
+                   },
+                   [&](InputEvent::iVector2 vec) {
 
-                       }},
+                   }},
                inputData.data);
     if (!handledMouse) {
         engine.mouse_ = {0.0f, 0.0f};
@@ -115,9 +112,9 @@ void MainMenu::MainMenuGUI() {
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<Demo>());
     }
-    if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
-        engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
-    }
+    //if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
+    //    engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
+    //}
     ImGui::Separator();
 
     ImGui::Text("Other options");
@@ -125,7 +122,7 @@ void MainMenu::MainMenuGUI() {
         engine.show_settings_menu_ = !engine.show_settings_menu_;
     }
     if (ImGui::Button("Quit", ImVec2(285, 40))) {
-        engine.EndEngine();
+        engine.GetGuiManager().ToggleWindow("quitScreen");
     }
 
     if (engine.show_settings_menu_) {
@@ -134,8 +131,7 @@ void MainMenu::MainMenuGUI() {
 
     ImGui::End();
 
-    engine.GetGuiManager().DisplayEscapeMenu();
-    engine.GetGuiManager().DisplayConsoleLog();
+    engine.GetGuiManager().DisplayQuitScreen();
 }
 
 void MainMenu::GUIEnd() {

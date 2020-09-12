@@ -19,5 +19,6 @@
   },
   "Animation": {
     "IDLE": "IDLE"
-  }
+  },
+  "Physics" : true
 }

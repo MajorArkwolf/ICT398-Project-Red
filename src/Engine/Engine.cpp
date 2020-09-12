@@ -92,8 +92,8 @@ redengine::Engine::Engine() {
     // glfw window creation
     // --------------------
     const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    last_window_x_size_ = mode->width / 2;
-    last_window_y_size_ = mode->height / 2;
+    last_window_x_size_ = 1920;
+    last_window_y_size_ = 1080;
     window_ = glfwCreateWindow(last_window_x_size_, last_window_y_size_, "Project Red", nullptr, nullptr);
     if (window_ == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;

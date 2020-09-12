@@ -58,7 +58,7 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
     auto &gui_manager = engine.GetGuiManager();
     ToggleRenderer(physics_engine_, gui_manager.renderer_);
     renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
-    ecs_.Draw(shader, projection, view, camera.GetLocation());
+    ecs_.Draw(shader, projection, view);
     physics_engine_.Draw(projection, view);
     shader->Use();
 }

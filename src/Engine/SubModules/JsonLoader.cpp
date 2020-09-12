@@ -10,6 +10,7 @@
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Physics/PhysicsEngine.hpp"
+#include "Engine/Physics/PhysicsWorld.hpp"
 
 
 
@@ -24,7 +25,7 @@ nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
 }
 
 std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
-    const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
+    const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsWorld *pw) {
     auto &prefabRepo = redengine::Engine::get().GetPrefabRepo();
     nlohmann::json j = LoadJson(file_path);
     std::optional<std::shared_ptr<Entity>> entity = {};
@@ -79,19 +80,19 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         std::cerr << "JSON Animation failed: " << e.what() << '\n';
                     }
                 }
-                if (prefab.has_physics && pe != nullptr) {
-                }
             } else {
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
-            if (j.contains("Physics") && prefab.has_physics) {
+            if (j.contains("Physics") && prefab.has_physics && pw != nullptr) {
                 component::PhysicBody phys_body;
                 auto &trans = ent->GetComponent<component::Transform>();
-                pe->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
+                pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
                 for (auto& n : prefab.colliders_) {
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
-                        pe->AddCollider(ent->GetID(), const_cast<physics::PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
+                        //TODO: look into changing this into physics world
+                        auto &pe = redengine::Engine::get().GetPhysicsEngine();
+                        //pe.AddCollider(ent->GetID(), const_cast<physics::PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
                     }
                     else {
                         ///Prefab name not found
@@ -107,7 +108,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
     return entity;
 }
 
-void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsEngine *pe = nullptr) {
+void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nullptr, physics::PhysicsWorld *pw = nullptr) {
     auto base_path = redengine::Engine::get().GetBasePath();
     const auto full_path = base_path / "res" / "Entity" / file_path;
     auto j = LoadJson(full_path);
@@ -118,7 +119,7 @@ void JSONLoader::LoadScene(const std::filesystem::path &file_path, ECS *ecs = nu
             auto file_name = full_path;
             file_name.remove_filename().append(file);
             if (ecs != nullptr) {
-                LoadEntity(file_name, ecs, pe);
+                LoadEntity(file_name, ecs, pw);
             }
         }
     }

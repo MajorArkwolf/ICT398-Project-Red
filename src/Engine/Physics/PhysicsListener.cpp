@@ -1,4 +1,5 @@
 #include "PhysicsListener.hpp"
+#include <glm/gtc/quaternion.hpp>
 
 static inline glm::vec3 ConvertVector(const reactphysics3d::Vector3& r_vec) {
     glm::vec3 pos = {};

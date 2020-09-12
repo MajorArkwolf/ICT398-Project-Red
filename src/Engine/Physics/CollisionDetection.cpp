@@ -33,6 +33,9 @@ static inline reactphysics3d::Quaternion ConvertQuaternion(const glm::quat& glm_
 CollisionDetection::CollisionDetection() {
     //physics_common_->setLogger(&logger_);
 
+}
+
+void CollisionDetection::Init() {
     using reactphysics3d::DebugRenderer;
     auto base_path = redengine::Engine::get().GetBasePath();
     auto vs = base_path / "res" / "shader" / "react_shader.vs";
@@ -51,51 +54,22 @@ CollisionDetection::CollisionDetection() {
     assert(t_vao_ != 0);
     glGenBuffers(1, &t_vbo_);
     assert(t_vbo_ != 0);
-}
+};
 
 CollisionDetection::~CollisionDetection() {
 }
 
-void CollisionDetection::AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot) {
-    reactphysics3d::Transform transform = {};
-    transform.setPosition(ConvertVector(pos));
-    transform.setOrientation(ConvertQuaternion(rot));
-    auto* body = world_->createCollisionBody(transform);
-    AddBodyAndEntt(const_cast<entt::entity&>(entity_id), body);
-}
-
-void CollisionDetection::AddBodyAndEntt(entt::entity& entity, reactphysics3d::CollisionBody* coll_body) {
-    auto r = std::make_pair(entity, coll_body);
-    auto y = std::make_pair(coll_body, entity);
-    entity_collision_coupling_.emplace(r);
-    collision_entity_coupling_.emplace(y);
-}
-
-void CollisionDetection::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
-    if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
-        auto body = entity_collision_coupling_.at(entity_id);
-        reactphysics3d::Transform new_transform(ConvertVector(pos), ConvertQuaternion(rot));
-        body->setTransform(new_transform);
-    }
-}
-
-void CollisionDetection::DeleteCollisionBody(const entt::entity& entity_id) {
-    auto body = entity_collision_coupling_.at(entity_id);
-    entity_collision_coupling_.erase(entity_id);
-    collision_entity_coupling_.erase(body);
-    world_->destroyCollisionBody(body);
-}
-
 std::queue<PhysicsCollisionData>& CollisionDetection::GetCollisions() {
-    return event_listener_.GetPhysicsQueue();
+    return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsQueue();
 }
 
 void CollisionDetection::ToggleRenderer() {
-    renderer_ = !renderer_;
-    world_->setIsDebugRenderingEnabled(renderer_);
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    physics_world.renderer_ = !physics_world.renderer_;
+    physics_world.world_->setIsDebugRenderingEnabled(physics_world.renderer_);
     // Get a reference to the debug renderer
-    reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
-    if (renderer_) {
+    reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
+    if (physics_world.renderer_) {
         // Select the contact points and contact normals to be displayed
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
@@ -112,7 +86,8 @@ void CollisionDetection::ToggleRenderer() {
 }
 
 void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view) {
-    if (renderer_) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    if (physics_world.renderer_) {
         //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -171,9 +146,10 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
 }
 
 void CollisionDetection::Update(double t, double dt) {
-    world_->update(dt);
-    if (renderer_) {
-        reactphysics3d::DebugRenderer& debug_renderer = world_->getDebugRenderer();
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    physics_world.world_->update(dt);
+    if (physics_world.renderer_) {
+        reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
         line_num_ = debug_renderer.getNbLines();
         if (line_num_ > 0) {
             glBindBuffer(GL_ARRAY_BUFFER, l_vbo_);
@@ -192,23 +168,24 @@ void CollisionDetection::Update(double t, double dt) {
 }
 
 bool CollisionDetection::GetRendererStatus() const {
-    return renderer_;
+    return redengine::Engine::get().game_stack_.getTop()->physics_world_.renderer_;
 }
 
 PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
-    return PhysicsShape(physics_common_->createBoxShape(ConvertVector(extents)), ShapeType::Box);
+    return PhysicsShape(physics_common_.createBoxShape(ConvertVector(extents)), ShapeType::Box);
 }
 
 PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
-    return PhysicsShape(physics_common_->createCapsuleShape(radius, height), ShapeType::Capsule);
+    return PhysicsShape(physics_common_.createCapsuleShape(radius, height), ShapeType::Capsule);
 }
 
 PhysicsShape CollisionDetection::CreateSphereShape(double radius) {
-    return PhysicsShape(physics_common_->createSphereShape(radius), ShapeType::Sphere);
+    return PhysicsShape(physics_common_.createSphereShape(radius), ShapeType::Sphere);
 }
 
-int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
-    auto* body = entity_collision_coupling_.at(entity_id);
+unsigned int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto* body = physics_world.entity_collision_coupling_.at(entity_id);
     rp3d::Transform transform(ConvertVector(relative_position), ConvertQuaternion(rotation));
     body->addCollider(shape.shape_, transform);
     return body->getNbColliders();
@@ -218,6 +195,6 @@ reactphysics3d::PhysicsWorld *CollisionDetection::CreatePhysicsWorld() {
     return physics_common_.createPhysicsWorld();
 }
 
-void CollisionDetection::CreatePhysicsWorld(reactphysics3d::PhysicsWorld *world) {
+void CollisionDetection::DeletePhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     physics_common_.destroyPhysicsWorld(world);
 }

@@ -20,5 +20,4 @@ class PhysicsDemo : public BaseState {
  private:
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
     ECS ecs_ = {};
-    physics::PhysicsEngine physics_engine_ = {};
 };

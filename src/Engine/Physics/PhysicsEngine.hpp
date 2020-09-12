@@ -78,14 +78,7 @@ namespace physics {
          */
         bool GetRendererStatus();
 
-
-        void DeleteCollisionBody(const entt::entity &entity_id);
-
-        void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
-
-        void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
-
-        int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position,
+        unsigned int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position,
                         glm::quat rotation);
 
         PhysicsShape CreateBoxShape(glm::vec3 extents);
@@ -97,6 +90,8 @@ namespace physics {
         reactphysics3d::PhysicsWorld *CreatePhysicsWorld();
 
         void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *);
+
+        void Init();
 
     private:
         CollisionDetection collision_detection_ = {};

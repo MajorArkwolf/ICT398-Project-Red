@@ -46,7 +46,7 @@ namespace redengine {
         /**
          * Sets the basepath of where the engine is running.
          */
-        auto SetupBasePath() -> void;
+        static auto SetupBasePath() -> std::filesystem::path;
         /**
          * Privatised constructor due to the engine being a singleton.
          */
@@ -198,7 +198,7 @@ namespace redengine {
          * Get the basepath relative to the executable.
          * @return file address
          */
-        auto GetBasePath() const -> std::filesystem::path;
+        auto GetBasePath() -> std::filesystem::path;
         /**
          * Gets the prefab repo from the engine.
          * @return a reference to the prefab repo.

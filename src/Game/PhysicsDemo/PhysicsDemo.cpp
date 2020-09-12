@@ -13,19 +13,19 @@ struct overload : Ts ... {
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
 PhysicsDemo::PhysicsDemo() {
-    physics_engine_.SetECS(&ecs_);
+    physics_world_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     std::filesystem::path path = "";
     path.append("PhysicsDemo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
+    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 }
 
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
-    renderer.SetCameraOnRender(camera);
+    //renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
 }
 
@@ -43,12 +43,12 @@ void PhysicsDemo::GUIEnd() {
 void PhysicsDemo::Update(double t, double dt) {
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     ecs_.Update(t, dt);
-    physics_engine_.Update(t, dt);
+    //physics_engine_.Update(t, dt);
 }
 
 void PhysicsDemo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
-    physics_engine_.FixedUpdate(t, dt);
+    //physics_engine_.FixedUpdate(t, dt);
 }
 
 void PhysicsDemo::Init() {
@@ -92,7 +92,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                             }
                                 break;
                             case input::VirtualKey::kEscape: {
-                                gui_manager.ToggleWindow("escapeMenu");
+
                             } break;
                         }
                     }

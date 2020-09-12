@@ -8,6 +8,7 @@
 #include "Engine/Renderer/Shader.hpp"
 #include "PhysicsShape.hpp"
 #include "Logger.hpp"
+#include "PhysicsData.hpp"
 
 class ECS;
 
@@ -25,32 +26,11 @@ namespace physics {
          */
         ~CollisionDetection();
 
+        void Init();
         /**
          * Toggles the collision renderer.
          */
         void ToggleRenderer();
-
-        /**
-         * Adds a collision body to the detection.
-         * @param entity_id the id of the entity
-         * @param pos the position of said entity.
-         * @param rot the rotation of said entity.
-         */
-        void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
-
-        /**
-         * Updates the collision body location
-         * @param entity_id the id of the entity to update.
-         * @param pos the current position of the entity.
-         * @param rot the rotation of the current entity.
-         */
-        void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
-
-        /**
-         * Delete colission body both from the world and from the maps.
-         * @param entity_id the entity id to drop.
-         */
-        void DeleteCollisionBody(const entt::entity &entity_id);
 
         void Draw(const glm::mat4 &projection, const glm::mat4 &view);
 
@@ -63,7 +43,7 @@ namespace physics {
         PhysicsShape CreateSphereShape(double radius);
 
 
-        int AddCollider(const entt::entity &entity_id, physics::PhysicsShape &shape, glm::vec3 relative_position,
+        unsigned int AddCollider(const entt::entity &entity_id, physics::PhysicsShape &shape, glm::vec3 relative_position,
                         glm::quat rotation);
 
 
@@ -83,12 +63,9 @@ namespace physics {
          * Destroys the physics world at the given address.
          * @param world to be destroyed.
          */
-        void CreatePhysicsWorld(reactphysics3d::PhysicsWorld *world);
+        void DeletePhysicsWorld(reactphysics3d::PhysicsWorld *world);
 
     private:
-
-        /// Value to enable or disable renderering.
-        bool renderer_ = false;
 
         //Test Renderer Values
         unsigned int l_vbo_ = 0, l_vao_ = 0;
@@ -100,16 +77,6 @@ namespace physics {
 
         /// The react PhysicsCommon
         reactphysics3d::PhysicsCommon physics_common_{};
-
-        /// The event lister in react to catch collission points.
-        RedEngineEventListener event_listener_;
-
-        /**
-         * Creates a bidirectional relationship between entity and a collision body for fast lookup times.
-         * @param entity the entity id
-         * @param coll_body pointer to the react physics body
-         */
-        void AddBodyAndEntt(entt::entity &entity, reactphysics3d::CollisionBody *coll_body);
 
         Logger logger_ = {};
 

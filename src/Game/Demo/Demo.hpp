@@ -2,7 +2,6 @@
 
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
-#include "Engine/Physics/PhysicsEngine.hpp"
 #include "ECS/Entity.hpp"
 
 class Demo : public BaseState {
@@ -19,7 +18,6 @@ public:
     void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
 private:
-    physics::PhysicsEngine physics_engine_ = {};
     ECS ecs_ = {};
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
     Entity player;

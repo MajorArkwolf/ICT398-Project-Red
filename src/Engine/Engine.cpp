@@ -12,6 +12,7 @@ auto redengine::Engine::Run() -> void {
     auto &engine = redengine::Engine::get();
     engine.prefabRepo_.Init();
 
+    engine.physics_engine_.Init();
     //ResourceManager::getInstance().loadResources();
     engine.game_stack_.AddToStack(std::make_shared<MainMenu>());
     engine.game_stack_.getTop()->Init();
@@ -69,7 +70,6 @@ GUIManager &redengine::Engine::GetGuiManager() {
 }
 
 redengine::Engine::Engine() {
-    SetupBasePath();
     log_.StartLog(GetBasePath().u8string());
 
     if (!glfwInit()) {
@@ -117,6 +117,7 @@ redengine::Engine::Engine() {
     // Are we industry pros yet?
     model_manager_.GetModelID(base_path_ / "res" / "model" / "error.fbx");
     log_.AddLog(ConsoleLog::LogType::Engine, "Engine Successfully Initialised", __LINE__, __FILE__);
+
 }
 
 redengine::Engine::~Engine() {
@@ -202,9 +203,10 @@ auto redengine::Engine::EndEngine() -> void {
     is_running_ = false;
 }
 
-auto redengine::Engine::SetupBasePath() -> void {
-    base_path_ = cpplocate::getExecutablePath();
+auto redengine::Engine::SetupBasePath() -> std::filesystem::path {
+    std::filesystem::path base_path_{cpplocate::getExecutablePath()};
     base_path_.remove_filename();
+    return base_path_;
 }
 
 void redengine::Engine::SettingMenu() {
@@ -284,7 +286,10 @@ double redengine::Engine::GetFrameTime() const {
     return engine_frame_time_;
 }
 
-auto redengine::Engine::GetBasePath() const -> std::filesystem::path {
+auto redengine::Engine::GetBasePath() -> std::filesystem::path {
+    if (base_path_.empty()) {
+        this->base_path_ = std::filesystem::path{SetupBasePath()};
+    }
     return this->base_path_;
 }
 

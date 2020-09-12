@@ -24,10 +24,6 @@ void PhysicsEngine::Draw(const glm::mat4& projection, const glm::mat4& view) {
     collision_detection_.Draw(projection, view);
 }
 
-void PhysicsEngine::SetECS(ECS *ecs) {
-    this->ecs_ = ecs;
-}
-
 void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
     collision_detection_.AddCollisionBody(entity_id, pos, rot);
 }

@@ -115,18 +115,10 @@ namespace physics {
         std::unique_ptr<Shader> shader_ = nullptr;
 
         /// The react PhysicsCommon
-        reactphysics3d::PhysicsCommon *physics_common_ = nullptr;
-
-        /// The react PhysicsWorld
-        reactphysics3d::PhysicsWorld *world_ = nullptr;
+        reactphysics3d::PhysicsCommon physics_common_{};
 
         /// The event lister in react to catch collission points.
         RedEngineEventListener event_listener_;
-
-        /// Map lookup from an entity to a collission body.
-        std::unordered_map<entt::entity, reactphysics3d::CollisionBody *> entity_collision_coupling_ = {};
-        /// Map lookup from a collission body to an entity.
-        std::unordered_map<reactphysics3d::CollisionBody *, entt::entity> collision_entity_coupling_ = {};
 
         /**
          * Creates a bidirectional relationship between entity and a collision body for fast lookup times.

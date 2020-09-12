@@ -1,8 +1,8 @@
 #pragma once
+
 #include "Engine/Physics/CollisionDetection.hpp"
 #include "Engine/Physics/CollisionResolution.hpp"
 
-class ECS;
 
 namespace physics {
 
@@ -78,30 +78,24 @@ namespace physics {
          */
         bool GetRendererStatus();
 
-        /**
-         * Set the ECS for the Physics engine to use, this is crucial and must be done.
-         * @param ecs ECS system.
-         */
-        void SetECS(ECS *ecs);
 
+        void DeleteCollisionBody(const entt::entity &entity_id);
 
-    void DeleteCollisionBody(const entt::entity &entity_id);
+        void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-    void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+        void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
 
-    void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+        int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position,
+                        glm::quat rotation);
 
-    int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation);
+        PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-    PhysicsShape CreateBoxShape(glm::vec3 extents);
+        PhysicsShape CreateCapsuleShape(double radius, double height);
 
-    PhysicsShape CreateCapsuleShape(double radius, double height);
+        PhysicsShape CreateSphereShape(double radius);
 
-    PhysicsShape CreateSphereShape(double radius);
-
-   private:
-    ECS *ecs_ = nullptr;
-    CollisionDetection collision_detection_ = {};
-    CollisionResolution collision_resolution_ = {};
-};
-}// namespace physics
+    private:
+        CollisionDetection collision_detection_ = {};
+        CollisionResolution collision_resolution_ = {};
+    };
+}

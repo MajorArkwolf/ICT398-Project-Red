@@ -2,6 +2,7 @@
 
 #include <reactphysics3d/engine/PhysicsWorld.h>
 #include <entt/entt.hpp>
+#include "Engine/Physics/PhysicsListener.hpp"
 
 class ECS;
 
@@ -34,6 +35,7 @@ namespace physics {
         std::unordered_map<entt::entity, reactphysics3d::CollisionBody *> entity_collision_coupling_ = {};
         /// Map lookup from a collission body to an entity.
         std::unordered_map<reactphysics3d::CollisionBody *, entt::entity> collision_entity_coupling_ = {};
+        RedEngineEventListener event_listener_;
     };
 }
 

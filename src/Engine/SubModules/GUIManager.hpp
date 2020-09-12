@@ -56,6 +56,8 @@ class GUIManager {
      */
     static void EndWindowFrame();
 
+    void DisplayQuitScreen();
+
     /**
      * @brief Toggles a window given its name in the map
      */
@@ -69,4 +71,6 @@ class GUIManager {
 
     /// Initialises the window open map
     void InitialiseWindowOpenMap();
+
+    unsigned int exit_texture_id = 0;
 };

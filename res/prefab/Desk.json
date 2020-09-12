@@ -1,7 +1,7 @@
 {
   "Name": "Desk",
   "Model": {
-    "ModelFilePath": "res/model/Desk/chair_obj.obj",
+    "ModelFilePath": "res/model/Desk/Desk.fbx",
     "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {

@@ -26,7 +26,7 @@ PhysicsDemo::PhysicsDemo() {
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
-    ecs_.Draw(shader, projection, view, camera.GetLocation());
+    ecs_.Draw(shader, projection, view);
 }
 
 void PhysicsDemo::GUIStart() {

@@ -75,9 +75,6 @@ void GUIManager::DisplayEscapeMenu() {
         ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
         ImGui::Begin("Escape Menu", &window_open,
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-        if (ImGui::Button("Controls")) {
-            ToggleWindow("controls");
-        }
         if (ImGui::Button("Instructions")) {
             ToggleWindow("instructions");
         }

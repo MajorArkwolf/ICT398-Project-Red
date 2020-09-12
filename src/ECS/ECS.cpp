@@ -11,18 +11,8 @@ void ECS::Update(double t, double dt) {
     System::UpdateAnimation(registry_, t, dt);
 }
 
-void ECS::Draw(Shader* shader, const glm::mat4& projection, const glm::mat4& view,
-               const glm::dvec2& camera_pos) {
-    System::Draw(registry_, shader, projection, view);
-}
-
-std::shared_ptr<Entity> ECS::GetEntity(entt::entity id) {
-    for (auto& n : entity_register_) {
-        if (n->GetID() == id) {
-            return n;
-        }
-    } 
-    return nullptr;
+void ECS::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
+  System::Draw(registry_, shader, projection, view);
 }
 
 Entity& ECS::CreateEntity() {

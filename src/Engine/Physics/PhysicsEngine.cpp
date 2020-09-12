@@ -1,5 +1,5 @@
 #include "PhysicsEngine.hpp"
-
+#include "Engine/Engine.hpp"
 #include "ECS/Component/Player.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/ECS.hpp"
@@ -11,8 +11,10 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
 }
 
 void PhysicsEngine::Update(double t, double dt) {
-    assert(ecs_ != nullptr);
-    auto &registry = ecs_->GetRegistry();
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    assert(ecs != nullptr);
+    auto &registry = ecs->GetRegistry();
     auto entities = registry.view<component::Transform, component::PhysicBody>();
 
     for (auto &e : entities) {
@@ -30,11 +32,6 @@ void PhysicsEngine::Update(double t, double dt) {
 
 void PhysicsEngine::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
     collision_detection_.Draw(projection, view);
-}
-
-void PhysicsEngine::SetECS(ECS *ecs) {
-    this->ecs_ = ecs;
-    collision_resolution_.SetECS(ecs);
 }
 
 void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
@@ -71,4 +68,12 @@ void PhysicsEngine::ToggleRenderer() {
 
 bool PhysicsEngine::GetRendererStatus() {
     return collision_detection_.GetRendererStatus();
+}
+
+reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
+    return collision_detection_.CreatePhysicsWorld();
+}
+
+void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *) {
+    collision_detection_.CreatePhysicsWorld();
 }

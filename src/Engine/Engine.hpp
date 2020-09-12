@@ -16,6 +16,7 @@
 #include "Engine/SubModules/PrefabRepo.hpp"
 #include "Engine/SubModules/ShaderRepo.hpp"
 #include "SubModules/ConsoleLog.hpp"
+#include "Engine/Physics/PhysicsEngine.hpp"
 
 namespace redengine {
 
@@ -37,6 +38,7 @@ namespace redengine {
         /// The game stack to allow to switch between scenes.
         GameStack<std::shared_ptr<BaseState>> game_stack_;
       private:
+        physics::PhysicsEngine physics_engine_ = {};
         /// GUI Manager for our GUI interface.
         GUIManager gui_manager_;
         /// Flag used to determine if the engine should shutdown.
@@ -206,5 +208,7 @@ namespace redengine {
         ConsoleLog &GetLog();
 
         void CloseScene();
+
+        physics::PhysicsEngine& GetPhysicsEngine();
     };
 }

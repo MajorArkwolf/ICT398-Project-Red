@@ -35,7 +35,7 @@ auto MainMenu::Display(Shader *shader, const glm::mat4 &projection, const glm::m
     auto &engine = redengine::Engine::get();
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
-    ecs.Draw(shader, projection, view, camera.GetLocation());
+    ecs.Draw(shader, projection, view);
 }
 
 auto MainMenu::FixedUpdate(double t, double dt) -> void {

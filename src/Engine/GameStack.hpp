@@ -80,6 +80,16 @@ class GameStack {
         return game_stack_.size() <= 1;
     }
 
+    bool Empty() {
+        return game_stack_.size() == 0;
+    }
+
+    void Clear() {
+        while (!game_stack_.empty()) {
+            game_stack_.pop();
+        }
+    }
+
 private:
     bool remove_top_flag_ = false;
     /// The stack itself.

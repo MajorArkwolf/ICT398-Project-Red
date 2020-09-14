@@ -3,6 +3,7 @@
 #include <reactphysics3d/engine/PhysicsWorld.h>
 #include <entt/entt.hpp>
 #include "Engine/Physics/PhysicsListener.hpp"
+#include "PhysicsShape.hpp"
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -58,7 +59,15 @@ namespace physics {
          */
         void DeleteCollisionBody(const entt::entity &entity_id);
 
+        unsigned int
+        AddCollider(const entt::entity &entity_id, physics::PhysicsShape &shape, glm::vec3 relative_position,
+                    glm::quat rotation);
+
         std::queue<PhysicsCollisionData> &GetCollisions();
+
+        bool GetRendererStatus() const {return renderer_;}
+
+        void ToggleRenderer();
 
     private:
         bool renderer_ = false;
@@ -71,7 +80,9 @@ namespace physics {
         std::unordered_map<reactphysics3d::CollisionBody *, entt::entity> collision_entity_coupling_ = {};
         RedEngineEventListener event_listener_;
 
-        void AddBodyAndEntt(entt::entity &entity, reactphysics3d::CollisionBody *coll_body);
+        void AddBodyAndEntt(entt::entity entity, reactphysics3d::CollisionBody *coll_body);
+
+
     };
 }
 

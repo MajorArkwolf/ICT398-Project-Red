@@ -56,11 +56,9 @@ reactphysics3d::PhysicsWorld *PhysicsWorld::GetWorld() {
     return world_;
 }
 
-void PhysicsWorld::AddBodyAndEntt(entt::entity& entity, reactphysics3d::CollisionBody* coll_body) {
-    auto r = std::make_pair(entity, coll_body);
-    auto y = std::make_pair(coll_body, entity);
-    entity_collision_coupling_.emplace(r);
-    collision_entity_coupling_.emplace(y);
+void PhysicsWorld::AddBodyAndEntt(entt::entity entity, reactphysics3d::CollisionBody* coll_body) {
+    entity_collision_coupling_.insert({entity, coll_body});
+    collision_entity_coupling_.insert({coll_body, entity});
 }
 
 void PhysicsWorld::AddCollisionBody(const entt::entity& entity_id, const glm::vec3& pos, const glm::quat& rot) {
@@ -68,7 +66,7 @@ void PhysicsWorld::AddCollisionBody(const entt::entity& entity_id, const glm::ve
     transform.setPosition(ConvertVector(pos));
     transform.setOrientation(ConvertQuaternion(rot));
     auto* body = world_->createCollisionBody(transform);
-    AddBodyAndEntt(const_cast<entt::entity&>(entity_id), body);
+    AddBodyAndEntt(entity_id, body);
 }
 
 void PhysicsWorld::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
@@ -90,3 +88,30 @@ std::queue<PhysicsCollisionData>& PhysicsWorld::GetCollisions() {
     return event_listener_.GetPhysicsQueue();
 }
 
+unsigned int PhysicsWorld::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
+    auto* body = this->entity_collision_coupling_.at(entity_id);
+    rp3d::Transform transform(ConvertVector(relative_position), ConvertQuaternion(rotation));
+    body->addCollider(shape.shape_, transform);
+    return body->getNbColliders();
+}
+
+void PhysicsWorld::ToggleRenderer() {
+    this->renderer_ = !this->renderer_;
+    this->world_->setIsDebugRenderingEnabled(this->renderer_);
+    // Get a reference to the debug renderer
+    reactphysics3d::DebugRenderer& debug_renderer = this->world_->getDebugRenderer();
+    if (this->renderer_) {
+        // Select the contact points and contact normals to be displayed
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
+    } else {
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, false);
+        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
+    }
+}

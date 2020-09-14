@@ -3,6 +3,7 @@
 #include "Engine/Physics/CollisionDetection.hpp"
 #include "Engine/Physics/CollisionResolution.hpp"
 
+class Shader;
 
 namespace physics {
 
@@ -64,22 +65,13 @@ namespace physics {
          * @param projection projection matrix of the camera.
          * @param view the view matrix of the camera.
          */
-        void Draw(const glm::mat4 &projection, const glm::mat4 &view);
-
-
-        /**
-         * Toggles the debug renderer on or off.
-         */
-        void ToggleRenderer();
+        void Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view);
 
         /**
          * Returns if the renderer is on.
          * @return true if renderer is on.
          */
         bool GetRendererStatus();
-
-        unsigned int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position,
-                        glm::quat rotation);
 
         PhysicsShape CreateBoxShape(glm::vec3 extents);
 
@@ -89,7 +81,7 @@ namespace physics {
 
         reactphysics3d::PhysicsWorld *CreatePhysicsWorld();
 
-        void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *);
+        void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world);
 
         void Init();
 

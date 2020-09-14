@@ -15,11 +15,7 @@ out vec4 vertexColorOut;
 
 void main() {
 
-    // Compute the vertex position
-    vec4 positionCameraSpace = view * model * vertexPosition;
-
-    // Compute the clip-space vertex coordinates
-    gl_Position = projection * positionCameraSpace;
+    gl_Position = projection * view * vertexPosition;
 
     // Transfer the vertex color to the fragment shader
     vertexColorOut = vec4((vertexColor & 0xFF0000u) >> 16, (vertexColor & 0x00FF00u) >> 8, vertexColor & 0x0000FFu, 0xFF);

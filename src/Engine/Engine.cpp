@@ -46,6 +46,7 @@ auto redengine::Engine::Run() -> void {
             glfwPollEvents();
             engine.ProcessInput(engine.dt_);
             engine.game_stack_.getTop()->FixedUpdate(engine.t_, engine.dt_);
+            engine.GetPhysicsEngine().FixedUpdate(engine.t_, engine.dt_);
             engine.t_ += engine.dt_;
             accumulator -= engine.dt_;
         }
@@ -53,15 +54,17 @@ auto redengine::Engine::Run() -> void {
         // const double alpha = accumulator / dt;
         // state = currentState * alpha + previousState * (1.0 - alpha);
         engine.game_stack_.getTop()->Update(engine.t_, engine.engine_frame_time_);
+        engine.GetPhysicsEngine().Update(engine.t_, engine.engine_frame_time_);
         engine.renderer_.Draw();
         if (engine.game_stack_.isRemoveTopFlag()) {
             engine.game_stack_.getTop()->UnInit();
         }
         engine.game_stack_.checkTop();
-        if (!engine.is_running_) {
+        if (!engine.is_running_ || engine.game_stack_.Empty()) {
             break;
         }
     }
+    engine.game_stack_.Clear();
     glfwDestroyWindow(engine.window_);
 }
 

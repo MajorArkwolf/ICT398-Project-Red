@@ -84,22 +84,20 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
             if (j.contains("Physics") && prefab.has_physics && pw != nullptr) {
-                component::PhysicBody phys_body;
                 auto &trans = ent->GetComponent<component::Transform>();
                 pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
-                for (auto& n : prefab.colliders_) {
+                for (const auto& n : prefab.colliders_) {
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
-                        //TODO: look into changing this into physics world
-                        auto &pe = redengine::Engine::get().GetPhysicsEngine();
-                        //pe.AddCollider(ent->GetID(), const_cast<physics::PhysicsShape&>(prefab.collision_shapes.at(n.base_shape_name)), n.position_local, n.rotation_local );
+                        auto pfc = prefab.collision_shapes.at(n.base_shape_name);
+                        pw->AddCollider(ent->GetID(), pfc, n.position_local, n.rotation_local);
                     }
                     else {
                         ///Prefab name not found
                     }
                 }
-                component::PhysicBody physBody;
-                physBody.colliders = prefab.colliders_;
+                component::PhysicBody phys_body;
+                phys_body.colliders = prefab.colliders_;
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";
@@ -173,7 +171,7 @@ void JSONLoader::LoadPrefabList() {
                     }
                 }
                 if (p.contains("Physics")) {
-                    auto e = physics::PhysicsEngine();
+                    auto &e = redengine::Engine::get().GetPhysicsEngine();
                     prefab.has_physics = true;
                     auto physics = p.at("Physics");
                     if (physics.contains("Static")) {

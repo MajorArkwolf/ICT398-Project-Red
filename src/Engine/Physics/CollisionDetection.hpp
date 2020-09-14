@@ -27,12 +27,10 @@ namespace physics {
         ~CollisionDetection();
 
         void Init();
-        /**
-         * Toggles the collision renderer.
-         */
-        void ToggleRenderer();
 
-        void Draw(const glm::mat4 &projection, const glm::mat4 &view);
+        void Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view);
+
+        void FixedUpdate(double t, double dt);
 
         void Update(double t, double dt);
 
@@ -41,10 +39,6 @@ namespace physics {
         PhysicsShape CreateCapsuleShape(double radius, double height);
 
         PhysicsShape CreateSphereShape(double radius);
-
-
-        unsigned int AddCollider(const entt::entity &entity_id, physics::PhysicsShape &shape, glm::vec3 relative_position,
-                        glm::quat rotation);
 
 
         /// This que is used for handling collisions both detection and resolution.

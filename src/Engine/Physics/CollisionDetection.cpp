@@ -63,42 +63,25 @@ std::queue<PhysicsCollisionData>& CollisionDetection::GetCollisions() {
     return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsQueue();
 }
 
-void CollisionDetection::ToggleRenderer() {
-    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    physics_world.renderer_ = !physics_world.renderer_;
-    physics_world.world_->setIsDebugRenderingEnabled(physics_world.renderer_);
-    // Get a reference to the debug renderer
-    reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
-    if (physics_world.renderer_) {
-        // Select the contact points and contact normals to be displayed
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
-    } else {
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, false);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, false);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, false);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, false);
-        debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
-    }
-}
-
-void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view) {
+void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     if (physics_world.renderer_) {
+        shader_->Use();
         //TODO Setup the shader, verify data is okay being passed in like this.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        shader_->SetMat4("projection", projection);
+        shader_->SetMat4("view", view);
+        shader_->SetMat4("model", view);
+//        const glm::mat4 localToCameraMatrix = view;
+//        const glm::mat4 normalMatrix = glm::transpose(glm::inverse(localToCameraMatrix));
+//        shader_->SetMat4("normalMatrix", normalMatrix);
+//
+//        // Set the model to camera matrix
+//        shader_->SetMat4("localToWorldMatrix", glm::mat4());
+//        shader_->SetMat4("worldToCameraMatrix", view);
+//        shader_->SetBool("isGlobalVertexColorEnabled", false);
 
-        const glm::mat4 localToCameraMatrix = view;
-        const glm::mat4 normalMatrix = glm::transpose(glm::inverse(localToCameraMatrix));
-        shader_->SetMat4("normalMatrix", normalMatrix);
 
-        // Set the model to camera matrix
-        shader_->SetMat4("localToWorldMatrix", glm::mat4());
-        shader_->SetMat4("worldToCameraMatrix", view);
-        shader_->SetBool("isGlobalVertexColorEnabled", false);
 
         // Lines
         if (line_num_ > 0) {
@@ -142,7 +125,13 @@ void CollisionDetection::Draw(const glm::mat4& projection, const glm::mat4& view
             glBindVertexArray(0);
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        shader->Use();
     }
+}
+
+void CollisionDetection::FixedUpdate(double t, double dt) {
+    //auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    //physics_world.world_->update(dt);
 }
 
 void CollisionDetection::Update(double t, double dt) {
@@ -181,14 +170,6 @@ PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height
 
 PhysicsShape CollisionDetection::CreateSphereShape(double radius) {
     return PhysicsShape(physics_common_.createSphereShape(radius), ShapeType::Sphere);
-}
-
-unsigned int CollisionDetection::AddCollider(const entt::entity& entity_id, PhysicsShape& shape, glm::vec3 relative_position, glm::quat rotation) {
-    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    auto* body = physics_world.entity_collision_coupling_.at(entity_id);
-    rp3d::Transform transform(ConvertVector(relative_position), ConvertQuaternion(rotation));
-    body->addCollider(shape.shape_, transform);
-    return body->getNbColliders();
 }
 
 reactphysics3d::PhysicsWorld *CollisionDetection::CreatePhysicsWorld() {

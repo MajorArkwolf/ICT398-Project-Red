@@ -15,6 +15,15 @@ void ECS::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& vie
   System::Draw(registry_, shader, projection, view);
 }
 
+std::shared_ptr<Entity> ECS::GetEntity(entt::entity id) {
+    for (auto& n : entity_register_) {
+        if (n->GetID() == id) {
+            return n;
+        }
+    } 
+    return nullptr;
+}
+
 Entity& ECS::CreateEntity() {
     this->entity_register_.emplace_back(
         std::make_shared<Entity>(registry_.create(), this));

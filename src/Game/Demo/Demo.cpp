@@ -68,6 +68,7 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayConsoleLog();
     engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
+    engine.GetGuiManager().DisplayQuitScreen();
 
 }
 
@@ -121,6 +122,9 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                    } break;
                                    case input::VirtualKey::D: {
                                        right_ = true;
+                                   } break;
+                                   case input::VirtualKey::X: {
+                                       gui_manager.ToggleWindow("quitScreen");
                                    } break;
                                }
                            } break;

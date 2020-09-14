@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "Engine/Engine.hpp"
+#include <Engine/Renderer/OpenGL.hpp>
 
 GUIManager::GUIManager() {
     InitialiseWindowOpenMap();
@@ -75,9 +76,6 @@ void GUIManager::DisplayEscapeMenu() {
         ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
         ImGui::Begin("Escape Menu", &window_open,
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-        if (ImGui::Button("Controls")) {
-            ToggleWindow("controls");
-        }
         if (ImGui::Button("Instructions")) {
             ToggleWindow("instructions");
         }
@@ -199,6 +197,32 @@ void GUIManager::DisplayConsoleLog() {
     }
 }
 
+void GUIManager::DisplayQuitScreen() {
+    if (exit_texture_id == 0) {
+        auto basepath = redengine::Engine::get().GetBasePath();
+        basepath = basepath / "res" / "images" / "";
+        exit_texture_id = view::OpenGL::TextureFromFile("exit.png", basepath, false);
+    }
+    auto &windowOpen = window_open_map.at("quitScreen");
+    auto &engine = redengine::Engine::get();
+
+    if (windowOpen) {
+        int height = 0, width = 0;
+        glfwGetWindowSize(engine.window_, &width, &height);
+        ImGui::SetNextWindowPos(ImVec2(width / 2, height / 2), ImGuiCond_Always, ImVec2(0.5, 0.5));
+        ImGui::Begin("###Exit", &windowOpen,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+
+        ImGui::Text("Thank you for playing our game. Click the image to exit.");
+        if (ImGui::ImageButton(reinterpret_cast<void *>(intptr_t(exit_texture_id)),
+                               ImVec2(500, 500))) {
+            engine.EndEngine();
+        }
+
+        ImGui::End();
+    }
+}
+
 void GUIManager::startWindowFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -225,4 +249,5 @@ void GUIManager::InitialiseWindowOpenMap() {
     window_open_map.emplace(std::make_pair(std::string("dev"), false));
     window_open_map.emplace(std::make_pair(std::string("textureRebind"), false));
     window_open_map.emplace(std::make_pair(std::string("consoleLog"), false));
+    window_open_map.emplace(std::make_pair(std::string("quitScreen"), false));
 }

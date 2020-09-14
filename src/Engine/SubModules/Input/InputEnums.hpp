@@ -2,6 +2,7 @@
 
 namespace input
 {
+	//List of input types
 	enum class InputType
 	{
 		  kNone
@@ -30,6 +31,7 @@ namespace input
 		, kWindowScaleChanged
 	};
 
+	//List of mouse buttons
 	enum class MouseButton
 	{
 		  kNone
@@ -40,7 +42,7 @@ namespace input
 		, kMouse5
 	};
 
-	//Key enums left without k prefix to maintain brevity
+	//List of keys
 	enum class VirtualKey
 	{
 		kNone,

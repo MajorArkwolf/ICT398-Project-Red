@@ -24,6 +24,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     Engine/SubModules/ConsoleLog.cpp
     #--Physics
     Engine/Physics/PhysicsEngine.cpp
+    Engine/Physics/PhysicsWorld.cpp
+    Engine/Physics/PhysicsListener.cpp
     Engine/Physics/CollisionDetection.cpp
     Engine/Physics/CollisionResolution.cpp
     Engine/Physics/PhysicsShape.cpp

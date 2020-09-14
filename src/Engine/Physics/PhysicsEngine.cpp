@@ -1,5 +1,5 @@
 #include "PhysicsEngine.hpp"
-
+#include "Engine/Engine.hpp"
 #include "ECS/Component/Player.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/ECS.hpp"
@@ -7,50 +7,38 @@
 using namespace physics;
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
-    collision_detection_.Update(t, dt);
+    collision_detection_.FixedUpdate(t, dt);
 }
 
 void PhysicsEngine::Update(double t, double dt) {
-    assert(ecs_ != nullptr);
-    auto &registry = ecs_->GetRegistry();
-    auto entities = registry.view<component::Transform, component::PhysicBody>();
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    if (ecs != nullptr) {
+        auto &registry = ecs->GetRegistry();
+        auto entities = registry.view<component::Transform, component::PhysicBody>();
 
-    for (auto &e : entities) {
-        auto &tran = entities.get<component::Transform>(e);
-        collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
+        for (auto &e : entities) {
+            auto &tran = entities.get<component::Transform>(e);
+            //collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
+            physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
+        }
+
+        auto players = registry.view<component::Player>();
+        for (auto &e : players) {
+            auto &p = players.get<component::Player>(e);
+            physics_world.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+        }
+        collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }
+    collision_detection_.Update(t, dt);
+}
 
-    auto players = registry.view<component::Player>();
-    for (auto &e : players) {
-        auto &p = players.get<component::Player>(e);
-        collision_detection_.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+void PhysicsEngine::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    if (ecs != nullptr) {
+        collision_detection_.Draw(shader, projection, view);
     }
-    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
-}
-
-void PhysicsEngine::Draw(const glm::mat4 &projection, const glm::mat4 &view) {
-    collision_detection_.Draw(projection, view);
-}
-
-void PhysicsEngine::SetECS(ECS *ecs) {
-    this->ecs_ = ecs;
-    collision_resolution_.SetECS(ecs);
-}
-
-void PhysicsEngine::AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
-    collision_detection_.AddCollisionBody(entity_id, pos, rot);
-}
-
-void PhysicsEngine::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot) {
-    collision_detection_.UpdateCollisionBody(entity_id, pos, rot);
-}
-
-void PhysicsEngine::DeleteCollisionBody(const entt::entity &entity_id) {
-    collision_detection_.DeleteCollisionBody(entity_id);
-}
-
-int PhysicsEngine::AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation) {
-    return collision_detection_.AddCollider(entity_id, shape, relative_position, rotation);
 }
 
 PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
@@ -65,10 +53,19 @@ PhysicsShape PhysicsEngine::CreateSphereShape(double radius) {
     return collision_detection_.CreateSphereShape(radius);
 }
 
-void PhysicsEngine::ToggleRenderer() {
-    collision_detection_.ToggleRenderer();
-}
-
 bool PhysicsEngine::GetRendererStatus() {
     return collision_detection_.GetRendererStatus();
+}
+
+reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
+    return collision_detection_.CreatePhysicsWorld();
+}
+
+void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld * world) {
+    collision_detection_.DeletePhysicsWorld(world);
+}
+
+void PhysicsEngine::Init() {
+    collision_detection_.Init();
+    //collision_resolution_.Init();
 }

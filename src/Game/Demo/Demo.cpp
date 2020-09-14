@@ -6,7 +6,7 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-static inline void ToggleRenderer(physics::PhysicsEngine &pe, bool val) {
+static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
         pe.ToggleRenderer();
     }
@@ -20,26 +20,26 @@ template<class... Ts>
 overload(Ts...)->overload<Ts...>;
 
 Demo::Demo() {
-    physics_engine_.SetECS(&ecs_);
+    physics_world_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     auto &engine = redengine::Engine::get();
     engine.GetMouseMode(relativeMouse);
-    physics_engine_.SetECS(&ecs_);
     std::filesystem::path path = "";
     path.append("Demo");
     path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, &physics_engine_);
+    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
     player = ecs_.CreateEntity();
     player.AddComponent<component::Player>();
     auto playerComp = player.GetComponent<component::Player>();
 
     player.AddComponent<component::PhysicBody>();
     auto &phys = player.GetComponent<component::PhysicBody>();
-    physics_engine_.AddCollisionBody(player.GetID(), playerComp.camera.position_, glm::quat(glm::vec3(0, 0, 0)));
-    auto playerShape = physics_engine_.CreateCapsuleShape(50, 100);
-    physics_engine_.AddCollider(player.GetID(), playerShape, {0.f, 25.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    physics_world_.AddCollisionBody(player.GetID(), playerComp.camera.position_, glm::quat(glm::vec3(0, 0, 0)));
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
+    physics_world_.AddCollider(player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
 
     player.GetComponent<component::Player>().camera.movement_speed_ = 0.15f;
 }
@@ -56,11 +56,9 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
     auto &renderer = redengine::Engine::get().renderer_;
     auto &engine = redengine::Engine::get();
     auto &gui_manager = engine.GetGuiManager();
-    ToggleRenderer(physics_engine_, gui_manager.renderer_);
+    ToggleRenderer(physics_world_, gui_manager.renderer_);
     renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Draw(shader, projection, view);
-    physics_engine_.Draw(projection, view);
-    shader->Use();
 }
 
 void Demo::GUIStart() {
@@ -85,12 +83,16 @@ void Demo::Update(double t, double dt) {
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player.GetComponent<component::Player>().Update(t, dt);
-    physics_engine_.Update(t, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
-    physics_engine_.FixedUpdate(t, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.FixedUpdate(t, dt);
 }
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {

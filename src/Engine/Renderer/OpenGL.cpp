@@ -35,25 +35,26 @@ void view::OpenGL::Draw() {
         model_shader_->SetMat4("projection", projection);
         model_shader_->SetMat4("view", view);
         engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
+        engine.GetPhysicsEngine().Draw(model_shader_.get(), projection, view);
         // be sure to activate shader when setting uniforms/drawing objects
-        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-        light_shader_->Use();
-        light_shader_->SetMat4("projection", projection);
-        light_shader_->SetMat4("view", view);
-        light_shader_->SetVec3("light.position", lightPos);
-        light_shader_->SetVec3("viewPos", camera_->position_);
+//        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+//        light_shader_->Use();
+//        light_shader_->SetMat4("projection", projection);
+//        light_shader_->SetMat4("view", view);
+//        light_shader_->SetVec3("light.position", lightPos);
+//        light_shader_->SetVec3("viewPos", camera_->position_);
 
         // light properties
-        glm::vec3 lightColor;
-
-        lightColor.x = sin(glfwGetTime() * 2.0f);
-        lightColor.y = sin(glfwGetTime() * 0.7f);
-        lightColor.z = sin(glfwGetTime() * 1.3f);
-        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
-        light_shader_->SetVec3("light.ambient", ambientColor);
-        light_shader_->SetVec3("light.diffuse", diffuseColor);
-        light_shader_->SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+//        glm::vec3 lightColor;
+//
+//        lightColor.x = sin(glfwGetTime() * 2.0f);
+//        lightColor.y = sin(glfwGetTime() * 0.7f);
+//        lightColor.z = sin(glfwGetTime() * 1.3f);
+//        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+//        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+//        light_shader_->SetVec3("light.ambient", ambientColor);
+//        light_shader_->SetVec3("light.diffuse", diffuseColor);
+//        light_shader_->SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
         //engine.game_stack_.getTop()->Display(light_shader_.get(), projection, view);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

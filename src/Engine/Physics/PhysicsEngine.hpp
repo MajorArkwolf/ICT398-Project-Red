@@ -1,8 +1,9 @@
 #pragma once
+
 #include "Engine/Physics/CollisionDetection.hpp"
 #include "Engine/Physics/CollisionResolution.hpp"
 
-class ECS;
+class Shader;
 
 namespace physics {
 
@@ -64,13 +65,7 @@ namespace physics {
          * @param projection projection matrix of the camera.
          * @param view the view matrix of the camera.
          */
-        void Draw(const glm::mat4 &projection, const glm::mat4 &view);
-
-
-        /**
-         * Toggles the debug renderer on or off.
-         */
-        void ToggleRenderer();
+        void Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view);
 
         /**
          * Returns if the renderer is on.
@@ -78,30 +73,20 @@ namespace physics {
          */
         bool GetRendererStatus();
 
-        /**
-         * Set the ECS for the Physics engine to use, this is crucial and must be done.
-         * @param ecs ECS system.
-         */
-        void SetECS(ECS *ecs);
+        PhysicsShape CreateBoxShape(glm::vec3 extents);
 
+        PhysicsShape CreateCapsuleShape(double radius, double height);
 
-    void DeleteCollisionBody(const entt::entity &entity_id);
+        PhysicsShape CreateSphereShape(double radius);
 
-    void UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+        reactphysics3d::PhysicsWorld *CreatePhysicsWorld();
 
-    void AddCollisionBody(const entt::entity &entity_id, const glm::vec3 &pos, const glm::quat &rot);
+        void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world);
 
-    int AddCollider(const entt::entity &entity_id, PhysicsShape &shape, glm::vec3 relative_position, glm::quat rotation);
+        void Init();
 
-    PhysicsShape CreateBoxShape(glm::vec3 extents);
-
-    PhysicsShape CreateCapsuleShape(double radius, double height);
-
-    PhysicsShape CreateSphereShape(double radius);
-
-   private:
-    ECS *ecs_ = nullptr;
-    CollisionDetection collision_detection_ = {};
-    CollisionResolution collision_resolution_ = {};
-};
-}// namespace physics
+    private:
+        CollisionDetection collision_detection_ = {};
+        CollisionResolution collision_resolution_ = {};
+    };
+}

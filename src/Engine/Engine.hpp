@@ -16,6 +16,7 @@
 #include "Engine/SubModules/PrefabRepo.hpp"
 #include "Engine/SubModules/ShaderRepo.hpp"
 #include "SubModules/ConsoleLog.hpp"
+#include "Engine/Physics/PhysicsEngine.hpp"
 
 namespace redengine {
 
@@ -37,6 +38,7 @@ namespace redengine {
         /// The game stack to allow to switch between scenes.
         GameStack<std::shared_ptr<BaseState>> game_stack_;
       private:
+        physics::PhysicsEngine physics_engine_ = {};
         /// GUI Manager for our GUI interface.
         GUIManager gui_manager_;
         /// Flag used to determine if the engine should shutdown.
@@ -44,7 +46,7 @@ namespace redengine {
         /**
          * Sets the basepath of where the engine is running.
          */
-        auto SetupBasePath() -> void;
+        static auto SetupBasePath() -> std::filesystem::path;
         /**
          * Privatised constructor due to the engine being a singleton.
          */
@@ -196,7 +198,7 @@ namespace redengine {
          * Get the basepath relative to the executable.
          * @return file address
          */
-        auto GetBasePath() const -> std::filesystem::path;
+        auto GetBasePath() -> std::filesystem::path;
         /**
          * Gets the prefab repo from the engine.
          * @return a reference to the prefab repo.
@@ -206,5 +208,7 @@ namespace redengine {
         ConsoleLog &GetLog();
 
         void CloseScene();
+
+        physics::PhysicsEngine& GetPhysicsEngine();
     };
 }

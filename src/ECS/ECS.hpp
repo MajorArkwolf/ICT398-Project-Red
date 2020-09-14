@@ -46,6 +46,10 @@ public:
      */
     void Update(double t, double dt);
 
+
+    std::shared_ptr<Entity> GetEntity(entt::entity id);
+
+
     /**
      * Draw call for all entities that have a model.
      * @param shader shader to be used on that given pass.
@@ -54,9 +58,7 @@ public:
      */
     void Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view);
 
-    std::shared_ptr<Entity> GetEntity(entt::entity id);
-
-    entt::registry& GetRegistry() {return registry_;};
+    entt::registry& GetRegistry() {return registry_;}
 
 protected:
     entt::registry registry_ = {};

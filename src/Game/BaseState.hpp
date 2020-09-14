@@ -4,6 +4,7 @@
 #include <glm/matrix.hpp>
 #include "Engine/EulerCamera.hpp"
 #include "Engine/Renderer/Shader.hpp"
+#include "Engine/Physics/PhysicsWorld.hpp"
 
 /**
  * @class BaseState
@@ -73,4 +74,5 @@ class BaseState {
     virtual void GUIEnd() = 0;
 
     engine::Camera camera;
+    physics::PhysicsWorld physics_world_;
 };

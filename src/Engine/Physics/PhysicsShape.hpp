@@ -16,6 +16,7 @@ namespace physics {
     class PhysicsShape {
 
         friend class CollisionDetection;
+        friend class PhysicsWorld;
 
     public:
         ~PhysicsShape() = default;

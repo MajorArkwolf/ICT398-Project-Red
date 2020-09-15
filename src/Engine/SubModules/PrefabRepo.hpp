@@ -9,6 +9,8 @@
 #include <Engine/Physics/PhysicsShape.hpp>
 #include <map>
 
+class PrefabGUI;
+
 namespace redengine{
     struct Collider {
         std::string part_name;
@@ -46,8 +48,14 @@ namespace redengine{
         prefab& AddNewPrefab(const std::string& key);
         bool FindPrefab(const std::string& key);
         const prefab &GetPrefab(const std::string &key) const;
+        std::vector<std::string> GetPrefabList ();
+
     private:
         std::unordered_map<std::string,prefab> prefabMap_ = {};
+
+        prefab &GetPrefabMut(const std::string &key);
+        //Friend class access to be able to modify Repo
+        friend PrefabGUI;
     };
 }
 

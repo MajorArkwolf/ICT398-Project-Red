@@ -27,6 +27,7 @@ void PrefabEditor::Display(Shader *shader, const glm::mat4 &projection, const gl
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
+    prefab_gui_.Draw();
 }
 
 void PrefabEditor::GUIStart() {

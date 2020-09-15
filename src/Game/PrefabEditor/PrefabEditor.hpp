@@ -3,6 +3,7 @@
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
 #include "Engine/Physics/PhysicsEngine.hpp"
+#include "Game/PrefabEditor/Components/PrefabGUI.hpp"
 
 class PrefabEditor : public BaseState {
  public:
@@ -20,4 +21,5 @@ class PrefabEditor : public BaseState {
  private:
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
     ECS ecs_ = {};
+    PrefabGUI prefab_gui_{};
 };

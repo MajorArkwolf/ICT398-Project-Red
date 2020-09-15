@@ -12,6 +12,12 @@ struct overload : Ts ... {
 };
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
+static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
+    if (pe.GetRendererStatus() != val) {
+        pe.ToggleRenderer();
+    }
+}
+
 PhysicsDemo::PhysicsDemo() {
     physics_world_.SetECS(&ecs_);
     camera = engine::Camera();
@@ -25,7 +31,10 @@ PhysicsDemo::PhysicsDemo() {
 
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
-    //renderer.SetCameraOnRender(camera);
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
+    ToggleRenderer(physics_world_, gui_manager.renderer_);
+    renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
 }
 
@@ -41,14 +50,18 @@ void PhysicsDemo::GUIEnd() {
 }
 
 void PhysicsDemo::Update(double t, double dt) {
-    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     ecs_.Update(t, dt);
-    //physics_engine_.Update(t, dt);
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.Update(t, dt);
 }
 
 void PhysicsDemo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
-    //physics_engine_.FixedUpdate(t, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.FixedUpdate(t, dt);
 }
 
 void PhysicsDemo::Init() {

@@ -184,10 +184,10 @@ void JSONLoader::LoadPrefabList() {
                                         if (element.at("Type").get<std::string>() == "Box") {
                                             auto extents = element.at("HalfExtents");
                                             prefab.collision_shapes.emplace(shape_name, e.CreateBoxShape(glm::vec3(extents.at("X").get<float>(), extents.at("Y").get<float>(), extents.at("Z").get<float>())));
-                                        } else if (element.at("Type").get<std::string>() == "Capsule") {
+                                        } else if (element.at("Type").get<std::string>() == "Sphere") {
                                             auto radius = element.at("Radius").get<float>();
                                             prefab.collision_shapes.emplace(shape_name, e.CreateSphereShape(radius));
-                                        } else if (element.at("Type").get<std::string>() == "Sphere") {
+                                        } else if (element.at("Type").get<std::string>() == "Capsule") {
                                             auto radius = element.at("Radius").get<float>();
                                             auto height = element.at("Height").get<float>();
                                             prefab.collision_shapes.emplace(shape_name, e.CreateCapsuleShape(radius, height));

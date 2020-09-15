@@ -160,30 +160,30 @@ void PrefabGUI::ModelComponentMenu() {
     ImGui::End();
 }
 
-void ThreeButtonMenu(const std::string& val, float &ref) {
-    if (ImGui::Button("<<<")) {
+static inline void ThreeButtonMenu(const std::string& val, const std::string& type, float &ref) {
+    if (ImGui::Button(std::string("<<<##" + type + val).c_str())) {
         ref += -100.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button("<<")) {
+    if (ImGui::Button(std::string("<<##" + type + val).c_str())) {
         ref += -10.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button("<")) {
+    if (ImGui::Button(std::string("<##" + type + val).c_str())) {
         ref += -1.0f;
     }
     ImGui::SameLine();
     ImGui::Text("%s", val.c_str());
     ImGui::SameLine();
-    if (ImGui::Button(">")) {
+    if (ImGui::Button(std::string(">##" + type + val).c_str())) {
         ref += 1.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button(">>")) {
+    if (ImGui::Button(std::string(">>##" + type + val).c_str())) {
         ref += 10.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button(">>>")) {
+    if (ImGui::Button(std::string(">>>##" + type + val).c_str())) {
         ref += 100.0f;
     }
 }
@@ -194,13 +194,15 @@ void PrefabGUI::TransformComponentMenu() {
     ImGui::Begin("Transform Model", &transform_component_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Position from origin");
-    ThreeButtonMenu("X", prefab_loaded.position_local.x);
-    ThreeButtonMenu("Y", prefab_loaded.position_local.y);
-    //prefab_loaded.position_local.z += ThreeButtonMenu("Z");
+    ThreeButtonMenu("X","pos", prefab_loaded.position_local.x);
+    ThreeButtonMenu("Y","pos", prefab_loaded.position_local.y);
+    ThreeButtonMenu("Z","pos", prefab_loaded.position_local.z);
     ImGui::Text("Scale");
-//    prefab_loaded.scale_local.x += ThreeButtonMenu("X");
-//    prefab_loaded.scale_local.y += ThreeButtonMenu("Y");
-//    prefab_loaded.scale_local.z += ThreeButtonMenu("Z");
+    ThreeButtonMenu("X", "scale", prefab_loaded.scale_local.x);
+    ThreeButtonMenu("Y", "scale", prefab_loaded.scale_local.y);
+    ThreeButtonMenu("Z", "scale", prefab_loaded.scale_local.z);
+    ImGui::Text("Rotation");
+    ImGui::Text("To be implemented");
     if (ImGui::Button("Save and Submit", button_size_)) {
         auto &engine = redengine::Engine::get();
         transform_component_ = false;

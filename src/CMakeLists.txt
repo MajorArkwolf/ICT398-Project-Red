@@ -37,7 +37,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Demo Scene
     Game/Demo/Demo.cpp
     #--Physics Demo Scene
-    Game/PhysicsDemo/PhysicsDemo.cpp
+        Game/PhysicsDemo/PhysicsDemo.cpp
+    #--PrefabEditor
+    Game/PrefabEditor/PrefabEditor.cpp
 
     #DataStructures
     #--Model

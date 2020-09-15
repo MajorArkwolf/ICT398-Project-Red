@@ -1,4 +1,4 @@
-#include "PhysicsDemo.hpp"
+#include "PrefabEditor.hpp"
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
@@ -12,52 +12,52 @@ struct overload : Ts ... {
 };
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
-PhysicsDemo::PhysicsDemo() {
+PrefabEditor::PrefabEditor() {
     physics_world_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     std::filesystem::path path = "";
-    path.append("PhysicsDemo");
+    path.append("PrefabEditor");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 }
 
-void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
+void PrefabEditor::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
 }
 
-void PhysicsDemo::GUIStart() {
+void PrefabEditor::GUIStart() {
     auto& engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
     engine.GetGuiManager().DisplayConsoleLog();
 }
 
-void PhysicsDemo::GUIEnd() {
+void PrefabEditor::GUIEnd() {
     GUIManager::EndWindowFrame();
 }
 
-void PhysicsDemo::Update(double t, double dt) {
+void PrefabEditor::Update(double t, double dt) {
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     ecs_.Update(t, dt);
 }
 
-void PhysicsDemo::FixedUpdate(double t, double dt) {
+void PrefabEditor::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
 }
 
-void PhysicsDemo::Init() {
+void PrefabEditor::Init() {
 
 }
 
-void PhysicsDemo::UnInit() {
+void PrefabEditor::UnInit() {
 
 }
 
-void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
+void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
     auto& engine = redengine::Engine::get();
     auto& gui_manager = engine.GetGuiManager();

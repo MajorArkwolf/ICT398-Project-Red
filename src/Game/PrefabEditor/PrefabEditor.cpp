@@ -17,17 +17,17 @@ PrefabEditor::PrefabEditor() {
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
-    std::filesystem::path path = "";
-    path.append("PrefabEditor");
-    path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+//    std::filesystem::path path = "";
+//    path.append("PrefabEditor");
+//    path.append("Scene.json");
+//    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 }
 
 void PrefabEditor::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
-    prefab_gui_.Draw();
+    prefab_gui_.Draw(shader, projection, view);
 }
 
 void PrefabEditor::GUIStart() {

@@ -33,3 +33,7 @@ std::vector<std::string> redengine::PrefabRepo::GetPrefabList() {
     }
     return list;
 }
+
+void redengine::PrefabRepo::InsertPrefab(const prefab& new_prefab) {
+    prefabMap_.insert({new_prefab.name, new_prefab});
+}

@@ -25,6 +25,7 @@ namespace redengine{
         std::string name;
         bool has_model = false;
         size_t model_id = 0;
+        std::string model_dir;
         std::shared_ptr<Shader> model_shader;
         glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
         glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
@@ -52,7 +53,7 @@ namespace redengine{
 
     private:
         std::unordered_map<std::string,prefab> prefabMap_ = {};
-
+        void InsertPrefab(const prefab& new_prefab);
         prefab &GetPrefabMut(const std::string &key);
         //Friend class access to be able to modify Repo
         friend PrefabGUI;

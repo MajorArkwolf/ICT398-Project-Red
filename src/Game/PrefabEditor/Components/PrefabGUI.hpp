@@ -4,13 +4,15 @@
 #include <GLFW/glfw3.h>
 #include "Engine/SubModules/PrefabRepo.hpp"
 
+class Shader;
+
 class PrefabGUI {
 public:
     PrefabGUI();
 
     ~PrefabGUI() = default;
 
-    void Draw();
+    void Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view);
 
 
 
@@ -24,8 +26,10 @@ private:
     bool get_prefab_ = false;
     /// main menu that will display all the options you can edit.
     bool main_edit_menu_ = false;
-    /// Used to determine what on the list is selected.
-    int listbox_item_current_ = 0;
+
+    //------Component Menu's-------
+    bool model_component_ = false;
+    bool transform_component_ = false;
 
     ImVec2 button_size_ = ImVec2(150, 30);
 
@@ -36,4 +40,8 @@ private:
     void CreatePrefab();
 
     void MainEntityMenu();
+
+    void ModelComponentMenu();
+
+    void TransformComponentMenu();
 };

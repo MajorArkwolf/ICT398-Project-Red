@@ -8,19 +8,20 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
 
     while (!queue.empty()) {
         auto& item = queue.front();
-        int player = 0;
         if (ecs_) {
             if (ecs_->GetRegistry().has<component::Player>(item.first_body)) {
-                player = 1;
+                ResolvePlayerCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
             } else if (ecs_->GetRegistry().has<component::Player>(item.second_body)) {
-                player = 2;
+                ResolvePlayerCollision(item, ecs_->GetEntity(item.second_body), ecs_->GetEntity(item.first_body));
             }
         }
-
         queue.pop();
     }
 }
 
 void physics::CollisionResolution::SetECS(ECS* ecs) {
     this->ecs_ = ecs;
+}
+
+void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> player, std::shared_ptr<Entity> other) {
 }

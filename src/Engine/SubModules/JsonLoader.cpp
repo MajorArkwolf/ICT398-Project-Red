@@ -12,8 +12,6 @@
 #include "Engine/Physics/PhysicsEngine.hpp"
 #include "Engine/Physics/PhysicsWorld.hpp"
 
-
-
 nlohmann::json JSONLoader::LoadJson(const std::filesystem::path &file_path) {
     nlohmann::json j = {};
     std::ifstream i(file_path);
@@ -87,12 +85,11 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 auto &trans = ent->GetComponent<component::Transform>();
                 pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
-                for (const auto& n : prefab.colliders_) {
+                for (const auto &n : prefab.colliders_) {
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
                         auto pfc = prefab.collision_shapes.at(n.base_shape_name);
                         pw->AddCollider(ent->GetID(), pfc, n.position_local, n.rotation_local);
-                    }
-                    else {
+                    } else {
                         ///Prefab name not found
                     }
                 }
@@ -205,21 +202,27 @@ void JSONLoader::LoadPrefabList() {
                             if (colliders.is_array()) {
                                 for (auto &n : colliders) {
                                     redengine::Collider collider;
+
                                     if (n.contains("Name")) {
                                         collider.part_name = n.at("Name").get<std::string>();
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, "Collider does not contain \"Name\" field", __LINE__, __FILE__);
                                     }
+
                                     if (n.contains("BaseShape")) {
                                         collider.base_shape_name = n.at("BaseShape").get<std::string>();
                                     } else {
                                         console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"BaseShape\" field"), __LINE__, __FILE__);
                                     }
+
                                     if (n.contains("Mass")) {
                                         collider.mass = n.at("Mass").get<float>();
                                     } else {
                                         collider.mass = 1.0f;
                                     }
+
+                                    prefab.mass += collider.mass;
+
                                     if (n.contains("CentreOfMass")) {
                                         auto com = n.at("CentreOfMass");
                                         glm::vec3 vec_com = {com.at("X").get<float>(),
@@ -229,6 +232,7 @@ void JSONLoader::LoadPrefabList() {
                                     } else {
                                         collider.centre_of_mass = {0.f, 0.f, 0.f};
                                     }
+
                                     if (n.contains("Position")) {
                                         auto position = n.at("Position");
                                         collider.position_local = {position.at("X").get<float>(),
@@ -237,6 +241,7 @@ void JSONLoader::LoadPrefabList() {
                                     } else {
                                         collider.position_local = {0.f, 0.f, 0.f};
                                     }
+
                                     if (n.contains("Rotation")) {
                                         auto rotation = n.at("Rotation");
                                         collider.rotation_local = glm::quat(glm::vec3(
@@ -249,6 +254,25 @@ void JSONLoader::LoadPrefabList() {
                                     }
 
                                     prefab.colliders_.push_back(collider);
+                                }
+
+                                //Calculate centre of mass for entire prefab
+                                {
+                                    glm::dvec3 centre_mass{0, 0, 0};
+                                    std::vector<glm::dvec3> weighted_collider_centre_mass;
+                                    for (auto &n : prefab.colliders_) {
+                                        float weight = n.mass / prefab.mass;
+                                        weighted_collider_centre_mass.emplace_back(n.centre_of_mass / weight);
+                                    }
+
+                                    auto average = std::invoke([&]() {
+                                        glm::dvec3 average = {};
+                                        for (auto&n : weighted_collider_centre_mass) {
+                                            average += n;
+                                        }
+                                        return average / static_cast<double>(weighted_collider_centre_mass.size());
+                                    });
+                                    prefab.centre_of_mass = average;
                                 }
                             }
                         } catch (const std::exception &e) {

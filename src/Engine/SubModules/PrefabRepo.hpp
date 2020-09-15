@@ -32,6 +32,8 @@ namespace redengine{
         bool is_static = false;
         std::map<std::string, physics::PhysicsShape> collision_shapes = {};
         std::vector<Collider> colliders_;
+        double mass = 0.0;
+        glm::dvec3 centre_of_mass = {0, 0, 0};
     };
 
     class PrefabRepo {

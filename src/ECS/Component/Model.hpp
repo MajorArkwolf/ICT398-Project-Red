@@ -13,5 +13,6 @@ namespace component {
         explicit Model(const std::filesystem::path &model);
         explicit Model(size_t model_id);
         size_t id_ = 0;
+        bool draw_model = true;
     };
 }

@@ -55,7 +55,7 @@ namespace model {
          * Draw call for the model
          * @param shader used to draw the model.
          */
-        void Draw(Shader* shader);
+        void Draw(Shader* shader, const glm::mat4& model_matrix);
 
         void Update(float t, float dt);
 
@@ -82,7 +82,7 @@ namespace model {
          * @param node of the model.
          * @param scene the model loaded in.
          */
-        void ProcessNode(aiNode *node, const aiScene *scene);
+        void ProcessNode(aiNode *node, const aiScene *scene, glm::mat4 transformation);
 
         /**
          * Process the mesh of a model.
@@ -90,7 +90,7 @@ namespace model {
          * @param scene scene the model loaded in.
          * @return returns the next mesh.
          */
-        Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
+        Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transformation);
         /**
          * Load a material into the GPU
          * @param mat the material type.

@@ -48,11 +48,11 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                     auto position = transform.at("Position");
                     auto rotation = transform.at("Rotation");
                     auto scale = transform.at("Scale");
-                    trans.pos = {
+                    trans.pos = glm::vec3{
                         position.at("X").get<float>(),
                         position.at("Y").get<float>(),
                         position.at("Z").get<float>()};
-                    trans.scale = {
+                    trans.scale = glm::vec3{
                         scale.at("X").get<float>(),
                         scale.at("Y").get<float>(),
                         scale.at("Z").get<float>()};
@@ -62,7 +62,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         glm::radians(rotation.at("Z").get<float>())));
                     trans.pos += prefab.position_local;
                     trans.rot *= prefab.rotation_local;
-                    trans.scale += prefab.scale_local;
+                    trans.scale *= prefab.scale_local;
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }

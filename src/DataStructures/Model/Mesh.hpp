@@ -33,6 +33,8 @@ class Mesh {
     unsigned int vao_ = {};
     /// Materials
     model::Material material_ = {};
+    /// Transform
+    glm::mat4 transform_ = {};
 
     /**
      * Constructs a mesh object.
@@ -41,13 +43,13 @@ class Mesh {
      * @param new_textures textures used in a mesh.
      */
     Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indices,
-         std::vector<TextureB> new_textures, model::Material material);
+         std::vector<TextureB> new_textures, model::Material material, glm::mat4 transformation);
 
     /**
      * Draw function for the model.
      * @param shader used to draw the model.
      */
-    void Draw(Shader* shader);
+    void Draw(Shader* shader, const glm::mat4& model_matrix);
 
     /**
      * Add bone data to the the given vertix.

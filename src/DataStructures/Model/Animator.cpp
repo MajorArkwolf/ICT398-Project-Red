@@ -90,7 +90,6 @@ glm::vec3 model::Animator::CalcInterpolatedPosition(double AnimationTime, const 
         out = pNodeAnim->pos_key[0].second;
         return out;
     }
-
     unsigned position_index = loaded_animation_->FindPosition(AnimationTime, pNodeAnim);
     unsigned next_position_index = (position_index + 1);
     assert(next_position_index < pNodeAnim->num_pos_keys);

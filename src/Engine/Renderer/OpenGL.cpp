@@ -242,3 +242,13 @@ void view::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
 view::OpenGL::~OpenGL() {
 
 }
+
+glm::vec2 view::OpenGL::GetViewPort() {
+    glm::vec2 window_size = {};
+    auto *window = redengine::Engine::get().window_;
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    window_size.x = static_cast<float>(width);
+    window_size.y = static_cast<float>(height);
+    return window_size;
+}

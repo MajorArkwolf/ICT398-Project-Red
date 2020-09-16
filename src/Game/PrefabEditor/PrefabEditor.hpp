@@ -18,8 +18,13 @@ class PrefabEditor : public BaseState {
     void FixedUpdate(double t, double dt) override;
     void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
+
  private:
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
     ECS ecs_ = {};
     PrefabGUI prefab_gui_{};
+    bool camera_enabled_ = false;
+    double distanceFromEntity = 10;
+    double currentRotation    = 0;
+    void ArcBallCamera(double dx, double dy);
 };

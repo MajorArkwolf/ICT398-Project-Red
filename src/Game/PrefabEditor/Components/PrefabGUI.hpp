@@ -8,17 +8,33 @@ class Shader;
 
 class PrefabGUI {
 public:
+    /**
+     * Default Constructor
+     */
     PrefabGUI();
-
+    /**
+     * Default Destructor
+     */
     ~PrefabGUI() = default;
 
+    /**
+     * Draw call to draw the models in the scene.
+     * @param shader program used to draw the models.
+     * @param projection the projection matrix from the camera.
+     * @param view view matrix of the camera.
+     */
     void Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view);
 
-
+    /**
+     * Returns the currently loaded prefab
+     * @return prefab loaded
+     */
+    const redengine::prefab GetPrefab() const;
 
 private:
-    redengine::prefab prefab_loaded;
-    ///Main menu will give the option to edit or create a new prefab
+    /// The prefab that will be edited.
+    redengine::prefab prefab_loaded_;
+    /// Main menu will give the option to edit or create a new prefab
     bool main_menu_ = true;
     /// Begin creating a new prefab
     bool create_new_prefab_ = false;
@@ -26,10 +42,14 @@ private:
     bool get_prefab_ = false;
     /// main menu that will display all the options you can edit.
     bool main_edit_menu_ = false;
+    /// physics menu that will let you add collidors.
+
 
     //------Component Menu's-------
     bool model_component_ = false;
     bool transform_component_ = false;
+    bool physics_edit_menu = false;
+    bool affordance_edit_menu = false;
 
     ImVec2 button_size_ = ImVec2(150, 30);
 
@@ -44,4 +64,8 @@ private:
     void ModelComponentMenu();
 
     void TransformComponentMenu();
+
+    void PhysicsMainMenu();
+
+    void AffordanceMenu();
 };

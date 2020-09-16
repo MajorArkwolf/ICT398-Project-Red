@@ -22,5 +22,9 @@ auto ModelManager::ModelRepo() -> std::array<model::Model, 1000> & {
     return m_;
 }
 model::Model *ModelManager::getModel(size_t modelID) {
-    return &m_[modelID];
+    if (modelID > 0 && modelID < m_.size()) {
+        return &m_[modelID];
+    } else {
+        return &m_[0];
+    }
 }

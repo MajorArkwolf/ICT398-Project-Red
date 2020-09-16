@@ -40,16 +40,18 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     get_prefab_ ? LoadExistingPrefab() : (void)0;
     model_component_ ? ModelComponentMenu() : (void)0;
     transform_component_ ? TransformComponentMenu() : (void)0;
+    physics_edit_menu ? PhysicsMainMenu() : (void)0;
+    affordance_edit_menu ? AffordanceMenu() : (void)0;
 
 
-    if (prefab_loaded.has_model) {
+    if (prefab_loaded_.has_model) {
         glm::mat4 model_matrix = glm::mat4(1.0f);
-        model_matrix = glm::translate(model_matrix, prefab_loaded.position_local);
-        model_matrix = glm::scale(model_matrix, prefab_loaded.scale_local);
-        model_matrix = model_matrix * glm::mat4_cast(prefab_loaded.rotation_local);
+        model_matrix = glm::translate(model_matrix, prefab_loaded_.position_local);
+        model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
+        model_matrix = model_matrix * glm::mat4_cast(prefab_loaded_.rotation_local);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
-        redengine::Engine::get().model_manager_.Draw(prefab_loaded.model_id, shader);
+        redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader);
     }
 }
 
@@ -77,8 +79,8 @@ void PrefabGUI::CreatePrefab() {
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::InputText("Prefab Name", prefab_name, IM_ARRAYSIZE(prefab_name));
     if (ImGui::Button("Submit", button_size_)) {
-        prefab_loaded = redengine::prefab();
-        prefab_loaded.name = std::string(prefab_name);
+        prefab_loaded_ = redengine::prefab();
+        prefab_loaded_.name = std::string(prefab_name);
         main_edit_menu_ = true;
         create_new_prefab_ = false;
     }
@@ -101,7 +103,7 @@ void PrefabGUI::LoadExistingPrefab() {
     if (ImGui::Button("Get Entity", button_size_)) {
         get_prefab_ = false;
         main_edit_menu_ = true;
-        prefab_loaded = redengine::Engine::get().GetPrefabRepo().GetPrefabMut(list.at(
+        prefab_loaded_ = redengine::Engine::get().GetPrefabRepo().GetPrefabMut(list.at(
                 static_cast<unsigned long>(listbox_item_current_)));
     }
     if (ImGui::Button("Exit", button_size_)) {
@@ -116,7 +118,7 @@ void PrefabGUI::MainEntityMenu() {
     ImGui::SetNextWindowSize(ImVec2(250, 500), 1);
     ImGui::Begin("Load Prefab", &main_edit_menu_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text("Editing: %s", prefab_loaded.name.c_str());
+    ImGui::Text("Editing: %s", prefab_loaded_.name.c_str());
     if (ImGui::Button("Model Component", button_size_)) {
         model_component_ = true;
     }
@@ -124,7 +126,7 @@ void PrefabGUI::MainEntityMenu() {
         transform_component_ = true;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
-        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded);
+        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
         main_menu_ = true;
         main_edit_menu_ = false;
     }
@@ -137,6 +139,7 @@ void PrefabGUI::MainEntityMenu() {
 
 void PrefabGUI::ModelComponentMenu() {
     static char prefab_name[100] = {'\0'};
+    static bool animate = false;
     ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
     ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
     ImGui::Begin("Set Model", &model_component_,
@@ -146,13 +149,17 @@ void PrefabGUI::ModelComponentMenu() {
     ImGui::NewLine();
     ImGui::InputText("Model Location: res/model/...", prefab_name, IM_ARRAYSIZE(prefab_name));
     ImGui::NewLine();
+    ImGui::Checkbox("Enable Animation", &animate);
     if (ImGui::Button("Save and Submit", button_size_)) {
         auto &engine = redengine::Engine::get();
         model_component_ = false;
-        prefab_loaded.model_dir = "res/model/" + std::string(prefab_name);
+        prefab_loaded_.model_dir = "res/model/" + std::string(prefab_name);
         auto full_path = engine.GetBasePath() / "res" / "model" / std::filesystem::path{prefab_name};
-        prefab_loaded.model_id = engine.model_manager_.GetModelID(full_path);
-        prefab_loaded.has_model = true;
+        prefab_loaded_.model_id = engine.model_manager_.GetModelID(full_path);
+        if (animate && engine.model_manager_.getModel(prefab_loaded_.model_id)->is_animated_) {
+            prefab_loaded_.has_animation = true;
+        }
+        prefab_loaded_.has_model = true;
     }
     if (ImGui::Button("Close, Dont Save", button_size_)) {
         model_component_ = false;
@@ -194,13 +201,14 @@ void PrefabGUI::TransformComponentMenu() {
     ImGui::Begin("Transform Model", &transform_component_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Position from origin");
-    ThreeButtonMenu("X","pos", prefab_loaded.position_local.x);
-    ThreeButtonMenu("Y","pos", prefab_loaded.position_local.y);
-    ThreeButtonMenu("Z","pos", prefab_loaded.position_local.z);
+    ThreeButtonMenu("X", "pos", prefab_loaded_.position_local.x);
+    ThreeButtonMenu("Y", "pos", prefab_loaded_.position_local.y);
+    ThreeButtonMenu("Z", "pos", prefab_loaded_.position_local.z);
     ImGui::Text("Scale");
-    ThreeButtonMenu("X", "scale", prefab_loaded.scale_local.x);
-    ThreeButtonMenu("Y", "scale", prefab_loaded.scale_local.y);
-    ThreeButtonMenu("Z", "scale", prefab_loaded.scale_local.z);
+    ThreeButtonMenu("X", "scale", prefab_loaded_.scale_local.x);
+    ThreeButtonMenu("Y", "scale", prefab_loaded_.scale_local.y);
+    ThreeButtonMenu("Z", "scale", prefab_loaded_.scale_local.z);
+    //TODO: Implement this
     ImGui::Text("Rotation");
     ImGui::Text("To be implemented");
     if (ImGui::Button("Save and Submit", button_size_)) {
@@ -208,4 +216,17 @@ void PrefabGUI::TransformComponentMenu() {
         transform_component_ = false;
     }
     ImGui::End();
+}
+// TODO: Implement this
+void PrefabGUI::PhysicsMainMenu() {
+
+}
+
+// TODO: Implement this
+void PrefabGUI::AffordanceMenu() {
+
+}
+
+const redengine::prefab PrefabGUI::GetPrefab() const {
+    return prefab_loaded_;
 }

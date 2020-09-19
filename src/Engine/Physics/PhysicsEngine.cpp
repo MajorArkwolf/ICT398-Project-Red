@@ -19,6 +19,8 @@ void PhysicsEngine::Update(double t, double dt) {
 
         for (auto &e : entities) {
             auto &tran = entities.get<component::Transform>(e);
+            auto &physBody = entities.get<component::PhysicBody>(e);
+            tran.pos += (physBody.GetVelocity() * dt);
             //collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
         }

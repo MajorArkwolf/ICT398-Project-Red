@@ -23,6 +23,8 @@ namespace component {
         bool static_object = false;
         size_t id = 0;
         glm::dvec3 velocity = {};
+        double mass = 0.0;
+        glm::dvec3 centre_mass = {0, 0, 0};
         std::vector<redengine::Collider> colliders;
         //tensorflow mat3
         void AddForce(glm::dvec3 additional_force);

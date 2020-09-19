@@ -2,16 +2,18 @@
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
+#include "Engine/Physics/PhysicsShape.hpp"
 
 template<class... Ts>
 struct overload : Ts... {
     using Ts::operator()...;
 };
 template<class... Ts>
-overload(Ts...)->overload<Ts...>;
+overload(Ts...) -> overload<Ts...>;
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
@@ -85,6 +87,20 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                            case input::InputType::kButtonPressed: {
                                switch (mouse.button) {
                                    case input::MouseButton::kLeft: {
+                                       auto entity = ecs_.CreateEntity();
+
+                                       entity.AddComponent<component::Model>(5);
+                                       auto &trans = entity.AddComponent<component::Transform>();
+                                       trans.pos = camera.position_;
+                                       trans.rot = {1, 0, 0, 0};
+                                       trans.scale = {1, 1, 1};
+
+                                       auto &physbody = entity.AddComponent<component::PhysicBody>();
+                                       physbody.SetVelocity(camera.front_);
+                                       physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
+                                       static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
+                                       physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
+
 
                                    } break;
                                }

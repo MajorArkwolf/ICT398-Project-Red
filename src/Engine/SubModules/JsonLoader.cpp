@@ -83,6 +83,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             }
             if (j.contains("Physics") && prefab.has_physics && pw != nullptr) {
                 auto &trans = ent->GetComponent<component::Transform>();
+                auto &phys = ent->AddComponent<component::PhysicBody>();
                 pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
                 for (const auto &n : prefab.colliders_) {
@@ -93,8 +94,10 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         ///Prefab name not found
                     }
                 }
-                component::PhysicBody phys_body;
-                phys_body.colliders = prefab.colliders_;
+
+                phys.colliders = prefab.colliders_;
+                phys.mass = prefab.mass;
+                phys.centre_mass = prefab.centre_of_mass;
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";

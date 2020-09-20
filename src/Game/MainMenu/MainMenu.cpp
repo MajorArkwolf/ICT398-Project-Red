@@ -9,13 +9,6 @@
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
 
-template<class... Ts>
-struct overload : Ts... {
-    using Ts::operator()...;
-};
-template<class... Ts>
-overload(Ts...) -> overload<Ts...>;
-
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

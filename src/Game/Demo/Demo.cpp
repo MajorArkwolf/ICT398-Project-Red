@@ -12,13 +12,6 @@ static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     }
 }
 
-template<class... Ts>
-struct overload : Ts... {
-    using Ts::operator()...;
-};
-template<class... Ts>
-overload(Ts...)->overload<Ts...>;
-
 Demo::Demo() {
     physics_world_.SetECS(&ecs_);
     camera = engine::Camera();

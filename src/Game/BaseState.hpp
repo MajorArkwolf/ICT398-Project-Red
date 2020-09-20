@@ -6,6 +6,13 @@
 #include "Engine/Renderer/Shader.hpp"
 #include "Engine/Physics/PhysicsWorld.hpp"
 
+template<class... Ts>
+struct overload : Ts... {
+    using Ts::operator()...;
+};
+template<class... Ts>
+overload(Ts...)->overload<Ts...>;
+
 /**
  * @class BaseState
  * @brief Pure virtual class for a game state

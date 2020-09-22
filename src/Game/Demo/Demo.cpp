@@ -72,7 +72,7 @@ Demo::Demo() {
     player_.SetLittlePlayer(little_player);
     /// Player instantiation completed
     auto &board = ecs_.CreateEntity();
-    board.AddComponent<component::Board>(&ecs_, glm::vec3(-506.0f, 83.0f, 300.0f), 20, 20, 5.0f);
+    board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 17, 11, 5.0f);
 }
 
 void Demo::Init() {
@@ -168,6 +168,12 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                    } break;
                                    case input::VirtualKey::E: {
                                        player_.TogglePlayer();
+                                   } break;
+                                   case input::VirtualKey::Q: {
+                                       auto ent = ecs_.GetRegistry().view<component::Board>();
+                                       for (auto &e : ent) {
+                                           ecs_.GetRegistry().get<component::Board>(e).ToggleRenderer();
+                                       }
                                    } break;
                                    case input::VirtualKey::kEscape:
                                        gui_manager.ToggleWindow("escapeMenu");

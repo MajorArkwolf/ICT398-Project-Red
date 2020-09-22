@@ -22,6 +22,18 @@ namespace model {
     class Model {
       public:
         Model() = default;
+
+        /**
+         * Model for when you just need a single mesh
+         * @param new_vertices the new verticies to add.
+         * @param new_indices the indicies to draw
+         * @param new_textures the textures used by the object.
+         * @param material the material used
+         * @param transformation the base transformation.
+         */
+        Model(const std::vector<Vertex> &new_vertices, const std::vector<unsigned int> &new_indices,
+              const std::vector<TextureB> &new_textures, const Material &material, const glm::mat4 &transformation);
+
         /// Textures IDs that have been loaded.
         std::vector<TextureB> textures_loaded_ = {}; // Stores all textures, needs to be global
         /// Meshes of models.

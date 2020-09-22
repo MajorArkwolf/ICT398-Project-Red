@@ -21,6 +21,12 @@ model::Model::Model(const std::string& path, bool gamma = false) : gamma_correct
     LoadModel(path);
 }
 
+model::Model::Model(const std::vector<Vertex>& new_vertices, const std::vector<unsigned int>& new_indices,
+           const std::vector<TextureB>& new_textures, const model::Material& material, const glm::mat4& transformation) {
+    meshes_.emplace_back(new_vertices, new_indices, new_textures, material, transformation);
+    meshes_.at(meshes_.size() - 1).MoveToGPU();
+}
+
 void model::Model::Draw(Shader* shader, const glm::mat4& model_matrix) {
     for (auto &mesh : meshes_) {
         mesh.Draw(shader, model_matrix);

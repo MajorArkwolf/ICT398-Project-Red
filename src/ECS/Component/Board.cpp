@@ -1,10 +1,16 @@
 #include "Board.hpp"
-#include <Engine/Renderer/Shader.hpp>
+#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Engine.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include "ECS/Component/Node.hpp"
 
 component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, const size_t node_y,
                         const float node_size) {
+    auto &mm = redengine::Engine::get().model_manager_;
+    auto base_path = redengine::Engine::get().GetBasePath();
+    base_path = base_path / "res" / "model" / "cube.obj";
+    node_model_ = mm.GetModelID(base_path);
     position_ = pos;
     node_size_ = node_size;
     assert(node_x > 0 || node_y > 0);
@@ -31,12 +37,26 @@ void component::Board::BuildBoard(ECS *ecs) {
             trans.scale = glm::vec3{node_size_, node_size_, node_size_};
             new_pos_z += node_size_;
             auto &model = node.AddComponent<component::Model>(node_model_);
+            model.wire_frame = true;
+            model.has_color = true;
+            model.draw_model = render_nodes_;
+            node.AddComponent<component::node>();
         }
         new_pos_x += node_size_;
     }
 }
 
 void component::Board::Update(double t, double dt) {
+
+}
+
+void component::Board::ToggleRenderer() {
+    render_nodes_ = !render_nodes_;
+    for (auto &node_array : nodes_) {
+        for (auto &node : node_array) {
+            node.GetComponent<component::Model>().draw_model = render_nodes_;
+        }
+    }
 
 }
 

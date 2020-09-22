@@ -14,5 +14,8 @@ namespace component {
         explicit Model(size_t model_id);
         size_t id_ = 0;
         bool draw_model = true;
+        bool wire_frame = false;
+        bool has_color = false;
+        glm::vec4 color = {};
     };
 }

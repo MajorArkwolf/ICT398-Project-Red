@@ -8,6 +8,7 @@
 
 void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto entities = registry.view<component::Model, component::Transform>();
+    static glm::vec4 last_color{};
 
     for (auto &e : entities) {
         auto &tran = entities.get<component::Transform>(e);
@@ -20,8 +21,9 @@ void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& pro
 
             //shader->SetMat4("model", model_matrix);
             shader->SetBool("has_color", mod.has_color);
-            if (mod.has_color) {
+            if (mod.has_color && last_color != mod.color) {
                 shader->SetVec4("color_value", mod.color);
+                last_color = mod.color;
             }
 
             if (registry.has<component::Animation>(e)) {
@@ -56,23 +58,24 @@ void System::UpdateColors(entt::registry& registry) {
     for (auto &e : entities) {
         auto &mod = entities.get<component::Model>(e);
         auto &node = entities.get<component::node>(e);
+        if (mod.draw_model) {
+            if (node.n_o == node_occupancy::vacant) {
+                mod.color.r = 0.0f;
+                mod.color.g = 1.0f;
+                mod.color.b = 0.0f;
+                mod.color.a = 1.0f;
+            } else if (node.n_o == node_occupancy::occupied) {
+                mod.color.r = 1.0f;
+                mod.color.g = 0.0f;
+                mod.color.b = 0.0f;
+                mod.color.a = 1.0f;
 
-        if (node.n_o == node_occupancy::vacant) {
-            mod.color.r = 0.0f;
-            mod.color.g = 1.0f;
-            mod.color.b = 0.0f;
-            mod.color.a = 1.0f;
-        } else if (node.n_o == node_occupancy::occupied) {
-            mod.color.r = 1.0f;
-            mod.color.g = 0.0f;
-            mod.color.b = 0.0f;
-            mod.color.a = 1.0f;
-
-        } else if (node.n_o == node_occupancy::leaving) {
-            mod.color.r = 1.0f;
-            mod.color.g = 1.0f;
-            mod.color.b = 0.0f;
-            mod.color.a = 1.0f;
+            } else if (node.n_o == node_occupancy::leaving) {
+                mod.color.r = 1.0f;
+                mod.color.g = 1.0f;
+                mod.color.b = 0.0f;
+                mod.color.a = 1.0f;
+            }
         }
     }
 }

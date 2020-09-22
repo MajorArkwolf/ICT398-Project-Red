@@ -72,7 +72,7 @@ Demo::Demo() {
     player_.SetLittlePlayer(little_player);
     /// Player instantiation completed
     auto &board = ecs_.CreateEntity();
-    board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 17, 11, 5.0f);
+    board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
 }
 
 void Demo::Init() {

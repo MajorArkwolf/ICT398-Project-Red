@@ -51,7 +51,7 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
         model_matrix = model_matrix * glm::mat4_cast(prefab_loaded_.rotation_local);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
-        redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader);
+        redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader, model_matrix);
     }
 }
 

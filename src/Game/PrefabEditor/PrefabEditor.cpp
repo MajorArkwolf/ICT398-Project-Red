@@ -6,12 +6,6 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-template<class... Ts>
-struct overload : Ts ... {
-    using Ts::operator()...;
-};
-template<class... Ts> overload(Ts...)->overload<Ts...>;
-
 PrefabEditor::PrefabEditor() {
     physics_world_.SetECS(&ecs_);
     camera = engine::Camera();

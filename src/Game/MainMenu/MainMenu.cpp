@@ -8,6 +8,7 @@
 #include "Engine/SubModules/JsonLoader.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
+#include "Game/PrefabEditor/PrefabEditor.hpp"
 
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;
@@ -107,6 +108,9 @@ void MainMenu::MainMenuGUI() {
     }
     if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
+    }
+    if (ImGui::Button("Prefab Editor", ImVec2(285, 40))) {
+        engine.game_stack_.AddToStack(std::make_shared<PrefabEditor>());
     }
     ImGui::Separator();
 

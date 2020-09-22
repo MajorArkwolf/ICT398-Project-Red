@@ -144,6 +144,7 @@ void JSONLoader::LoadPrefabList() {
                 prefab.name = name;
                 if (p.contains("Model")) {
                     prefab.has_model = true;
+                    prefab.model_dir = p.at("Model").at("ModelFilePath").get<std::string>();
                     std::filesystem::path m_path = p.at("Model").at("ModelFilePath").get<std::string>();
                     auto model_file_path = base_path / m_path;
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);

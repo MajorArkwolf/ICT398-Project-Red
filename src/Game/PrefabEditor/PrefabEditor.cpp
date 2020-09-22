@@ -1,4 +1,4 @@
-#include "PhysicsDemo.hpp"
+#include "PrefabEditor.hpp"
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
@@ -6,61 +6,88 @@
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
-PhysicsDemo::PhysicsDemo() {
+template<class... Ts>
+struct overload : Ts ... {
+    using Ts::operator()...;
+};
+template<class... Ts> overload(Ts...)->overload<Ts...>;
+
+PrefabEditor::PrefabEditor() {
     physics_world_.SetECS(&ecs_);
     camera = engine::Camera();
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
-    std::filesystem::path path = "";
-    path.append("PhysicsDemo");
-    path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 }
 
-void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
+void PrefabEditor::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
     ecs_.Draw(shader, projection, view);
+    prefab_gui_.Draw(shader, projection, view);
 }
 
-void PhysicsDemo::GUIStart() {
-    auto& engine = redengine::Engine::get();
+void PrefabEditor::GUIStart() {
+    auto &engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
     engine.GetGuiManager().DisplayConsoleLog();
 }
 
-void PhysicsDemo::GUIEnd() {
+void PrefabEditor::GUIEnd() {
     GUIManager::EndWindowFrame();
 }
 
-void PhysicsDemo::Update(double t, double dt) {
+void PrefabEditor::Update(double t, double dt) {
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     ecs_.Update(t, dt);
 }
 
-void PhysicsDemo::FixedUpdate(double t, double dt) {
+void PrefabEditor::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
 }
 
-void PhysicsDemo::Init() {
+void PrefabEditor::Init() {
 
 }
 
-void PhysicsDemo::UnInit() {
+void PrefabEditor::UnInit() {
 
 }
 
-void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
+void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime) {
     using namespace input;
-    auto& engine = redengine::Engine::get();
-    auto& gui_manager = engine.GetGuiManager();
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
     auto handledMouse = false;
     std::visit(overload{
             [&](std::monostate) {
 
             }, [&](InputEvent::MouseEvent mouse) {
-
+                switch (inputData.type) {
+                    case (input::InputType::kButtonPressed): {
+                        switch (mouse.button) {
+                            case input::MouseButton::kRight: {
+                                camera_enabled_ = true;
+                            }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                        break;
+                    case (input::InputType::kButtonReleased): {
+                        switch (mouse.button) {
+                            case input::MouseButton::kRight: {
+                                camera_enabled_ = false;
+                            }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    default:
+                        break;
+                }
             },
             [&](InputEvent::KeyboardEvent keyboard) {
 
@@ -85,7 +112,8 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                 break;
                             case input::VirtualKey::kEscape: {
 
-                            } break;
+                            }
+                                break;
                         }
                     }
                         break;
@@ -130,10 +158,19 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                         auto x = static_cast<double>(vec.x);
                         auto y = static_cast<double>(vec.y);
                         x = x * -1.0;
-                        camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                        //camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                        ArcBallCamera(prev_x - x, prev_y - y);
                         handledMouse = true;
                         prev_x = x;
                         prev_y = y;
+                    }
+                        break;
+                    case input::InputType::kMouseScrolled: {
+                        double amountScrolledY = static_cast<double>(vec.y);
+                        distanceFromEntity += amountScrolledY;
+                        if (distanceFromEntity < 0) {
+                            distanceFromEntity = 0;
+                        }
                     }
                         break;
                     default:
@@ -143,5 +180,17 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
     }, inputData.data);
     if (!handledMouse) {
         engine.mouse_ = {0.0f, 0.0f};
+    }
+}
+
+void PrefabEditor::ArcBallCamera(double dx, double dy) {
+    if (camera_enabled_) {
+        auto viewport = redengine::Engine::get().renderer_.GetViewPort();
+        auto rotation = currentRotation * ((std::atan(1) * 4) / 180);
+        camera.position_.x = std::cos(rotation) * distanceFromEntity;
+        camera.position_.z = std::sin(rotation) * distanceFromEntity;
+        camera.position_.y += dy;
+        currentRotation = fmod(currentRotation + dx, 360);
+        camera.front_ = -camera.position_;
     }
 }

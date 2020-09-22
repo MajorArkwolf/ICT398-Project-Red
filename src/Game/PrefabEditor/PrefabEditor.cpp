@@ -164,6 +164,8 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
                         distanceFromEntity += amountScrolledY;
                         if (distanceFromEntity < 0) {
                             distanceFromEntity = 0;
+                            UpdateZoom();
+                            handledMouse = true;
                         }
                     }
                         break;
@@ -179,7 +181,6 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
 
 void PrefabEditor::ArcBallCamera(double dx, double dy) {
     if (camera_enabled_) {
-        auto viewport = redengine::Engine::get().renderer_.GetViewPort();
         auto rotation = currentRotation * ((std::atan(1) * 4) / 180);
         camera.position_.x = std::cos(rotation) * distanceFromEntity;
         camera.position_.z = std::sin(rotation) * distanceFromEntity;
@@ -187,4 +188,16 @@ void PrefabEditor::ArcBallCamera(double dx, double dy) {
         currentRotation = fmod(currentRotation + dx, 360);
         camera.front_ = -camera.position_;
     }
+
+}
+
+void PrefabEditor::UpdateZoom() {
+    double dx = 0.0;
+    double dy = 0.0;
+    auto rotation = currentRotation * ((std::atan(1) * 4) / 180);
+    camera.position_.x = std::cos(rotation) * distanceFromEntity;
+    camera.position_.z = std::sin(rotation) * distanceFromEntity;
+    camera.position_.y += dy;
+    currentRotation = fmod(currentRotation + dx, 360);
+    camera.front_ = -camera.position_;
 }

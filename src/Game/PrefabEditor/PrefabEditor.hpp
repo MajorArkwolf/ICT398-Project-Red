@@ -27,4 +27,6 @@ class PrefabEditor : public BaseState {
     double distanceFromEntity = 10;
     double currentRotation    = 0;
     void ArcBallCamera(double dx, double dy);
+
+    void UpdateZoom();
 };

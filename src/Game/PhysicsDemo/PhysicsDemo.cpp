@@ -53,6 +53,7 @@ void PhysicsDemo::GUIEnd() {
 }
 
 void PhysicsDemo::Update(double t, double dt) {
+    physics_world_.SetECS(&ecs_);
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     //TODO: fix this to use just the phyiscs world instead.
@@ -96,7 +97,26 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        trans.scale = {1, 1, 1};
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
-                                       physbody.SetVelocity(camera.front_);
+                                       physbody.SetVelocity(camera.front_ * 5.0f);
+                                       physbody.mass = 1;
+                                       physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
+                                       static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
+                                       physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
+
+
+                                   } break;
+                                   case input::MouseButton::kRight: {
+                                       auto entity = ecs_.CreateEntity();
+
+                                       entity.AddComponent<component::Model>(5);
+                                       auto &trans = entity.AddComponent<component::Transform>();
+                                       trans.pos = camera.position_;
+                                       trans.rot = {1, 0, 0, 0};
+                                       trans.scale = {1, 1, 1};
+
+                                       auto &physbody = entity.AddComponent<component::PhysicBody>();
+                                       physbody.SetVelocity({0, 0, 0});
+                                       physbody.mass = 1;
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
                                        physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});

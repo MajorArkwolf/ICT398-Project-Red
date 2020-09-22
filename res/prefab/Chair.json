@@ -29,27 +29,27 @@
         "Name": "Leg",
         "Type": "Box",
         "HalfExtents": {
-          "X": 50,
-          "Y": 50,
-          "Z": 50
+          "X": 3,
+          "Y": 90,
+          "Z": 3
         }
       },
       {
         "Name": "Seat",
         "Type": "Box",
         "HalfExtents": {
-          "X": 0.5,
-          "Y": 0.1,
-          "Z": 0.5
+          "X": 40,
+          "Y": 5,
+          "Z": 40
         }
       },
       {
         "Name": "Back",
         "Type": "Box",
         "HalfExtents": {
-          "X": 0.1,
-          "Y": 0.5,
-          "Z": 0.1
+          "X": 48,
+          "Y": 20,
+          "Z": 5
         }
       }
     ],
@@ -58,8 +58,58 @@
         "Name": "Leg1",
         "BaseShape": "Leg",
         "Position": {
+          "X": 43,
+          "Y": 83,
+          "Z": -0.5
+        },
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "Mass": 1,
+        "CentreOfMass": {
           "X": 0.0,
-          "Y": 25,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      },
+      {
+        "Name": "Leg2",
+        "BaseShape": "Leg",
+        "Position": {
+          "X": -43,
+          "Y": 83,
+          "Z": -0.5
+        },
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "Mass": 1,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      },
+      {
+        "Name": "Base",
+        "BaseShape": "Seat",
+        "Position": {
+          "X": 0,
+          "Y": 97,
           "Z": 0.0
         },
         "Rotation": {
@@ -68,11 +118,36 @@
           "Z": 0.0
         },
         "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "Mass": 1,
+        "CentreOfMass": {
           "X": 0.0,
           "Y": 0.0,
           "Z": 0.0
+        }
+      },
+      {
+        "Name": "Back",
+        "BaseShape": "Back",
+        "Position": {
+          "X": 0,
+          "Y": 180,
+          "Z": -45.0
         },
-        "Mass": 0.0,
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "Mass": 1,
         "CentreOfMass": {
           "X": 0.0,
           "Y": 0.0,
@@ -81,5 +156,4 @@
       }
     ]
   }
-  }
-}
+} }

@@ -1,6 +1,7 @@
 #include "System.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include <glm/matrix.hpp>
 

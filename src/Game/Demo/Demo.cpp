@@ -3,6 +3,7 @@
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Player.hpp"
+#include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
@@ -70,7 +71,8 @@ Demo::Demo() {
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
     /// Player instantiation completed
-
+    auto &board = ecs_.CreateEntity();
+    board.AddComponent<component::Board>(&ecs_, glm::vec3(-506.0f, 83.0f, 300.0f), 20, 20, 5.0f);
 }
 
 void Demo::Init() {

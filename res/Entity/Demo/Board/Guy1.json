@@ -1,0 +1,24 @@
+{
+  "Prefab": "Guy1",
+  "Transform": {
+    "Position": {
+      "X": -465.0,
+      "Y": 80.0,
+      "Z": 330.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 210.0,
+      "Z": 0.0
+    },
+    "Scale": {
+      "X": 0.5,
+      "Y": 0.5,
+      "Z": 0.5
+    }
+  },
+  "Animation": {
+    "IDLE": "IDLE"
+  },
+  "Physics" : true
+}

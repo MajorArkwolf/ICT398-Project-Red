@@ -38,21 +38,85 @@ namespace redengine{
 
     class PrefabRepo {
     public:
+        /**
+         * Default Constructor.
+         */
         PrefabRepo();
+
+        /**
+         * Default Destructor.
+         */
         ~PrefabRepo() = default;
+
+        /**
+         * Deleted copy constructor
+         * @param prefabRepo
+         */
         PrefabRepo(PrefabRepo& prefabRepo) = delete;
+
+        /**
+         * Deleted Move Constructor
+         * @param prefabRepo
+         */
         PrefabRepo(PrefabRepo&& prefabRepo) = default;
+
+        /**
+         * Deleted Copy Assignment
+         * @param prefabRepo
+         * @return
+         */
         PrefabRepo& operator=(PrefabRepo& prefabRepo) = delete;
+
+        /**
+         * Move assignment
+         * @param prefabRepo
+         * @return
+         */
         PrefabRepo& operator=(PrefabRepo&& prefabRepo) = default;
+
+        /**
+         * Init function to construction things that cant happen on instantiation.
+         */
         void Init();
+
+        /**
+         * Add a new prefab
+         * @param key Give it the key
+         * @return returns an empty prefab to be filled.
+         */
         prefab& AddNewPrefab(const std::string& key);
+
+        /**
+         * Check to see if a prefab exists.
+         * @param key to search for
+         * @return true if it exists in the array
+         */
         bool FindPrefab(const std::string& key);
+
+        /**
+         * Get Prefab of key
+         * @param key to search for
+         * @return returns a const prefab.
+         */
         const prefab &GetPrefab(const std::string &key) const;
+
         std::vector<std::string> GetPrefabList ();
 
     private:
+        /// Map of prefabs
         std::unordered_map<std::string,prefab> prefabMap_ = {};
+
+        /**
+         * Inserts a prefab, uses the name stored inside the prefab as the key.
+         * @param new_prefab prefab to be stored.
+         */
         void InsertPrefab(const prefab& new_prefab);
+
+        /**
+         * Get Prefab
+         * @param key to the prefab
+         * @return a mutable prefab by reference.
+         */
         prefab &GetPrefabMut(const std::string &key);
         //Friend class access to be able to modify Repo
         friend PrefabGUI;

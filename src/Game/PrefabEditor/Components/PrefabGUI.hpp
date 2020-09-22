@@ -29,7 +29,7 @@ public:
      * Returns the currently loaded prefab
      * @return prefab loaded
      */
-    const redengine::prefab GetPrefab() const;
+    redengine::prefab GetPrefab() const;
 
 private:
     /// The prefab that will be edited.
@@ -53,19 +53,43 @@ private:
 
     ImVec2 button_size_ = ImVec2(150, 30);
 
+    /**
+     * Load existing prefab menu
+     */
     void LoadExistingPrefab();
 
+    /**
+     * Main Menu for loading prefabs
+     */
     void MainMenu();
 
+    /**
+     * Create a new prefab
+     */
     void CreatePrefab();
 
+    /**
+     * Main Menu of prefab entity
+     */
     void MainEntityMenu();
 
+    /**
+     * Model menu
+     */
     void ModelComponentMenu();
 
+    /**
+     * Transform Menu
+     */
     void TransformComponentMenu();
 
+    /**
+     * Physics Main Menu
+     */
     void PhysicsMainMenu();
 
+    /**
+     * Affordance Menu
+     */
     void AffordanceMenu();
 };

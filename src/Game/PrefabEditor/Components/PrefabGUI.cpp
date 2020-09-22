@@ -127,6 +127,7 @@ void PrefabGUI::MainEntityMenu() {
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
         redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
+        //TODO: This needs to also serialise out to a JSON file.
         main_menu_ = true;
         main_edit_menu_ = false;
     }
@@ -227,6 +228,6 @@ void PrefabGUI::AffordanceMenu() {
 
 }
 
-const redengine::prefab PrefabGUI::GetPrefab() const {
+redengine::prefab PrefabGUI::GetPrefab() const {
     return prefab_loaded_;
 }

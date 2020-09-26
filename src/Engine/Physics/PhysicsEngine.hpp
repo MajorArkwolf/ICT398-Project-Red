@@ -85,6 +85,8 @@ namespace physics {
 
         void Init();
 
+        entt::entity RayCastSingle(const glm::vec3& start, const glm::vec3& end);
+
     private:
         CollisionDetection collision_detection_ = {};
         CollisionResolution collision_resolution_ = {};

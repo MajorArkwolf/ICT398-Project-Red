@@ -65,3 +65,20 @@ physics::RedEngineEventListener::RedEngineEventListener(
 std::queue<PhysicsCollisionData>& physics::RedEngineEventListener::GetPhysicsQueue() {
     return physics_que_;
 }
+
+float physics::RedEngineRayCast::notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
+    result.is_hit = true;
+    result.world_normal = ConvertVector(info.worldNormal);
+    result.world_point = ConvertVector(info.worldPoint);
+    result.collisionBody = info.body;
+    result.collider = info.collider;
+    // Display the world hit point coordinates
+    std::cout << "Hit point : " <<
+    info.worldPoint.x <<
+    info.worldPoint.y <<
+    info.worldPoint.z <<
+    std::endl;
+
+    // Return a fraction of 1.0 to gather all hits
+    return float(1.0);
+}

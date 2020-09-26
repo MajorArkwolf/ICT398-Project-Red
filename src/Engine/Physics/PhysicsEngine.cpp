@@ -69,3 +69,7 @@ void PhysicsEngine::Init() {
     collision_detection_.Init();
     //collision_resolution_.Init();
 }
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
+    return collision_detection_.RayCastSingle(start, end);
+}

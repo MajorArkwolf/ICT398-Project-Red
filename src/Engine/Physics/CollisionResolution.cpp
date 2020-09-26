@@ -16,7 +16,6 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
                 player = 2;
             }
         }
-
         queue.pop();
     }
 }

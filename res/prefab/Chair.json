@@ -24,39 +24,15 @@
   "Physics": {
     "Static": false,
     "Collision_Shapes": "Yes",
-    "BaseShapes": [
+    "Colliders": [
       {
-        "Name": "Leg",
+        "Name": "Leg1",
         "Type": "Box",
         "HalfExtents": {
           "X": 3,
           "Y": 90,
           "Z": 3
-        }
-      },
-      {
-        "Name": "Seat",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 40,
-          "Y": 5,
-          "Z": 40
-        }
-      },
-      {
-        "Name": "Back",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 48,
-          "Y": 20,
-          "Z": 5
-        }
-      }
-    ],
-    "Colliders": [
-      {
-        "Name": "Leg1",
-        "BaseShape": "Leg",
+        },
         "Position": {
           "X": 43,
           "Y": 83,
@@ -81,7 +57,12 @@
       },
       {
         "Name": "Leg2",
-        "BaseShape": "Leg",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 3,
+          "Y": 90,
+          "Z": 3
+        },
         "Position": {
           "X": -43,
           "Y": 83,
@@ -105,8 +86,13 @@
         }
       },
       {
-        "Name": "Base",
-        "BaseShape": "Seat",
+        "Name": "Seat",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 40,
+          "Y": 5,
+          "Z": 40
+        },
         "Position": {
           "X": 0,
           "Y": 97,
@@ -131,7 +117,12 @@
       },
       {
         "Name": "Back",
-        "BaseShape": "Back",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 48,
+          "Y": 20,
+          "Z": 5
+        },
         "Position": {
           "X": 0,
           "Y": 180,

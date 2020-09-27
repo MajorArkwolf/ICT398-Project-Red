@@ -24,15 +24,10 @@
   "Physics": {
     "Static": false,
     "Collision_Shapes": "Yes",
-    "BaseShapes": [
-      {
-        "Name": "Sphere",
-        "Type": "Sphere",
-        "Radius": 2
-      }
-    ],
     "Colliders": [
       {
+        "Type": "Sphere",
+        "Radius": 2,
         "Name": "Centre",
         "BaseShape": "Sphere",
         "Position": {

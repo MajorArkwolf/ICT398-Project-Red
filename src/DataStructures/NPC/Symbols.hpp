@@ -58,7 +58,7 @@ namespace npc {
     };
 
         /**
-         * @brief The set of conditions that can be used to establish NPC goals.
+         * @brief The set of conditions that can be used to establish NPC Goals.
          * @warning Lists only symbolic representations of conditional logic!
          */
     enum class Conditions {
@@ -76,8 +76,8 @@ namespace npc {
          */
     enum class Events {
         kCollision, ///< The NPC collided with another entity.
-        kIntentionEnded, ///< The NPC finished operating on an intention.
-        kDesireEnded, ///< The NPC finished operating on a desire.
-        kAnalysisEnded ///< The NPC finished operating on an analysis.
+        kIntentionEnded, ///< The NPC finished operating on an Intention.
+        kDesireEnded, ///< The NPC finished operating on a Desire.
+        kAnalysisEnded ///< The NPC finished operating its analysis.
     };
 }

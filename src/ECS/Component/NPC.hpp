@@ -1,6 +1,8 @@
 #pragma once
 
+#include <map>
 #include <set>
+#include <vector>
 
 #include <entt/entt.hpp>
 #include "DataStructures/NPC/Symbols.hpp"
@@ -42,6 +44,9 @@ namespace component {
              */
         npc::Outcomes history_;
 
+            /// The default constructor is not permitted for use.
+        Plan() = delete;
+
             /**
              * @brief Object constructor, initializes Plan via parameter.
              *
@@ -51,10 +56,7 @@ namespace component {
              * @param desire The identifier of the Desire that the NPC has planned to resolve.
              * @param goals The identifier(s) of the Desire's Goal(s) that the NPC has planned to resolve.
              */
-        Plan(npc::Actions action, entt::entity entity, int desire, std::set<int> goals);
-
-            /// The default constructor is not permitted for use.
-        Plan() = delete;
+        Plan(npc::Actions action, entt::entity entity, int desire, std::initializer_list<int> goals);
     };
 
         /**
@@ -94,10 +96,13 @@ namespace component {
         npc::Conditions condition_;
 
             /**
-             * @brief The previous outcome of resolving this Goal.
+             * @brief The previous outcome of attempting to resolve this Goal.
              * @note Assumes that kUnknown indicates no prior attempts have been made.
              */
         npc::Outcomes history_;
+
+            /// The default constructor is not permitted for use.
+        Goal() = delete;
 
             /**
              * @brief Object constructor, initializes Goal via parameter.
@@ -112,8 +117,96 @@ namespace component {
              */
         Goal(entt::entity entity, npc::Properties property, npc::Components component,
              float range_min, float range_max, npc::Conditions condition);
+    };
+
+        /**
+         * @brief An NPC's hierarchical collection of conditional requirements.
+         * @note A Desire is only resolved when all of its Goals have been met.
+         */
+    struct Desire {
+            /**
+             * @brief The identifier of the parent Desire.
+             * Used to establish a hierarchy of Desires and branching tree of behaviour.
+             * @note A value of 0 is used to indicate this is a root desire and has no parent.
+             */
+        int parent_;
+
+            /**
+             * @brief The Desire's collection of conditional requirements.
+             * The Desire is only resolved when all of its Goals have been met.
+             * @warning This should never be empty!
+             */
+        std::vector<Goal> goals_;
+
+            /**
+             * @brief The previous outcome of attempting to resolve this Desire.
+             * Success only occurs when all of the Desire's Goals are met.
+             * Failure only occurs when a Desire's Goal could not be met.
+             * @note Assumes that kUnknown indicates no prior attempts have been made.
+             */
+        npc::Outcomes history_;
 
             /// The default constructor is not permitted for use.
-        Goal() = delete;
+        Desire() = delete;
+
+            /**
+             * @brief Object constructor, initializes Goal via parameter.
+             *
+             * Initialises history_ to npc::Outcomes::kUnknown.
+             * @param parent The identifier of the parent Desire.
+             * @param goals The Desire's collection of conditional requirements.
+             */
+        Desire(int parent, std::initializer_list<Goal> goals);
+    };
+
+        /**
+         * @brief An NPC's collection of Beliefs, Desires, and Intentions that influence its behaviour.
+         * @note This will always be exclusively contextual to the NPC's perspective.
+         */
+    struct BDI {
+            /**
+             * @brief The NPC's collection of knowledge of entity properties.
+             * Each entity is tracked individually, being mapped to a unique property set.
+             * @note An NPC should only gather values for Properties listed here.
+             */
+        std::map<entt::entity, std::set<npc::Properties>> beliefs_properties_;
+
+            /**
+             * @brief The NPC's collection of entity interactions it can perform.
+             * Each entity is tracked individually, being mapped to a unique action set.
+             * @note An NPC should only plan or perform Actions listed here.
+             */
+        std::map<entt::entity, std::set<npc::Actions>> beliefs_affordances_;
+
+            /**
+             * @brief The NPC's hierarchical collection of Desires to resolve.
+             * All Desires are mapped to their unique identifier.
+             * @warning No Desire should be mapped to a value of 0 or less!
+             */
+        std::map<int, Desire> desires_;
+
+            /**
+             * @brief The NPC's intended set of reactions to a Desire's resolution.
+             * A set of one to many Plans is mapped to a trigger Desire's identifier.
+             */
+        std::map<int, std::set<Plan>> intentions_;
+
+            /**
+             * @brief Object constructor, initialises BDI to default values.
+             * Generates an NPC's BDI with no initial knowledge.
+             */
+        BDI();
+
+            /**
+             * @brief Object constructor, initializes BDI via parameter.
+             * Establishes an NPC's BDI with an initial knowledge of itself.
+             * @note Always generates npc::Beliefs::kExists for itself, even if not provided.
+             * @param self_identifier The identifier of the NPC.
+             * @param beliefs_properties_self The NPC's properties that it believes it initially knows about.
+             * @param beliefs_affordances_self The NPC's actions that it believes it can initially perform by itself.
+             */
+        BDI(entt::entity self_identifier,
+            std::initializer_list<npc::Properties> beliefs_properties_self,
+            std::initializer_list<npc::Actions> beliefs_affordances_self);
     };
 }

@@ -2,6 +2,7 @@
 
 #include <map>
 #include <set>
+#include <variant>
 #include <vector>
 
 #include <entt/entt.hpp>
@@ -208,5 +209,29 @@ namespace component {
         BDI(entt::entity self_identifier,
             std::initializer_list<npc::Properties> beliefs_properties_self = {},
             std::initializer_list<npc::Actions> beliefs_affordances_self = {});
+    };
+
+        /// An emotional response to a specific NPC perception, construct, or circumstance.
+    struct EmotiveResponse {
+            /**
+             * @brief The identifier of the target entity to check.
+             * @note Can be used to set the NPC itself as its target.
+             */
+        entt::entity entity_;
+
+            /**
+             * @brief The emotional response to the NPC perception, construct, or circumstance.
+             * Higher values are positive, lower values are negative.
+             * @note Values are expected to be within a range of 1.0f and -1.0f.
+             */
+        float emotion_;
+
+            /**
+             * @brief The source of the emotional response.
+             * @warning Requires use of std::holds_alternative and std::visit to test & access!
+             */
+        std::variant<std::monostate, std::tuple<npc::Properties, npc::Components>,
+                     std::tuple<int, Plan>, std::tuple<int, int, Goal>,
+                     std::tuple<int, Desire>, npc::Events> what_;
     };
 }

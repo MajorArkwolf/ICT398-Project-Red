@@ -206,7 +206,7 @@ namespace component {
              * @param beliefs_affordances_self The NPC's actions that it believes it can initially perform by itself.
              */
         BDI(entt::entity self_identifier,
-            std::initializer_list<npc::Properties> beliefs_properties_self,
-            std::initializer_list<npc::Actions> beliefs_affordances_self);
+            std::initializer_list<npc::Properties> beliefs_properties_self = {},
+            std::initializer_list<npc::Actions> beliefs_affordances_self = {});
     };
 }

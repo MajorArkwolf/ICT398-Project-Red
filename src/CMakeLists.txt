@@ -52,6 +52,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Components
     ECS/Component/Model.cpp
     ECS/Component/Basic.cpp
+    ECS/Component/NPC.cpp
     #--Systems
     ECS/System/System.cpp
 )

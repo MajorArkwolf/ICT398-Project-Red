@@ -82,4 +82,4 @@ enum class Events {
     kAnalysisEnded ///< The NPC finished operating its analysis.
 };
 
-}
+} // namespace npc

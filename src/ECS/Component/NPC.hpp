@@ -3,6 +3,8 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <tuple>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -356,4 +358,4 @@ struct Characteristics {
                              std::initializer_list<std::pair<const npc::Actions, float>> personality = {});
 };
 
-}
+} // namespace component

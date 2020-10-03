@@ -57,4 +57,5 @@ Characteristics::Characteristics(float mood,
           emotions_(emotions),
           traits_(traits),
           personality_(personality) {}
-}
+
+} // namespace component

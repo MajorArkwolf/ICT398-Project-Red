@@ -57,7 +57,8 @@ namespace component {
              * @param desire The identifier of the Desire that the NPC has planned to resolve.
              * @param goals The identifier(s) of the Desire's Goal(s) that the NPC has planned to resolve.
              */
-        Plan(npc::Actions action, entt::entity entity, int desire, std::initializer_list<int> goals);
+        Plan(npc::Actions action, entt::entity entity, int desire,
+             std::initializer_list<int> goals);
     };
 
         /**
@@ -107,7 +108,6 @@ namespace component {
 
             /**
              * @brief Object constructor, initializes Goal via parameter.
-             *
              * Initialises history_ to npc::Outcomes::kUnknown.
              * @param entity The identifier of the target entity to check.
              * @param property The identifier of the target entity's property to check.
@@ -193,7 +193,7 @@ namespace component {
 
             /**
              * @brief Default object constructor, initialises BDI to default values.
-             * Generates an NPC's BDI with no initial knowledge.
+             * Generates an NPC's BDI with no initial knowledge or content.
              */
         BDI();
 
@@ -201,11 +201,11 @@ namespace component {
              * @brief Object constructor, initializes BDI via parameter.
              * Establishes an NPC's BDI with an initial knowledge of itself.
              * @note Always generates npc::Beliefs::kExists for itself, even if not provided.
-             * @param self_identifier The identifier of the NPC.
-             * @param beliefs_properties_self The NPC's properties that it believes it initially knows about.
-             * @param beliefs_affordances_self The NPC's actions that it believes it can initially perform by itself.
+             * @param entity The identifier of the NPC.
+             * @param beliefs_properties The initial property beliefs for the specified entity.
+             * @param beliefs_affordances The initial affordance beliefs for the specified entity.
              */
-        BDI(entt::entity self_identifier,
+        BDI(entt::entity entity,
             std::initializer_list<npc::Properties> beliefs_properties_self = {},
             std::initializer_list<npc::Actions> beliefs_affordances_self = {});
     };
@@ -251,8 +251,8 @@ namespace component {
             /**
              * @brief Stores a copy of the emotive response's source.
              * It nature as a type-safe union enables it to store one of several source types.
-             * @note Use std::holds_alternative or std::get_if to check the stored type.
-             * @warning This will throw std::bad_variant_access is incorrectly accessed!
+             * @note Use std::holds_alternative for type checking, and std::visit for access and use.
+             * @warning This will throw std::bad_variant_access is incorrectly treated!
              */
         using SourceWhat = std::variant<std::monostate, SourceProperty, SourceAffordance,
                                         SourceIntention, SourceDesire, SourceGoal, SourceEvent>;
@@ -340,7 +340,7 @@ namespace component {
              * @param personality A collection of modifiers for behaviour tendencies towards/against specific Actions.
              */
         Characteristics(float mood,
-                        std::initializer_list<std::pair<npc::Properties, float>> traits = {},
-                        std::initializer_list<std::pair<npc::Actions, float>> personality = {});
+                        std::initializer_list<std::pair<const npc::Properties, float>> traits = {},
+                        std::initializer_list<std::pair<const npc::Actions, float>> personality = {});
     };
 }

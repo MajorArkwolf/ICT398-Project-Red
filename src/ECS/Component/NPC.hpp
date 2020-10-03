@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <queue>
 #include <set>
 #include <variant>
 #include <vector>
@@ -50,7 +51,6 @@ namespace component {
 
             /**
              * @brief Object constructor, initializes Plan via parameter.
-             *
              * Initialises history_ to npc::Outcomes::kUnknown.
              * @param action The action that the NPC has planned to perform.
              * @param entity The identifier of the target entity for the planned action.
@@ -152,7 +152,6 @@ namespace component {
 
             /**
              * @brief Object constructor, initializes Goal via parameter.
-             *
              * Initialises history_ to npc::Outcomes::kUnknown.
              * @param parent The identifier of the parent Desire.
              * @param goals The Desire's collection of conditional requirements.
@@ -193,7 +192,7 @@ namespace component {
         std::map<int, std::set<Plan>> intentions_;
 
             /**
-             * @brief Object constructor, initialises BDI to default values.
+             * @brief Default object constructor, initialises BDI to default values.
              * Generates an NPC's BDI with no initial knowledge.
              */
         BDI();
@@ -214,24 +213,134 @@ namespace component {
         /// An emotional response to a specific NPC perception, construct, or circumstance.
     struct EmotiveResponse {
             /**
-             * @brief The identifier of the target entity to check.
+             * @brief Data structure for recording a Belief Property emotive source.
+             * Stores a copy of the Belief's symbols and value.
+             */
+        using SourceProperty = std::tuple<npc::Properties, npc::Components, float>;
+
+            /**
+             * @brief Data structure for recording a Belief Action emotive source.
+             * Stores a copy of the Belief's symbol.
+             */
+        using SourceAffordance = npc::Actions;
+
+            /**
+             * @brief Data structure for recording an Intention emotive source.
+             * Stores a copy of the Intention's identifier and contents.
+             */
+        using SourceIntention = std::tuple<int, Plan>;
+
+            /**
+             * @brief Data structure for recording a Desire emotive source.
+             * Stores a copy of the Desire's identifier and contents.
+             */
+        using SourceDesire = std::tuple<int, Desire>;
+
+            /**
+             * @brief Data structure for recording a Goal emotive source.
+             * Stores a copy of the Goal's identifiers (parent Desire and itself) and contents.
+             */
+        using SourceGoal = std::tuple<int, int, Goal>;
+
+            /**
+             * @brief Data structure for recording an Event emotive source.
+             * Stores a copy of the Event's symbol.
+             */
+        using SourceEvent = npc::Events;
+
+            /**
+             * @brief Stores a copy of the emotive response's source.
+             * It nature as a type-safe union enables it to store one of several source types.
+             * @note Use std::holds_alternative or std::get_if to check the stored type.
+             * @warning This will throw std::bad_variant_access is incorrectly accessed!
+             */
+        using SourceWhat = std::variant<std::monostate, SourceProperty, SourceAffordance,
+                                        SourceIntention, SourceDesire, SourceGoal, SourceEvent>;
+
+            /**
+             * @brief The identifier of the entity causing the emotive response.
              * @note Can be used to set the NPC itself as its target.
              */
         entt::entity entity_;
 
             /**
              * @brief The emotional response to the NPC perception, construct, or circumstance.
-             * Higher values are positive, lower values are negative.
+             * Higher values are positive, lower values are negative, zero is apathetic.
              * @note Values are expected to be within a range of 1.0f and -1.0f.
              */
         float emotion_;
 
             /**
-             * @brief The source of the emotional response.
-             * @warning Requires use of std::holds_alternative and std::visit to test & access!
+             * @brief The source of the emotive response, relative to the tracked entity.
+             * @warning This is a type-safe union (std::variant), and must be treated with care!
+             * @see EmotiveResponse::SourceWhat
              */
-        std::variant<std::monostate, std::tuple<npc::Properties, npc::Components>,
-                     std::tuple<int, Plan>, std::tuple<int, int, Goal>,
-                     std::tuple<int, Desire>, npc::Events> what_;
+        SourceWhat what_;
+
+            /// The default constructor is not permitted for use.
+        EmotiveResponse() = delete;
+
+            /**
+             * @brief Object constructor, initializes EmotiveResponse via parameter.
+             * @param entity The identifier of the entity causing the emotive response.
+             * @param emotion The emotional response to the NPC perception, construct, or circumstance.
+             * @param what A copy of the source for the emotive response.
+             */
+        EmotiveResponse(entt::entity entity, float emotion, SourceWhat what);
+    };
+
+        /**
+         * @brief Stores the properties used to establish believable NPC emotions.
+         * Secondary to the BDI for behaviour influence.
+         */
+    struct Characteristics {
+            /**
+             * @brief A collection of short-term reactions to specific events and observations.
+             * Ideally, the contents should be popped out from the queue over a period of time.
+             */
+        std::queue<EmotiveResponse> emotions_;
+
+            /**
+             * @brief A long-term emotive state, influenced by the generation of new emotions.
+             * Higher values are positive, lower values are negative, zero is apathetic.
+             * @note Values are expected to be within a range of 1.0f and -1.0f.
+             */
+        float mood_;
+
+            /**
+             * @brief A collection of modifiers for the emotive responses to specific Properties.
+             * This value should be added to emotive responses using its mapped Property.
+             * Higher values are positive, lower values are negative, zero has no effect.
+             * Properties without a modifier should be treated as if they are assigned a modifier of 0.0f.
+             * @note Values are expected to be within a range of 1.0f and -1.0f.
+             */
+        std::map<npc::Properties, float> traits_;
+
+            /**
+             * @brief A collection of modifiers for behaviour tendencies towards/against specific Actions.
+             * This value should be used when establishing plans and determining Action priority.
+             * Higher values are positive, lower values are negative, zero is the default.
+             * Properties without a modifier should be treated as if they are assigned a modifier of 0.0f.
+             * @note Values are expected to be within a range of 1.0f and -1.0f.
+             * @warning Modifier meaning is established relative to other Action modifiers!
+             */
+        std::map<npc::Actions, float> personality_;
+
+            /**
+             * @brief Default object constructor, initialises Characteristics to default values.
+             * Generates a Characteristic initially apathetic, with no emotions, traits, or personality.
+             */
+        Characteristics();
+
+            /**
+             * @brief Object constructor, initialises Characteristics via parameter.
+             * Allows for all initial Characteristic properties to be set other than emotions.
+             * @param mood The initial long-term emotive state.
+             * @param traits A collection of modifiers for the emotive responses to specific Properties.
+             * @param personality A collection of modifiers for behaviour tendencies towards/against specific Actions.
+             */
+        Characteristics(float mood,
+                        std::initializer_list<std::pair<npc::Properties, float>> traits = {},
+                        std::initializer_list<std::pair<npc::Actions, float>> personality = {});
     };
 }

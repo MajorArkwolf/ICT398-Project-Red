@@ -186,5 +186,8 @@ entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm
     auto ray = reactphysics3d::Ray(ConvertVector(start), ConvertVector(end));
     auto callback = RedEngineRayCast();
     physics_world.world_->raycast(ray, &callback);
+    if (callback.result.collisionBody == nullptr) {
+        return entt::entity(-1);
+    }
     return physics_world.collision_entity_coupling_.at(callback.result.collisionBody);
 }

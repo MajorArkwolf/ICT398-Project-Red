@@ -73,12 +73,12 @@ float physics::RedEngineRayCast::notifyRaycastHit(const reactphysics3d::RaycastI
     result.collisionBody = info.body;
     result.collider = info.collider;
     // Display the world hit point coordinates
-    std::cout << "Hit point : " <<
-    info.worldPoint.x <<
-    info.worldPoint.y <<
-    info.worldPoint.z <<
-    std::endl;
+//    std::cout << "Hit point : " <<
+//    info.worldPoint.x <<
+//    info.worldPoint.y <<
+//    info.worldPoint.z <<
+//    std::endl;
 
     // Return a fraction of 1.0 to gather all hits
-    return float(1.0);
+    return 1.0f;
 }

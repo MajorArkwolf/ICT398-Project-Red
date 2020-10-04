@@ -73,3 +73,9 @@ void PhysicsEngine::Init() {
 entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
     return collision_detection_.RayCastSingle(start, end);
 }
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance) {
+    glm::vec3 end = start;
+    end += distance * front;
+    return collision_detection_.RayCastSingle(start, end);
+}

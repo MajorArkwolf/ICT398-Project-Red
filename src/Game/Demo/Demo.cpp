@@ -62,7 +62,7 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
     engine.GetGuiManager().DisplayInputRebindWindow();
     engine.GetGuiManager().DisplayQuitScreen();
-
+    engine.GetGuiManager().DisplayAI(player.GetComponent<component::Player>().selected_entity, ecs_.GetRegistry());
 }
 
 void Demo::GUIEnd() {
@@ -134,6 +134,10 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                    } break;
                                    case input::VirtualKey::D: {
                                        right_ = false;
+                                   } break;
+                                   case input::VirtualKey::E: {
+                                       auto &currentCam = player.GetComponent<component::Player>().camera;
+                                       player.GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
                                    } break;
                                    case input::VirtualKey::kEscape:
                                        gui_manager.ToggleWindow("escapeMenu");

@@ -5,6 +5,7 @@
 #include <string>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <entt/entt.hpp>
 
 #include "Engine/EulerCamera.hpp"
 
@@ -62,6 +63,13 @@ class GUIManager {
      * @brief Toggles a window given its name in the map
      */
     void ToggleWindow(const std::string &windowName);
+
+    /**
+     * Displays the AI Menu
+     * @param entity entity your viewing.
+     * @param registry the registry being used.
+     */
+    void DisplayAI(entt::entity &entity, entt::registry& registry);
 
     bool renderer_ = false;
 

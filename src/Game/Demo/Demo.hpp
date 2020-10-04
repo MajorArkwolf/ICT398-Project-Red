@@ -2,7 +2,7 @@
 
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
-#include "ECS/Entity.hpp"
+#include "Game/Demo/Components/Player.hpp"
 
 class Demo : public BaseState {
 public:
@@ -20,5 +20,5 @@ public:
 private:
     ECS ecs_ = {};
     bool forward_ = false, backward_ = false, left_ = false, right_ = false;
-    Entity player;
+    demo::Player player_{};
 };

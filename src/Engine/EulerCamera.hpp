@@ -108,6 +108,7 @@ class Camera {
    * @return right vector
    */
   glm::vec3 GetRightVector();
+  glm::vec3 GetFrontVector();
 
   void ProcessKeyboardInput(bool forward, bool backward, bool left,
                             bool right, double delta_time);

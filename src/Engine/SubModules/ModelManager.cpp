@@ -14,8 +14,8 @@ auto ModelManager::GetModelID(const std::filesystem::path& filename) -> size_t {
     }
 }
 
-void ModelManager::Draw(size_t id, Shader *shader) {
-    ModelRepo().at(id).Draw(shader);
+void ModelManager::Draw(size_t id, Shader *shader, const glm::mat4& model_matrix) {
+    ModelRepo().at(id).Draw(shader, model_matrix);
 }
 
 auto ModelManager::ModelRepo() -> std::array<model::Model, 1000> & {
@@ -24,3 +24,10 @@ auto ModelManager::ModelRepo() -> std::array<model::Model, 1000> & {
 model::Model *ModelManager::getModel(size_t modelID) {
     return &m_[modelID];
 }
+
+auto ModelManager::AddBasicModel(model::Model new_model) -> size_t {
+    m_[size_] = std::move(new_model);
+    ++size_;
+    return size_ - 1;
+}
+

@@ -26,7 +26,7 @@ void PhysicsEngine::Update(double t, double dt) {
         auto players = registry.view<component::Player>();
         for (auto &e : players) {
             auto &p = players.get<component::Player>(e);
-            physics_world.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+            physics_world.UpdateCollisionBody(e, p.camera_.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
         }
         collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }

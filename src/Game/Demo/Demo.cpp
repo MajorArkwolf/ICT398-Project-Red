@@ -3,6 +3,7 @@
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Player.hpp"
+#include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
@@ -23,18 +24,48 @@ Demo::Demo() {
     path.append("Demo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
-    player = ecs_.CreateEntity();
-    player.AddComponent<component::Player>();
-    auto playerComp = player.GetComponent<component::Player>();
 
-    player.AddComponent<component::PhysicBody>();
-    auto &phys = player.GetComponent<component::PhysicBody>();
-    physics_world_.AddCollisionBody(player.GetID(), playerComp.camera.position_, glm::quat(glm::vec3(0, 0, 0)));
+    /// This is messy, this instantiates the two main players for our scene.
+    auto big_player = ecs_.CreateEntity();
+    big_player.AddComponent<component::Player>();
+    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "ClothedMan.gltf";
+    auto &b_model = big_player.AddComponent<component::Model>(filepath);
+    b_model.draw_model = false;
+    auto &trans = big_player.AddComponent<component::Transform>();
+    trans.pos = glm::vec3{0.f, 0.f, 0.f};
+    auto &playerComp = big_player.GetComponent<component::Player>();
+    big_player.AddComponent<component::PhysicBody>();
+    auto &phys = big_player.GetComponent<component::PhysicBody>();
+    physics_world_.AddCollisionBody(big_player.GetID(), playerComp.camera_.position_, glm::quat(glm::vec3(0, 0, 0)));
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
-    physics_world_.AddCollider(player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    trans.scale = glm::vec3 {24.0f, 24.0f, 24.0f};
+    big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
+    big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};;
+    auto &anim =
+            big_player.AddComponent<component::Animation>(
+                    big_player.GetComponent<component::Model>().id_);
+    auto idle = "IDLE";
+    anim.animator_.LoadAnimation(idle);
+    player_.SetBigPlayer(big_player);
 
-    player.GetComponent<component::Player>().camera.movement_speed_ = 0.15f;
+    auto little_player = ecs_.CreateEntity();
+    auto &little_p = little_player.AddComponent<component::Player>();
+    auto &little_model = little_player.AddComponent<component::Model>(filepath);
+    auto &little_tran = little_player.AddComponent<component::Transform>();
+    little_tran.pos = glm::vec3{-465.0f, 80.0f, 330.0f};
+    little_tran.scale = glm::vec3 {0.5, 0.5, 0.5};
+    little_p.camera_.position_ = glm::vec3{-465.0f, 82.8f, 330.0f};
+    little_p.height_ = 83.0f;
+    auto &little_anim =
+            little_player.AddComponent<component::Animation>(
+                    little_player.GetComponent<component::Model>().id_);
+    little_anim.animator_.LoadAnimation(idle);
+    player_.SetLittlePlayer(little_player);
+    /// Player instantiation completed
+    auto &board = ecs_.CreateEntity();
+    board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
 }
 
 void Demo::Init() {
@@ -50,7 +81,7 @@ void Demo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 
     auto &engine = redengine::Engine::get();
     auto &gui_manager = engine.GetGuiManager();
     ToggleRenderer(physics_world_, gui_manager.renderer_);
-    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
+    renderer.SetCameraOnRender(player_.GetActiveCamera());
     ecs_.Draw(shader, projection, view);
 }
 
@@ -59,7 +90,7 @@ void Demo::GUIStart() {
     GUIManager::startWindowFrame();
     engine.GetGuiManager().DisplayEscapeMenu();
     engine.GetGuiManager().DisplayConsoleLog();
-    engine.GetGuiManager().DisplayDevScreen(player.GetComponent<component::Player>().camera);
+    engine.GetGuiManager().DisplayDevScreen(player_.GetActiveCamera());
     engine.GetGuiManager().DisplayInputRebindWindow();
     engine.GetGuiManager().DisplayQuitScreen();
     engine.GetGuiManager().DisplayAI(player.GetComponent<component::Player>().selected_entity, ecs_.GetRegistry());
@@ -71,21 +102,14 @@ void Demo::GUIEnd() {
 
 void Demo::Update(double t, double dt) {
     auto &renderer = redengine::Engine::get().renderer_;
-    renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
+    renderer.SetCameraOnRender(player_.GetActiveCamera());
     ecs_.Update(t, dt);
-    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().Update(t, dt);
-    //TODO: fix this to use just the phyiscs world instead.
-    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
-    physics_engine.Update(t, dt);
+    player_.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player_.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
     ecs_.FixedUpdate(t, dt);
-    //TODO: fix this to use just the phyiscs world instead.
-    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
-    physics_engine.FixedUpdate(t, dt);
 }
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
@@ -136,8 +160,17 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                        right_ = false;
                                    } break;
                                    case input::VirtualKey::E: {
+                                       player_.TogglePlayer();
+                                   } break;
+                                   case input::VirtualKey::R: {
                                        auto &currentCam = player.GetComponent<component::Player>().camera;
                                        player.GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
+                                   } break;
+                                   case input::VirtualKey::Q: {
+                                       auto ent = ecs_.GetRegistry().view<component::Board>();
+                                       for (auto &e : ent) {
+                                           ecs_.GetRegistry().get<component::Board>(e).ToggleRenderer();
+                                       }
                                    } break;
                                    case input::VirtualKey::kEscape:
                                        gui_manager.ToggleWindow("escapeMenu");
@@ -160,11 +193,15 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                auto x = static_cast<double>(vec.x);
                                auto y = static_cast<double>(vec.y);
                                x = x * -1.0;
-                               player.GetComponent<component::Player>().camera.ProcessMouseMovement(prev_x - x, prev_y - y);
+                               player_.GetActiveCamera().ProcessMouseMovement(prev_x - x, prev_y - y);
                                handledMouse = true;
                                prev_x = x;
                                prev_y = y;
                            } break;
+                           case input::InputType::kMouseScrolled: {
+                               double amountScrolledY = static_cast<double>(vec.y);
+                               player_.GetActiveCamera().ProcessMouseScroll(amountScrolledY);
+                           }
                            default:
                                break;
                        }

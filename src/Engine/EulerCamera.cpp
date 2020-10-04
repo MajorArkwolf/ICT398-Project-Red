@@ -113,4 +113,8 @@ void Camera::ProcessKeyboardInput(bool forward, bool backward, bool left,
     position_ += right_ * velocity;
 }
 
+glm::vec3 Camera::GetFrontVector() {
+    return front_;
+}
+
 }  // namespace engine

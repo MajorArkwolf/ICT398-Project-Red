@@ -93,7 +93,7 @@ void Demo::GUIStart() {
     engine.GetGuiManager().DisplayDevScreen(player_.GetActiveCamera());
     engine.GetGuiManager().DisplayInputRebindWindow();
     engine.GetGuiManager().DisplayQuitScreen();
-
+    engine.GetGuiManager().DisplayAI(player.GetComponent<component::Player>().selected_entity, ecs_.GetRegistry());
 }
 
 void Demo::GUIEnd() {
@@ -161,6 +161,10 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                    } break;
                                    case input::VirtualKey::E: {
                                        player_.TogglePlayer();
+                                   } break;
+                                   case input::VirtualKey::R: {
+                                       auto &currentCam = player.GetComponent<component::Player>().camera;
+                                       player.GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
                                    } break;
                                    case input::VirtualKey::Q: {
                                        auto ent = ecs_.GetRegistry().view<component::Board>();

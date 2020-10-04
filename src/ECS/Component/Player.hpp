@@ -1,10 +1,12 @@
 #pragma once
 #include "Engine/EulerCamera.hpp"
+#include <entt/entt.hpp>
 
 namespace component {
     struct Player {
-        engine::Camera camera_{};
-        float height_ = 170.f;
+        engine::Camera camera{};
+        float height = 170.f;
+        entt::entity selected_entity;
 
         void Update(double t, double dt) {
             if (camera_.position_.y != height_) {

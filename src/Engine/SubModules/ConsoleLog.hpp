@@ -16,7 +16,8 @@ class ConsoleLog {
         Collision,
         Resolution,
         Error,
-        Warning
+        Warning,
+        Json
     };
     using LogLine = std::tuple<LogType, std::string, int, std::string, std::string>;
 

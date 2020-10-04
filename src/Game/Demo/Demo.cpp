@@ -80,19 +80,17 @@ void Demo::Update(double t, double dt) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(player.GetComponent<component::Player>().camera);
     ecs_.Update(t, dt);
-    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
-    player.GetComponent<component::Player>().Update(t, dt);
+
     //TODO: fix this to use just the phyiscs world instead.
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     physics_engine.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player.GetComponent<component::Player>().camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player.GetComponent<component::Player>().Update(t, dt);
     ecs_.FixedUpdate(t, dt);
-    //TODO: fix this to use just the phyiscs world instead.
-    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
-    physics_engine.FixedUpdate(t, dt);
 }
 
 void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {

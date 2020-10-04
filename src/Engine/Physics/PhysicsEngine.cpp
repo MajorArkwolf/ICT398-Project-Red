@@ -1,16 +1,13 @@
 #include "PhysicsEngine.hpp"
-#include "Engine/Engine.hpp"
-#include "ECS/Component/Player.hpp"
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Player.hpp"
 #include "ECS/ECS.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace physics;
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
-    collision_detection_.FixedUpdate(t, dt);
-}
-
-void PhysicsEngine::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     auto &ecs = physics_world.ecs_;
     if (ecs != nullptr) {
@@ -32,6 +29,10 @@ void PhysicsEngine::Update(double t, double dt) {
         }
         collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }
+    collision_detection_.FixedUpdate(t, dt);
+}
+
+void PhysicsEngine::Update(double t, double dt) {
     collision_detection_.Update(t, dt);
 }
 
@@ -63,7 +64,7 @@ reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
     return collision_detection_.CreatePhysicsWorld();
 }
 
-void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld * world) {
+void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     collision_detection_.DeletePhysicsWorld(world);
 }
 

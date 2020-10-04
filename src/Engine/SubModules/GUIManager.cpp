@@ -3,10 +3,10 @@
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
 
+#include <Engine/Renderer/OpenGL.hpp>
 #include <sstream>
 
 #include "Engine/Engine.hpp"
-#include <Engine/Renderer/OpenGL.hpp>
 
 GUIManager::GUIManager() {
     InitialiseWindowOpenMap();
@@ -120,6 +120,7 @@ void GUIManager::DisplayConsoleLog() {
     static bool warning_logs = true;
     static bool error_logs = true;
     static bool collision_logs = true;
+    static bool json_logs = true;
     static bool display_file_loc = true;
     static bool time_stamp = true;
 
@@ -156,6 +157,8 @@ void GUIManager::DisplayConsoleLog() {
         ImGui::Checkbox("Error Logs", &error_logs);
         ImGui::SameLine();
         ImGui::Checkbox("Collision Logs", &collision_logs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Json Logs", &json_logs);
         ImGui::Checkbox("Display Log Location", &display_file_loc);
         ImGui::SameLine();
         ImGui::Checkbox("Display Timestamp", &time_stamp);
@@ -181,6 +184,11 @@ void GUIManager::DisplayConsoleLog() {
                 } break;
                 case ConsoleLog::LogType::Error: {
                     if (error_logs) {
+                        PrintLog(n);
+                    }
+                } break;
+                case ConsoleLog::LogType::Json: {
+                    if (json_logs) {
                         PrintLog(n);
                     }
                 } break;

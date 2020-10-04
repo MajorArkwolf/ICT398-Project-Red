@@ -67,6 +67,8 @@ namespace physics {
          */
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &end);
 
+        void SetTrigger(entt::entity entity, bool is_trigger);
+
     private:
 
         //Test Renderer Values

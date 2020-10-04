@@ -7,11 +7,8 @@
 using namespace physics;
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
-    collision_detection_.FixedUpdate(t, dt);
-}
-
-void PhysicsEngine::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    collision_detection_.FixedUpdate(t, dt);
     auto &ecs = physics_world.ecs_;
     if (ecs != nullptr) {
         auto &registry = ecs->GetRegistry();
@@ -30,6 +27,9 @@ void PhysicsEngine::Update(double t, double dt) {
         }
         collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }
+}
+
+void PhysicsEngine::Update(double t, double dt) {
     collision_detection_.Update(t, dt);
 }
 
@@ -78,4 +78,8 @@ entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec
     glm::vec3 end = start;
     end += distance * front;
     return collision_detection_.RayCastSingle(start, end);
+}
+
+void PhysicsEngine::SetTrigger(entt::entity entity, bool is_trigger) {
+    collision_detection_.SetTrigger(entity, is_trigger);
 }

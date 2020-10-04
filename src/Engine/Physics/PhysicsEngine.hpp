@@ -102,6 +102,8 @@ namespace physics {
          */
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance);
 
+        void SetTrigger(entt::entity entity, bool is_trigger);
+
     private:
         CollisionDetection collision_detection_ = {};
         CollisionResolution collision_resolution_ = {};

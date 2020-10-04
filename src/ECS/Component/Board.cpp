@@ -24,8 +24,13 @@ component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, con
 }
 
 void component::Board::BuildBoard(ECS *ecs) {
+    auto &pe = redengine::Engine::get().GetPhysicsEngine();
+    auto &pw = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     assert(ecs != nullptr);
     float new_pos_x = position_.x;
+    auto adjusted_size = node_size_ - 0.1;
+    auto box_size = glm::vec3(adjusted_size / 2, adjusted_size / 2, adjusted_size /2);
+    auto box = pe.CreateBoxShape(box_size);
     for (auto &node_array : nodes_) {
         float new_pos_z = position_.z;
         for (auto &node : node_array) {
@@ -41,6 +46,10 @@ void component::Board::BuildBoard(ECS *ecs) {
             model.has_color = true;
             model.draw_model = render_nodes_;
             node.AddComponent<component::node>();
+            //TODO: Implement a collision objects here.
+            auto &pb = node.AddComponent<component::PhysicBody>();
+            //pw.AddCollisionBody(node.GetID(), trans.pos, trans.rot);
+            //pw.AddCollider(node.GetID(), box, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
         }
         new_pos_x += node_size_;
     }

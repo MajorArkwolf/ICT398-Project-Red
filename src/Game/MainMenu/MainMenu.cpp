@@ -104,6 +104,7 @@ void MainMenu::MainMenuGUI() {
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<Demo>());
+        engine.game_stack_.getTop()->Init();
     }
     if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
         engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());

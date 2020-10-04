@@ -20,7 +20,8 @@ class JSONLoader {
         Float,
         Int,
         Array,
-        Json
+        Json,
+        Number
     };
 
    public:

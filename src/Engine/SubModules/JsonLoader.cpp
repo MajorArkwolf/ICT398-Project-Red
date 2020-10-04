@@ -54,16 +54,16 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         position.at("Y").get<float>(),
                         position.at("Z").get<float>()};
                     trans.scale = {
-                        scale.at("X").get<float>(),
-                        scale.at("Y").get<float>(),
-                        scale.at("Z").get<float>()};
+                        scale.get<float>(),
+                        scale.get<float>(),
+                        scale.get<float>()};
                     trans.rot = glm::quat(glm::vec3(
                         glm::radians(rotation.at("X").get<float>()),
                         glm::radians(rotation.at("Y").get<float>()),
                         glm::radians(rotation.at("Z").get<float>())));
                     trans.pos += prefab.position_local;
                     trans.rot *= prefab.rotation_local;
-                    trans.scale += prefab.scale_local;
+                    trans.scale *= prefab.scale_local;
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }
@@ -96,12 +96,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(n.part_name) + std::string(" does not contain a physics shape when trying to instatiate."), __LINE__, __FILE__);
                                    },
                                    [&](redengine::Capsule shape) {
-                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius, shape.height);
-                                       pw->AddCollider(ent->GetID(), capsule, n.position_local, n.rotation_local);
+                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale.x, shape.height * trans.scale.x);
+                                       pw->AddCollider(ent->GetID(), capsule, n.position_local * trans.scale.x, n.rotation_local);
                                    },
                                    [&](redengine::Box shape) {
-                                       auto box = physics_engine.CreateBoxShape(shape.extents);
-                                       pw->AddCollider(ent->GetID(), box, n.position_local, n.rotation_local);
+                                       auto box = physics_engine.CreateBoxShape(shape.extents * static_cast<double>(trans.scale.x));
+                                       pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale.x , n.rotation_local);
                                    },
                                    [&](redengine::Sphere shape) {
                                        auto sphere = physics_engine.CreateSphereShape(shape.radius);
@@ -110,7 +110,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                n.shape);
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
                         auto pfc = prefab.collision_shapes.at(n.base_shape_name);
-                        pw->AddCollider(ent->GetID(), pfc, n.position_local, n.rotation_local);
+                        pw->AddCollider(ent->GetID(), pfc, n.position_local * trans.scale.x, n.rotation_local);
                     } else {
                         ///Prefab name not found
                     }
@@ -200,50 +200,24 @@ void JSONLoader::LoadPrefabList() {
                     }
                     if (true) {
                         try {
-
-                            //if (physics.contains("BaseShapes")) {
-                            //    auto base_shapes = physics.at("BaseShapes");
-                            //    if (base_shapes.is_array()) {
-                            //        for (auto &element : base_shapes) {
-                            //            if (element.contains("Name") && element.contains("Type")) {
-                            //                auto shape_name = element.at("Name").get<std::string>();
-                            //                if (element.at("Type").get<std::string>() == "Box") {
-                            //                    auto extents = element.at("HalfExtents");
-                            //                    prefab.collision_shapes.emplace(shape_name, e.CreateBoxShape(glm::vec3(extents.at("X").get<float>(), extents.at("Y").get<float>(), extents.at("Z").get<float>())));
-                            //                } else if (element.at("Type").get<std::string>() == "Sphere") {
-                            //                    auto radius = element.at("Radius").get<float>();
-                            //                    prefab.collision_shapes.emplace(shape_name, e.CreateSphereShape(radius));
-                            //                } else if (element.at("Type").get<std::string>() == "Capsule") {
-                            //                    auto radius = element.at("Radius").get<float>();
-                            //                    auto height = element.at("Height").get<float>();
-                            //                    prefab.collision_shapes.emplace(shape_name, e.CreateCapsuleShape(radius, height));
-                            //                }
-
-                            //            } else {
-                            //                console_log.AddLog(ConsoleLog::LogType::Collision, "Base shape does not contain both \"Name\" and \"Type\" fields", __LINE__, __FILE__);
-                            //            }
-                            //        }
-                            //    }
-                            //}
-
                             auto colliders = physics.at("Colliders");
                             if (colliders.is_array()) {
                                 for (auto &json_collider : colliders) {
                                     redengine::Collider collider;
 
-                                    auto part_name = GetJsonField(physics, std::string("Colliders"), std::string("Name"), JsonType::String);
+                                    auto part_name = GetJsonField(json_collider, std::string("Colliders"), std::string("Name"), JsonType::String);
                                     if (part_name.has_value()) {
                                         collider.part_name = part_name->get().get<std::string>();
                                     }
 
-                                    auto mass = GetJsonField(physics, std::string("Colliders"), std::string("Mass"), JsonType::Float);
+                                    auto mass = GetJsonField(json_collider, std::string("Colliders"), std::string("Mass"), JsonType::Number);
                                     if (mass.has_value()) {
                                         collider.mass = json_collider.at("Mass").get<float>();
                                     } else {
                                         collider.mass = 1.0f;
                                     }
 
-                                    auto type_field = GetJsonField(physics, std::string("Colliders"), std::string("Type"), JsonType::String);
+                                    auto type_field = GetJsonField(json_collider, std::string("Colliders"), std::string("Type"), JsonType::String);
                                     if (type_field.has_value()) {
                                         auto type = type_field->get().get<std::string>();
 
@@ -253,42 +227,22 @@ void JSONLoader::LoadPrefabList() {
                                                 collider.shape = redengine::Sphere({radius_field->get().get<double>()});
                                             }
                                         } else if (type == "Box") {
-                                            auto extents_field = GetJsonField(type_field->get(), std::string("Type: Box"), std::string("HalfExtents"), JsonType::Json);
+                                            auto extents_field = GetJsonField(json_collider, std::string("Type: Box"), std::string("HalfExtents"), JsonType::Json);
                                             if (extents_field.has_value()) {
-                                                auto x_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("X"), JsonType::Float);                                      
-                                                auto y_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Y"), JsonType::Float);                                      
-                                                auto z_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Z"), JsonType::Float);
+                                                auto x_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("X"), JsonType::Number);
+                                                auto y_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Y"), JsonType::Number);
+                                                auto z_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Z"), JsonType::Number);
                                                 if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
                                                     collider.shape = redengine::Box({{x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()}});
                                                 }
                                             }
                                         } else if (type == "Capsule") {
-                                            auto radius_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Radius"), JsonType::Float);
-                                            auto height_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Height"), JsonType::Float);
+                                            auto radius_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Radius"), JsonType::Number);
+                                            auto height_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Height"), JsonType::Number);
                                             if (radius_field.has_value() && height_field.has_value()) {
                                                 collider.shape = redengine::Capsule({radius_field->get().get<double>(), height_field->get().get<double>()});
                                             }
                                         }
-
-                                    }
-                                    if (json_collider.contains("Type")) {
-                                        auto type = json_collider.at("Type").get<std::string>();
-                                        if (type == "Sphere") {
-                                            collider.shape = redengine::Sphere({json_collider.at("Radius").get<double>()});
-                                        } else if (type == "Box") {
-                                            if (!json_collider.contains("HalfExtents")) {
-                                                console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Shape in Collider: ") + std::string(collider.part_name) + std::string(" of type \"Box\" does not contain .\t") + std::string(prefab_full_path.string()), __LINE__, __FILE__);
-                                            }
-                                            auto extents = json_collider.at("HalfExtents");
-
-                                            collider.shape = redengine::Box({{json_collider.at("X").get<double>(), json_collider.at("Y").get<double>(), json_collider.at("Z").get<double>()}});
-                                        } else if (type == "Capsule") {
-                                            collider.shape = redengine::Capsule({json_collider.at("Radius").get<double>(), json_collider.at("Height").get<double>()});
-                                        } else {
-                                            console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Shape in Collider: ") + std::string(collider.part_name) + std::string(" is not a \"Type\" of  \"Sphere\",  \"Capsule\", or \"Box\".\t") + std::string(prefab_full_path.string()), __LINE__, __FILE__);
-                                        }
-                                    } else {
-                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does contain the \"Type\" field.\t") + std::string(prefab_full_path.string()), __LINE__, __FILE__);
                                     }
 
                                     prefab.mass += collider.mass;
@@ -371,32 +325,37 @@ std::optional<std::reference_wrapper<nlohmann::json>> JSONLoader::GetJsonField(n
     if (input_json.contains(field_name)) {
         switch (expectedType) {
             case JsonType::Json: {
-                if (!input_json.is_object()) {
+                if (!input_json.at(field_name).is_object()) {
                     unexpected_type = true;
                 }
             } break;
             case JsonType::Array: {
-                if (!input_json.is_array()) {
+                if (!input_json.at(field_name).is_array()) {
                     unexpected_type = true;
                 }
             } break;
             case JsonType::Float: {
-                if (!input_json.is_number_float()) {
+                if (!input_json.at(field_name).is_number_float()) {
                     unexpected_type = true;
                 }
             } break;
             case JsonType::Int: {
-                if (!input_json.is_number_integer()) {
+                if (!input_json.at(field_name).is_number_integer()) {
                     unexpected_type = true;
                 }
             } break;
             case JsonType::String: {
-                if (!input_json.is_string()) {
+                if (!input_json.at(field_name).is_string()) {
                     unexpected_type = true;
                 }
             } break;
             case JsonType::Boolean: {
-                if (!input_json.is_boolean()) {
+                if (!input_json.at(field_name).is_boolean()) {
+                    unexpected_type = true;
+                }
+            } break;
+            case JsonType::Number: {
+                if (!input_json.at(field_name).is_number()) {
                     unexpected_type = true;
                 }
             } break;

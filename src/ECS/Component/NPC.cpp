@@ -2,60 +2,67 @@
 
 namespace component {
 
-Plan::Plan(npc::Actions action, entt::entity entity, int desire,
-           std::initializer_list<int> goals, npc::Outcomes history)
-        : action_(action),
-          entity_(entity),
-          desire_(desire),
-          goals_(goals),
-          history_(history) {}
+Plan::Plan(npc::Actions action_in, entt::entity entity_in, int desire_in,
+           std::initializer_list<int> goals_in, npc::Outcomes history_in)
+        : action(action_in),
+          entity(entity_in),
+          desire(desire_in),
+          goals(goals_in),
+          history(history_in) {}
 
-Goal::Goal(entt::entity entity, npc::Properties property,
-           npc::Components component, float range_min,
-           float range_max, npc::Conditions condition,
-           npc::Outcomes history)
-        : entity_(entity),
-          property_(property),
-          component_(component),
-          range_min_(range_min),
-          range_max_(range_max),
-          condition_(condition),
-          history_(history) {}
+Goal::Goal(entt::entity entity_in, npc::Properties property_in,
+           npc::Components element_in, float range_min_in,
+           float range_max_in, npc::Conditions condition_in,
+           npc::Outcomes history_in)
+        : entity(entity_in),
+          property(property_in),
+          element(element_in),
+          range_min(range_min_in),
+          range_max(range_max_in),
+          condition(condition_in),
+          history(history_in) {}
 
-Desire::Desire(int parent, std::initializer_list<Goal> goals,
-               npc::Outcomes history)
-        : parent_(parent),
-          goals_(goals),
-          history_(history) {}
+Desire::Desire(int parent_in, std::initializer_list<Goal> goals_in,
+               npc::Outcomes history_in)
+        : parent(parent_in),
+          goals(goals_in),
+          history(history_in) {}
 
-BDI::BDI(entt::entity entity,
-         std::initializer_list<npc::Properties> beliefs_properties,
-         std::initializer_list<npc::Actions> beliefs_affordances,
-         std::initializer_list<std::pair<const int, Desire>> desires,
-         std::initializer_list<std::pair<const int, std::set<Plan>>> intentions)
-        : beliefs_properties_({{entity, beliefs_properties}}),
-          beliefs_affordances_({{entity, beliefs_affordances}}),
-          desires_(desires),
-          intentions_(intentions) {
+BDI::BDI(entt::entity entity_in,
+         std::initializer_list<npc::Properties> beliefs_properties_in,
+         std::initializer_list<npc::Actions> beliefs_affordances_in,
+         std::initializer_list<std::pair<const int, Desire>> desires_in,
+         std::initializer_list<std::pair<const int, std::set<Plan>>> intentions_in)
+        : beliefs_properties({{entity_in, beliefs_properties_in}}),
+          beliefs_affordances({{entity_in, beliefs_affordances_in}}),
+          desires(desires_in),
+          intentions(intentions_in) {
     // Guarantee an initial belief in the existence of the identified entity
-    beliefs_properties_[entity].insert(npc::Properties::kExists);
+    beliefs_properties[entity_in].insert(npc::Properties::kExists);
 }
 
-EmotiveResponse::EmotiveResponse(entt::entity entity, float emotion,
-                                 SourceWhat&& what)
-        : entity_(entity),
-          emotion_(emotion),
-          what_(what) {}
+EmotiveResponse::EmotiveResponse(entt::entity entity_in, float emotion_in,
+                                 SourceWhat&& what_in)
+        : entity(entity_in),
+          emotion(emotion_in),
+          what(what_in) {}
 
-Characteristics::Characteristics() : mood_(0.0f) {}
+Characteristics::Characteristics() : mood(0.0f) {}
 
-Characteristics::Characteristics(float mood,
-                                 std::initializer_list<EmotiveResponse> emotions,
-                                 std::initializer_list<std::pair<const npc::Properties, float>> traits,
-                                 std::initializer_list<std::pair<const npc::Actions, float>> personality)
-        : mood_(mood),
-          emotions_(emotions),
-          traits_(traits),
-          personality_(personality) {}
+Characteristics::Characteristics(float mood_in,
+                                 std::initializer_list<EmotiveResponse> emotions_in,
+                                 std::initializer_list<std::pair<const npc::Properties, float>> traits_in,
+                                 std::initializer_list<std::pair<const npc::Actions, float>> personality_in)
+        : mood(mood_in),
+          emotions(emotions_in),
+          traits(traits_in),
+          personality(personality_in) {}
+
+BehaviourState::BehaviourState(npc::Stages current_in, double current_d_in,
+                               npc::Stages prior_in, double prior_d_in)
+        : current(current_in),
+          current_d(current_d_in),
+          prior(prior_in),
+          prior_d(prior_d_in) {}
 
 } // namespace component

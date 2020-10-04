@@ -82,4 +82,16 @@ enum class Events {
     kAnalysisEnded ///< The NPC finished operating its analysis.
 };
 
+    /**
+     * @brief The set of generic stages of an NPC's behaviour.
+     * @warning Lists only symbolic representations of general behaviour characteristics!
+     */
+enum class Stages {
+    kIdle, ///< The NPC is not performing any significant actions.
+    kPrepare, ///< The NPC is creating a branching hierarchy of Desires and Intentions.
+    kObserve, ///< The NPC is establishing Beliefs from perceptions and testing Desires.
+    kRespond, ///< The NPC is checking for triggered Intentions and performing their actions.
+    kOther ///< The NPC's behaviour is in a misc. stage not otherwise listed.
+};
+
 } // namespace npc

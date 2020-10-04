@@ -21,10 +21,15 @@ model::Model::Model(const std::string& path, bool gamma = false) : gamma_correct
     LoadModel(path);
 }
 
-void model::Model::Draw(Shader* shader) {
-    auto cameraPos = redengine::Engine::get().renderer_.GetActiveCamera()->position_;
+model::Model::Model(const std::vector<Vertex>& new_vertices, const std::vector<unsigned int>& new_indices,
+           const std::vector<TextureB>& new_textures, const model::Material& material, const glm::mat4& transformation) {
+    meshes_.emplace_back(new_vertices, new_indices, new_textures, material, transformation);
+    meshes_.at(meshes_.size() - 1).MoveToGPU();
+}
+
+void model::Model::Draw(Shader* shader, const glm::mat4& model_matrix) {
     for (auto &mesh : meshes_) {
-        mesh.Draw(shader);
+        mesh.Draw(shader, model_matrix);
     }
 }
 
@@ -54,19 +59,19 @@ void model::Model::LoadModel(const std::filesystem::path &path) {
     is_animated_ = is_animated_ && scene->HasAnimations();
     global_inverse_transform_ = glm::inverse(mat4_cast(scene->mRootNode->mTransformation));
     // process ASSIMP's root node recursively
-    ProcessNode(scene->mRootNode, scene);
+    ProcessNode(scene->mRootNode, scene, mat4_cast(scene->mRootNode->mTransformation));
     for (auto &mesh : meshes_) {
         mesh.MoveToGPU();
     }
 }
 
-void model::Model::ProcessNode(aiNode *node, const aiScene *scene) {
+void model::Model::ProcessNode(aiNode *node, const aiScene *scene, glm::mat4 transformation) {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         // the node object only contains indices to index the actual objects in the scene.
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        auto newMesh = ProcessMesh(mesh, scene);
+        auto newMesh = ProcessMesh(mesh, scene, transformation * mat4_cast(node->mTransformation));
         meshes_.push_back(newMesh);
         if (is_animated_) {
             LoadBones(i, mesh);
@@ -76,16 +81,15 @@ void model::Model::ProcessNode(aiNode *node, const aiScene *scene) {
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
-        ProcessNode(node->mChildren[i], scene);
+        ProcessNode(node->mChildren[i], scene, transformation * mat4_cast(node->mTransformation));
     }
 }
 
-Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
+Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transformation) {
     // data to fill
     std::vector<Vertex> vertices = {};
     std::vector<unsigned int> indices = {};
     std::vector<TextureB> textures = {};
-
     // Walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         Vertex vertex = {};
@@ -166,7 +170,7 @@ Mesh model::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
 
     Material loaded_material = LoadMaterial(material);
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures, loaded_material);
+    return Mesh(vertices, indices, textures, loaded_material, transformation);
 }
 
 std::vector<TextureB> model::Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,

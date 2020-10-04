@@ -28,7 +28,7 @@ void view::OpenGL::Draw() {
 
         glm::mat4 projection =
                 glm::perspective(glm::radians(camera_->zoom_),
-                                 static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
+                                 static_cast<double>(width) / static_cast<double>(height), 0.1, 10000000.0);
         glm::mat4 view = camera_->GetViewMatrix();
 
         model_shader_->Use();

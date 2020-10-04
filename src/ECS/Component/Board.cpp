@@ -6,7 +6,7 @@
 #include "ECS/Component/Node.hpp"
 
 component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, const size_t node_y,
-                        const float node_size) {
+                        const float node_size) : grid_(node_x, node_y) {
     auto &mm = redengine::Engine::get().model_manager_;
     auto base_path = redengine::Engine::get().GetBasePath();
     base_path = base_path / "res" / "model" / "cube.obj";
@@ -20,7 +20,6 @@ component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, con
         node_array.resize(node_y);
         assert(node_array.size() == node_y);
     }
-    grid_ = Pathing::Grid(node_x, node_y);
     BuildBoard(ecs);
 }
 

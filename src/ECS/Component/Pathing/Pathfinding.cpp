@@ -28,8 +28,9 @@ int Pathing::Pathfinding::findDistance(Node &nodeA, Node &nodeB, bool oct) {
     int dstX = abs(static_cast<int>(nodeA.x) - static_cast<int>(nodeB.x));
     int dstY = abs(static_cast<int>(nodeA.y) - static_cast<int>(nodeB.y));
 
-    if (dstX > dstY)
+    if (dstX > dstY) {
         return diagonalCost * dstY + straightCost * (dstX - dstY);
+    }
     return diagonalCost * dstX + straightCost * (dstY - dstX);
 }
 
@@ -40,6 +41,7 @@ int Pathing::Pathfinding::findDistance(Node &nodeA, Node &nodeB, bool oct) {
  * @return Returns true if node is contained within set
  */
 bool Pathing::Pathfinding::containsNode(std::vector<Node *> &set, Node *node) {
+    //return std::any_of(set.cbegin(), set.cend(), node);
     for (const auto &m : set) {
         if (node == m) {
             return true;
@@ -55,7 +57,7 @@ bool Pathing::Pathfinding::containsNode(std::vector<Node *> &set, Node *node) {
  */
 std::vector<Node *> Pathing::Pathfinding::traceRoute(Node *endNode) {
 
-    std::vector<Node *> path;
+    auto path = std::vector<Node *>();
     Node *currentNode = endNode;
 
     while (currentNode->parent != nullptr) {
@@ -74,6 +76,7 @@ std::vector<Node *> Pathing::Pathfinding::traceRoute(Node *endNode) {
  * @param oct Whether the path will assume diagonal movement or not
  * @return The path from the start node to the end node in vector form
  */
+ //TODO: This is wildly ineffecient, we could fix this.
 std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node &startNode,
                                                    Node &endNode, bool oct) {
     std::vector<Node *> openSet;

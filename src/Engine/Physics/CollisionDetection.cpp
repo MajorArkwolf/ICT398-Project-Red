@@ -189,5 +189,8 @@ entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm
     if (callback.result.collisionBody == nullptr) {
         return entt::entity(-1);
     }
+    if (physics_world.collision_entity_coupling_.find(callback.result.collisionBody) == physics_world.collision_entity_coupling_.end()) {
+        return entt::entity(-1);
+    }
     return physics_world.collision_entity_coupling_.at(callback.result.collisionBody);
 }

@@ -20,6 +20,7 @@ component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, con
         node_array.resize(node_y);
         assert(node_array.size() == node_y);
     }
+    grid_ = Pathing::Grid(node_x, node_y);
     BuildBoard(ecs);
 }
 

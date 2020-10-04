@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include "ECS/Entity.hpp"
+#include "ECS/Component/Pathing/Grid.hpp"
 
 class Shader;
 
@@ -21,6 +22,7 @@ namespace component {
         size_t node_model_ = 0;
         void BuildBoard(ECS *ecs);
 
+        Pathing::Grid grid_;
 
     };
 }

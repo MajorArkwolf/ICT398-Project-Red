@@ -54,6 +54,10 @@ target_sources(${PROJECT_NAME} PRIVATE
     ECS/Component/Model.cpp
     ECS/Component/Basic.cpp
     ECS/Component/Board.cpp
+    #----Pathing
+    ECS/Component/Pathing/Grid.cpp
+    ECS/Component/Pathing/Node.cpp
+    ECS/Component/Pathing/Pathfinding.cpp
     #--Systems
     ECS/System/System.cpp
 )

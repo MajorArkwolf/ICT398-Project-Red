@@ -4,8 +4,8 @@
 
 namespace component {
     struct Player {
-        engine::Camera camera{};
-        float height = 170.f;
+        engine::Camera camera_{};
+        float height_ = 170.f;
         entt::entity selected_entity;
 
         void Update(double t, double dt) {

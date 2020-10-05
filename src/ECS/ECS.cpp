@@ -9,6 +9,7 @@ void ECS::FixedUpdate(double t, double dt) {
 
 void ECS::Update(double t, double dt) {
     System::UpdateAnimation(registry_, t, dt);
+    System::UpdateColors(registry_);
 }
 
 void ECS::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {

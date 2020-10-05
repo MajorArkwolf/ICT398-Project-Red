@@ -2,6 +2,7 @@
 
 #include "Engine/Engine.hpp"
 #include "Engine/Physics/PhysicsCommon.hpp"
+#include "Engine/Physics/PhysicsListener.hpp"
 
 using namespace physics;
 
@@ -178,4 +179,18 @@ reactphysics3d::PhysicsWorld *CollisionDetection::CreatePhysicsWorld() {
 
 void CollisionDetection::DeletePhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     physics_common_.destroyPhysicsWorld(world);
+}
+
+entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto ray = reactphysics3d::Ray(ConvertVector(start), ConvertVector(end));
+    auto callback = RedEngineRayCast();
+    physics_world.world_->raycast(ray, &callback);
+    if (callback.result.collisionBody == nullptr) {
+        return entt::entity(-1);
+    }
+    if (physics_world.collision_entity_coupling_.find(callback.result.collisionBody) == physics_world.collision_entity_coupling_.end()) {
+        return entt::entity(-1);
+    }
+    return physics_world.collision_entity_coupling_.at(callback.result.collisionBody);
 }

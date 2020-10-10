@@ -48,7 +48,7 @@ PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
     return collision_detection_.CreateBoxShape(extents);
 }
 
-PhysicsShape PhysicsEngine::CreateCapsuleShape(double radius, double height) {
+PhysicsShape PhysicsEngine::CreateCapsuleShape(float radius, float height) {
     return collision_detection_.CreateCapsuleShape(radius, height);
 }
 

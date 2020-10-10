@@ -165,7 +165,7 @@ PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
     return PhysicsShape(physics_common_.createBoxShape(ConvertVector(extents)), ShapeType::Box);
 }
 
-PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
+PhysicsShape CollisionDetection::CreateCapsuleShape(float radius, float height) {
     return PhysicsShape(physics_common_.createCapsuleShape(radius, height), ShapeType::Capsule);
 }
 

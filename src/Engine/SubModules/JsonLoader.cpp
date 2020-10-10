@@ -204,7 +204,7 @@ void JSONLoader::LoadPrefabList() {
                     try {
                         auto position_field = GetJsonField(transform->get(), "Colliders", "Position", JsonType::Json);
                         auto rotation_field = GetJsonField(transform->get(), "Colliders", "Rotation", JsonType::Json);
-                        auto scale_field = GetJsonField(transform->get(), "Colliders", "Scale", JsonType::Number);
+                        auto scale_field = GetJsonField(transform->get(), prefab_full_path.string(), "Scale", JsonType::Number);
 
                         if (position_field.has_value()) {
                             auto x_field = GetJsonField(position_field->get(), "Prefab Position X", "X", JsonType::Number);
@@ -304,8 +304,8 @@ void JSONLoader::LoadPrefabList() {
                                             }
                                         }
                                     } else if (type == "Capsule") {
-                                        auto radius_field = GetJsonField(type_field->get(), "Type: Capsule", "Radius", JsonType::Number);
-                                        auto height_field = GetJsonField(type_field->get(), "Type: Capsule", "Height", JsonType::Number);
+                                        auto radius_field = GetJsonField(json_collider, "Type: Capsule", "Radius", JsonType::Number);
+                                        auto height_field = GetJsonField(json_collider, "Type: Capsule", "Height", JsonType::Number);
                                         if (radius_field.has_value() && height_field.has_value()) {
                                             collider.shape = redengine::Capsule({radius_field->get().get<float>(), height_field->get().get<float>()});
                                         }

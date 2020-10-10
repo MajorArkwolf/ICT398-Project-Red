@@ -28,7 +28,7 @@ Demo::Demo() {
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();
     big_player.AddComponent<component::Player>();
-    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "ClothedMan.gltf";
+    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "Character" / "ClothedMan.gltf";
     auto &b_model = big_player.AddComponent<component::Model>(filepath);
     b_model.draw_model = false;
     auto &trans = big_player.AddComponent<component::Transform>();

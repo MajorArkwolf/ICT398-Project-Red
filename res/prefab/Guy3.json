@@ -1,7 +1,7 @@
 {
   "Name": "Guy1",
   "Model": {
-    "ModelFilePath": "res/model/Character/ClothedMan.gltf",
+    "ModelFilePath": "res/model/Character/GreenDark.gltf",
     "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {
@@ -50,10 +50,10 @@
           "Z": 0.0
         },
         "Scale": {
-      "X": 1.0,
-      "Y": 1.0,
-      "Z": 1.0
-    },
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
         "Mass": 0.0,
         "CentreOfMass": {
           "X": 0.0,

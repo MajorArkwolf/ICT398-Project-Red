@@ -2,6 +2,10 @@
   "Prefab": [
     "Error.json",
     "Guy1.json",
+    "Guy2.json",
+    "Guy3.json",
+    "Female1.json",
+    "Female2.json",
     "Chair.json",
     "Desk.json",
     "Classroom.json",

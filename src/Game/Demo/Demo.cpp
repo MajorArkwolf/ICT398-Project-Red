@@ -105,10 +105,6 @@ void Demo::Update(double t, double dt) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(player_.GetActiveCamera());
     ecs_.Update(t, dt);
-
-    //TODO: fix this to use just the phyiscs world instead.
-    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
-    physics_engine.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {

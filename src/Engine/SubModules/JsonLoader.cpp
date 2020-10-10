@@ -222,7 +222,7 @@ void JSONLoader::LoadPrefabList() {
                                         auto type = type_field->get().get<std::string>();
 
                                         if (type == "Sphere") {
-                                            auto radius_field = GetJsonField(type_field->get(), std::string("Type: Sphere"), std::string("Radius"), JsonType::Float);
+                                            auto radius_field = GetJsonField(json_collider, std::string("Type: Sphere"), std::string("Radius"), JsonType::Number);
                                             if (radius_field.has_value()) {
                                                 collider.shape = redengine::Sphere({radius_field->get().get<double>()});
                                             }

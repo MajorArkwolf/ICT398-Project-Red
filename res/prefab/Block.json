@@ -24,21 +24,15 @@
   "Physics": {
     "Static": false,
     "Collision_Shapes": "Yes",
-    "BaseShapes": [
+    "Colliders": [
       {
         "Name": "Wall",
         "Type": "Box",
         "HalfExtents": {
-          "X": 0.15,
-          "Y": 5.75,
-          "Z": 5.4
-        }
-      }
-    ],
-    "Colliders": [
-      {
-        "Name": "Wall",
-        "BaseShape": "Wall",
+          "X": 0.075,
+          "Y": 2.875,
+          "Z": 2.7
+        },
         "Position": {
           "X": 0.0,
           "Y": 0.0,
@@ -48,11 +42,6 @@
           "X": 0.0,
           "Y": 0.0,
           "Z": 0.0
-        },
-        "Scale": {
-          "X": 1.0,
-          "Y": 1.0,
-          "Z": 1.0
         },
         "Mass": 1.0,
         "CentreOfMass": {

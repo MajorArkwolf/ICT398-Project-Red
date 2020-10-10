@@ -57,12 +57,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         auto y_field = GetJsonField(position_field->get(), "Prefab Position Y", "Y", JsonType::Number);
                         auto z_field = GetJsonField(position_field->get(), "Prefab Position Z", "Z", JsonType::Number);
                         if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                            transform_component.pos = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                            transform_component.pos = {x_field->get().get<float>(), y_field->get().get<float>(), z_field->get().get<float>()};
                         }
                     }
 
                     if (scale_field.has_value()) {
-                        transform_component.scale = {scale_field->get().get<double>()};
+                        transform_component.scale = {scale_field->get().get<float>(), scale_field->get().get<float>(), scale_field->get().get<float>()};
                     }
 
                     if (rotation_field.has_value()) {
@@ -70,7 +70,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         auto y_field = GetJsonField(rotation_field->get(), "Prefab Position Y", "Y", JsonType::Number);
                         auto z_field = GetJsonField(rotation_field->get(), "Prefab Position Z", "Z", JsonType::Number);
                         if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                            transform_component.rot = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                            transform_component.rot = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<float>()), glm::radians(y_field->get().get<float>()), glm::radians(z_field->get().get<float>())))};
                         }
                     }
 
@@ -110,12 +110,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                        console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " does not contain a physics shape when trying to instatiate.", __LINE__, __FILE__);
                                    },
                                    [&](redengine::Capsule shape) {
-                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale, shape.height * trans.scale);
+                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale.x, shape.height * trans.scale.y);
                                        pw->AddCollider(ent->GetID(), capsule, n.position_local * trans.scale, n.rotation_local);
                                    },
                                    [&](redengine::Box shape) {
-                                       auto box = physics_engine.CreateBoxShape(shape.extents * static_cast<double>(trans.scale));
-                                       pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale, n.rotation_local);
+                                       auto box = physics_engine.CreateBoxShape(shape.extents * trans.scale.x);
+                                       pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale.x, n.rotation_local);
                                    },
                                    [&](redengine::Sphere shape) {
                                        auto sphere = physics_engine.CreateSphereShape(shape.radius);
@@ -196,12 +196,12 @@ void JSONLoader::LoadPrefabList() {
                             auto y_field = GetJsonField(position_field->get(), "Prefab Position Y", "Y", JsonType::Number);
                             auto z_field = GetJsonField(position_field->get(), "Prefab Position Z", "Z", JsonType::Number);
                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                prefab.position_local = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                                prefab.position_local = {x_field->get().get<float>(), y_field->get().get<float>(), z_field->get().get<float>()};
                             }
                         }
 
                         if (scale_field.has_value()) {
-                            prefab.scale_local = {scale_field->get().get<double>()};
+                            prefab.scale_local = {scale_field->get().get<float>()};
                         }
 
                         if (rotation_field.has_value()) {
@@ -209,7 +209,7 @@ void JSONLoader::LoadPrefabList() {
                             auto y_field = GetJsonField(rotation_field->get(), "Prefab Position Y", "Y", JsonType::Number);
                             auto z_field = GetJsonField(rotation_field->get(), "Prefab Position Z", "Z", JsonType::Number);
                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                prefab.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                                prefab.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<float>()), glm::radians(y_field->get().get<float>()), glm::radians(z_field->get().get<float>())))};
                             }
                         }
                     } catch (const std::exception &e) {
@@ -256,7 +256,7 @@ void JSONLoader::LoadPrefabList() {
                                     if (type == "Sphere") {
                                         auto radius_field = GetJsonField(json_collider, "Type: Sphere", "Radius", JsonType::Number);
                                         if (radius_field.has_value()) {
-                                            collider.shape = redengine::Sphere({radius_field->get().get<double>()});
+                                            collider.shape = redengine::Sphere({radius_field->get().get<float>()});
                                         }
                                     } else if (type == "Box") {
                                         auto extents_field = GetJsonField(json_collider, "Type: Box", "HalfExtents", JsonType::Json);
@@ -265,14 +265,14 @@ void JSONLoader::LoadPrefabList() {
                                             auto y_field = GetJsonField(extents_field->get(), "Type: Box Extents", "Y", JsonType::Number);
                                             auto z_field = GetJsonField(extents_field->get(), "Type: Box Extents", "Z", JsonType::Number);
                                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                                collider.shape = redengine::Box({{x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()}});
+                                                collider.shape = redengine::Box({{x_field->get().get<float>(), y_field->get().get<float>(), z_field->get().get<float>()}});
                                             }
                                         }
                                     } else if (type == "Capsule") {
                                         auto radius_field = GetJsonField(type_field->get(), "Type: Capsule", "Radius", JsonType::Number);
                                         auto height_field = GetJsonField(type_field->get(), "Type: Capsule", "Height", JsonType::Number);
                                         if (radius_field.has_value() && height_field.has_value()) {
-                                            collider.shape = redengine::Capsule({radius_field->get().get<double>(), height_field->get().get<double>()});
+                                            collider.shape = redengine::Capsule({radius_field->get().get<float>(), height_field->get().get<float>()});
                                         }
                                     }
                                 } else {
@@ -290,7 +290,7 @@ void JSONLoader::LoadPrefabList() {
                                     auto y_field = GetJsonField(com_field->get(), "CentreOfMass Y", "Y", JsonType::Number);
                                     auto z_field = GetJsonField(com_field->get(), "CentreOfMass Z", "Z", JsonType::Number);
                                     if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                        collider.centre_of_mass = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                                        collider.centre_of_mass = {x_field->get().get<float>(), y_field->get().get<float>(), z_field->get().get<float>()};
                                     }
                                 } else {
                                     std::stringstream error;
@@ -305,7 +305,7 @@ void JSONLoader::LoadPrefabList() {
                                     auto y_field = GetJsonField(position_field->get(), "Position Y", "Y", JsonType::Number);
                                     auto z_field = GetJsonField(position_field->get(), "Position Z", "Z", JsonType::Number);
                                     if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                        collider.position_local = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                                        collider.position_local = {x_field->get().get<float>(), y_field->get().get<float>(), z_field->get().get<float>()};
                                     }
                                 } else {
                                     std::stringstream error;
@@ -320,7 +320,7 @@ void JSONLoader::LoadPrefabList() {
                                     auto y_field = GetJsonField(rotation_field->get(), "Rotation Y", "Y", JsonType::Number);
                                     auto z_field = GetJsonField(rotation_field->get(), "Rotation Z", "Z", JsonType::Number);
                                     if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                        collider.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                                        collider.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<float>()), glm::radians(y_field->get().get<float>()), glm::radians(z_field->get().get<float>())))};
                                     }
                                 } else {
                                     std::stringstream error;
@@ -337,16 +337,16 @@ void JSONLoader::LoadPrefabList() {
                                 glm::dvec3 centre_mass{0, 0, 0};
                                 std::vector<glm::dvec3> weighted_collider_centre_mass;
                                 for (auto &n : prefab.colliders_) {
-                                    double weight = n.mass / prefab.mass;
+                                    float weight = n.mass / prefab.mass;
                                     weighted_collider_centre_mass.emplace_back(n.centre_of_mass / weight);
                                 }
 
                                 auto average = std::invoke([&]() {
-                                    glm::dvec3 average = {};
+                                    glm::vec3 average = {};
                                     for (auto &n : weighted_collider_centre_mass) {
                                         average += n;
                                     }
-                                    return average / static_cast<double>(weighted_collider_centre_mass.size());
+                                    return average / static_cast<float>(weighted_collider_centre_mass.size());
                                 });
                                 prefab.centre_of_mass = average;
                             }

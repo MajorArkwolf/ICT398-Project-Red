@@ -49,7 +49,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 try {
                     auto position_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Position"), JsonType::Json);
                     auto rotation_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Rotation"), JsonType::Json);
-                    auto scale_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Scale"), JsonType::Number);
+                    auto scale_field = GetJsonField(transform->get(), file_path.string(), std::string("Scale"), JsonType::Number);
 
                     if (position_field.has_value()) {
                         auto x_field = GetJsonField(position_field->get(), std::string("Prefab Position X"), std::string("X"), JsonType::Number);
@@ -57,7 +57,15 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         auto z_field = GetJsonField(position_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
                         if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
                             transform_component.pos = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                        } else {
+                            std::stringstream error;
+                            error << "File: " << file_path << " Transform: Position does not contain all coordinate fields, aborting read.";
+                            console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                         }
+                    } else {
+                        std::stringstream error;
+                        error << "File: " << file_path << " Transform: does not contain \"Position\" field, aborting read.";
+                        console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                     }
 
                     if (scale_field.has_value()) {
@@ -70,9 +78,16 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         auto z_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
                         if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
                             transform_component.rot = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                        } else {
+                            std::stringstream error;
+                            error << "File: " << file_path << " Transform: Rotation does not contain all coordinate fields, aborting read.";
+                            console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                         }
+                    } else {
+                        std::stringstream error;
+                        error << "File: " << file_path << " Transform: does not contain \"Rotation\" field, aborting read.";
+                        console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                     }
-
                     transform_component.pos += prefab.position_local;
                     transform_component.rot *= prefab.rotation_local;
                     transform_component.scale *= prefab.scale_local;
@@ -196,7 +211,17 @@ void JSONLoader::LoadPrefabList() {
                             auto z_field = GetJsonField(position_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
                                 prefab.position_local = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                            } else {
+                                std::stringstream error;
+                                error << "File: " << prefab_full_path << " Transform: Position does not contain all coordinate fields, aborting read.";
+                                console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                break;
                             }
+                        } else {
+                            std::stringstream error;
+                            error << "File: " << prefab_full_path << " Transform: does not contain \"Position\" field, aborting read.";
+                            console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                            break;
                         }
 
                         if (scale_field.has_value()) {
@@ -209,7 +234,17 @@ void JSONLoader::LoadPrefabList() {
                             auto z_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
                                 prefab.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                            } else {
+                                std::stringstream error;
+                                error << "File: " << prefab_full_path << " Transform: Rotation does not contain all coordinate fields, aborting read.";
+                                console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                break;
                             }
+                        } else {
+                            std::stringstream error;
+                            error << "File: " << prefab_full_path << " Transform: does not contain \"Rotation\" field, aborting read.";
+                            console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                            break;
                         }
                     } catch (const std::exception &e) {
                         std::cerr << "JSON Transform failed: " << e.what() << '\n';

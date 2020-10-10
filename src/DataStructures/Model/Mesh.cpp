@@ -3,14 +3,15 @@
 #include "Engine/Renderer/OpenGL.hpp"
 
 Mesh::Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indices,
-           std::vector<TextureB> new_textures, model::Material material) {
+           std::vector<TextureB> new_textures, model::Material material, glm::mat4 transformation) {
     this->vertices_ = std::move(new_vertices);
     this->indices_  = std::move(new_indices);
     this->textures_ = std::move(new_textures);
     this->material_ = material;
+    this->transform_ = transformation;
 }
 
-void Mesh::Draw(Shader* shader) {
+void Mesh::Draw(Shader* shader, const glm::mat4& model_matrix) {
     // bind appropriate textures
     unsigned int diffuse_nr = 1;
     unsigned int specular_nr = 1;
@@ -42,6 +43,8 @@ void Mesh::Draw(Shader* shader) {
         glBindTexture(GL_TEXTURE_2D, textures_[i].id);
     }
 
+    //auto matrix = model_matrix * transform_;
+    shader->SetMat4("model", model_matrix);
     shader->SetBool("has_texture", has_texture);
     shader->SetVec3("material.ambient", material_.Ambient);
     shader->SetVec3("material.diffuse", material_.Diffuse);

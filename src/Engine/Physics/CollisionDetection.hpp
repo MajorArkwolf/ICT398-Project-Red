@@ -59,6 +59,14 @@ namespace physics {
          */
         void DeletePhysicsWorld(reactphysics3d::PhysicsWorld *world);
 
+        /**
+         * Cast a single ray from one point to another.
+         * @param start the start vector.
+         * @param end end of the ray.
+         * @return the single entity you hit.
+         */
+        entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &end);
+
     private:
 
         //Test Renderer Values
@@ -73,7 +81,6 @@ namespace physics {
         reactphysics3d::PhysicsCommon physics_common_{};
 
         Logger logger_ = {};
-
 
     };
 }

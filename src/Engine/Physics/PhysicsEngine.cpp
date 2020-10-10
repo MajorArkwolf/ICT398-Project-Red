@@ -25,7 +25,7 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
         auto players = registry.view<component::Player>();
         for (auto &e : players) {
             auto &p = players.get<component::Player>(e);
-            physics_world.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+            physics_world.UpdateCollisionBody(e, p.camera_.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
         }
         collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }
@@ -71,4 +71,14 @@ void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
 void PhysicsEngine::Init() {
     collision_detection_.Init();
     //collision_resolution_.Init();
+}
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
+    return collision_detection_.RayCastSingle(start, end);
+}
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance) {
+    glm::vec3 end = start;
+    end += distance * front;
+    return collision_detection_.RayCastSingle(start, end);
 }

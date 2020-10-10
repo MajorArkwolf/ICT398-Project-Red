@@ -29,7 +29,7 @@ void main()
     if (isAnimated == true) {
 	    boned_position = bone_transform * vec4(aPos, 1.0);
 	} else {
-	    boned_position = vec4(aPos, 1.0);
+	    boned_position = mat4(1.0) * vec4(aPos, 1.0);
 	}
 
     Normals = mat3(transpose(inverse(model))) * aNormal;

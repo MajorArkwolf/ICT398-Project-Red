@@ -8,13 +8,7 @@
 #include "Engine/SubModules/JsonLoader.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
-
-template<class... Ts>
-struct overload : Ts... {
-    using Ts::operator()...;
-};
-template<class... Ts>
-overload(Ts...) -> overload<Ts...>;
+#include "DataStructures/Model/Overload.hpp"
 
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;

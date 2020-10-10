@@ -6,9 +6,9 @@
 
 namespace component {
     struct Transform {
-        glm::vec3 pos = {0.0f, 0.0f, 0.0f};
-        glm::quat rot = {1.0f, 0.0f, 0.0f, 0.0f};
-        glm::vec3 scale = {1.0f, 1.0f, 1.0f};
+        glm::dvec3 pos = {0.0f, 0.0f, 0.0f};
+        glm::dquat rot = {1.0f, 0.0f, 0.0f, 0.0f};
+        double scale = 1.0;
     };
 
     struct Animation {

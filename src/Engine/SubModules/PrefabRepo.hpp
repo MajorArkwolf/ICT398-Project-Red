@@ -24,10 +24,10 @@ struct Collider {
     std::variant<std::monostate, Sphere, Box, Capsule> shape;
     std::string part_name;
     std::string base_shape_name;
-    glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
-    glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
+    glm::dvec3 position_local = {0.0f, 0.0f, 0.0f};
+    glm::dquat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
     double mass = 0.0;
-    glm::vec3 centre_of_mass = {0.0f, 0.0f, 0.0f};
+    glm::dvec3 centre_of_mass = {0.0f, 0.0f, 0.0f};
 };
 
 struct prefab {
@@ -35,9 +35,9 @@ struct prefab {
     bool has_model = false;
     size_t model_id = 0;
     std::shared_ptr<Shader> model_shader;
-    glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
-    glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
-    glm::vec3 scale_local = {1.0f, 1.0f, 1.0f};
+    glm::dvec3 position_local = {0.0f, 0.0f, 0.0f};
+    glm::dquat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
+    double scale_local = 1.0;
     bool has_animation = false;
     bool has_physics = false;
     bool is_static = false;

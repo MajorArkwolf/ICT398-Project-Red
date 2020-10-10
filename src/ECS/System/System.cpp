@@ -12,9 +12,9 @@ void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& pro
         auto &tran = entities.get<component::Transform>(e);
         auto &mod = entities.get<component::Model>(e);
         glm::mat4 model_matrix = glm::mat4(1.0f);
-        model_matrix = glm::translate(model_matrix, tran.pos);
-        model_matrix = glm::scale(model_matrix, tran.scale);
-        model_matrix = model_matrix * glm::mat4_cast(tran.rot);
+        model_matrix = glm::translate(model_matrix, static_cast<glm::vec3>(tran.pos));
+        model_matrix = glm::scale(model_matrix, glm::vec3(tran.scale));
+        model_matrix = model_matrix * glm::mat4_cast(static_cast<glm::quat>(tran.rot));
 
         shader->SetMat4("model", model_matrix);
 

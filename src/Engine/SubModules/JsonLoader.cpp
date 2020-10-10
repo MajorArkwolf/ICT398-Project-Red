@@ -42,48 +42,61 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             entity = std::make_shared<Entity>(ecs->CreateEntity());
             auto &ent = entity.value();
             ent->AddComponent<component::Model>(prefab.model_id);
-            if (j.contains("Transform")) {
+
+            auto &transform_component = ent->AddComponent<component::Transform>();
+            auto transform = GetJsonField(j, std::string("Colliders"), std::string("Transform"), JsonType::Json);
+            if (transform.has_value()) {
                 try {
-                    auto &trans = ent->AddComponent<component::Transform>();
-                    auto transform = j.at("Transform");
-                    auto position = transform.at("Position");
-                    auto rotation = transform.at("Rotation");
-                    auto scale = transform.at("Scale");
-                    trans.pos = {
-                        position.at("X").get<float>(),
-                        position.at("Y").get<float>(),
-                        position.at("Z").get<float>()};
-                    trans.scale = {
-                        scale.get<float>(),
-                        scale.get<float>(),
-                        scale.get<float>()};
-                    trans.rot = glm::quat(glm::vec3(
-                        glm::radians(rotation.at("X").get<float>()),
-                        glm::radians(rotation.at("Y").get<float>()),
-                        glm::radians(rotation.at("Z").get<float>())));
-                    trans.pos += prefab.position_local;
-                    trans.rot *= prefab.rotation_local;
-                    trans.scale *= prefab.scale_local;
+                    auto position_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Position"), JsonType::Json);
+                    auto rotation_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Rotation"), JsonType::Json);
+                    auto scale_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Scale"), JsonType::Number);
+
+                    if (position_field.has_value()) {
+                        auto x_field = GetJsonField(position_field->get(), std::string("Prefab Position X"), std::string("X"), JsonType::Number);
+                        auto y_field = GetJsonField(position_field->get(), std::string("Prefab Position Y"), std::string("Y"), JsonType::Number);
+                        auto z_field = GetJsonField(position_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
+                        if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                            transform_component.pos = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                        }
+                    }
+
+                    if (scale_field.has_value()) {
+                        transform_component.scale = {scale_field->get().get<double>()};
+                    }
+
+                    if (rotation_field.has_value()) {
+                        auto x_field = GetJsonField(rotation_field->get(), std::string("Prefab Position X"), std::string("X"), JsonType::Number);
+                        auto y_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Y"), std::string("Y"), JsonType::Number);
+                        auto z_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
+                        if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                            transform_component.rot = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                        }
+                    }
+
+                    transform_component.pos += prefab.position_local;
+                    transform_component.rot *= prefab.rotation_local;
+                    transform_component.scale *= prefab.scale_local;
+
+                    if (j.contains("Animation")
+                        && entity->get()->HasComponent<component::Model>()) {
+                        //TODO: Redo this logic, this is kinda scuffed.
+                        try {
+                            assert(ent->HasComponent<component::Model>());
+                            auto &anim =
+                                ent->AddComponent<component::Animation>(
+                                    ent->GetComponent<component::Model>().id_);
+                            auto idle = j.at("Animation").at("IDLE").get<std::string>();
+                            anim.animator_.LoadAnimation(idle);
+                        } catch (const std::exception &e) {
+                            std::cerr << "JSON Animation failed: " << e.what() << '\n';
+                        }
+                    }
+
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }
-                if (j.contains("Animation")
-                    && entity->get()->HasComponent<component::Model>()) {
-                    //TODO: Redo this logic, this is kinda scuffed.
-                    try {
-                        assert(ent->HasComponent<component::Model>());
-                        auto &anim =
-                            ent->AddComponent<component::Animation>(
-                                ent->GetComponent<component::Model>().id_);
-                        auto idle = j.at("Animation").at("IDLE").get<std::string>();
-                        anim.animator_.LoadAnimation(idle);
-                    } catch (const std::exception &e) {
-                        std::cerr << "JSON Animation failed: " << e.what() << '\n';
-                    }
-                }
-            } else {
-                std::cerr << "ERROR: Prefab was not found during creation of Entity.\n";
             }
+
             if (j.contains("Physics") && prefab.has_physics && pw != nullptr) {
                 auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
                 auto &trans = ent->GetComponent<component::Transform>();
@@ -96,12 +109,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(n.part_name) + std::string(" does not contain a physics shape when trying to instatiate."), __LINE__, __FILE__);
                                    },
                                    [&](redengine::Capsule shape) {
-                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale.x, shape.height * trans.scale.x);
-                                       pw->AddCollider(ent->GetID(), capsule, n.position_local * trans.scale.x, n.rotation_local);
+                                       auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale, shape.height * trans.scale);
+                                       pw->AddCollider(ent->GetID(), capsule, n.position_local * trans.scale, n.rotation_local);
                                    },
                                    [&](redengine::Box shape) {
-                                       auto box = physics_engine.CreateBoxShape(shape.extents * static_cast<double>(trans.scale.x));
-                                       pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale.x , n.rotation_local);
+                                       auto box = physics_engine.CreateBoxShape(shape.extents * static_cast<double>(trans.scale));
+                                       pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale, n.rotation_local);
                                    },
                                    [&](redengine::Sphere shape) {
                                        auto sphere = physics_engine.CreateSphereShape(shape.radius);
@@ -110,7 +123,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                n.shape);
                     if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
                         auto pfc = prefab.collision_shapes.at(n.base_shape_name);
-                        pw->AddCollider(ent->GetID(), pfc, n.position_local * trans.scale.x, n.rotation_local);
+                        pw->AddCollider(ent->GetID(), pfc, n.position_local * trans.scale, n.rotation_local);
                     } else {
                         ///Prefab name not found
                     }
@@ -169,24 +182,35 @@ void JSONLoader::LoadPrefabList() {
                     auto model_file_path = base_path / m_path;
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);
                 }
-                if (p.contains("Transform")) {
+
+                auto transform = GetJsonField(p, std::string("Colliders"), std::string("Transform"), JsonType::Json);
+                if (transform.has_value()) {
                     try {
-                        auto transform = p.at("Transform");
-                        auto position = transform.at("Position");
-                        auto rotation = transform.at("Rotation");
-                        auto scale = transform.at("Scale");
-                        prefab.position_local = {
-                            position.at("X").get<float>(),
-                            position.at("Y").get<float>(),
-                            position.at("Z").get<float>()};
-                        prefab.scale_local = {
-                            scale.at("X").get<float>(),
-                            scale.at("Y").get<float>(),
-                            scale.at("Z").get<float>()};
-                        prefab.rotation_local = glm::quat(glm::vec3(
-                            glm::radians(rotation.at("X").get<float>()),
-                            glm::radians(rotation.at("Y").get<float>()),
-                            glm::radians(rotation.at("Z").get<float>())));
+                        auto position_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Position"), JsonType::Json);
+                        auto rotation_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Rotation"), JsonType::Json);
+                        auto scale_field = GetJsonField(transform->get(), std::string("Colliders"), std::string("Scale"), JsonType::Number);
+
+                        if (position_field.has_value()) {
+                            auto x_field = GetJsonField(position_field->get(), std::string("Prefab Position X"), std::string("X"), JsonType::Number);
+                            auto y_field = GetJsonField(position_field->get(), std::string("Prefab Position Y"), std::string("Y"), JsonType::Number);
+                            auto z_field = GetJsonField(position_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
+                            if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                prefab.position_local = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                            }
+                        }
+
+                        if (scale_field.has_value()) {
+                            prefab.scale_local = {scale_field->get().get<double>()};
+                        }
+
+                        if (rotation_field.has_value()) {
+                            auto x_field = GetJsonField(rotation_field->get(), std::string("Prefab Position X"), std::string("X"), JsonType::Number);
+                            auto y_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Y"), std::string("Y"), JsonType::Number);
+                            auto z_field = GetJsonField(rotation_field->get(), std::string("Prefab Position Z"), std::string("Z"), JsonType::Number);
+                            if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                prefab.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                            }
+                        }
                     } catch (const std::exception &e) {
                         std::cerr << "JSON Transform failed: " << e.what() << '\n';
                     }
@@ -198,121 +222,145 @@ void JSONLoader::LoadPrefabList() {
                     if (physics.contains("Static")) {
                         prefab.is_static = physics.at("Static").get<bool>();
                     }
-                    if (true) {
-                        try {
-                            auto colliders = physics.at("Colliders");
-                            if (colliders.is_array()) {
-                                for (auto &json_collider : colliders) {
-                                    redengine::Collider collider;
+                    try {
+                        auto colliders = physics.at("Colliders");
+                        if (colliders.is_array()) {
+                            for (auto &json_collider : colliders) {
+                                redengine::Collider collider;
 
-                                    auto part_name = GetJsonField(json_collider, std::string("Colliders"), std::string("Name"), JsonType::String);
-                                    if (part_name.has_value()) {
-                                        collider.part_name = part_name->get().get<std::string>();
-                                    }
-
-                                    auto mass = GetJsonField(json_collider, std::string("Colliders"), std::string("Mass"), JsonType::Number);
-                                    if (mass.has_value()) {
-                                        collider.mass = json_collider.at("Mass").get<float>();
-                                    } else {
-                                        collider.mass = 1.0f;
-                                    }
-
-                                    auto type_field = GetJsonField(json_collider, std::string("Colliders"), std::string("Type"), JsonType::String);
-                                    if (type_field.has_value()) {
-                                        auto type = type_field->get().get<std::string>();
-
-                                        if (type == "Sphere") {
-                                            auto radius_field = GetJsonField(json_collider, std::string("Type: Sphere"), std::string("Radius"), JsonType::Number);
-                                            if (radius_field.has_value()) {
-                                                collider.shape = redengine::Sphere({radius_field->get().get<double>()});
-                                            }
-                                        } else if (type == "Box") {
-                                            auto extents_field = GetJsonField(json_collider, std::string("Type: Box"), std::string("HalfExtents"), JsonType::Json);
-                                            if (extents_field.has_value()) {
-                                                auto x_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("X"), JsonType::Number);
-                                                auto y_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Y"), JsonType::Number);
-                                                auto z_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Z"), JsonType::Number);
-                                                if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                                    collider.shape = redengine::Box({{x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()}});
-                                                }
-                                            }
-                                        } else if (type == "Capsule") {
-                                            auto radius_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Radius"), JsonType::Number);
-                                            auto height_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Height"), JsonType::Number);
-                                            if (radius_field.has_value() && height_field.has_value()) {
-                                                collider.shape = redengine::Capsule({radius_field->get().get<double>(), height_field->get().get<double>()});
-                                            }
-                                        }
-                                    }
-
-                                    prefab.mass += collider.mass;
-
-                                    if (json_collider.contains("CentreOfMass")) {
-                                        auto com = json_collider.at("CentreOfMass");
-                                        glm::vec3 vec_com = {com.at("X").get<float>(),
-                                                             com.at("Y").get<float>(),
-                                                             com.at("Z").get<float>()};
-                                        collider.centre_of_mass = vec_com;
-                                    } else {
-                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"CentreOfMass\" field, defaulting to {0,0,0}."), __LINE__, __FILE__);
-                                        collider.centre_of_mass = {0.f, 0.f, 0.f};
-                                    }
-
-                                    if (json_collider.contains("Position")) {
-                                        auto position = json_collider.at("Position");
-                                        collider.position_local = {position.at("X").get<float>(),
-                                                                   position.at("Y").get<float>(),
-                                                                   position.at("Z").get<float>()};
-                                    } else {
-                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"Position\" field, defaulting to {0,0,0}."), __LINE__, __FILE__);
-                                        collider.position_local = {0.f, 0.f, 0.f};
-                                    }
-
-                                    if (json_collider.contains("Rotation")) {
-                                        auto rotation = json_collider.at("Rotation");
-                                        collider.rotation_local = glm::quat(glm::vec3(
-                                            glm::radians(rotation.at("X").get<float>()),
-                                            glm::radians(rotation.at("Y").get<float>()),
-                                            glm::radians(rotation.at("Z").get<float>())));
-
-                                    } else {
-                                        console_log.AddLog(ConsoleLog::LogType::Collision, std::string("Collider: ") + std::string(collider.part_name) + std::string(" does not contain \"Rotation\" field, defaulting to no rotation."), __LINE__, __FILE__);
-                                        collider.rotation_local = {1.0f, 0.f, 0.f, 0.f};
-                                    }
-
-                                    prefab.colliders_.push_back(collider);
+                                auto part_name = GetJsonField(json_collider, std::string("Colliders"), std::string("Name"), JsonType::String);
+                                if (part_name.has_value()) {
+                                    collider.part_name = part_name->get().get<std::string>();
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Name\" field, aborting read.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    break;
                                 }
 
-                                //Calculate centre of mass for entire prefab
-                                {
-                                    glm::dvec3 centre_mass{0, 0, 0};
-                                    std::vector<glm::dvec3> weighted_collider_centre_mass;
-                                    for (auto &n : prefab.colliders_) {
-                                        float weight = n.mass / prefab.mass;
-                                        weighted_collider_centre_mass.emplace_back(n.centre_of_mass / weight);
-                                    }
-
-                                    auto average = std::invoke([&]() {
-                                        glm::dvec3 average = {};
-                                        for (auto &n : weighted_collider_centre_mass) {
-                                            average += n;
-                                        }
-                                        return average / static_cast<double>(weighted_collider_centre_mass.size());
-                                    });
-                                    prefab.centre_of_mass = average;
+                                auto mass = GetJsonField(json_collider, std::string("Colliders"), std::string("Mass"), JsonType::Number);
+                                if (mass.has_value()) {
+                                    collider.mass = json_collider.at("Mass").get<float>();
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Mass\" field, defaulting to 1.0kg.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    collider.mass = 1.0f;
                                 }
+
+                                auto type_field = GetJsonField(json_collider, std::string("Colliders"), std::string("Type"), JsonType::String);
+                                if (type_field.has_value()) {
+                                    auto type = type_field->get().get<std::string>();
+
+                                    if (type == "Sphere") {
+                                        auto radius_field = GetJsonField(json_collider, std::string("Type: Sphere"), std::string("Radius"), JsonType::Number);
+                                        if (radius_field.has_value()) {
+                                            collider.shape = redengine::Sphere({radius_field->get().get<double>()});
+                                        }
+                                    } else if (type == "Box") {
+                                        auto extents_field = GetJsonField(json_collider, std::string("Type: Box"), std::string("HalfExtents"), JsonType::Json);
+                                        if (extents_field.has_value()) {
+                                            auto x_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("X"), JsonType::Number);
+                                            auto y_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Y"), JsonType::Number);
+                                            auto z_field = GetJsonField(extents_field->get(), std::string("Type: Box Extents"), std::string("Z"), JsonType::Number);
+                                            if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                                collider.shape = redengine::Box({{x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()}});
+                                            }
+                                        }
+                                    } else if (type == "Capsule") {
+                                        auto radius_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Radius"), JsonType::Number);
+                                        auto height_field = GetJsonField(type_field->get(), std::string("Type: Capsule"), std::string("Height"), JsonType::Number);
+                                        if (radius_field.has_value() && height_field.has_value()) {
+                                            collider.shape = redengine::Capsule({radius_field->get().get<double>(), height_field->get().get<double>()});
+                                        }
+                                    }
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Type\" field, aborting read.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    break;
+                                }
+
+                                prefab.mass += collider.mass;
+
+                                auto com_field = GetJsonField(json_collider, std::string("Colliders"), std::string("CentreOfMass"), JsonType::Json);
+                                if (com_field.has_value()) {
+                                    auto x_field = GetJsonField(com_field->get(), std::string("CentreOfMass X"), std::string("X"), JsonType::Number);
+                                    auto y_field = GetJsonField(com_field->get(), std::string("CentreOfMass Y"), std::string("Y"), JsonType::Number);
+                                    auto z_field = GetJsonField(com_field->get(), std::string("CentreOfMass Z"), std::string("Z"), JsonType::Number);
+                                    if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                        collider.centre_of_mass = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                                    }
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"CentreOfMass\" field, defaulting to {0,0,0}.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    collider.centre_of_mass = {0.f, 0.f, 0.f};
+                                }
+
+                                auto position_field = GetJsonField(json_collider, std::string("Colliders"), std::string("Position"), JsonType::Json);
+                                if (position_field.has_value()) {
+                                    auto x_field = GetJsonField(position_field->get(), std::string("Position X"), std::string("X"), JsonType::Number);
+                                    auto y_field = GetJsonField(position_field->get(), std::string("Position Y"), std::string("Y"), JsonType::Number);
+                                    auto z_field = GetJsonField(position_field->get(), std::string("Position Z"), std::string("Z"), JsonType::Number);
+                                    if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                        collider.position_local = {x_field->get().get<double>(), y_field->get().get<double>(), z_field->get().get<double>()};
+                                    }
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Position\" field, defaulting to {0,0,0}.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    collider.position_local = {0.f, 0.f, 0.f};
+                                }
+
+                                auto rotation_field = GetJsonField(json_collider, std::string("Colliders"), std::string("Rotation"), JsonType::Json);
+                                if (rotation_field.has_value()) {
+                                    auto x_field = GetJsonField(rotation_field->get(), std::string("Rotation X"), std::string("X"), JsonType::Number);
+                                    auto y_field = GetJsonField(rotation_field->get(), std::string("Rotation Y"), std::string("Y"), JsonType::Number);
+                                    auto z_field = GetJsonField(rotation_field->get(), std::string("Rotation Z"), std::string("Z"), JsonType::Number);
+                                    if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
+                                        collider.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<double>()), glm::radians(y_field->get().get<double>()), glm::radians(z_field->get().get<double>())))};
+                                    }
+                                } else {
+                                    std::stringstream error;
+                                    error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Rotation\" field, defaulting to no rotation.";
+                                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+                                    collider.rotation_local = {1.0f, 0.f, 0.f, 0.f};
+                                }
+
+                                prefab.colliders_.push_back(collider);
                             }
-                        } catch (const std::exception &e) {
-                            std::cerr << "BaseShapes does not contain all correct readable information: " << e.what() << '\n';
+
+                            //Calculate centre of mass for entire prefab
+                            {
+                                glm::dvec3 centre_mass{0, 0, 0};
+                                std::vector<glm::dvec3> weighted_collider_centre_mass;
+                                for (auto &n : prefab.colliders_) {
+                                    double weight = n.mass / prefab.mass;
+                                    weighted_collider_centre_mass.emplace_back(n.centre_of_mass / weight);
+                                }
+
+                                auto average = std::invoke([&]() {
+                                    glm::dvec3 average = {};
+                                    for (auto &n : weighted_collider_centre_mass) {
+                                        average += n;
+                                    }
+                                    return average / static_cast<double>(weighted_collider_centre_mass.size());
+                                });
+                                prefab.centre_of_mass = average;
+                            }
                         }
-                    } else {
-                        std::stringstream error;
-                        error << name
-                              << " does not contain a 'BaseShapes' array";
-                        console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
+
+                    } catch (const std::exception &e) {
+                        std::cerr << "BaseShapes does not contain all correct readable information: " << e.what() << '\n';
                     }
-                    console_log.AddLog(ConsoleLog::LogType::Collision, std::string(name) + std::string(" sucessfully added to prefab list"), __LINE__, __FILE__);
+                } else {
+                    std::stringstream error;
+                    error << name
+                          << " does not contain a 'Physics' json object";
+                    console_log.AddLog(ConsoleLog::LogType::Collision, error.str(), __LINE__, __FILE__);
                 }
+                console_log.AddLog(ConsoleLog::LogType::Collision, std::string(name) + std::string(" sucessfully added to prefab list"), __LINE__, __FILE__);
             }
         }
     }

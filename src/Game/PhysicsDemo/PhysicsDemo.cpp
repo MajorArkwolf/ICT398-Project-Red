@@ -94,7 +94,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        auto &trans = entity.AddComponent<component::Transform>();
                                        trans.pos = camera.position_;
                                        trans.rot = {1, 0, 0, 0};
-                                       trans.scale = {1, 1, 1};
+                                       trans.scale = 1;
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
                                        physbody.SetVelocity(camera.front_ * 5.0f);
@@ -112,7 +112,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        auto &trans = entity.AddComponent<component::Transform>();
                                        trans.pos = camera.position_;
                                        trans.rot = {1, 0, 0, 0};
-                                       trans.scale = {1, 1, 1};
+                                       trans.scale = 1;
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
                                        physbody.SetVelocity({0, 0, 0});

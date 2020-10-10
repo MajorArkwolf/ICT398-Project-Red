@@ -41,7 +41,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             auto &prefab = prefabRepo.GetPrefab(prefab_key);
             entity = std::make_shared<Entity>(ecs->CreateEntity());
             auto &ent = entity.value();
-            std::cout << "Entity ID: " << static_cast<size_t>(ent->GetID()) << " Path: " << file_path << std::endl;
             ent->AddComponent<component::Model>(prefab.model_id);
 
             auto &transform_component = ent->AddComponent<component::Transform>();

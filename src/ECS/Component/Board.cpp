@@ -34,7 +34,7 @@ void component::Board::BuildBoard(ECS *ecs) {
             trans.pos.x = new_pos_x;
             trans.pos.y = position_.y;
             trans.pos.z = new_pos_z;
-            trans.scale = 0.0;
+            trans.scale = glm::vec3{node_size_, node_size_, node_size_};
             new_pos_z += node_size_;
             auto &model = node.AddComponent<component::Model>(node_model_);
             model.wire_frame = true;

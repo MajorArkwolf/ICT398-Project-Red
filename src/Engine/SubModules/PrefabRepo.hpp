@@ -14,20 +14,20 @@ struct Sphere {
     double radius = 0;
 };
 struct Box {
-    glm::dvec3 extents = {};
+    glm::vec3 extents = {};
 };
 struct Capsule {
-    double radius = 0;
-    double height = 0;
+    float radius = 0;
+    float height = 0;
 };
 struct Collider {
     std::variant<std::monostate, Sphere, Box, Capsule> shape;
     std::string part_name;
     std::string base_shape_name;
-    glm::dvec3 position_local = {0.0f, 0.0f, 0.0f};
-    glm::dquat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
-    double mass = 0.0;
-    glm::dvec3 centre_of_mass = {0.0f, 0.0f, 0.0f};
+    glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
+    glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
+    float mass = 0.0;
+    glm::vec3 centre_of_mass = {0.0f, 0.0f, 0.0f};
 };
 
 struct prefab {
@@ -35,15 +35,15 @@ struct prefab {
     bool has_model = false;
     size_t model_id = 0;
     std::shared_ptr<Shader> model_shader;
-    glm::dvec3 position_local = {0.0f, 0.0f, 0.0f};
-    glm::dquat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
+    glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
+    glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
     double scale_local = 1.0;
     bool has_animation = false;
     bool has_physics = false;
     bool is_static = false;
     std::map<std::string, physics::PhysicsShape> collision_shapes = {};
     std::vector<Collider> colliders_;
-    double mass = 0.0;
+    float mass = 0.0;
     glm::dvec3 centre_of_mass = {0, 0, 0};
 };
 

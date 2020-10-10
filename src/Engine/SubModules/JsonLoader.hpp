@@ -32,5 +32,5 @@ class JSONLoader {
     static void LoadPrefabList();
 
     private:
-    static std::optional<std::reference_wrapper<nlohmann::json>> GetJsonField(nlohmann::json& input_json, std::string& json_name, std::string& field_name, JsonType expectedType);
+    static std::optional<std::reference_wrapper<nlohmann::json>> GetJsonField(nlohmann::json& input_json, const std::string &json_name, const std::string &field_name, JsonType expectedType);
 };

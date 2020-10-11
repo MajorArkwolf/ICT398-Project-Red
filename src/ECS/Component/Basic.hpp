@@ -36,6 +36,7 @@ namespace component {
         glm::vec3 going_to = glm::vec3{0.f, 0.f, 0.f};
         bool is_moving = false;
         std::queue<entt::entity> move_list{};
+        entt::entity last_node;
         float speed = 1.0f;
     };
 }

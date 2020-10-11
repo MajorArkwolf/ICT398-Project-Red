@@ -1,5 +1,6 @@
 #include "AISystem.hpp"
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Node.hpp"
 #define EPSILON 0.1f
 
 void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
@@ -13,11 +14,12 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                 auto moving_to = ecs.get<component::Transform>(entity_id).pos;
                 auto dist = moving_to - tran.pos;
                 if (!(abs(dist.x) < EPSILON && abs(dist.z) < EPSILON)) {
+                    ecs.get<component::Node>(entity_id).n_o = node_occupancy::occupied;
                     glm::vec3 dir = glm::normalize(moving_to - tran.pos);
                     dir = dir * (move.speed * static_cast<float>(dt));
                     tran.pos += dir;
                     //TODO: THIS DOES NOT WORK YET, Rotation is out and needs to be addressed.
-                    auto quat = glm::quat_cast(glm::lookAt(tran.pos, moving_to, {0.0f, 0.0f, 0.0f}));
+                    auto quat = glm::quat_cast(glm::lookAt(tran.pos, moving_to, {0.0f, 1.0f, 0.0f}));
                     tran.rot = quat;
                     if (ecs.has<component::Animation>(e)) {
                         auto &anim = ecs.get<component::Animation>(e);
@@ -25,6 +27,13 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                         anim.animator_.LoadAnimation("WALK", false);
                     }
                 } else {
+                    if (ecs.has<component::Node>(entity_id)) {
+                        ecs.get<component::Node>(entity_id).n_o = node_occupancy::leaving;
+                    }
+                    if (ecs.has<component::Node>(move.last_node)) {
+                        ecs.get<component::Node>(move.last_node).n_o = node_occupancy::vacant;
+                    }
+                    move.last_node = move.move_list.front();
                     move.move_list.pop();
                 }
             }

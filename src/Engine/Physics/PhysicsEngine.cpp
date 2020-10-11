@@ -17,8 +17,11 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
         for (auto &e : entities) {
             auto &tran = entities.get<component::Transform>(e);
             auto &physBody = entities.get<component::PhysicBody>(e);
+
+            //Semi Implicit Euler Integrator
+            physBody.velocity += physBody.acceleration * dt;
             tran.pos += (physBody.GetVelocity() * dt);
-            //collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
+
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
         }
 

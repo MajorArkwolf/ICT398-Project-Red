@@ -15,13 +15,12 @@ namespace Pathing {
      */
     class Pathfinding {
       public:
-        static int findDistance(Node &nodeA, Node &nodeB, bool oct);
-        static std::vector<Node *> findPath(Grid &nodeGrid, Node &startNode,
-                                            Node &endNode, bool oct);
+        static int findDistance(Node *nodeA, Node *nodeB, bool oct);
+        static std::vector<Node *> findPath(Grid &nodeGrid, Node *startNode,
+                                            Node *endNode, bool oct);
         static bool containsNode(std::vector<Node *> &set, Node *node);
       private:
         static std::vector<Node *> traceRoute(Node *endNode);
         Pathfinding() = default;
-        
     };
 };

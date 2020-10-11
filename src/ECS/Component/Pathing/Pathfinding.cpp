@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <set>
 
 using Pathing::Node;
@@ -16,7 +16,7 @@ using Pathing::Pathfinding;
  * @param oct Whether to find distance assuming traveling to all 8 surrounding nodes rather than 4
  * @return The distance between two nodes on the grid
  */
-int Pathing::Pathfinding::findDistance(Node &nodeA, Node &nodeB, bool oct) {
+int Pathing::Pathfinding::findDistance(Node *nodeA, Node *nodeB, bool oct) {
 
     int diagonalCost = 20;
     int straightCost = 10;
@@ -25,8 +25,8 @@ int Pathing::Pathfinding::findDistance(Node &nodeA, Node &nodeB, bool oct) {
         diagonalCost = 14;
     }
 
-    int dstX = abs(static_cast<int>(nodeA.x) - static_cast<int>(nodeB.x));
-    int dstY = abs(static_cast<int>(nodeA.y) - static_cast<int>(nodeB.y));
+    int dstX = abs(static_cast<int>(nodeA->x) - static_cast<int>(nodeB->x));
+    int dstY = abs(static_cast<int>(nodeA->y) - static_cast<int>(nodeB->y));
 
     if (dstX > dstY) {
         return diagonalCost * dstY + straightCost * (dstX - dstY);
@@ -77,16 +77,16 @@ std::vector<Node *> Pathing::Pathfinding::traceRoute(Node *endNode) {
  * @return The path from the start node to the end node in vector form
  */
  //TODO: This is wildly ineffecient, we could fix this.
-std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node &startNode,
-                                                   Node &endNode, bool oct) {
+std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node *startNode,
+                                                   Node *endNode, bool oct) {
     std::vector<Node *> openSet;
     std::vector<Node *> closedSet;
     nodeGrid.resetGridCosts();
 
-	startNode.occupied = false;
-    endNode.occupied   = false;
+	startNode->occupied = false;
+    endNode->occupied   = false;
 
-    openSet.push_back(&startNode);
+    openSet.push_back(startNode);
 
     while (!openSet.empty()) {
 
@@ -113,10 +113,10 @@ std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node &startNo
         closedSet.push_back(currentNode);
 
         // Path find
-        if (currentNode == &endNode) {
-            startNode.occupied = true;
-            endNode.occupied   = true;
-            return traceRoute(&endNode);
+        if (currentNode == endNode) {
+            startNode->occupied = true;
+            endNode->occupied   = true;
+            return traceRoute(endNode);
 
         }
 
@@ -130,13 +130,13 @@ std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node &startNo
 
             // Calculate costs and set parents
             int newCostToNeighbour =
-                currentNode->gCost + findDistance(*currentNode, *neighbour, oct);
+                currentNode->gCost + findDistance(currentNode, neighbour, oct);
             // std::cout << newCostToNeighbour << std::endl;
 
             if (newCostToNeighbour < neighbour->gCost ||
                 !containsNode(openSet, neighbour)) {
                 neighbour->gCost  = newCostToNeighbour;
-                neighbour->hCost  = findDistance(*neighbour, endNode, oct);
+                neighbour->hCost  = findDistance(neighbour, endNode, oct);
                 neighbour->parent = currentNode;
             }
 
@@ -150,8 +150,8 @@ std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node &startNo
             openSet.push_back(neighbour);
         }
     }
-    startNode.occupied = true;
-    endNode.occupied   = true;
+    startNode->occupied = true;
+    endNode->occupied   = true;
     std::vector<Node *> emptyList;
     return emptyList;
 }

@@ -4,9 +4,10 @@
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Node.hpp"
+#include "ECS/Component/Pathing/Pathfinding.hpp"
 
 component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, const size_t node_y,
-                        const float node_size) : grid_(node_x, node_y) {
+                        const float node_size) : grid_(static_cast<unsigned>(node_x), static_cast<unsigned>(node_y)) {
     auto &mm = redengine::Engine::get().model_manager_;
     auto base_path = redengine::Engine::get().GetBasePath();
     base_path = base_path / "res" / "model" / "cube.obj";
@@ -31,7 +32,9 @@ void component::Board::BuildBoard(ECS *ecs) {
     auto adjusted_size = node_size_ - 0.1;
     auto box_size = glm::vec3(adjusted_size / 2, adjusted_size / 2, adjusted_size /2);
     auto box = pe.CreateBoxShape(box_size);
+    unsigned x = 0, y = 0;
     for (auto &node_array : nodes_) {
+        y = 0;
         float new_pos_z = position_.z;
         for (auto &node : node_array) {
             node = ecs->CreateEntity();
@@ -45,12 +48,17 @@ void component::Board::BuildBoard(ECS *ecs) {
             model.wire_frame = true;
             model.has_color = true;
             model.draw_model = render_nodes_;
-            node.AddComponent<component::node>();
+            auto &node_comp = node.AddComponent<component::Node>();
+            node_comp.grid_node = grid_.getNode(x, y);
             //TODO: Implement a collision objects here.
             auto &pb = node.AddComponent<component::PhysicBody>();
             //pw.AddCollisionBody(node.GetID(), trans.pos, trans.rot);
             //pw.AddCollider(node.GetID(), box, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+            node_to_entity_.insert({node_comp.grid_node, node.GetID()});
+            entity_to_node_.insert({node.GetID(), node_comp.grid_node});
+            ++y;
         }
+        ++x;
         new_pos_x += node_size_;
     }
 }
@@ -66,7 +74,18 @@ void component::Board::ToggleRenderer() {
             node.GetComponent<component::Model>().draw_model = render_nodes_;
         }
     }
-
 }
 
-
+std::queue<entt::entity> component::Board::FindPath(ECS *ecs, entt::entity first_node, entt::entity second_node) {
+    std::queue<entt::entity> node_list = {};
+    auto &reg = ecs->GetRegistry();
+    if (reg.has<component::Node>(first_node) && reg.has<component::Node>(second_node)) {
+        auto *node_comp_first = reg.get<component::Node>(first_node).grid_node;
+        auto *node_comp_second = reg.get<component::Node>(second_node).grid_node;
+        auto result = Pathing::Pathfinding::findPath(grid_, node_comp_first, node_comp_second, true);
+        for (auto &e : result) {
+            node_list.push(node_to_entity_.at(e));
+        }
+    }
+    return node_list;
+}

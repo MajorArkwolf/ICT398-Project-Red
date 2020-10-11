@@ -4,6 +4,7 @@
 #include "ECS/Component/Node.hpp"
 #include "Engine/Engine.hpp"
 #include <glm/matrix.hpp>
+#include "ECS/System/AISystem.hpp"
 
 
 void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
@@ -53,11 +54,11 @@ void System::UpdateAnimation(entt::registry& registry, double t, double dt) {
 }
 
 void System::UpdateColors(entt::registry& registry) {
-    auto entities = registry.view<component::Model, component::node>();
+    auto entities = registry.view<component::Model, component::Node>();
 
     for (auto &e : entities) {
         auto &mod = entities.get<component::Model>(e);
-        auto &node = entities.get<component::node>(e);
+        auto &node = entities.get<component::Node>(e);
         if (mod.draw_model) {
             if (node.n_o == node_occupancy::vacant) {
                 mod.color.r = 0.0f;

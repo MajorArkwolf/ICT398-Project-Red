@@ -54,10 +54,7 @@ void Pathing::Grid::resetGrid() {
  * @return Pointer to node at given coordinate
  */
 Node *Pathing::Grid::getNode(glm::uvec2 pos) {
-    if (pos.x > gridSizeX || pos.y > gridSizeY) {
-        return nullptr;
-    }
-    return &nodeGrid[pos.x][pos.y];
+    return getNode(pos.x, pos.y);
 }
 
 /**
@@ -124,4 +121,12 @@ vector<Node *> Grid::getNeighbours(Node &node, int radius, bool oct) {
     }
 
     return newList;
+}
+
+Node *Pathing::Grid::getNode(unsigned int x, unsigned int y) {
+    if (x >= gridSizeX || y >= gridSizeY) {
+        assert(false);
+        return nullptr;
+    }
+    return &nodeGrid[x][y];
 }

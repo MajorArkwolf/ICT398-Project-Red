@@ -60,6 +60,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     ECS/Component/Pathing/Pathfinding.cpp
     #--Systems
     ECS/System/System.cpp
+    ECS/System/AISystem.cpp
 )
 
 # Include project header files.

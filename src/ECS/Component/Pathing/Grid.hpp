@@ -24,6 +24,7 @@ namespace Pathing {
         void resetGridCosts();
         void resetGrid();
         Node *getNode(glm::uvec2 pos);
+        Node *getNode(unsigned x, unsigned y);
         void resizeGrid(unsigned x, unsigned y);
 
         /// 2Dimensional Vector of nodes

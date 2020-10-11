@@ -22,13 +22,38 @@ namespace component {
        public:
         bool static_object = false;
         size_t id = 0;
-        glm::dvec3 velocity = {};
-        double mass = 0.0;
-        glm::dvec3 centre_mass = {0, 0, 0};
+
+        struct State {
+            //primary
+            glm::vec3 position = {};
+            glm::vec3 momentum = {};
+
+            //Secondary
+            glm::vec3 velocity = {};
+
+            //constant 
+            float mass = 0;
+            float inverseMass = 0;
+            void Recalculate();
+        } state;
+
+        struct Derivative {
+            glm::vec3 velocity = {};
+            glm::vec3 force = {};
+        } derivative;
+
+
+        //Constants
+        float mass = 0.0;
+        float inverse_mass = 0.0;
+        glm::vec3 centre_mass = {0, 0, 0};
+
+
+        //Colliders
         std::vector<redengine::Collider> colliders;
         //tensorflow mat3
-        void AddForce(glm::dvec3 additional_force);
-        void SetVelocity(glm::dvec3 new_velocity);
-        glm::dvec3 GetVelocity() const;
+
+        void AddForce(glm::vec3 additional_force);
+
     };
 }

@@ -30,8 +30,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                     glm::vec3 dir = glm::normalize(moving_to - tran.pos);
                     dir = dir * (move.speed * static_cast<float>(dt));
                     tran.pos += dir;
-                    auto quat = glm::quat_cast(glm::lookAt(tran.pos, moving_to, {0.0f, 1.0f, 0.0f}));
-                    tran.rot = quat;
+                    tran.rot = glm::quatLookAt(glm::normalize(tran.pos - moving_to), {0.0f, 1.0f, 0.0f});
                     if (ecs.has<component::Animation>(e)) {
                         auto &anim = ecs.get<component::Animation>(e);
                         anim.animator_.LoadAnimation("WALK", false);

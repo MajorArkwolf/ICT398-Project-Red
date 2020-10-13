@@ -131,13 +131,13 @@ void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const
 }
 
 void CollisionDetection::FixedUpdate(double t, double dt) {
-    //auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    //physics_world.world_->update(dt);
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    physics_world.world_->update(dt);
 }
 
 void CollisionDetection::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    physics_world.world_->update(dt);
+    //physics_world.world_->update(dt);
     if (physics_world.renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
         line_num_ = debug_renderer.getNbLines();
@@ -165,7 +165,7 @@ PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
     return PhysicsShape(physics_common_.createBoxShape(ConvertVector(extents)), ShapeType::Box);
 }
 
-PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
+PhysicsShape CollisionDetection::CreateCapsuleShape(float radius, float height) {
     return PhysicsShape(physics_common_.createCapsuleShape(radius, height), ShapeType::Capsule);
 }
 

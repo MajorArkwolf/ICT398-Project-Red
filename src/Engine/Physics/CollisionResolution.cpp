@@ -35,18 +35,18 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto& first_physbody = first_object->GetComponent<component::PhysicBody>();
     auto& second_physbody = second_object->GetComponent<component::PhysicBody>();
 
-    auto relative_velocity = second_physbody.GetVelocity() - first_physbody.GetVelocity();
+    auto relative_velocity = second_physbody.linear_velocity - first_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
-        auto relative_normal_velocity = glm::dot(relative_velocity, static_cast<glm::dvec3>(n.world_normal));
+        auto relative_normal_velocity = glm::dot(relative_velocity, n.world_normal);
         if (relative_normal_velocity >= 0) {
-            auto impulse_scalar = (-1.0) * relative_normal_velocity;
+            auto impulse_scalar = (-1.0f) * relative_normal_velocity;
             impulse_scalar /= (first_physbody.mass + second_physbody.mass);
-            auto impulse = impulse_scalar * static_cast<glm::dvec3>(n.world_normal);
-            first_physbody.velocity -= (second_physbody.mass * impulse);
-            second_physbody.velocity += (first_physbody.mass * impulse);
+            auto impulse = impulse_scalar * n.world_normal;
+            first_physbody.linear_velocity -= (second_physbody.mass * impulse);
+            second_physbody.linear_velocity += (first_physbody.mass * impulse);
             const auto k_slop = 0.01f;// Penetration allowance
             const auto percent = 0.1f;// Penetration percentage to correct
-            auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * static_cast<glm::dvec3>(n.world_normal);
+            auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * n.world_normal;
             first_transform.pos += first_physbody.mass * correction;
             second_transform.pos -= second_physbody.mass * correction;
         } else {

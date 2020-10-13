@@ -1,59 +1,48 @@
 #pragma once
-#include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/vec3.hpp>
+
 #include "DataStructures/Model/Animator.hpp"
 #include "Engine/SubModules/PrefabRepo.hpp"
 
 namespace component {
-    struct Transform {
-        glm::vec3 pos = {0.0f, 0.0f, 0.0f};
-        glm::quat rot = {1.0f, 0.0f, 0.0f, 0.0f};
-        glm::vec3 scale = {1.0f, 1.0f, 1.0f};
-    };
+struct Transform {
+    glm::vec3 pos = {0.0f, 0.0f, 0.0f};
+    glm::quat rot = {1.0f, 0.0f, 0.0f, 0.0f};
+    glm::vec3 scale = {1.0f, 1.0f, 1.0f};
+};
 
-    struct Animation {
-        explicit Animation(size_t modelID) {
-            animator_.LinkToModel(modelID);
-        }
-        ::model::Animator animator_ = {};
-    };
+struct Animation {
+    explicit Animation(size_t modelID) {
+        animator_.LinkToModel(modelID);
+    }
+    ::model::Animator animator_ = {};
+};
 
-    class PhysicBody {
-       public:
-        bool static_object = false;
-        size_t id = 0;
+class PhysicBody {
+   public:
+    bool static_object = false;
+    size_t id = 0;
+    //Primary
+    glm::vec3 position = {};
+    glm::quat orientation = {};
+    glm::mat3x3 inertia_tensor = {};
 
-        struct State {
-            //primary
-            glm::vec3 position = {};
-            glm::vec3 momentum = {};
+    //Secondary
+    glm::vec3 linear_velocity = {};
+    glm::vec3 angular_velocity = {};
+    glm::vec3 added_force = {};
+    glm::vec3 added_torque = {};
 
-            //Secondary
-            glm::vec3 velocity = {};
+    //Constants
+    float mass = 0.0;
+    float inverse_mass = 0.0;
+    glm::vec3 centre_mass = {0, 0, 0};
 
-            //constant 
-            float mass = 0;
-            float inverseMass = 0;
-            void Recalculate();
-        } state;
+    //Colliders
+    std::vector<redengine::Collider> colliders;
+    //tensorflow mat3
 
-        struct Derivative {
-            glm::vec3 velocity = {};
-            glm::vec3 force = {};
-        } derivative;
-
-
-        //Constants
-        float mass = 0.0;
-        float inverse_mass = 0.0;
-        glm::vec3 centre_mass = {0, 0, 0};
-
-
-        //Colliders
-        std::vector<redengine::Collider> colliders;
-        //tensorflow mat3
-
-        void AddForce(glm::vec3 additional_force);
-
-    };
-}
+    void AddForce(glm::vec3 additional_force);
+};
+}// namespace component

@@ -91,7 +91,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};;
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
-                                       physbody.SetVelocity(camera.front_ * 5.0f);
+                                       physbody.AddForce(camera.front_ * 5.0f);
                                        physbody.mass = 1;
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
@@ -109,7 +109,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
-                                       physbody.SetVelocity({0, 0, 0});
+                                       physbody.AddForce({0, 0, 0});
                                        physbody.mass = 1;
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);

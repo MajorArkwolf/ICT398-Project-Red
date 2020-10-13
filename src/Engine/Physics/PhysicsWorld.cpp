@@ -116,6 +116,22 @@ void PhysicsWorld::ToggleRenderer() {
     }
 }
 
+bool physics::PhysicsWorld::IsGravityEnabled() {
+    return gravity_enabled;
+}
+
+void physics::PhysicsWorld::SetGravityEnabled(bool enabled) {
+    gravity_enabled = enabled;
+}
+
+const glm::vec3& physics::PhysicsWorld::GetGravity() {
+    return gravity;
+}
+
+void physics::PhysicsWorld::SetGravity(const glm::vec3& gravity_) {
+    gravity = gravity_;
+}
+
 ECS* physics::PhysicsWorld::GetECS() {
     return ecs_;
 }

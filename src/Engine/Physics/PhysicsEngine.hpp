@@ -102,6 +102,10 @@ namespace physics {
          */
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance);
 
+        void IntegrateVelocities(double dt);
+        void IntegratePositions(double dt);
+        void ResetAddedForces();
+
     private:
         CollisionDetection collision_detection_ = {};
         CollisionResolution collision_resolution_ = {};

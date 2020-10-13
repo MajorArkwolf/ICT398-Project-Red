@@ -1,7 +1,7 @@
 {
-  "Name": "Guy1",
+  "Name": "Female1",
   "Model": {
-    "ModelFilePath": "res/model/Character/BlueLight.gltf",
+    "ModelFilePath": "res/model/Character/BlueLightFemale.gltf",
     "ShaderFilePath": "res/shader/model_shader"
   },
   "Transform": {
@@ -15,7 +15,11 @@
       "Y": 0.0,
       "Z": 0.0
     },
-    "Scale": 1.0
+    "Scale": {
+      "X": 0.1,
+      "Y": 0.1,
+      "Z": 0.1
+    }
   },
   "Physics": {
     "Static": false,

@@ -58,11 +58,13 @@ Characteristics::Characteristics(float mood_in,
           traits(traits_in),
           personality(personality_in) {}
 
-BehaviourState::BehaviourState(npc::Stages current_in, double current_d_in,
-                               npc::Stages prior_in, double prior_d_in)
+BehaviourState::BehaviourState(npc::Stages current_in, int steps_current_in,
+                               int steps_accumulated_in, npc::Stages prior_in,
+                               int steps_prior_in)
         : current(current_in),
-          current_d(current_d_in),
+          steps_current(steps_current_in),
+          steps_accumulated(steps_accumulated_in),
           prior(prior_in),
-          prior_d(prior_d_in) {}
+          steps_prior(steps_prior_in) {}
 
 } // namespace component

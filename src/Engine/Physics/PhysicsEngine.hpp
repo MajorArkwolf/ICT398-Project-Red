@@ -75,7 +75,7 @@ namespace physics {
 
         PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-        PhysicsShape CreateCapsuleShape(double radius, double height);
+        PhysicsShape CreateCapsuleShape(float radius, float height);
 
         PhysicsShape CreateSphereShape(double radius);
 

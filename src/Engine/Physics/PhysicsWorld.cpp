@@ -115,3 +115,7 @@ void PhysicsWorld::ToggleRenderer() {
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
     }
 }
+
+ECS* physics::PhysicsWorld::GetECS() {
+    return ecs_;
+}

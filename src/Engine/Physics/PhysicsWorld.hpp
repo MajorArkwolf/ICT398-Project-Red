@@ -34,6 +34,7 @@ namespace physics {
         PhysicsWorld &operator=(PhysicsWorld &&) = default;
 
         void SetECS(ECS *ecs);
+        ECS *GetECS();
 
         reactphysics3d::PhysicsWorld *GetWorld();
 
@@ -68,6 +69,8 @@ namespace physics {
         bool GetRendererStatus() const {return renderer_;}
 
         void ToggleRenderer();
+
+
 
     private:
         bool renderer_ = false;

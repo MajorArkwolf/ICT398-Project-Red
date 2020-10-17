@@ -50,31 +50,53 @@ void NPCIdle(entt::registry& registry, entt::entity& entity) {
 
 }
 
-void NPCsFixedUpdate(entt::registry& registry, double t, double dt) {
+void NPCsUpdate(entt::registry& registry, double t, double dt) {
     // Loop through the NPCs that have all of the required data structures
     auto npc_view = registry.view<component::BDI, component::Characteristics, component::BehaviourState>();
     for (auto npc_entity: npc_view) {
-        // Get the NPC's BehaviourState and update the current behaviour's step counters
+        // Get the NPC's BehaviourState and update the current behaviour state's delta timers
         auto npc_state = npc_view.get<component::BehaviourState>(npc_entity);
-        npc_state.steps_current++;
-        npc_state.steps_accumulated++;
+        npc_state.current_dt += dt;
+        npc_state.emotion_turnover_dt += dt;
 
-        // Get the NPC's characteristics and gradually reduce the intensity of its mood
+        // Get the NPC's characteristics and calculate the mood reduction amount
         auto npc_characteristics = npc_view.get<component::Characteristics>(npc_entity);
+        float mood_reduction = MOOD_INTENSITY_REDUCTION_RATE * dt;
+
+        // Decrease the intensity of the NPC's mood
         if (npc_characteristics.mood < 0.0f) {
-            npc_characteristics.mood += MOOD_INTENSITY_REDUCTION_RATE * dt;
+            // Catch reductions that would cause a swing in the type of mood
+            if (0.0f < npc_characteristics.mood + mood_reduction) {
+                // Make the NPC's mood fully neutral/apathetic
+                npc_characteristics.mood = 0.0f;
+            }
+            else {
+                // Make the NPC's mood slightly less negative
+                npc_characteristics.mood += mood_reduction;
+            }
         }
         else {
-            npc_characteristics.mood -= MOOD_INTENSITY_REDUCTION_RATE * dt;
+            // Catch reductions that would cause a swing in the type of mood
+            if (npc_characteristics.mood - mood_reduction < 0.0f) {
+                // Make the NPC's mood fully neutral/apathetic
+                npc_characteristics.mood = 0.0f;
+            }
+            else {
+                // Make the NPC's mood slightly less positive
+                npc_characteristics.mood -= mood_reduction;
+            }
         }
 
         // Gradually reduce the contents of the NPC's emotional queue
-        if (npc_state.steps_accumulated * dt * EMOTION_QUEUE_TURNOVER_RATE >= 1.0f) {
+        if (1.0f < npc_state.emotion_turnover_dt * EMOTION_QUEUE_TURNOVER_RATE) {
             // Avoid popping the emotion queue if it is empty
             if (!npc_characteristics.emotions.empty()) {
                 // Pop the oldest emotion from the NPC's emotional queue
                 npc_characteristics.emotions.pop();
             }
+
+            // Clear the NPC's emotional turnover timer
+            npc_state.emotion_turnover_dt = 0.0f;
         }
 
         // Check the NPC's current state and call the appropriate behaviour state manager

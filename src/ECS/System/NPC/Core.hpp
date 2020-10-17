@@ -71,7 +71,7 @@ void NPCIdle(entt::registry& registry, entt::entity& entity);
      * @param [in] t The current time.
      * @param [in] dt The delta time from the previous call.
      */
-void NPCsFixedUpdate(entt::registry& registry, double t, double dt);
+void NPCsUpdate(entt::registry& registry, double t, double dt);
 
     /**
      * @brief Initializes NPC system and component dependencies.

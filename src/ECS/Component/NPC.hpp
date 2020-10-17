@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <queue>
+#include <deque>
 #include <set>
 #include <tuple>
 #include <utility>
@@ -310,7 +310,7 @@ struct Characteristics {
          * @brief A collection of short-term reactions to specific events and observations.
          * Ideally, the contents should be popped out from the queue over a period of time.
          */
-    std::queue<EmotiveResponse> emotions;
+    std::deque<EmotiveResponse> emotions;
 
         /**
          * @brief A long-term emotive state, influenced by the generation of new emotions.

@@ -1,12 +1,17 @@
 #include "Core.hpp"
 
 #include "ECS/Component/NPC.hpp"
+#include "ECS/System/NPC/Tools.hpp"
 
 namespace System {
 
-const static int EMOTION_QUEUE_TURNOVER_RATE = 1.0f / 240.0f;
+const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0f / 240.0f;
 
-const static float MOOD_INTENSITY_REDUCTION_RATE = 1.0f / 360.0f;
+const static double MOOD_INTENSITY_REDUCTION_RATE = 1.0f / 360.0f;
+
+const static double VARIABLE_IDLE_TIME = 3.5f;
+
+const static double MINIMUM_IDLE_TIME = 1.0f;
 
 void NPCInit(entt::registry& registry, entt::entity& entity) {
     // Regenerate default values for all NPC components
@@ -47,7 +52,16 @@ void NPCRespond(entt::registry& registry, entt::entity& entity) {
 }
 
 void NPCIdle(entt::registry& registry, entt::entity& entity) {
+    // Calculate the NPC's idle time limit, relative to its overall mood intensity
+    auto npc_characteristics = registry.get<component::Characteristics>(entity);
+    double idle_time_limit = MINIMUM_IDLE_TIME + VARIABLE_IDLE_TIME * EmotionalStateOverallIntensity(npc_characteristics);
 
+    // Catch if the NPC should be idling any longer
+    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    if (idle_time_limit < npc_behaviour_state.current_dt) {
+        // Move back to the observation state
+        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+    }
 }
 
 void NPCsUpdate(entt::registry& registry, double t, double dt) {
@@ -61,7 +75,7 @@ void NPCsUpdate(entt::registry& registry, double t, double dt) {
 
         // Get the NPC's characteristics and calculate the mood reduction amount
         auto npc_characteristics = npc_view.get<component::Characteristics>(npc_entity);
-        float mood_reduction = MOOD_INTENSITY_REDUCTION_RATE * dt;
+        auto mood_reduction = (float) (MOOD_INTENSITY_REDUCTION_RATE * dt);
 
         // Decrease the intensity of the NPC's mood
         if (npc_characteristics.mood < 0.0f) {
@@ -92,7 +106,7 @@ void NPCsUpdate(entt::registry& registry, double t, double dt) {
             // Avoid popping the emotion queue if it is empty
             if (!npc_characteristics.emotions.empty()) {
                 // Pop the oldest emotion from the NPC's emotional queue
-                npc_characteristics.emotions.pop();
+                npc_characteristics.emotions.pop_front();
             }
 
             // Clear the NPC's emotional turnover timer

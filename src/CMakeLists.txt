@@ -62,6 +62,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Systems
     ECS/System/System.cpp
     ECS/System/NPC/Core.cpp
+    ECS/System/NPC/Tools.cpp
 )
 
 # Include project header files.

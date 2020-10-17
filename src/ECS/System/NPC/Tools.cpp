@@ -37,4 +37,15 @@ float EmotionalStateIntensity(component::Characteristics& target) {
     return intensity;
 }
 
+void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_state,
+                            double starting_dt) {
+    // Copy the current values from the current state to the prior
+    target.prior = target.current;
+    target.prior_dt = target.current_dt;
+
+    // Assign the current state the newly provided values
+    target.current = new_state;
+    target.current_dt = starting_dt;
+}
+
 } // namespace System

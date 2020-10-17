@@ -58,7 +58,7 @@ void NPCRespond(entt::registry& registry, entt::entity& entity);
 
     /**
      * @brief Keeps an NPC idle, relative to its characteristics.
-     * An NPC with an apathetic mood will remain idle for longer.
+     * An NPC with a neutral/apathetic mood will remain idle for longer.
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */
@@ -74,8 +74,8 @@ void NPCIdle(entt::registry& registry, entt::entity& entity);
 void NPCsUpdate(entt::registry& registry, double t, double dt);
 
     /**
-     * @brief Initializes NPC system and component dependencies.
-     * Ensures that any construction or destruction of NPC components remains in sync.
+     * @brief Initializes the EnTT configuration of NPC system and component dependencies.
+     * This ensures that any construction or destruction of NPC components remains in sync.
      * @note Only required to be called once, but should be safe to call repeatedly.
      */
 void NPCSystemInit(entt::registry& registry);

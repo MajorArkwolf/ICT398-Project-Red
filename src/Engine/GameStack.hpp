@@ -60,28 +60,43 @@ class GameStack {
         return game_stack_.top();
     }
     /**
-     * Deletes the top element
+     * Get ready to pop the top.
      */
     void popTop() {
         remove_top_flag_ = true;
     }
 
+    /**
+     * Checks if the top is ready to pop and if so pop up.
+     */
     void checkTop() {
         if (remove_top_flag_) {
             removeTop();
         }
     }
 
+    /**
+     * Checks to see if the stack wants to deallocate something.
+     * @return true if ready.
+     */
     bool isRemoveTopFlag() const {
         return remove_top_flag_;
     }
 
+    /**
+     * Checks to see if deallocating will cause their to be no scene.
+     * @return true if 1 or less is on the stack.
+     */
     bool WillBeEmpty() {
         return game_stack_.size() <= 1;
     }
 
+    /**
+     * Checks to see if the stack is empty.
+     * @return true if empty
+     */
     bool Empty() {
-        return game_stack_.size() == 0;
+        return game_stack_.empty();
     }
 
     void Clear() {
@@ -96,7 +111,7 @@ private:
     std::stack<T> game_stack_;
 
     /*
-     * Finds an element on the stack.
+     * Removes the top when its safe to do so.
      */
     void removeTop() {
         game_stack_.pop();

@@ -44,7 +44,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             auto &model = ent->AddComponent<component::Model>(prefab.model_id);
             model.draw_model = prefab.render;
 
-
             auto &transform_component = ent->AddComponent<component::Transform>();
             auto transform = GetJsonField(j, "Colliders", "Transform", JsonType::Json);
             if (transform.has_value()) {
@@ -128,29 +127,25 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                    [&](redengine::Capsule shape) {
                                        auto capsule = physics_engine.CreateCapsuleShape(shape.radius * trans.scale.x, shape.height * trans.scale.y);
                                        pw->AddCollider(ent->GetID(), capsule, n.position_local * trans.scale, n.rotation_local);
+                                       console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " added capsule shape.", __LINE__, __FILE__);
                                    },
                                    [&](redengine::Box shape) {
                                        auto box = physics_engine.CreateBoxShape(shape.extents * trans.scale.x);
                                        pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale.x, n.rotation_local);
+                                       console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " added box shape.", __LINE__, __FILE__);
                                    },
                                    [&](redengine::Sphere shape) {
                                        auto sphere = physics_engine.CreateSphereShape(shape.radius);
                                        pw->AddCollider(ent->GetID(), sphere, n.position_local, n.rotation_local);
+                                       console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " added sphere shape.", __LINE__, __FILE__);
                                    }},
                                n.shape);
-                    if (prefab.collision_shapes.find(n.base_shape_name) != prefab.collision_shapes.end()) {
-                        auto pfc = prefab.collision_shapes.at(n.base_shape_name);
-                        pw->AddCollider(ent->GetID(), pfc, n.position_local * trans.scale, n.rotation_local);
-                    } else {
-                        ///Prefab name not found
-                    }
                 }
 
                 auto static_field = GetJsonField(j, prefab.name, "Static", JsonType::Boolean);
                 if (static_field.has_value()) {
                     phys.static_object = static_field->get().get<bool>();
-                    
-                } 
+                }
                 if (phys.static_object) {
                     phys.mass = 50000;
                     phys.inverse_mass = 1 / phys.mass;
@@ -214,7 +209,6 @@ void JSONLoader::LoadPrefabList() {
                 if (j.contains("Render")) {
                     prefab.render = j.at("Render").get<bool>();
                 }
-
 
                 auto transform = GetJsonField(p, "Colliders", "Transform", JsonType::Json);
                 if (transform.has_value()) {

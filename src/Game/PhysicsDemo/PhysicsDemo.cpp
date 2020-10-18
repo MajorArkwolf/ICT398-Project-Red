@@ -24,6 +24,7 @@ PhysicsDemo::PhysicsDemo() {
     path.append("PhysicsDemo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+
 }
 
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
@@ -91,8 +92,9 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};;
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
-                                       physbody.AddForce(camera.front_ * 5.0f);
-                                       physbody.mass = 1;
+                                       physbody.AddForce(camera.front_ * 500.0f);
+                                       physbody.mass = 0.1;
+                                       physbody.inverse_mass = 1/0.1;
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
                                        physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
@@ -110,7 +112,8 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
 
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
                                        physbody.AddForce({0, 0, 0});
-                                       physbody.mass = 1;
+                                       physbody.mass = INT_MAX;
+                                       physbody.inverse_mass = 1/INT_MAX;
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
                                        physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
@@ -138,8 +141,9 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                    case input::VirtualKey::D: {
                                        right_ = true;
                                    } break;
-                                   case input::VirtualKey::kEscape: {
-
+                                   case input::VirtualKey::M: {
+                                       physics_world_.SetGravity(glm::vec3(0, -9.8f, 0));
+                                       physics_world_.SetGravityEnabled(true);
                                    } break;
                                }
                            } break;

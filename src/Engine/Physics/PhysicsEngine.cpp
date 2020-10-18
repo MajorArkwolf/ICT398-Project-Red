@@ -13,7 +13,6 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
     IntegratePositions(dt);
     collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     ResetAddedForces();
-
 }
 
 void PhysicsEngine::Update(double t, double dt) {
@@ -90,10 +89,11 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
             for (auto &e : entities) {
                 auto &tran = entities.get<component::Transform>(e);
                 auto &phys_body = entities.get<component::PhysicBody>(e);
+                if (!phys_body.static_object) {
+                    auto &linear_velocity = phys_body.linear_velocity;
 
-                auto &linear_velocity = phys_body.linear_velocity;
-
-                linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
+                    linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
+                }
             }
         }
     }
@@ -112,14 +112,13 @@ void physics::PhysicsEngine::IntegratePositions(double dt) {
 
             auto &linear_velocity = phys_body.linear_velocity;
             auto &angular_velocity = phys_body.angular_velocity;
-            auto &position = phys_body.position;
-            auto &orientation = phys_body.orientation;
 
-            position += linear_velocity * glm::vec3(dt);
-            orientation += glm::quat(0.f, angular_velocity) * orientation * 0.5f * float(dt);
 
-            tran.pos = phys_body.position;
-            tran.rot = phys_body.orientation;
+            tran.pos += linear_velocity * glm::vec3(dt);
+            tran.rot += glm::quat(0.f, angular_velocity) * tran.rot * 0.5f * float(dt);
+
+
+            physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
         }
     }
 }

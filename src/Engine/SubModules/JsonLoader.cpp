@@ -41,7 +41,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             auto &prefab = prefabRepo.GetPrefab(prefab_key);
             entity = std::make_shared<Entity>(ecs->CreateEntity());
             auto &ent = entity.value();
-            ent->AddComponent<component::Model>(prefab.model_id);
+            auto &model = ent->AddComponent<component::Model>(prefab.model_id);
+            model.draw_model = prefab.render;
+
 
             auto &transform_component = ent->AddComponent<component::Transform>();
             auto transform = GetJsonField(j, "Colliders", "Transform", JsonType::Json);
@@ -144,8 +146,19 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                     }
                 }
 
+                auto static_field = GetJsonField(j, "Entity Physics Creation", "Static", JsonType::Boolean);
+                if (static_field.has_value()) {
+                    phys.static_object = static_field->get().get<bool>();
+                    
+                } 
+                if (phys.static_object) {
+                    phys.mass = 99999999;
+                    phys.inverse_mass = 1 / phys.mass;
+                } else {
+                    phys.mass = prefab.mass;
+                    phys.inverse_mass = 1 / prefab.mass;
+                }
                 phys.colliders = prefab.colliders_;
-                phys.mass = prefab.mass;
                 phys.centre_mass = prefab.centre_of_mass;
             }
         } else {
@@ -196,6 +209,11 @@ void JSONLoader::LoadPrefabList() {
                     std::filesystem::path m_path = p.at("Model").at("ModelFilePath").get<std::string>();
                     auto model_file_path = base_path / m_path;
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);
+                }
+
+                auto render_field = GetJsonField(p, "Base", "Render", JsonType::Boolean);
+                if (render_field.has_value()) {
+                    prefab.render = render_field->get().get<bool>();
                 }
 
                 auto transform = GetJsonField(p, "Colliders", "Transform", JsonType::Json);

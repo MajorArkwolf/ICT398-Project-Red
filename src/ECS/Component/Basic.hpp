@@ -22,10 +22,9 @@ struct Animation {
 class PhysicBody {
    public:
     bool static_object = false;
+    bool is_sleeping = false;
     size_t id = 0;
     //Primary
-    glm::vec3 position = {};
-    glm::quat orientation = {};
     glm::mat3x3 inertia_tensor = {};
 
     //Secondary

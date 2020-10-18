@@ -1,9 +1,6 @@
 {
-  "Name": "Desk",
-  "Model": {
-    "ModelFilePath": "res/model/Desk/Desk.fbx",
-    "ShaderFilePath": "res/shader/model_shader"
-  },
+  "Name": "UnitTestBlock",
+  "Render" : false,
   "Transform": {
     "Position": {
       "X": 0.0,
@@ -12,7 +9,7 @@
     },
     "Rotation": {
       "X": 0.0,
-      "Y": 0.0,
+      "Y": 90.0,
       "Z": 0.0
     },
     "Scale": 1.0
@@ -22,24 +19,24 @@
     "Collision_Shapes": "Yes",
     "Colliders": [
       {
-        "Name": "Flat",
+        "Name": "Wall",
         "Type": "Box",
         "HalfExtents": {
-          "X": 49,
-          "Y": 1.5,
-          "Z": 36
+          "X": 0.5,
+          "Y": 15,
+          "Z": 10
         },
         "Position": {
-          "X": 0,
-          "Y": 77,
-          "Z": 31
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
         },
         "Rotation": {
           "X": 0.0,
           "Y": 0.0,
           "Z": 0.0
         },
-        "Mass": 1,
+        "Mass": 2.0,
         "CentreOfMass": {
           "X": 0.0,
           "Y": 0.0,
@@ -48,4 +45,5 @@
       }
     ]
   }
+
 }

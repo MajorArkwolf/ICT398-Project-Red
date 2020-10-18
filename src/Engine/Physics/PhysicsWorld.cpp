@@ -72,6 +72,7 @@ void PhysicsWorld::AddCollisionBody(const entt::entity& entity_id, const glm::ve
 void PhysicsWorld::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
     if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
         auto body = entity_collision_coupling_.at(entity_id);
+        assert(body != nullptr);
         reactphysics3d::Transform new_transform(ConvertVector(pos), ConvertQuaternion(rot));
         body->setTransform(new_transform);
     }

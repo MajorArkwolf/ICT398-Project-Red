@@ -42,7 +42,7 @@ void physics::RedEngineEventListener::onContact(const reactphysics3d::CollisionC
             // Get the contact point
             CollisionCallback::ContactPoint contact_point = contact_pair.getContactPoint(c);
             c_p.penetration = contact_point.getPenetrationDepth();
-            c_p.world_normal = ConvertVector(contact_point.getWorldNormal());
+            c_p.collision_normal = ConvertVector(contact_point.getWorldNormal());
 
             // Get the contact point on the first collider and convert it in world-space
             c_p.first_body_contact_point = ConvertVector(

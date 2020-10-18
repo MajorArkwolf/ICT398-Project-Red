@@ -70,7 +70,10 @@ namespace physics {
 
         void ToggleRenderer();
 
-
+        bool IsGravityEnabled();
+        void SetGravityEnabled(bool enabled);
+        void SetGravity(const glm::vec3& gravity);
+        const glm::vec3 &GetGravity();
 
     private:
         bool renderer_ = false;
@@ -84,6 +87,8 @@ namespace physics {
         RedEngineEventListener event_listener_;
 
         void AddBodyAndEntt(entt::entity entity, reactphysics3d::CollisionBody *coll_body);
+        bool gravity_enabled = false;
+        glm::vec3 gravity = {};
 
 
     };

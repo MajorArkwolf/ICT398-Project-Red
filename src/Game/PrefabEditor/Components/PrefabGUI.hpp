@@ -45,11 +45,16 @@ private:
     /// physics menu that will let you add collidors.
 
 
+    //Save stuff
+    std::string save_location;
+    nlohmann::json save_json;
+
     //------Component Menu's-------
     bool model_component_ = false;
     bool transform_component_ = false;
     bool physics_edit_menu = false;
     bool affordance_edit_menu = false;
+    bool save_to = false;
 
     ImVec2 button_size_ = ImVec2(150, 30);
 
@@ -92,4 +97,10 @@ private:
      * Affordance Menu
      */
     void AffordanceMenu();
+
+    /**
+     * Save To Menu
+     * Used to save a json to a place
+     */
+    void SaveTo();
 };

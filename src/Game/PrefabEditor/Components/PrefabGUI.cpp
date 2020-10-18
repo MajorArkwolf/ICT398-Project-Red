@@ -4,6 +4,7 @@
 #include "ECS/Component/Model.hpp"
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <nlohmann/json.hpp>
 
 
 namespace ImGui
@@ -45,6 +46,7 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     transform_component_ ? TransformComponentMenu() : (void)0;
     physics_edit_menu ? PhysicsMainMenu() : (void)0;
     affordance_edit_menu ? AffordanceMenu() : (void)0;
+    save_to ? SaveTo() : (void)0;
 
 
     if (prefab_loaded_.has_model) {
@@ -130,8 +132,9 @@ void PrefabGUI::MainEntityMenu() {
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
         redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
-        //TODO: This needs to also serialise out to a JSON file.
-        main_menu_ = true;
+        redengine::prefab::to_json(save_json, prefab_loaded_);
+        save_to = true;
+        //main_menu_ = true;
         main_edit_menu_ = false;
     }
     if (ImGui::Button("Close, Dont Save", button_size_)) {
@@ -229,6 +232,31 @@ void PrefabGUI::PhysicsMainMenu() {
 // TODO: Implement this
 void PrefabGUI::AffordanceMenu() {
 
+}
+
+void PrefabGUI::SaveTo() {
+    static char location[100] = {'\0'};
+    ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
+    ImGui::SetNextWindowSize(ImVec2(250, 500), 1);
+    ImGui::Begin("Save to...", &save_to,
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Text("Path relative from prefab. Please include extension (.json)");
+    ImGui::InputText("Location", location, IM_ARRAYSIZE(location));
+    if (ImGui::Button("Save", button_size_)) {
+        auto path = redengine::Engine::get().GetBasePath();
+        path = path / "res" / "prefab" / location;
+        std::ofstream myfile;
+        myfile.open(path);
+        myfile << save_json;
+        myfile.close();
+        save_to = false;
+        main_menu_ = true;
+    }
+    if (ImGui::Button("Dont Save", button_size_)) {
+        save_to = false;
+        main_menu_ = true;
+    }
+    ImGui::End();
 }
 
 redengine::prefab PrefabGUI::GetPrefab() const {

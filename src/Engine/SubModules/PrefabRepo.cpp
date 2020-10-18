@@ -1,6 +1,29 @@
 #include "PrefabRepo.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
 
+void redengine::prefab::to_json(nlohmann::json& json, const redengine::prefab& fab) {
+    json = nlohmann::json();
+    json["Name"] = fab.name;
+    json["Model"]["ModelFilePath"] = fab.model_dir;
+    json["Transform"]["Position"]["X"] = fab.position_local.x;
+    json["Transform"]["Position"]["Y"] = fab.position_local.y;
+    json["Transform"]["Position"]["Z"] = fab.position_local.z;
+    json["Transform"]["Rotation"]["X"] = fab.rotation_local.x;
+    json["Transform"]["Rotation"]["Y"] = fab.rotation_local.y;
+    json["Transform"]["Rotation"]["Z"] = fab.rotation_local.z;
+    json["Transform"]["Scale"] = fab.scale_local.x;
+    json["Physics"]["Static"] = fab.is_static;
+    json["Physics"]["Colliders"] = {};
+    for (const auto& col_body : fab.colliders_) {
+        auto col = nlohmann::json();
+        col["Name"] = col_body.part_name;
+        col["Mass"] = col_body.mass;
+        std::string shape = "";
+        //TODO: Add variant shenanigans
+        json["Physics"]["Colliders"].push_back(col);
+    }
+}
+
 redengine::prefab& redengine::PrefabRepo::AddNewPrefab(const std::string& key) {
     prefabMap_.emplace(key, prefab());
     return prefabMap_.at(key);

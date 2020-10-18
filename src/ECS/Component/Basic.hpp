@@ -26,6 +26,7 @@ class PhysicBody {
     size_t id = 0;
     //Primary
     glm::mat3x3 inertia_tensor = {};
+    glm::mat3x3 inverse_inertia_tensor = {};
 
     //Secondary
     glm::vec3 linear_velocity = {};
@@ -43,5 +44,6 @@ class PhysicBody {
     //tensorflow mat3
 
     void AddForce(glm::vec3 additional_force);
+    void AddTorque(glm::vec3 additional_force);
 };
 }// namespace component

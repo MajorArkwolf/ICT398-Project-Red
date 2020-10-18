@@ -62,6 +62,18 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
             auto impulse = impulse_scalar * n.collision_normal;
             first_physbody.linear_velocity -= (second_physbody.mass * impulse);
             second_physbody.linear_velocity += (first_physbody.mass * impulse);
+            first_physbody.angular_velocity +=  1000.f*(first_physbody.inverse_inertia_tensor * glm::cross(n.collision_normal, impulse));
+            second_physbody.angular_velocity += 1000.f*(second_physbody.inverse_inertia_tensor * glm::cross(n.collision_normal, impulse));
+            const auto k_slop = 0.1f;// Penetration allowance
+            const auto percent = 0.01f;// Penetration percentage to correct
+            auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * (n.collision_normal);
+            if (!first_physbody.static_object) {
+                first_transform.pos += first_physbody.mass * correction;
+            }
+            if (!second_physbody.static_object) {
+                second_transform.pos -= second_physbody.mass * correction;
+            }
+
         } else {
 
         }

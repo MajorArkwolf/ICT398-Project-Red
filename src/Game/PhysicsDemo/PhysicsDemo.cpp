@@ -1,13 +1,13 @@
 #include "PhysicsDemo.hpp"
 
+#include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
-#include "Engine/SubModules/JsonLoader.hpp"
 #include "Engine/Physics/PhysicsShape.hpp"
-#include "DataStructures/Model/Overload.hpp"
+#include "Engine/SubModules/JsonLoader.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
@@ -24,7 +24,6 @@ PhysicsDemo::PhysicsDemo() {
     path.append("PhysicsDemo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
-
 }
 
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
@@ -85,20 +84,24 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                    case input::MouseButton::kLeft: {
                                        auto entity = ecs_.CreateEntity();
 
-                                       entity.AddComponent<component::Model>(5);
+                                       auto model = entity.AddComponent<component::Model>(5);
+
                                        auto &trans = entity.AddComponent<component::Transform>();
                                        trans.pos = camera.position_;
                                        trans.rot = {1, 0, 0, 0};
-                                       trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};;
-
+                                       trans.scale = glm::vec3{10.0f, 10.0f, 10.0f};
+                                       ;
+                                       constexpr float radius = 1.1f;
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
                                        physbody.AddForce(camera.front_ * 500.0f);
+                                       physbody.AddTorque({0.f, 20, 0});
                                        physbody.mass = 0.1;
-                                       physbody.inverse_mass = 1/0.1;
+                                       physbody.inverse_mass = 1 / 0.1;
+                                       physbody.inertia_tensor = glm::mat3((2.f / 5.f) * physbody.mass * (radius * radius));
+                                       physbody.inverse_inertia_tensor = glm::inverse(physbody.inertia_tensor);
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
-                                       static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
+                                       static auto shape = engine.GetPhysicsEngine().CreateSphereShape(radius);
                                        physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
-
 
                                    } break;
                                    case input::MouseButton::kRight: {
@@ -108,16 +111,17 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        auto &trans = entity.AddComponent<component::Transform>();
                                        trans.pos = camera.position_;
                                        trans.rot = {1, 0, 0, 0};
-                                       trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};
-
+                                       trans.scale = glm::vec3{2.0f, 2.0f, 2.0f};
+                                       constexpr float radius = 1.1f;
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
                                        physbody.AddForce({0, 0, 0});
-                                       physbody.mass = INT_MAX;
-                                       physbody.inverse_mass = 1/INT_MAX;
+                                       physbody.AddTorque({0.f, 500, 0});
+                                       physbody.mass = 500;
+                                       physbody.inverse_mass = 1 / physbody.mass;
+                                       physbody.inertia_tensor = glm::mat3((2.f / 5.f) * physbody.mass * (radius * radius));
                                        physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
                                        static auto shape = engine.GetPhysicsEngine().CreateSphereShape(1.1);
                                        physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
-
 
                                    } break;
                                }
@@ -144,6 +148,25 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                    case input::VirtualKey::M: {
                                        physics_world_.SetGravity(glm::vec3(0, -9.8f, 0));
                                        physics_world_.SetGravityEnabled(true);
+                                   } break;
+                                   case input::VirtualKey::V: {
+                                       auto entity = ecs_.CreateEntity();
+                                       constexpr redengine::Box box_shape = {glm::vec3{3, 5, 3}};
+                                       entity.AddComponent<component::Model>(1);
+                                       auto &trans = entity.AddComponent<component::Transform>();
+                                       trans.pos = camera.position_;
+                                       trans.rot = {1, 0, 0, 0};
+                                       trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};
+                                       auto &physbody = entity.AddComponent<component::PhysicBody>();
+ 
+                                       physbody.mass = 20;
+                                       physbody.inverse_mass = 1 / 20;
+
+                                       physics_world_.AddCollisionBody(entity.GetID(), {0, 0, 0}, {1, 0, 0, 0});
+                                       static auto shape = engine.GetPhysicsEngine().CreateBoxShape({box_shape.extents.x, box_shape.extents.y, box_shape.extents.z});
+                                       physbody.inertia_tensor = engine.GetPhysicsEngine().CalculateInertiaTensor(box_shape, 20);
+                                       physbody.inverse_inertia_tensor = glm::inverse(physbody.inertia_tensor);
+                                       physics_world_.AddCollider(entity.GetID(), shape, {0, 0, 0}, {1, 0, 0, 0});
                                    } break;
                                }
                            } break;

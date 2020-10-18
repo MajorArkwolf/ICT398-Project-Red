@@ -4,8 +4,43 @@
 #include "ECS/Component/Player.hpp"
 #include "ECS/ECS.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Physics/CollisionDetection.hpp"
 
 using namespace physics;
+
+static inline glm::vec3 ConvertVector(const reactphysics3d::Vector3 &r_vec) {
+    glm::vec3 pos = {};
+    pos.x = r_vec.x;
+    pos.y = r_vec.y;
+    pos.z = r_vec.z;
+    return pos;
+}
+
+static inline reactphysics3d::Vector3 ConvertVector(const glm::vec3 &glm_vec) {
+    auto pos = reactphysics3d::Vector3();
+    pos.x = glm_vec.x;
+    pos.y = glm_vec.y;
+    pos.z = glm_vec.z;
+    return pos;
+}
+
+static inline reactphysics3d::Quaternion ConvertQuaternion(const glm::quat &glm_quat) {
+    auto rot = reactphysics3d::Quaternion();
+    rot.w = glm_quat.w;
+    rot.x = glm_quat.x;
+    rot.y = glm_quat.y;
+    rot.z = glm_quat.z;
+    return rot;
+}
+
+static inline glm::quat ConvertQuaternion(const reactphysics3d::Quaternion &react_quat) {
+    auto rot = glm::quat();
+    rot.w = react_quat.w;
+    rot.x = react_quat.x;
+    rot.y = react_quat.y;
+    rot.z = react_quat.z;
+    return rot;
+}
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
     collision_detection_.FixedUpdate(t, dt);
@@ -49,6 +84,33 @@ reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
 
 void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     collision_detection_.DeletePhysicsWorld(world);
+}
+
+glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Box shape, float mass) {
+    glm::mat3x3 tensor{};
+    constexpr float calc =  1.f / 12.f;
+    //length
+    tensor[0][0] = calc * mass * (shape.extents.y * shape.extents.y + shape.extents.z * shape.extents.z);
+    //height
+    tensor[1][1] = calc * mass * (shape.extents.x * shape.extents.x + shape.extents.z * shape.extents.z);
+    //width
+    tensor[2][2] = calc * mass * (shape.extents.x * shape.extents.x + shape.extents.y * shape.extents.y);
+    return tensor;
+}
+
+glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Capsule shape, float mass) {
+
+    return glm::mat3x3();
+}
+
+glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Sphere shape, float mass) {
+    glm::mat3x3 tensor{};
+    constexpr float calc = 2.f / 5.f;
+    auto calculation = calc * mass * float(shape.radius * shape.radius); 
+    tensor[0][0] = calculation;
+    tensor[1][1] = calculation;
+    tensor[2][2] = calculation;
+    return tensor;
 }
 
 void PhysicsEngine::Init() {
@@ -113,11 +175,11 @@ void physics::PhysicsEngine::IntegratePositions(double dt) {
             auto &linear_velocity = phys_body.linear_velocity;
             auto &angular_velocity = phys_body.angular_velocity;
 
-
-            tran.pos += linear_velocity * glm::vec3(dt);
-            tran.rot += glm::quat(0.f, angular_velocity) * tran.rot * 0.5f * float(dt);
-
-
+            if (!phys_body.static_object) {
+                tran.pos += linear_velocity * glm::vec3(dt);
+                tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * float(dt));
+                tran.rot = glm::normalize(tran.rot);
+            }
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
         }
     }

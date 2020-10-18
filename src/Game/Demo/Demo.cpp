@@ -29,12 +29,12 @@ Demo::Demo() {
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();
     big_player.AddComponent<component::Player>();
-    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "ClothedMan.gltf";
+    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "Character" / "ClothedMan.gltf";
     auto &b_model = big_player.AddComponent<component::Model>(filepath);
     b_model.draw_model = false;
     auto &trans = big_player.AddComponent<component::Transform>();
     trans.pos = glm::vec3{0.f, 0.f, 0.f};
-    trans.scale = glm::vec3{22.f, 22.f, 22.f};
+    trans.scale = {22.f, 22.f, 22.f};
     auto &playerComp = big_player.GetComponent<component::Player>();
     big_player.AddComponent<component::PhysicBody>();
     auto &phys = big_player.GetComponent<component::PhysicBody>();
@@ -105,6 +105,12 @@ void Demo::Update(double t, double dt) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(player_.GetActiveCamera());
     ecs_.Update(t, dt);
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player_.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player_.Update(t, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {

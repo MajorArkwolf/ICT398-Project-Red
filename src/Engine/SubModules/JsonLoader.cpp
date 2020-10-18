@@ -146,13 +146,13 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                     }
                 }
 
-                auto static_field = GetJsonField(j, "Entity Physics Creation", "Static", JsonType::Boolean);
+                auto static_field = GetJsonField(j, prefab.name, "Static", JsonType::Boolean);
                 if (static_field.has_value()) {
                     phys.static_object = static_field->get().get<bool>();
                     
                 } 
                 if (phys.static_object) {
-                    phys.mass = 99999999;
+                    phys.mass = 50000;
                     phys.inverse_mass = 1 / phys.mass;
                 } else {
                     phys.mass = prefab.mass;
@@ -211,10 +211,10 @@ void JSONLoader::LoadPrefabList() {
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);
                 }
 
-                auto render_field = GetJsonField(p, "Base", "Render", JsonType::Boolean);
-                if (render_field.has_value()) {
-                    prefab.render = render_field->get().get<bool>();
+                if (j.contains("Render")) {
+                    prefab.render = j.at("Render").get<bool>();
                 }
+
 
                 auto transform = GetJsonField(p, "Colliders", "Transform", JsonType::Json);
                 if (transform.has_value()) {

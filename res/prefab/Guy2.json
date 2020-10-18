@@ -1,5 +1,5 @@
 {
-  "Name": "Guy1",
+  "Name": "Guy2",
   "Model": {
     "ModelFilePath": "res/model/Character/BlueLight.gltf",
     "ShaderFilePath": "res/shader/model_shader"

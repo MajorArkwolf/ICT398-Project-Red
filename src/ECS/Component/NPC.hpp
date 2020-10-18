@@ -134,8 +134,17 @@ struct Desire {
          * @brief The identifier of the parent Desire.
          * Used to establish a hierarchy of Desires and branching tree of behaviour.
          * @note A value of 0 is used to indicate this is a root desire and has no parent.
+         * @warning No checks will be made to avoid circular relationships between Desires!
          */
     int parent;
+
+        /**
+         * @brief The identifiers of the child Desires.
+         * Used to establish a hierarchy of Desires and branching tree of behaviour.
+         * @note The identifier 0 is invalid for use here, and will likely be ignored.
+         * @warning No checks will be made to avoid circular relationships between Desires!
+         */
+    std::set<int> children;
 
         /**
          * @brief The Desire's collection of conditional requirements.
@@ -158,10 +167,12 @@ struct Desire {
         /**
          * @brief Object constructor, initializes Goal via parameter.
          * @param [in] parent_in The identifier of the parent Desire.
+         * @param [in] children_in The Desire's collection of child Desire identifiers.
          * @param [in] goals_in The Desire's collection of conditional requirements.
          * @param [in] history_in The previous outcome of attempting to resolve this Desire.
          */
-    Desire(int parent_in, std::initializer_list<Goal> goals_in,
+    Desire(int parent_in, std::initializer_list<int> children_in,
+           std::initializer_list<Goal> goals_in,
            npc::Outcomes history_in = npc::Outcomes::kUnknown);
 };
 

@@ -22,9 +22,11 @@ Goal::Goal(entt::entity entity_in, npc::Properties property_in,
           condition(condition_in),
           history(history_in) {}
 
-Desire::Desire(int parent_in, std::initializer_list<Goal> goals_in,
+Desire::Desire(int parent_in, std::initializer_list<int> children_in,
+               std::initializer_list<Goal> goals_in,
                npc::Outcomes history_in)
         : parent(parent_in),
+          children(children_in),
           goals(goals_in),
           history(history_in) {}
 

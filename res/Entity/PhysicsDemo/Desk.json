@@ -1,17 +1,18 @@
 {
-  "Prefab": "Block",
+  "Prefab": "Desk",
   "Transform": {
     "Position": {
-      "X": 40.0,
-      "Y": 10.0,
-      "Z": 10.0
+      "X": 0.0,
+      "Y": -100,
+      "Z": 0.0
     },
     "Rotation": {
       "X": 0.0,
-      "Y": 70.0,
+      "Y": 0.0,
       "Z": 0.0
     },
     "Scale": 1.0
   },
-  "Physics": true
+  "Physics": true,
+  "Static" : true
 }

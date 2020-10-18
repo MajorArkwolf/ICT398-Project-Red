@@ -14,6 +14,7 @@
     "Board.json",
     "Bench.json",
     "Tree_01.json",
-    "Rock_01.json"
+    "Rock_01.json",
+    "UnitTestBlock.json"
   ]
 }

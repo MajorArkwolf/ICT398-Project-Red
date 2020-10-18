@@ -5,12 +5,9 @@
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
+#include "DataStructures/Model/Overload.hpp"
 
-template<class... Ts>
-struct overload : Ts ... {
-    using Ts::operator()...;
-};
-template<class... Ts> overload(Ts...)->overload<Ts...>;
+#define M_PI 3.142
 
 PrefabEditor::PrefabEditor() {
     physics_world_.SetECS(&ecs_);
@@ -168,11 +165,8 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
                     case input::InputType::kMouseScrolled: {
                         double amountScrolledY = static_cast<double>(vec.y);
                         distanceFromEntity += amountScrolledY;
-                        if (distanceFromEntity < 0) {
-                            distanceFromEntity = 0;
-                            UpdateZoom();
-                            handledMouse = true;
-                        }
+                        UpdateZoom(amountScrolledY);
+                        handledMouse = true;
                     }
                         break;
                     default:
@@ -187,23 +181,36 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
 
 void PrefabEditor::ArcBallCamera(double dx, double dy) {
     if (camera_enabled_) {
-        auto rotation = currentRotation * ((std::atan(1) * 4) / 180);
-        camera.position_.x = std::cos(rotation) * distanceFromEntity;
-        camera.position_.z = std::sin(rotation) * distanceFromEntity;
-        camera.position_.y += dy;
-        currentRotation = fmod(currentRotation + dx, 360);
-        camera.front_ = -camera.position_;
+        // Get the homogenous position of the camera and pivot point
+        glm::vec4 position = {camera.position_, 1};
+        glm::vec4 pivot = {prefab_gui_.GetPrefab().position_local, 1};
+
+        // step 1 : Calculate the amount of rotation given the mouse movement.
+        glm::dvec2 viewport = redengine::Engine::get().renderer_.GetViewPort();
+        double deltaAngleX = (2 * M_PI / viewport.x); // a movement from left to right = 2*PI = 360 deg
+        double deltaAngleY = (M_PI / viewport.y);  // a movement from top to bottom = PI = 180 deg
+        double xAngle = (dx) * deltaAngleX;
+        double yAngle = (dy) * deltaAngleY;
+
+        // step 2: Rotate the camera around the pivot point on the first axis.
+        glm::mat4x4 rotationMatrixX(1.0f);
+        rotationMatrixX = glm::rotate(rotationMatrixX, static_cast<float>(xAngle), camera.up_);
+        position = (rotationMatrixX * (position - pivot)) + pivot;
+
+        // step 3: Rotate the camera around the pivot point on the second axis.
+        glm::mat4x4 rotationMatrixY(1.0f);
+        rotationMatrixY = glm::rotate(rotationMatrixY, static_cast<float>(yAngle), camera.GetRightVector());
+        glm::vec3 finalPosition = (rotationMatrixY * (position - pivot)) + pivot;
+
+        // Update the camera view (we keep the same lookat and the same up vector)
+        camera.position_ = finalPosition;
+        camera.front_ = glm::normalize(prefab_gui_.GetPrefab().position_local - camera.position_);
     }
 
 }
 
-void PrefabEditor::UpdateZoom() {
-    double dx = 0.0;
-    double dy = 0.0;
-    auto rotation = currentRotation * ((std::atan(1) * 4) / 180);
-    camera.position_.x = std::cos(rotation) * distanceFromEntity;
-    camera.position_.z = std::sin(rotation) * distanceFromEntity;
-    camera.position_.y += dy;
-    currentRotation = fmod(currentRotation + dx, 360);
-    camera.front_ = -camera.position_;
+void PrefabEditor::UpdateZoom(double movement) {
+    auto result_vector = prefab_gui_.GetPrefab().position_local - camera.position_;
+    result_vector = glm::normalize(result_vector) * static_cast<float>(movement);
+    camera.position_ += result_vector;
 }

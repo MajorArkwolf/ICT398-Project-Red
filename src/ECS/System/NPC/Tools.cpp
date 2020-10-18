@@ -48,4 +48,25 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
     target.current_dt = starting_dt;
 }
 
+bool TestGoal(component::Goal& target, float value) {
+    // Perform the calculations depending on the requested condition
+    switch (target.condition) {
+        case npc::Conditions::kInRange:
+            return (target.range_min < value) && (value < target.range_max);
+        case npc::Conditions::kNotInRange:
+            return (target.range_max < value) || (value < target.range_min);
+        case npc::Conditions::kBelowRange:
+            return value < target.range_min;
+        case npc::Conditions::kNotBelowRange:
+            return target.range_min <= value;
+        case npc::Conditions::kAboveRange:
+            return target.range_max < value;
+        case npc::Conditions::kNotAboveRange:
+            return value <= target.range_max;
+    }
+
+    // Any value other than the above is not supported and undefined, so just return false
+    return false;
+}
+
 } // namespace System

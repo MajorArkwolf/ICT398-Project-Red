@@ -30,4 +30,13 @@ void ChangeBehaviouralState(component::BehaviourState& target,
                          npc::Stages new_state,
                          double starting_dt = 0.0f);
 
+    /**
+     * @brief Tests a provided value meets a Goal's conditions.
+     * @param target A Goal from a BDI Desire Component of an NPC.
+     * @param value The value to test the Goal with.
+     * @return True if the value fulfils the Goal, False otherwise.
+     * @warning Invalid range values from the provided Goal will result in undefined behaviour!
+     */
+bool TestGoal(component::Goal& target, float value);
+
 } // namespace System

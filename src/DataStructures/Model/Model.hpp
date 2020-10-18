@@ -22,6 +22,18 @@ namespace model {
     class Model {
       public:
         Model() = default;
+
+        /**
+         * Model for when you just need a single mesh
+         * @param new_vertices the new verticies to add.
+         * @param new_indices the indicies to draw
+         * @param new_textures the textures used by the object.
+         * @param material the material used
+         * @param transformation the base transformation.
+         */
+        Model(const std::vector<Vertex> &new_vertices, const std::vector<unsigned int> &new_indices,
+              const std::vector<TextureB> &new_textures, const Material &material, const glm::mat4 &transformation);
+
         /// Textures IDs that have been loaded.
         std::vector<TextureB> textures_loaded_ = {}; // Stores all textures, needs to be global
         /// Meshes of models.
@@ -55,7 +67,7 @@ namespace model {
          * Draw call for the model
          * @param shader used to draw the model.
          */
-        void Draw(Shader* shader);
+        void Draw(Shader* shader, const glm::mat4& model_matrix);
 
         void Update(float t, float dt);
 
@@ -82,7 +94,7 @@ namespace model {
          * @param node of the model.
          * @param scene the model loaded in.
          */
-        void ProcessNode(aiNode *node, const aiScene *scene);
+        void ProcessNode(aiNode *node, const aiScene *scene, glm::mat4 transformation);
 
         /**
          * Process the mesh of a model.
@@ -90,7 +102,7 @@ namespace model {
          * @param scene scene the model loaded in.
          * @return returns the next mesh.
          */
-        Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
+        Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transformation);
         /**
          * Load a material into the GPU
          * @param mat the material type.

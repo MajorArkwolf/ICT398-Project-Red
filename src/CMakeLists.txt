@@ -36,6 +36,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Game/MainMenu/MainMenu.cpp
     #--Demo Scene
     Game/Demo/Demo.cpp
+    Game/Demo/Components/Player.cpp
     #--Physics Demo Scene
     Game/PhysicsDemo/PhysicsDemo.cpp
     #--PrefabEditor
@@ -55,6 +56,11 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Components
     ECS/Component/Model.cpp
     ECS/Component/Basic.cpp
+    ECS/Component/Board.cpp
+    #----Pathing
+    ECS/Component/Pathing/Grid.cpp
+    ECS/Component/Pathing/Node.cpp
+    ECS/Component/Pathing/Pathfinding.cpp
     #--Systems
     ECS/System/System.cpp
 )

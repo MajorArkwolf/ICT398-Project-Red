@@ -1,0 +1,16 @@
+{
+  "Prefab": "Board",
+  "Transform": {
+    "Position": {
+      "X": -465.0,
+      "Y": 1.0,
+      "Z": 330.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 1.0
+  }
+}

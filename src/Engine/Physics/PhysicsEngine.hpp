@@ -75,7 +75,7 @@ namespace physics {
 
         PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-        PhysicsShape CreateCapsuleShape(double radius, double height);
+        PhysicsShape CreateCapsuleShape(float radius, float height);
 
         PhysicsShape CreateSphereShape(double radius);
 
@@ -84,6 +84,23 @@ namespace physics {
         void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world);
 
         void Init();
+
+        /**
+         * Ray cast in a given direction to determine if a object is hit.
+         * @param start the start vector.
+         * @param end the end vector.
+         * @return the entity id if hit or -1 if not hit.
+         */
+        entt::entity RayCastSingle(const glm::vec3& start, const glm::vec3& end);
+
+        /**
+         * Ray cast in a given direction to determine if a object is hit.
+         * @param start the start location of the object.
+         * @param front the front vector of the object.
+         * @param distance the distance in which to ray cast before giving up.
+         * @return the entity id if hit or -1 if not hit.
+         */
+        entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance);
 
     private:
         CollisionDetection collision_detection_ = {};

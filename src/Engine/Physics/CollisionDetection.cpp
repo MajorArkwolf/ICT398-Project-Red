@@ -2,6 +2,7 @@
 
 #include "Engine/Engine.hpp"
 #include "Engine/Physics/PhysicsCommon.hpp"
+#include "Engine/Physics/PhysicsListener.hpp"
 
 using namespace physics;
 
@@ -130,13 +131,13 @@ void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const
 }
 
 void CollisionDetection::FixedUpdate(double t, double dt) {
-    //auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    //physics_world.world_->update(dt);
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    physics_world.world_->update(dt);
 }
 
 void CollisionDetection::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    physics_world.world_->update(dt);
+    //physics_world.world_->update(dt);
     if (physics_world.renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
         line_num_ = debug_renderer.getNbLines();
@@ -164,7 +165,7 @@ PhysicsShape CollisionDetection::CreateBoxShape(glm::vec3 extents) {
     return PhysicsShape(physics_common_.createBoxShape(ConvertVector(extents)), ShapeType::Box);
 }
 
-PhysicsShape CollisionDetection::CreateCapsuleShape(double radius, double height) {
+PhysicsShape CollisionDetection::CreateCapsuleShape(float radius, float height) {
     return PhysicsShape(physics_common_.createCapsuleShape(radius, height), ShapeType::Capsule);
 }
 
@@ -178,4 +179,18 @@ reactphysics3d::PhysicsWorld *CollisionDetection::CreatePhysicsWorld() {
 
 void CollisionDetection::DeletePhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     physics_common_.destroyPhysicsWorld(world);
+}
+
+entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto ray = reactphysics3d::Ray(ConvertVector(start), ConvertVector(end));
+    auto callback = RedEngineRayCast();
+    physics_world.world_->raycast(ray, &callback);
+    if (callback.result.collisionBody == nullptr) {
+        return entt::entity(-1);
+    }
+    if (physics_world.collision_entity_coupling_.find(callback.result.collisionBody) == physics_world.collision_entity_coupling_.end()) {
+        return entt::entity(-1);
+    }
+    return physics_world.collision_entity_coupling_.at(callback.result.collisionBody);
 }

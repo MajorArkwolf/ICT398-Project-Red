@@ -34,4 +34,17 @@ namespace physics {
         std::queue<PhysicsCollisionData> physics_que_ = {};
     };
 
+    class RedEngineRayCast : public reactphysics3d::RaycastCallback {
+
+    public:
+        struct redengineray {
+            bool is_hit = false;
+            reactphysics3d::CollisionBody* collisionBody = nullptr;
+            reactphysics3d::Collider *collider = nullptr;
+            glm::vec3 world_normal{};
+            glm::vec3 world_point{};
+        };
+        float notifyRaycastHit(const reactphysics3d::RaycastInfo& info) override;
+        redengineray result;
+    };
 }

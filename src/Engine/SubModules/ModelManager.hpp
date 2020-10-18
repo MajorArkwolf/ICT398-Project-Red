@@ -15,6 +15,7 @@ class ModelManager {
   public:
     auto ModelRepo() -> std::array<model::Model, 1000> &;
     auto GetModelID(const std::filesystem::path& filename) -> size_t;
-    void Draw(size_t id, Shader *shader);
+    auto AddBasicModel(model::Model new_model) -> size_t;
+    void Draw(size_t id, Shader *shader, const glm::mat4& model_matrix);
     model::Model* getModel(size_t modelID);
 };

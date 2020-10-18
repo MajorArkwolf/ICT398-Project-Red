@@ -7,6 +7,7 @@
 
 #include "Engine/Engine.hpp"
 #include <Engine/Renderer/OpenGL.hpp>
+#include "ECS/Component/Model.hpp"
 
 GUIManager::GUIManager() {
     InitialiseWindowOpenMap();
@@ -82,6 +83,9 @@ void GUIManager::DisplayEscapeMenu() {
         if (ImGui::Button("Dev Menu")) {
             ToggleWindow("dev");
         }
+        if (ImGui::Button("AI Menu")) {
+            ToggleWindow("aiviewer");
+        }
         if (ImGui::Button("Toggle Debug Renderer")) {
             renderer_ = !renderer_;
         }
@@ -106,7 +110,20 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
         ImGui::Begin("Dev Menu", &window_open, ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Camera Position: %f, %f, %f", camera.position_.x, camera.position_.y,
                     camera.position_.z);
+        ImGui::Text("Camera Yaw: %f", camera.yaw_);
+        ImGui::Text("Camera Pitch: %f", camera.pitch_);
         ImGui::SliderFloat("Camera Speed", &camera.movement_speed_, 0.001, 2.0);
+        ImGui::End();
+    }
+}
+
+void GUIManager::DisplayAI(entt::entity &entity, entt::registry& registry) {
+    // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    bool &window_open = window_open_map.at("aiviewer");
+    if (window_open && entity != entt::entity(-1)) {
+        auto &model = registry.get<component::Model>(entity);
+        ImGui::Begin("AI Menu", &window_open, ImGuiWindowFlags_NoCollapse);
+        ImGui::Text("Model ID: %d", model.id_);
         ImGui::End();
     }
 }
@@ -120,6 +137,7 @@ void GUIManager::DisplayConsoleLog() {
     static bool warning_logs = true;
     static bool error_logs = true;
     static bool collision_logs = true;
+    static bool json_logs = true;
     static bool display_file_loc = true;
     static bool time_stamp = true;
 
@@ -156,6 +174,8 @@ void GUIManager::DisplayConsoleLog() {
         ImGui::Checkbox("Error Logs", &error_logs);
         ImGui::SameLine();
         ImGui::Checkbox("Collision Logs", &collision_logs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Json Logs", &json_logs);
         ImGui::Checkbox("Display Log Location", &display_file_loc);
         ImGui::SameLine();
         ImGui::Checkbox("Display Timestamp", &time_stamp);
@@ -181,6 +201,11 @@ void GUIManager::DisplayConsoleLog() {
                 } break;
                 case ConsoleLog::LogType::Error: {
                     if (error_logs) {
+                        PrintLog(n);
+                    }
+                } break;
+                case ConsoleLog::LogType::Json: {
+                    if (json_logs) {
                         PrintLog(n);
                     }
                 } break;
@@ -244,6 +269,7 @@ void GUIManager::ToggleWindow(const std::string &windowName) {
 void GUIManager::InitialiseWindowOpenMap() {
     window_open_map.emplace(std::make_pair(std::string("escapeMenu"), false));
     window_open_map.emplace(std::make_pair(std::string("controls"), false));
+    window_open_map.emplace(std::make_pair(std::string("aiviewer"), false));
     window_open_map.emplace(std::make_pair(std::string("instructions"), false));
     window_open_map.emplace(std::make_pair(std::string("exit"), false));
     window_open_map.emplace(std::make_pair(std::string("dev"), false));

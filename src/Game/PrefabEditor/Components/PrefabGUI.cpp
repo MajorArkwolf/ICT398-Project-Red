@@ -2,6 +2,9 @@
 #include "Engine/Engine.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace ImGui
 {
@@ -47,11 +50,11 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     if (prefab_loaded_.has_model) {
         glm::mat4 model_matrix = glm::mat4(1.0f);
         model_matrix = glm::translate(model_matrix, prefab_loaded_.position_local);
-        model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
         model_matrix = model_matrix * glm::mat4_cast(prefab_loaded_.rotation_local);
+        model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
-        redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader);
+        redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader, model_matrix);
     }
 }
 

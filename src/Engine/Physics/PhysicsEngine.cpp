@@ -1,16 +1,13 @@
 #include "PhysicsEngine.hpp"
-#include "Engine/Engine.hpp"
-#include "ECS/Component/Player.hpp"
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Player.hpp"
 #include "ECS/ECS.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace physics;
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
-    collision_detection_.FixedUpdate(t, dt);
-}
-
-void PhysicsEngine::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     auto &ecs = physics_world.ecs_;
     if (ecs != nullptr) {
@@ -19,17 +16,22 @@ void PhysicsEngine::Update(double t, double dt) {
 
         for (auto &e : entities) {
             auto &tran = entities.get<component::Transform>(e);
-            //collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
+            auto &physBody = entities.get<component::PhysicBody>(e);
+            tran.pos += (physBody.GetVelocity() * dt);
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
         }
 
         auto players = registry.view<component::Player>();
         for (auto &e : players) {
             auto &p = players.get<component::Player>(e);
-            physics_world.UpdateCollisionBody(e, p.camera.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
+            physics_world.UpdateCollisionBody(e, p.camera_.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
         }
         collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     }
+    collision_detection_.FixedUpdate(t, dt);
+}
+
+void PhysicsEngine::Update(double t, double dt) {
     collision_detection_.Update(t, dt);
 }
 
@@ -45,7 +47,7 @@ PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
     return collision_detection_.CreateBoxShape(extents);
 }
 
-PhysicsShape PhysicsEngine::CreateCapsuleShape(double radius, double height) {
+PhysicsShape PhysicsEngine::CreateCapsuleShape(float radius, float height) {
     return collision_detection_.CreateCapsuleShape(radius, height);
 }
 
@@ -61,11 +63,21 @@ reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
     return collision_detection_.CreatePhysicsWorld();
 }
 
-void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld * world) {
+void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     collision_detection_.DeletePhysicsWorld(world);
 }
 
 void PhysicsEngine::Init() {
     collision_detection_.Init();
     //collision_resolution_.Init();
+}
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &end) {
+    return collision_detection_.RayCastSingle(start, end);
+}
+
+entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance) {
+    glm::vec3 end = start;
+    end += distance * front;
+    return collision_detection_.RayCastSingle(start, end);
 }

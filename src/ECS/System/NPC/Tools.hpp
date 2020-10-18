@@ -32,6 +32,7 @@ void ChangeBehaviouralState(component::BehaviourState& target,
 
     /**
      * @brief Tests a provided value meets a Goal's conditions.
+     * Additionally updated the Goal's history according to the outcome of the test result.
      * @param target A Goal from a BDI Desire Component of an NPC.
      * @param value The value to test the Goal with.
      * @return True if the value fulfils the Goal, False otherwise.

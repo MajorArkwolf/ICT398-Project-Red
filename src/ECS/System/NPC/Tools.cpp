@@ -50,23 +50,41 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
 
 bool TestGoal(component::Goal& target, float value) {
     // Perform the calculations depending on the requested condition
+    bool result = false;
     switch (target.condition) {
         case npc::Conditions::kInRange:
-            return (target.range_min < value) && (value < target.range_max);
+            result = (target.range_min < value) && (value < target.range_max);
+            break;
         case npc::Conditions::kNotInRange:
-            return (target.range_max < value) || (value < target.range_min);
+            result = (target.range_max < value) || (value < target.range_min);
+            break;
         case npc::Conditions::kBelowRange:
-            return value < target.range_min;
+            result = value < target.range_min;
+            break;
         case npc::Conditions::kNotBelowRange:
-            return target.range_min <= value;
+            result = target.range_min <= value;
+            break;
         case npc::Conditions::kAboveRange:
-            return target.range_max < value;
+            result = target.range_max < value;
+            break;
         case npc::Conditions::kNotAboveRange:
-            return value <= target.range_max;
+            result = value <= target.range_max;
+            break;
+        default:
+            // Any value other than the above is not supported and undefined, so just return false
+            result = false;
     }
 
-    // Any value other than the above is not supported and undefined, so just return false
-    return false;
+    // Update the Goal's history and return the test outcome
+    if (result) {
+        // Indicate success
+        target.history = npc::Outcomes::kSuccess;
+    }
+    else {
+        // Indicate failure
+        target.history = npc::Outcomes::kFailure;
+    }
+    return result;
 }
 
 } // namespace System

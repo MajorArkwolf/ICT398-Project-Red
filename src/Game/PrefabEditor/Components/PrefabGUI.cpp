@@ -71,15 +71,24 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
         model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
+        shader->SetBool("has_color", false);
+        if (collider_edit_menu_) {
+            redengine::Engine::get().renderer_.ToggleWireFrame();
+        }
         redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader, model_matrix);
+        if (collider_edit_menu_) {
+            redengine::Engine::get().renderer_.ToggleWireFrame();
+        }
     }
     if (collider_edit_menu_ && loaded_model != 0) {
         glm::mat4 model_matrix = glm::mat4(1.0f);
         model_matrix = glm::translate(model_matrix, collider_.position_local);
         model_matrix = model_matrix * glm::mat4_cast(collider_.rotation_local);
-        //model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
+        model_matrix = glm::scale(model_matrix, collider_scale_);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
+        shader->SetBool("has_color", true);
+        shader->SetVec4("color_value", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
         redengine::Engine::get().renderer_.ToggleWireFrame();
         redengine::Engine::get().model_manager_.Draw(loaded_model, shader, model_matrix);
         redengine::Engine::get().renderer_.ToggleWireFrame();
@@ -287,7 +296,6 @@ void PrefabGUI::PhysicsMainMenu() {
             collider_ = prefab_loaded_.colliders_.at(collider_index_);
             collider_index_set_ = true;
             collider_edit_menu_ = true;
-            //physics_menu_ = false;
         }
     }
     if (ImGui::Button("New Collider", button_size_)) {
@@ -295,28 +303,22 @@ void PrefabGUI::PhysicsMainMenu() {
             collider_ = redengine::Collider();
             collider_edit_menu_ = true;
     }
-    if (ImGui::Button("Save and Submit", button_size_)) {
-        save_to = true;
-        //main_menu_ = true;
+    if (ImGui::Button("Close", button_size_)) {
         physics_menu_ = false;
-    }
-    if (ImGui::Button("Close, Dont Save", button_size_)) {
-        main_menu_ = true;
-        physics_menu_ = false;
+        collider_edit_menu_ = false;
     }
     ImGui::End();
 }
 
 void PrefabGUI::ColliderEditor() {
-    static char prefab_name[50] = {'\0'};
+    auto index = collider_.shape.index();
+
     static glm::vec3 eulerRot;
-    static std::vector<std::string> list = {"Box", "Sphere", "Capsule"};
-    static int selection_choice = 0;
-    //TODO: Make a vistor for collider.
+    ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
     ImGui::Begin("Collider Edit Menu", &collider_edit_menu_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::InputText("Prefab Name", prefab_name, IM_ARRAYSIZE(prefab_name));
-    ImGui::ListBox("Select Collider: ", &selection_choice, list);
+    ImGui::Text("Prefab Name: %s", collider_.part_name.c_str());
+    ImGui::Text("Select Collider: %s", collider_.base_shape_name.c_str());
     ImGui::Text("Collider Position");
     ThreeButtonMenu("X", "pos-col", collider_.position_local.x);
     ThreeButtonMenu("Y", "pos-col", collider_.position_local.y);
@@ -327,14 +329,36 @@ void PrefabGUI::ColliderEditor() {
     ThreeButtonMenu("Y", "rotation-col", eulerRot.y);
     ThreeButtonMenu("Z", "rotation-col", eulerRot.z);
     collider_.rotation_local = glm::quat(eulerRot);
-    if (selection_choice == 0) {
-        loaded_model = box_model;
-    } else if (selection_choice == 1) {
+    if (index == 1) {
+        auto &cap = std::get<redengine::Sphere>(collider_.shape);
+        collider_scale_.x = cap.radius;
+        collider_scale_.y = cap.radius;
+        collider_scale_.z = cap.radius;
+        collider_scale_ *= prefab_loaded_.scale_local.x;
         loaded_model = sphere_model;
-    } else if (selection_choice == 2) {
-        loaded_model = capsule_model;
+        ImGui::Text("Sphere Dimensions");
+        ImGui::InputDouble("Radius", &cap.radius, 0.01f, 1.0f, "%.3f");
+    } else if (index == 2 ) {
+        auto &cap = std::get<redengine::Box>(collider_.shape);
+        collider_scale_ = cap.extents;
+        collider_scale_ *= 2;
+        collider_scale_ *= prefab_loaded_.scale_local.x;
+        loaded_model = box_model;
+        ImGui::Text("Box Dimensions");
+        ImGui::InputFloat("X: ", &cap.extents.x, 0.01f, 1.0f, "%.3f");
+        ImGui::InputFloat("Y: ", &cap.extents.y, 0.01f, 1.0f, "%.3f");
+        ImGui::InputFloat("Z: ", &cap.extents.z, 0.01f, 1.0f, "%.3f");
+    } else if (index == 3) {
+        auto &cap = std::get<redengine::Capsule>(collider_.shape);
+        collider_scale_.x = cap.radius;
+        collider_scale_.y = cap.height;
+        collider_scale_.z = cap.radius;
+        collider_scale_ *= prefab_loaded_.scale_local.x;
+        loaded_model = box_model;
+        ImGui::Text("Capsule Dimensions");
+        ImGui::InputFloat("Radius: ", &cap.radius, 0.01f, 1.0f, "%.3f");
+        ImGui::InputFloat("Height: ", &cap.height, 0.01f, 1.0f, "%.3f");
     } else {
-        selection_choice = 0;
         loaded_model = 0;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {

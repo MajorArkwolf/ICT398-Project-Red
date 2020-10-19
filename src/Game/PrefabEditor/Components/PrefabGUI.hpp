@@ -49,6 +49,7 @@ private:
     size_t sphere_model = 0;
     size_t capsule_model = 0;
     size_t loaded_model = 0;
+    glm::vec3 collider_scale_ = {};
 
     //Save stuff
     std::string save_location;

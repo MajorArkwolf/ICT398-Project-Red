@@ -54,6 +54,7 @@ private:
     bool transform_component_ = false;
     bool physics_edit_menu = false;
     bool affordance_edit_menu = false;
+    bool physics_menu_ = false;
     bool save_to = false;
 
     ImVec2 button_size_ = ImVec2(150, 30);

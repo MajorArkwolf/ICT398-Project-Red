@@ -24,6 +24,14 @@ void redengine::prefab::to_json(nlohmann::json& json, const redengine::prefab& f
     }
 }
 
+std::vector<std::string> redengine::prefab::GetColliderList() {
+    auto list = std::vector<std::string>();
+    for (auto &e : colliders_) {
+        list.emplace_back(e.part_name);
+    }
+    return list;
+}
+
 redengine::prefab& redengine::PrefabRepo::AddNewPrefab(const std::string& key) {
     prefabMap_.emplace(key, prefab());
     return prefabMap_.at(key);

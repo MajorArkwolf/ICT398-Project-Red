@@ -16,5 +16,61 @@
       "Z": 0.0
     },
     "Scale": 1.0
+  },
+  "Physics": {
+    "Static": true,
+    "Collision_Shapes": "Yes",
+    "Colliders": [
+      {
+        "Name": "LeftSideWall",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 1,
+          "Y": 150,
+          "Z": 560
+        },
+        "Position": {
+          "X": 180.0,
+          "Y": 150.0,
+          "Z": 200.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Mass": 1,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      },
+      {
+        "Name": "RightSideWall",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 1,
+          "Y": 150,
+          "Z": 560
+        },
+        "Position": {
+          "X": -680.0,
+          "Y": 150.0,
+          "Z": 200.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Mass": 1,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      }
+      ]
   }
 }

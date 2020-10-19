@@ -50,6 +50,8 @@ struct prefab {
     float mass = 0.0;
     glm::dvec3 centre_of_mass = {0, 0, 0};
     static void to_json(nlohmann::json& json, const prefab& fab);
+    std::vector<std::string> GetColliderList();
+
 };
 
 class PrefabRepo {

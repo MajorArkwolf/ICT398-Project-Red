@@ -76,7 +76,7 @@ namespace physics {
         const glm::vec3 &GetGravity();
 
     private:
-        bool renderer_ = false;
+        bool renderer_ = true;
         ECS *ecs_ = nullptr;
         /// The react PhysicsWorld
         reactphysics3d::PhysicsWorld *world_ = nullptr;

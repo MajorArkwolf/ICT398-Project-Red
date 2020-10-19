@@ -46,6 +46,7 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     transform_component_ ? TransformComponentMenu() : (void)0;
     physics_edit_menu ? PhysicsMainMenu() : (void)0;
     affordance_edit_menu ? AffordanceMenu() : (void)0;
+    physics_menu_ ? PhysicsMainMenu() : (void)0;
     save_to ? SaveTo() : (void)0;
 
 
@@ -129,6 +130,9 @@ void PrefabGUI::MainEntityMenu() {
     }
     if (ImGui::Button("Transform Component", button_size_)) {
         transform_component_ = true;
+    }
+    if (ImGui::Button("Physics Component", button_size_)) {
+        physics_menu_ = true;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
         redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
@@ -226,7 +230,31 @@ void PrefabGUI::TransformComponentMenu() {
 }
 // TODO: Implement this
 void PrefabGUI::PhysicsMainMenu() {
-
+    static int listbox_item_current_ = 0;
+    auto list = prefab_loaded_.GetColliderList();
+    ImGui::Begin("Physics Menu", &physics_menu_,
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Checkbox("Has physics: ", &prefab_loaded_.has_physics);
+    ImGui::Checkbox("Is static: ", &prefab_loaded_.is_static);
+    ImGui::NewLine();
+    ImGui::ListBox("Collider to Edit", &listbox_item_current_, list);
+    if (ImGui::Button("Edit Collider", button_size_)) {
+        //save_to = true;
+        //main_menu_ = true;
+        physics_menu_ = false;
+    }
+    if (ImGui::Button("Save and Submit", button_size_)) {
+        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
+        redengine::prefab::to_json(save_json, prefab_loaded_);
+        save_to = true;
+        //main_menu_ = true;
+        physics_menu_ = false;
+    }
+    if (ImGui::Button("Close, Dont Save", button_size_)) {
+        main_menu_ = true;
+        physics_menu_ = false;
+    }
+    ImGui::End();
 }
 
 // TODO: Implement this

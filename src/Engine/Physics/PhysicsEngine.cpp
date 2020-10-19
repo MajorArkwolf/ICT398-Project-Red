@@ -88,7 +88,7 @@ void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
 
 glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Box shape, float mass) {
     glm::mat3x3 tensor{};
-    constexpr float calc =  1.f / 12.f;
+    constexpr float calc = 1.f / 12.f;
     //length
     tensor[0][0] = calc * mass * (shape.extents.y * shape.extents.y + shape.extents.z * shape.extents.z);
     //height
@@ -100,13 +100,19 @@ glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Box shape,
 
 glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Capsule shape, float mass) {
 
-    return glm::mat3x3();
+    glm::mat3x3 tensor{};
+    constexpr float calc = 2.f / 5.f;
+    auto calculation = calc * mass * float(shape.radius * shape.radius);
+    tensor[0][0] = calculation;
+    tensor[1][1] = calculation;
+    tensor[2][2] = calculation;
+    return tensor;
 }
 
 glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Sphere shape, float mass) {
     glm::mat3x3 tensor{};
     constexpr float calc = 2.f / 5.f;
-    auto calculation = calc * mass * float(shape.radius * shape.radius); 
+    auto calculation = calc * mass * float(shape.radius * shape.radius);
     tensor[0][0] = calculation;
     tensor[1][1] = calculation;
     tensor[2][2] = calculation;
@@ -129,7 +135,8 @@ entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec
 }
 
 void physics::PhysicsEngine::IntegrateVelocities(double dt) {
-
+    constexpr float angular_damping = 0.1f;
+    const float damping_factor = std::pow(1.0 - angular_damping, float(dt));
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     auto &ecs = physics_world.ecs_;
     if (ecs != nullptr) {
@@ -137,19 +144,18 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
         auto entities = registry.view<component::Transform, component::PhysicBody>();
 
         for (auto &e : entities) {
-            auto &tran = entities.get<component::Transform>(e);
             auto &phys_body = entities.get<component::PhysicBody>(e);
 
             auto &linear_velocity = phys_body.linear_velocity;
             auto &angular_velocity = phys_body.angular_velocity;
 
             linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.added_force);
-            angular_velocity += float(dt) * (phys_body.inertia_tensor * phys_body.added_torque);
+            angular_velocity += float(dt) * (phys_body.inverse_inertia_tensor * phys_body.added_torque);
+            angular_velocity *= damping_factor;
         }
 
         if (physics_world.IsGravityEnabled()) {
             for (auto &e : entities) {
-                auto &tran = entities.get<component::Transform>(e);
                 auto &phys_body = entities.get<component::PhysicBody>(e);
                 if (!phys_body.static_object) {
                     auto &linear_velocity = phys_body.linear_velocity;
@@ -193,7 +199,6 @@ void physics::PhysicsEngine::ResetAddedForces() {
         auto entities = registry.view<component::Transform, component::PhysicBody>();
 
         for (auto &e : entities) {
-            auto &tran = entities.get<component::Transform>(e);
             auto &phys_body = entities.get<component::PhysicBody>(e);
 
             phys_body.added_force = {0.f, 0.f, 0.f};

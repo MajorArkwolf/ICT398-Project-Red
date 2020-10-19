@@ -1,12 +1,12 @@
 #include "Demo.hpp"
 
+#include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Player.hpp"
-#include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
-#include "DataStructures/Model/Overload.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
@@ -43,10 +43,11 @@ Demo::Demo() {
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
     physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
-    big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};;
+    big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};
+    ;
     auto &anim =
-            big_player.AddComponent<component::Animation>(
-                    big_player.GetComponent<component::Model>().id_);
+        big_player.AddComponent<component::Animation>(
+            big_player.GetComponent<component::Model>().id_);
     auto idle = "IDLE";
     anim.animator_.LoadAnimation(idle);
     player_.SetBigPlayer(big_player);
@@ -60,8 +61,8 @@ Demo::Demo() {
     little_p.camera_.position_ = glm::vec3{-465.0f, 82.8f, 330.0f};
     little_p.height_ = 83.0f;
     auto &little_anim =
-            little_player.AddComponent<component::Animation>(
-                    little_player.GetComponent<component::Model>().id_);
+        little_player.AddComponent<component::Animation>(
+            little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
     /// Player instantiation completed
@@ -208,8 +209,10 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            case input::InputType::kMouseScrolled: {
                                double amountScrolledY = static_cast<double>(vec.y);
                                player_.GetActiveCamera().ProcessMouseScroll(amountScrolledY);
-                           }
-                           default:
+                           } break;
+                           default: {
+
+                           };
                                break;
                        }
                    }},

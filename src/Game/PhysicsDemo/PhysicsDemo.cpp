@@ -82,19 +82,19 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                            case input::InputType::kButtonPressed: {
                                switch (mouse.button) {
                                    case input::MouseButton::kLeft: {
-                                       auto entity = ecs_.CreateEntity();
+                                       auto &entity = ecs_.CreateEntity();
 
-                                       auto model = entity.AddComponent<component::Model>(5);
+                                       auto &model = entity.AddComponent<component::Model>(5);
 
                                        auto &trans = entity.AddComponent<component::Transform>();
                                        trans.pos = camera.position_;
                                        trans.rot = {1, 0, 0, 0};
-                                       trans.scale = glm::vec3{10.0f, 10.0f, 10.0f};
+                                       trans.scale = glm::vec3{20, 20, 20};
                                        ;
                                        constexpr float radius = 1.1f;
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
-                                       physbody.AddForce(camera.front_ * 500.0f);
-                                       physbody.AddTorque({0.f, 20, 0});
+                                       physbody.AddForce(camera.front_ * 50.0f);
+                                       physbody.AddTorque({0.f, 0, 0});
                                        physbody.mass = 0.1;
                                        physbody.inverse_mass = 1 / 0.1;
                                        physbody.inertia_tensor = glm::mat3((2.f / 5.f) * physbody.mass * (radius * radius));

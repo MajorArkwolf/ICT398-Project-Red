@@ -33,6 +33,13 @@ namespace ImGui
 
 }
 
+void PrefabGUI::CleanUp() {
+    prefab_loaded_ = redengine::prefab();
+    save_location = "";
+    save_json = nlohmann::json();
+    collider_index_ = 0;
+}
+
 PrefabGUI::PrefabGUI() {
 
 }
@@ -45,6 +52,7 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     model_component_ ? ModelComponentMenu() : (void)0;
     transform_component_ ? TransformComponentMenu() : (void)0;
     physics_edit_menu ? PhysicsMainMenu() : (void)0;
+    collider_edit_menu_ ? ColliderEditor() : (void)0;
     affordance_edit_menu ? AffordanceMenu() : (void)0;
     physics_menu_ ? PhysicsMainMenu() : (void)0;
     save_to ? SaveTo() : (void)0;
@@ -73,6 +81,9 @@ void PrefabGUI::MainMenu() {
     if (ImGui::Button("Loaded Prefab", button_size_)) {
         get_prefab_ = true;
         main_menu_ = false;
+    }
+    if (ImGui::Button("Exit", button_size_)) {
+        redengine::Engine::get().game_stack_.popTop();
     }
     ImGui::End();
 }
@@ -140,10 +151,12 @@ void PrefabGUI::MainEntityMenu() {
         save_to = true;
         //main_menu_ = true;
         main_edit_menu_ = false;
+        CleanUp();
     }
     if (ImGui::Button("Close, Dont Save", button_size_)) {
         main_menu_ = true;
         main_edit_menu_ = false;
+        CleanUp();
     }
     ImGui::End();
 }
@@ -179,36 +192,44 @@ void PrefabGUI::ModelComponentMenu() {
 }
 
 static inline void ThreeButtonMenu(const std::string& val, const std::string& type, float &ref) {
-    if (ImGui::Button(std::string("<<<##" + type + val).c_str())) {
+    if (ImGui::Button(std::string("<<<<##" + type + val).c_str())) {
         ref += -100.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button(std::string("<<##" + type + val).c_str())) {
+    if (ImGui::Button(std::string("<<<##" + type + val).c_str())) {
         ref += -10.0f;
     }
     ImGui::SameLine();
-    if (ImGui::Button(std::string("<##" + type + val).c_str())) {
+    if (ImGui::Button(std::string("<<##" + type + val).c_str())) {
         ref += -1.0f;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(std::string("<##" + type + val).c_str())) {
+        ref += -0.1f;
     }
     ImGui::SameLine();
     ImGui::Text("%s", val.c_str());
     ImGui::SameLine();
     if (ImGui::Button(std::string(">##" + type + val).c_str())) {
-        ref += 1.0f;
+        ref += 0.1f;
     }
     ImGui::SameLine();
     if (ImGui::Button(std::string(">>##" + type + val).c_str())) {
-        ref += 10.0f;
+        ref += 1.0f;
     }
     ImGui::SameLine();
     if (ImGui::Button(std::string(">>>##" + type + val).c_str())) {
+        ref += 10.0f;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(std::string(">>>>##" + type + val).c_str())) {
         ref += 100.0f;
     }
 }
 
 void PrefabGUI::TransformComponentMenu() {
     ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
-    ImGui::SetNextWindowSize(ImVec2(250, 500), 1);
+    ImGui::SetNextWindowSize(ImVec2(350, 500), 1);
     ImGui::Begin("Transform Model", &transform_component_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Position from origin");
@@ -221,10 +242,16 @@ void PrefabGUI::TransformComponentMenu() {
     ThreeButtonMenu("Z", "scale", prefab_loaded_.scale_local.z);
     //TODO: Implement this
     ImGui::Text("Rotation");
+    static glm::vec3 eulerRot = glm::eulerAngles(prefab_loaded_.rotation_local);
+    ThreeButtonMenu("X", "rotation", eulerRot.x);
+    ThreeButtonMenu("Y", "rotation", eulerRot.y);
+    ThreeButtonMenu("Z", "rotation", eulerRot.z);
+    prefab_loaded_.rotation_local = glm::quat(eulerRot);
     ImGui::Text("To be implemented");
     if (ImGui::Button("Save and Submit", button_size_)) {
         auto &engine = redengine::Engine::get();
         transform_component_ = false;
+        eulerRot = glm::vec3();
     }
     ImGui::End();
 }
@@ -239,13 +266,20 @@ void PrefabGUI::PhysicsMainMenu() {
     ImGui::NewLine();
     ImGui::ListBox("Collider to Edit", &listbox_item_current_, list);
     if (ImGui::Button("Edit Collider", button_size_)) {
-        //save_to = true;
-        //main_menu_ = true;
-        physics_menu_ = false;
+        if (static_cast<size_t>(listbox_item_current_) < list.size()) {
+            collider_index_ = static_cast<size_t>(listbox_item_current_);
+            collider_ = prefab_loaded_.colliders_.at(collider_index_);
+            collider_index_set_ = true;
+            collider_edit_menu_ = true;
+            //physics_menu_ = false;
+        }
+    }
+    if (ImGui::Button("New Collider", button_size_)) {
+            collider_index_set_ = false;
+            collider_ = redengine::Collider();
+            collider_edit_menu_ = true;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
-        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
-        redengine::prefab::to_json(save_json, prefab_loaded_);
         save_to = true;
         //main_menu_ = true;
         physics_menu_ = false;
@@ -253,6 +287,44 @@ void PrefabGUI::PhysicsMainMenu() {
     if (ImGui::Button("Close, Dont Save", button_size_)) {
         main_menu_ = true;
         physics_menu_ = false;
+    }
+    ImGui::End();
+}
+
+void PrefabGUI::ColliderEditor() {
+    static char prefab_name[50] = {'\0'};
+    static glm::vec3 eulerRot;
+    static std::vector<std::string> list = {"Box", "Sphere", "Capsule"};
+    static int selection_choice = 0;
+    //TODO: Make a vistor for collider.
+    ImGui::Begin("Collider Edit Menu", &collider_edit_menu_,
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::InputText("Prefab Name", prefab_name, IM_ARRAYSIZE(prefab_name));
+    ImGui::ListBox("Select Collider: ", &selection_choice, list);
+    ImGui::Text("Collider Position");
+    ThreeButtonMenu("X", "pos-col", collider_.position_local.x);
+    ThreeButtonMenu("Y", "pos-col", collider_.position_local.y);
+    ThreeButtonMenu("Z", "pos-col", collider_.position_local.z);
+    ImGui::Text("Collider Rotation");
+    eulerRot = glm::eulerAngles(collider_.rotation_local);
+    ThreeButtonMenu("X", "rotation-col", eulerRot.x);
+    ThreeButtonMenu("Y", "rotation-col", eulerRot.y);
+    ThreeButtonMenu("Z", "rotation-col", eulerRot.z);
+    collider_.rotation_local = glm::quat(eulerRot);
+    if (selection_choice == 0) {
+
+    }
+    if (selection_choice == 1) {
+
+    }
+    if (selection_choice == 2) {
+
+    } else {
+
+    }
+    if (ImGui::Button("Save and Submit", button_size_)) {
+        collider_edit_menu_ = false;
+        eulerRot = glm::vec3();
     }
     ImGui::End();
 }

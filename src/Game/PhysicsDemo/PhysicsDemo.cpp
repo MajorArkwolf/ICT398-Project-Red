@@ -49,6 +49,8 @@ void PhysicsDemo::GUIEnd() {
 }
 
 void PhysicsDemo::Update(double t, double dt) {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(camera);
     physics_world_.SetECS(&ecs_);
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);

@@ -7,10 +7,10 @@
 
 /// Makes understanding the direction simple.
 enum class CameraMovement {
-  kForward,
-  kBackward,
-  kLeft,
-  kRight
+    kForward,
+    kBackward,
+    kLeft,
+    kRight
 };
 
 /// Default values used to initialise a camera.

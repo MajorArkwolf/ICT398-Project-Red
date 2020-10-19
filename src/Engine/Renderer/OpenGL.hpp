@@ -87,6 +87,8 @@ namespace view {
          */
         void UpdateViewPort(int bl, int br, int tl, int tr) override;
 
+        glm::vec2 GetViewPort();
+
         engine::Camera *GetActiveCamera() { return camera_; }
 
         void ClearCamera();

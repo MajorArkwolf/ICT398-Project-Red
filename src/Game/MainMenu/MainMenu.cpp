@@ -8,6 +8,7 @@
 #include "Engine/SubModules/JsonLoader.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
+#include "Game/PrefabEditor/PrefabEditor.hpp"
 #include "DataStructures/Model/Overload.hpp"
 
 MainMenu::MainMenu() {
@@ -40,6 +41,8 @@ auto MainMenu::FixedUpdate(double t, double dt) -> void {
 }
 
 auto MainMenu::Update(double t, double dt) -> void {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(camera);
     ecs.Update(t, dt);
 }
 
@@ -110,6 +113,11 @@ void MainMenu::MainMenuGUI() {
     }
     if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
         auto p = std::make_shared<PhysicsDemo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
+    }
+    if (ImGui::Button("Prefab Editor", ImVec2(285, 40))) {
+        auto p = std::make_shared<PrefabEditor>();
         p->Init();
         engine.game_stack_.AddToStack(p);
     }

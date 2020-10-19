@@ -14,7 +14,7 @@ class CollisionResolution {
     void SetECS(ECS* ecs);
     private:
     void ResolvePlayerCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> player, std::shared_ptr<Entity> other);
-    void ResolvePhysicsCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object);
+    void ResolvePhysicsCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object, double dt);
     ECS* ecs_ = nullptr;
 };
 }// namespace physics

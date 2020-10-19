@@ -15,7 +15,7 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
             } else if (ecs_->GetRegistry().has<component::Player>(item.second_body)) {
                 ResolvePlayerCollision(item, ecs_->GetEntity(item.second_body), ecs_->GetEntity(item.first_body));
             } else {
-                ResolvePhysicsCollision(item, ecs_->GetEntity(item.second_body), ecs_->GetEntity(item.first_body));
+                ResolvePhysicsCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
             }
         }
         queue.pop();
@@ -46,7 +46,7 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto second_linear_momentum = second_physbody.mass * second_physbody.linear_velocity;
     std::stringstream log_text;
 
-    auto relative_velocity = second_physbody.linear_velocity - first_physbody.linear_velocity;
+    auto relative_velocity = first_physbody.linear_velocity - second_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";

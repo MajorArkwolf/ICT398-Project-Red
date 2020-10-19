@@ -75,7 +75,7 @@ namespace physics {
 
         PhysicsShape CreateBoxShape(glm::vec3 extents);
 
-        PhysicsShape CreateCapsuleShape(double radius, double height);
+        PhysicsShape CreateCapsuleShape(float radius, float height);
 
         PhysicsShape CreateSphereShape(double radius);
 
@@ -103,9 +103,13 @@ namespace physics {
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance);
 
         void SetTrigger(entt::entity entity, bool is_trigger);
+        void IntegrateVelocities(double dt);
+        void IntegratePositions(double dt);
 
     private:
         CollisionDetection collision_detection_ = {};
         CollisionResolution collision_resolution_ = {};
+
+        void ResetAddedForces();
     };
 }

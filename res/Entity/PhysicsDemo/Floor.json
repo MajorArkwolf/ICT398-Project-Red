@@ -1,0 +1,17 @@
+{
+  "Prefab": "Block",
+  "Transform": {
+    "Position": {
+      "X": 20.0,
+      "Y": 0.0,
+      "Z": 10.0
+    },
+    "Rotation": {
+      "X": 90,
+      "Y": 0,
+      "Z": 0
+    },
+    "Scale": 1.0
+  },
+  "Physics": true
+}

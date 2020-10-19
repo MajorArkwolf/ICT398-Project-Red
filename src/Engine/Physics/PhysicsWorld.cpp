@@ -72,6 +72,7 @@ void PhysicsWorld::AddCollisionBody(const entt::entity& entity_id, const glm::ve
 void PhysicsWorld::UpdateCollisionBody(const entt::entity &entity_id, const glm::vec3& pos, const glm::quat& rot) {
     if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
         auto body = entity_collision_coupling_.at(entity_id);
+        assert(body != nullptr);
         reactphysics3d::Transform new_transform(ConvertVector(pos), ConvertQuaternion(rot));
         body->setTransform(new_transform);
     }
@@ -114,4 +115,24 @@ void PhysicsWorld::ToggleRenderer() {
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, false);
         debug_renderer.setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, false);
     }
+}
+
+bool physics::PhysicsWorld::IsGravityEnabled() {
+    return gravity_enabled;
+}
+
+void physics::PhysicsWorld::SetGravityEnabled(bool enabled) {
+    gravity_enabled = enabled;
+}
+
+const glm::vec3& physics::PhysicsWorld::GetGravity() {
+    return gravity;
+}
+
+void physics::PhysicsWorld::SetGravity(const glm::vec3& gravity_) {
+    gravity = gravity_;
+}
+
+ECS* physics::PhysicsWorld::GetECS() {
+    return ecs_;
 }

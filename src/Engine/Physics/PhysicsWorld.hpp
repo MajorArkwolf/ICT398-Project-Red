@@ -34,6 +34,7 @@ namespace physics {
         PhysicsWorld &operator=(PhysicsWorld &&) = default;
 
         void SetECS(ECS *ecs);
+        ECS *GetECS();
 
         reactphysics3d::PhysicsWorld *GetWorld();
 
@@ -69,6 +70,11 @@ namespace physics {
 
         void ToggleRenderer();
 
+        bool IsGravityEnabled();
+        void SetGravityEnabled(bool enabled);
+        void SetGravity(const glm::vec3& gravity);
+        const glm::vec3 &GetGravity();
+
     private:
         bool renderer_ = false;
         ECS *ecs_ = nullptr;
@@ -81,6 +87,8 @@ namespace physics {
         RedEngineEventListener event_listener_;
 
         void AddBodyAndEntt(entt::entity entity, reactphysics3d::CollisionBody *coll_body);
+        bool gravity_enabled = false;
+        glm::vec3 gravity = {};
 
 
     };

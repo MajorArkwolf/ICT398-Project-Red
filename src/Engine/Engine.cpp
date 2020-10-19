@@ -35,8 +35,10 @@ auto redengine::Engine::Run() -> void {
         double frame_time = new_time - current_time;
         engine.engine_frame_time_ = frame_time;
 
-        if (frame_time > 0.25)
+        if (frame_time > 0.25) {
             frame_time = 0.25;
+        }
+
         current_time = new_time;
 
         accumulator += frame_time;

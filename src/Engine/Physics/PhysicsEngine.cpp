@@ -1,32 +1,18 @@
 #include "PhysicsEngine.hpp"
-#include "Engine/Engine.hpp"
-#include "ECS/Component/Player.hpp"
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Player.hpp"
 #include "ECS/ECS.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace physics;
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
-    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     collision_detection_.FixedUpdate(t, dt);
-    auto &ecs = physics_world.ecs_;
-    if (ecs != nullptr) {
-        auto &registry = ecs->GetRegistry();
-        auto entities = registry.view<component::Transform, component::PhysicBody>();
-
-        for (auto &e : entities) {
-            auto &tran = entities.get<component::Transform>(e);
-            //collision_detection_.UpdateCollisionBody(e, tran.pos, tran.rot);
-            physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
-        }
-
-        auto players = registry.view<component::Player>();
-        for (auto &e : players) {
-            auto &p = players.get<component::Player>(e);
-            physics_world.UpdateCollisionBody(e, p.camera_.position_, glm::quat(1.0f, 0.f, 0.f, 0.f));
-        }
-        collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
-    }
+    IntegrateVelocities(dt);
+    IntegratePositions(dt);
+    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
+    ResetAddedForces();
 }
 
 void PhysicsEngine::Update(double t, double dt) {
@@ -45,7 +31,7 @@ PhysicsShape PhysicsEngine::CreateBoxShape(glm::vec3 extents) {
     return collision_detection_.CreateBoxShape(extents);
 }
 
-PhysicsShape PhysicsEngine::CreateCapsuleShape(double radius, double height) {
+PhysicsShape PhysicsEngine::CreateCapsuleShape(float radius, float height) {
     return collision_detection_.CreateCapsuleShape(radius, height);
 }
 
@@ -61,7 +47,7 @@ reactphysics3d::PhysicsWorld *PhysicsEngine::CreatePhysicsWorld() {
     return collision_detection_.CreatePhysicsWorld();
 }
 
-void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld * world) {
+void PhysicsEngine::DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world) {
     collision_detection_.DeletePhysicsWorld(world);
 }
 
@@ -82,4 +68,78 @@ entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec
 
 void PhysicsEngine::SetTrigger(entt::entity entity, bool is_trigger) {
     collision_detection_.SetTrigger(entity, is_trigger);
+}
+
+void physics::PhysicsEngine::IntegrateVelocities(double dt) {
+
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    if (ecs != nullptr) {
+        auto &registry = ecs->GetRegistry();
+        auto entities = registry.view<component::Transform, component::PhysicBody>();
+
+        for (auto &e : entities) {
+            auto &tran = entities.get<component::Transform>(e);
+            auto &phys_body = entities.get<component::PhysicBody>(e);
+
+            auto &linear_velocity = phys_body.linear_velocity;
+            auto &angular_velocity = phys_body.angular_velocity;
+
+            linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.added_force);
+            angular_velocity += float(dt) * (phys_body.inertia_tensor * phys_body.added_torque);
+        }
+
+        if (physics_world.IsGravityEnabled()) {
+            for (auto &e : entities) {
+                auto &tran = entities.get<component::Transform>(e);
+                auto &phys_body = entities.get<component::PhysicBody>(e);
+                if (!phys_body.static_object) {
+                    auto &linear_velocity = phys_body.linear_velocity;
+
+                    linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
+                }
+            }
+        }
+    }
+}
+
+void physics::PhysicsEngine::IntegratePositions(double dt) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    if (ecs != nullptr) {
+        auto &registry = ecs->GetRegistry();
+        auto entities = registry.view<component::Transform, component::PhysicBody>();
+
+        for (auto &e : entities) {
+            auto &tran = entities.get<component::Transform>(e);
+            auto &phys_body = entities.get<component::PhysicBody>(e);
+
+            auto &linear_velocity = phys_body.linear_velocity;
+            auto &angular_velocity = phys_body.angular_velocity;
+
+
+            tran.pos += linear_velocity * glm::vec3(dt);
+            tran.rot += glm::quat(0.f, angular_velocity) * tran.rot * 0.5f * float(dt);
+
+
+            physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);
+        }
+    }
+}
+
+void physics::PhysicsEngine::ResetAddedForces() {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto &ecs = physics_world.ecs_;
+    if (ecs != nullptr) {
+        auto &registry = ecs->GetRegistry();
+        auto entities = registry.view<component::Transform, component::PhysicBody>();
+
+        for (auto &e : entities) {
+            auto &tran = entities.get<component::Transform>(e);
+            auto &phys_body = entities.get<component::PhysicBody>(e);
+
+            phys_body.added_force = {0.f, 0.f, 0.f};
+            phys_body.added_torque = {0.f, 0.f, 0.f};
+        }
+    }
 }

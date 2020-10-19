@@ -10,7 +10,7 @@
 struct ContactPoints{
     glm::vec3 first_body_contact_point = {};
     glm::vec3 second_body_contact_point = {};
-    glm::vec3 world_normal = {};
+    glm::vec3 collision_normal = {};
     float penetration = 0.0f;
 };
 

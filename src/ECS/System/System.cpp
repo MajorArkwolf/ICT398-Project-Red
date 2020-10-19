@@ -16,9 +16,9 @@ void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& pro
         auto &mod = entities.get<component::Model>(e);
         if (mod.draw_model) {
             glm::mat4 model_matrix = glm::mat4(1.0f);
-            model_matrix = glm::translate(model_matrix, tran.pos);
-            model_matrix = glm::scale(model_matrix, tran.scale);
+            model_matrix = glm::translate(model_matrix,tran.pos);
             model_matrix = model_matrix * glm::mat4_cast(tran.rot);
+            model_matrix = glm::scale(model_matrix, tran.scale);
 
             //shader->SetMat4("model", model_matrix);
             shader->SetBool("has_color", mod.has_color);

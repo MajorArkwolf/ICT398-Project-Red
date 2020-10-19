@@ -8,6 +8,7 @@
 #include "Engine/SubModules/JsonLoader.hpp"
 #include "Game/Demo/Demo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
+#include "DataStructures/Model/Overload.hpp"
 
 MainMenu::MainMenu() {
     auto &window = redengine::Engine::get().window_;
@@ -103,11 +104,14 @@ void MainMenu::MainMenuGUI() {
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
     if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        engine.game_stack_.AddToStack(std::make_shared<Demo>());
-        engine.game_stack_.getTop()->Init();
+        auto p = std::make_shared<Demo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
     }
     if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
-        engine.game_stack_.AddToStack(std::make_shared<PhysicsDemo>());
+        auto p = std::make_shared<PhysicsDemo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
     }
     ImGui::Separator();
 

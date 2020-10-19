@@ -6,6 +6,7 @@
 #include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
+#include "DataStructures/Model/Overload.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
@@ -34,11 +35,12 @@ void Demo::Init() {
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();
     big_player.AddComponent<component::Player>();
-    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "ClothedMan.gltf";
+    auto filepath = redengine::Engine::get().GetBasePath() / "res" / "model" / "Character" / "ClothedMan.gltf";
     auto &b_model = big_player.AddComponent<component::Model>(filepath);
     b_model.draw_model = false;
     auto &trans = big_player.AddComponent<component::Transform>();
     trans.pos = glm::vec3{0.f, 0.f, 0.f};
+    trans.scale = {22.f, 22.f, 22.f};
     auto &playerComp = big_player.GetComponent<component::Player>();
     big_player.AddComponent<component::PhysicBody>();
     auto &phys = big_player.GetComponent<component::PhysicBody>();
@@ -46,7 +48,6 @@ void Demo::Init() {
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
     physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
-    trans.scale = glm::vec3 {24.0f, 24.0f, 24.0f};
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
     big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};;
     auto &anim =
@@ -62,7 +63,7 @@ void Demo::Init() {
     auto &little_tran = little_player.AddComponent<component::Transform>();
     auto &little_move = little_player.AddComponent<component::Moving>();
     little_tran.pos = glm::vec3{-465.0f, 80.0f, 330.0f};
-    little_tran.scale = glm::vec3 {0.5, 0.5, 0.5};
+    little_tran.scale = glm::vec3{0.5f, 0.5f, 0.5f};
     little_p.camera_.position_ = glm::vec3{-465.0f, 82.8f, 330.0f};
     little_p.height_ = 83.0f;
     auto &little_anim =
@@ -108,11 +109,17 @@ void Demo::Update(double t, double dt) {
     auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(player_.GetActiveCamera());
     ecs_.Update(t, dt);
+    camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player_.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player_.Update(t, dt);
+    //TODO: fix this to use just the phyiscs world instead.
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.Update(t, dt);
 }
 
 void Demo::FixedUpdate(double t, double dt) {
+    player_.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
+    player_.Update(t, dt);
     ecs_.FixedUpdate(t, dt);
 }
 

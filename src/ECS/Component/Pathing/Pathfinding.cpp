@@ -1,21 +1,11 @@
-
 #include "Pathfinding.hpp"
-
 #include <algorithm>
-#include <iostream>
 #include <cmath>
-#include <set>
 
 using Pathing::Node;
 using Pathing::Pathfinding;
 
-/**
- * @brief A namespace for the A* pathfinding algorithm
- * @param nodeA The starting node to find the path between
- * @param nodeB The ending node to find the path between
- * @param oct Whether to find distance assuming traveling to all 8 surrounding nodes rather than 4
- * @return The distance between two nodes on the grid
- */
+
 int Pathing::Pathfinding::findDistance(Node *nodeA, Node *nodeB, bool oct) {
 
     int diagonalCost = 20;
@@ -34,12 +24,6 @@ int Pathing::Pathfinding::findDistance(Node *nodeA, Node *nodeB, bool oct) {
     return diagonalCost * dstX + straightCost * (dstY - dstX);
 }
 
-/**
- * @brief A namespace for the A* pathfinding algorithm
- * @param set The vector to search in for node
- * @param node The node to search for in set
- * @return Returns true if node is contained within set
- */
 bool Pathing::Pathfinding::containsNode(std::vector<Node *> &set, Node *node) {
     //return std::any_of(set.cbegin(), set.cend(), node);
     for (const auto &m : set) {
@@ -50,11 +34,6 @@ bool Pathing::Pathfinding::containsNode(std::vector<Node *> &set, Node *node) {
     return false;
 }
 
-/**
- * @brief Returns the route from the end node to the start node in a vector
- * @param endNode The node to read the path backwards from
- * @return A vector containing the current path, ordered from start to end
- */
 std::vector<Node *> Pathing::Pathfinding::traceRoute(Node *endNode) {
 
     auto path = std::vector<Node *>();
@@ -68,14 +47,7 @@ std::vector<Node *> Pathing::Pathfinding::traceRoute(Node *endNode) {
     return path;
 }
 
-/**
- * @brief A method to find a path between two nodes using A* pathfinding
- * @param nodeGrid The grid to read from
- * @param startNode The node to start from
- * @param endNode The node to end at
- * @param oct Whether the path will assume diagonal movement or not
- * @return The path from the start node to the end node in vector form
- */
+
  //TODO: This is wildly ineffecient, we could fix this.
 std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node *startNode,
                                                    Node *endNode, bool oct) {
@@ -93,11 +65,12 @@ std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node *startNo
         Node *currentNode = openSet[0];
 
         // Find best node to use from open set
-        for (unsigned i = 1; i < openSet.size(); i++) {
-            if (openSet[i]->fCost() < currentNode->fCost() ||
-                openSet[i]->fCost() == currentNode->fCost()) {
-                if (openSet[i]->hCost < currentNode->hCost)
-                    currentNode = openSet[i];
+        for (auto &next_node : openSet) {
+            if (next_node->fCost() < currentNode->fCost() ||
+                    next_node->fCost() == currentNode->fCost()) {
+                if (next_node->hCost < currentNode->hCost) {
+                    currentNode = next_node;
+                }
             }
         }
 
@@ -152,6 +125,5 @@ std::vector<Node *> Pathing::Pathfinding::findPath(Grid &nodeGrid, Node *startNo
     }
     startNode->occupied = true;
     endNode->occupied   = true;
-    std::vector<Node *> emptyList;
-    return emptyList;
+    return std::vector<Node *>{};
 }

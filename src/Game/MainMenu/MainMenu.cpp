@@ -41,6 +41,8 @@ auto MainMenu::FixedUpdate(double t, double dt) -> void {
 }
 
 auto MainMenu::Update(double t, double dt) -> void {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(camera);
     ecs.Update(t, dt);
 }
 

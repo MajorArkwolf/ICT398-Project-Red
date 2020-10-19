@@ -23,6 +23,8 @@ class PhysicBody {
    public:
     bool static_object = false;
     bool is_sleeping = false;
+    bool should_apply_gravity = true;
+    
     size_t id = 0;
     //Primary
     glm::mat3x3 inertia_tensor = {};

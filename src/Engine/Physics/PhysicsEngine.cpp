@@ -44,9 +44,10 @@ static inline glm::quat ConvertQuaternion(const reactphysics3d::Quaternion &reac
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
     collision_detection_.FixedUpdate(t, dt);
+    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
     IntegrateVelocities(dt);
     IntegratePositions(dt);
-    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
+
     ResetAddedForces();
 }
 
@@ -157,7 +158,7 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
         if (physics_world.IsGravityEnabled()) {
             for (auto &e : entities) {
                 auto &phys_body = entities.get<component::PhysicBody>(e);
-                if (!phys_body.static_object) {
+                if (!phys_body.static_object && !phys_body.is_sleeping && phys_body.should_apply_gravity) {
                     auto &linear_velocity = phys_body.linear_velocity;
 
                     linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
@@ -203,6 +204,7 @@ void physics::PhysicsEngine::ResetAddedForces() {
 
             phys_body.added_force = {0.f, 0.f, 0.f};
             phys_body.added_torque = {0.f, 0.f, 0.f};
+            phys_body.should_apply_gravity = true;
         }
     }
 }

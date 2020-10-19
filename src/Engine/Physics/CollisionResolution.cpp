@@ -37,6 +37,11 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto& first_physbody = first_object->GetComponent<component::PhysicBody>();
     auto& second_physbody = second_object->GetComponent<component::PhysicBody>();
 
+    auto& lvelocity1 = first_physbody.linear_velocity;
+    auto& wvelocity1 = first_physbody.angular_velocity;
+    auto& lvelocity2 = second_physbody.linear_velocity;
+    auto& wvelocity2 = second_physbody.angular_velocity;
+
     auto first_linear_momentum = first_physbody.mass * first_physbody.linear_velocity;
     auto second_linear_momentum = second_physbody.mass * second_physbody.linear_velocity;
     std::stringstream log_text;
@@ -49,37 +54,36 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
                  << n.second_body_contact_point.x << "," << n.second_body_contact_point.y << "," << n.second_body_contact_point.z << "}";
         logger.AddLog(ConsoleLog::LogType::Collision, log_text.str(), __LINE__, __FILE__);*/
 
-        //auto impulse = n.collision_normal;
-        //impulse *= -(1 + restitution) * first_physbody.mass * second_physbody.mass;
-        //impulse *= glm::dot(n.collision_normal, second_physbody.linear_velocity - first_physbody.linear_velocity);
-        //impulse /= (first_physbody.mass + second_physbody.mass);
-        //first_physbody.linear_velocity -= impulse * first_physbody.inverse_mass;
-        //second_physbody.linear_velocity += impulse * second_physbody.inverse_mass;
         auto relative_normal_velocity = glm::dot(relative_velocity, n.collision_normal);
         if (relative_normal_velocity > 1) {
             auto impulse_scalar = glm::dot(first_physbody.linear_velocity - second_physbody.linear_velocity, n.collision_normal);
             impulse_scalar *= -(1 + restitution) * first_physbody.mass * second_physbody.mass;
             impulse_scalar /= (first_physbody.mass + second_physbody.mass);
             auto impulse = impulse_scalar * n.collision_normal;
-           // auto impulse_scalar = (-1.0f + restitution) * relative_normal_velocity;
-            //impulse_scalar /= (first_physbody.mass + second_physbody.mass);
-           // auto impulse = impulse_scalar * n.collision_normal;
-            first_physbody.linear_velocity += (impulse * first_physbody.inverse_mass);
-            second_physbody.linear_velocity -= (impulse * second_physbody.inverse_mass);
+
+            first_physbody.linear_velocity += (impulse * first_physbody.inverse_mass) ;
+            second_physbody.linear_velocity -= (impulse * second_physbody.inverse_mass) ;
             auto first_distance_to_com = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
             auto second_distance_to_com = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
 
             first_physbody.angular_velocity += (first_physbody.inverse_inertia_tensor * glm::cross(impulse, first_distance_to_com));
             second_physbody.angular_velocity += (second_physbody.inverse_inertia_tensor * glm::cross(impulse, second_distance_to_com));
-            const auto k_slop = 0.01f;// Penetration allowance
-            const auto percent = 0.01f;// Penetration percentage to correct
-            auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * (n.collision_normal);
-            if (!first_physbody.static_object) {
-                first_transform.pos += second_physbody.mass * correction;
-            }
-            if (!second_physbody.static_object) {
-                second_transform.pos -= first_physbody.mass * correction;
-            }
+
+            if (first_physbody.static_object) {
+                second_physbody.should_apply_gravity = false;
+            } 
+            if (second_physbody.static_object) {
+                first_physbody.should_apply_gravity = false;
+            } 
+            //const auto k_slop = 0.01f;// Penetration allowance
+            //const auto percent = 0.01f;// Penetration percentage to correct
+            //auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * (n.collision_normal);
+            //if (!first_physbody.static_object) {
+            //    first_transform.pos += second_physbody.mass * correction;
+            //}
+            //if (!second_physbody.static_object) {
+            //    second_transform.pos -= first_physbody.mass * correction;
+            //}
 
         } else {
 

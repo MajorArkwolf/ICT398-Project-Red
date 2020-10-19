@@ -1,3 +1,5 @@
+# SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
+
 # Used to remove warnings from lib
 function(target_ignore_header_warnings target scope)
     get_target_property(lib_include_dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
@@ -11,6 +13,8 @@ option(OPTION_BUILD_TESTS OFF)
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_TESTS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
+option(RP3D_COMPILE_TESTBED OFF)
+option(RP3D_COMPILE_TESTS OFF)
 
 # Build libraries.
 string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -53,7 +57,8 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     glad/src
     react/src
     stb_image/
-    entt/
+    entt/src
+    cpplocate/source
 )
 
 # Ignore header warnings in our libraries.
@@ -66,3 +71,4 @@ target_ignore_header_warnings(glfw INTERFACE)
 target_ignore_header_warnings(glad INTERFACE)
 target_ignore_header_warnings(imgui INTERFACE)
 target_ignore_header_warnings(stb_image INTERFACE)
+target_ignore_header_warnings(cpplocate INTERFACE)

@@ -137,7 +137,6 @@ void CollisionDetection::FixedUpdate(double t, double dt) {
 
 void CollisionDetection::Update(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    //physics_world.world_->update(dt);
     if (physics_world.renderer_) {
         reactphysics3d::DebugRenderer& debug_renderer = physics_world.world_->getDebugRenderer();
         line_num_ = debug_renderer.getNbLines();
@@ -193,4 +192,13 @@ entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm
         return entt::entity(-1);
     }
     return physics_world.collision_entity_coupling_.at(callback.result.collisionBody);
+}
+
+void CollisionDetection::SetTrigger(entt::entity entity, bool is_trigger) {
+    auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
+    auto coll_body = physics_world.entity_collision_coupling_.at(entity);
+    for (unsigned i = 0; i < coll_body->getNbColliders(); ++i) {
+        auto *col = coll_body->getCollider(i);
+        col->setIsTrigger(is_trigger);
+    }
 }

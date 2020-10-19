@@ -24,6 +24,7 @@ PhysicsDemo::PhysicsDemo() {
     path.append("PhysicsDemo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+    redengine::Engine::get().GetMouseMode(relativeMouse);
 
 }
 

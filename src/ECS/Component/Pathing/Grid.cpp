@@ -2,6 +2,7 @@
 
 using Pathing::Grid;
 using Pathing::Node;
+using std::vector;
 
 
 Grid::Grid() {

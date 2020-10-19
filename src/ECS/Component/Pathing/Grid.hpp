@@ -4,8 +4,6 @@
 #include "Node.hpp"
 #include "glm/vec2.hpp"
 
-using std::vector;
-
 /**
  * @namespace Pathing
  * @brief A namespace for the A* pathfinding algorithm
@@ -58,7 +56,7 @@ namespace Pathing {
         void resizeGrid(unsigned x, unsigned y);
 
         /// 2Dimensional Vector of nodes
-        vector<vector<Node>> nodeGrid;
+        std::vector<std::vector<Node>> nodeGrid;
 
         /// The number of columns of nodes
         unsigned gridSizeX = 20;
@@ -70,7 +68,7 @@ namespace Pathing {
          * @param node The node to get neighbours from
          * @return A vector containing pointers to all the node neighbours
          */
-        vector<Node *> getNeighbours(Node &_node);
+        std::vector<Node *> getNeighbours(Node &_node);
         /**
          * @brief Returns the specified number of neighbours of a given node if they exist
          * @param node The node to get neighbours from
@@ -78,6 +76,6 @@ namespace Pathing {
          * @param oct True = return all 8 neighbours, False = return the 4 neighbours in each cardinal direction
          * @return A vector containing pointers to all the node neighbours
          */
-        vector<Node *> getNeighbours(Node &_node, int radius, bool oct);
+        std::vector<Node *> getNeighbours(Node &_node, int radius, bool oct);
     };
 };

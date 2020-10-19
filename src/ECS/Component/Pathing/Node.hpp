@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ECS/ECS.hpp"
-
 /**
  * @namespace Pathing
  * @brief A namespace for the A* pathfinding algorithm

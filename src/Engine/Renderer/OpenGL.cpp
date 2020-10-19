@@ -222,6 +222,12 @@ void view::OpenGL::ClearCamera() {
 
 void view::OpenGL::ToggleWireFrame() {
     wire_frame_ = !wire_frame_;
+    if (wire_frame_) {
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    } else {
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    }
+
 }
 
 bool view::OpenGL::WindowMinimized() {

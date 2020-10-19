@@ -44,6 +44,11 @@ private:
     bool main_edit_menu_ = false;
     /// physics menu that will let you add collidors.
 
+    //Models
+    size_t box_model = 0;
+    size_t sphere_model = 0;
+    size_t capsule_model = 0;
+    size_t loaded_model = 0;
 
     //Save stuff
     std::string save_location;

@@ -41,7 +41,13 @@ void PrefabGUI::CleanUp() {
 }
 
 PrefabGUI::PrefabGUI() {
-
+    auto base_path = redengine::Engine::get().GetBasePath() / "res" / "model" / "Debug";
+    auto box_path = base_path / "box.obj";
+    auto sphere_path = base_path / "sphere.obj";
+    auto capsule_path = base_path / "capsule.obj";
+    box_model = redengine::Engine::get().model_manager_.GetModelID(box_path);
+    sphere_model = redengine::Engine::get().model_manager_.GetModelID(sphere_path);
+    capsule_model = redengine::Engine::get().model_manager_.GetModelID(capsule_path);
 }
 
 void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {
@@ -66,6 +72,17 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
         redengine::Engine::get().model_manager_.Draw(prefab_loaded_.model_id, shader, model_matrix);
+    }
+    if (collider_edit_menu_ && loaded_model != 0) {
+        glm::mat4 model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, collider_.position_local);
+        model_matrix = model_matrix * glm::mat4_cast(collider_.rotation_local);
+        //model_matrix = glm::scale(model_matrix, prefab_loaded_.scale_local);
+        shader->SetMat4("model", model_matrix);
+        shader->SetBool("isAnimated", false);
+        redengine::Engine::get().renderer_.ToggleWireFrame();
+        redengine::Engine::get().model_manager_.Draw(loaded_model, shader, model_matrix);
+        redengine::Engine::get().renderer_.ToggleWireFrame();
     }
 }
 
@@ -151,7 +168,6 @@ void PrefabGUI::MainEntityMenu() {
         save_to = true;
         //main_menu_ = true;
         main_edit_menu_ = false;
-        CleanUp();
     }
     if (ImGui::Button("Close, Dont Save", button_size_)) {
         main_menu_ = true;
@@ -312,19 +328,19 @@ void PrefabGUI::ColliderEditor() {
     ThreeButtonMenu("Z", "rotation-col", eulerRot.z);
     collider_.rotation_local = glm::quat(eulerRot);
     if (selection_choice == 0) {
-
-    }
-    if (selection_choice == 1) {
-
-    }
-    if (selection_choice == 2) {
-
+        loaded_model = box_model;
+    } else if (selection_choice == 1) {
+        loaded_model = sphere_model;
+    } else if (selection_choice == 2) {
+        loaded_model = capsule_model;
     } else {
-
+        selection_choice = 0;
+        loaded_model = 0;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
         collider_edit_menu_ = false;
         eulerRot = glm::vec3();
+        loaded_model = 0;
     }
     ImGui::End();
 }
@@ -351,10 +367,12 @@ void PrefabGUI::SaveTo() {
         myfile.close();
         save_to = false;
         main_menu_ = true;
+        CleanUp();
     }
     if (ImGui::Button("Dont Save", button_size_)) {
         save_to = false;
         main_menu_ = true;
+        CleanUp();
     }
     ImGui::End();
 }

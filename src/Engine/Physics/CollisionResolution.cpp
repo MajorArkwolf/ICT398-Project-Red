@@ -48,23 +48,36 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto& lvelocity2 = second_physbody.linear_velocity;
     auto& wvelocity2 = second_physbody.angular_velocity;
 
-
-    auto 
     std::stringstream log_text;
 
     auto relative_velocity = second_physbody.linear_velocity - first_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
-        glm::vec3 deltaV = {lvelocity2 + glm::cross(wvelocity2, n.second_body_contact_point) - lvelocity1 - glm::cross(wvelocity1, n.first_body_contact_point)};
+        auto centre_to_collision1 = n.first_body_contact_point - first_transform.pos;
+        auto centre_to_collision2 = n.second_body_contact_point - second_transform.pos;
+        auto cross1 = glm::cross(centre_to_collision1, n.collision_normal);
+        auto cross2 = glm::cross(n.collision_normal, centre_to_collision1);
+
+        glm::vec3 deltaV = {lvelocity2 + glm::cross(wvelocity2, centre_to_collision2) - lvelocity1 - glm::cross(wvelocity1, centre_to_collision1)};
         float deltaVDotN = glm::dot(deltaV, n.collision_normal);
         float biasPenetrationDepth = 0.0;
         auto deltalambda = 0.f;
         if (n.penetration > slop) {
             biasPenetrationDepth = -(beta / dt) * std::max(0.0f, n.penetration - slop) + restitution;
         }
-        float massPenetration = first_physbody.inverse_mass + second_physbody.inverse_mass 
-            + ((mContactPoints[mNbContactPoints].i1TimesR1CrossN).cross(mContactPoints[mNbContactPoints].r1)).dot(mContactPoints[mNbContactPoints].normal) +
-            ((mContactPoints[mNbContactPoints].i2TimesR2CrossN).cross(mContactPoints[mNbContactPoints].r2)).dot(mContactPoints[mNbContactPoints].normal);
-        deltalambda = (deltaVDotN + biasPenetrationDepth)
+        float inverse_mass_penetration = 0.f;
+        float massPenetration = first_physbody.inverse_mass + second_physbody.inverse_mass + glm::dot(glm::cross(glm::cross(centre_to_collision1, n.collision_normal), centre_to_collision1), n.collision_normal) + glm::dot(glm::cross(glm::cross(centre_to_collision2, n.collision_normal), centre_to_collision2), n.collision_normal);
+        if (massPenetration > 0) {
+            inverse_mass_penetration = 1.f / massPenetration;
+        } 
+        deltalambda = (deltaVDotN + biasPenetrationDepth) * inverse_mass_penetration;
+
+        glm::vec3 linear_impulse = {n.collision_normal * deltaVDotN};
+
+        first_physbody.linear_velocity -= first_physbody.inverse_mass * linear_impulse;
+        first_physbody.angular_velocity -= glm::cross(centre_to_collision1, n.collision_normal) * deltalambda;
+
+        second_physbody.linear_velocity += second_physbody.inverse_mass * linear_impulse;
+        second_physbody.angular_velocity += glm::cross(centre_to_collision2, n.collision_normal) * deltalambda;
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";
         log_text << " Body 2: {"

@@ -60,6 +60,9 @@ public:
 
     entt::registry& GetRegistry() {return registry_;}
 
+    ECS& operator=(ECS&) = delete;
+    ECS& operator=(ECS&&) = default;
+
 protected:
     entt::registry registry_ = {};
     std::vector<std::shared_ptr<Entity>> entity_register_ = {};

@@ -75,6 +75,8 @@ namespace physics {
         void SetGravity(const glm::vec3& gravity);
         const glm::vec3 &GetGravity();
 
+        void ResetWorld();
+
     private:
         bool renderer_ = true;
         ECS *ecs_ = nullptr;

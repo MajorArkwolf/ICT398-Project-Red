@@ -125,10 +125,10 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 }
                 if (phys.static_object) {
                     phys.mass = 50000;
-                    phys.inverse_mass = 1 / phys.mass;
+                    phys.inverse_mass = 1.f / phys.mass;
                 } else {
                     phys.mass = prefab.mass;
-                    phys.inverse_mass = 1 / prefab.mass;
+                    phys.inverse_mass = 1.f / prefab.mass;
                 }
                 for (const auto &n : prefab.colliders_) {
                     std::visit(overload{

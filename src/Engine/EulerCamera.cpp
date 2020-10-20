@@ -5,15 +5,15 @@
 namespace engine {
 
 // Constructor with vectors
-Camera::Camera(glm::dvec3 position, glm::dvec3 up, double yaw, double pitch)
-    : front_(glm::dvec3(0.0f, 0.0f, -1.0f)), movement_speed_(kSpeed),
-      mouse_sensitivity_(kSensitivity), zoom_(kZoom) {
-  position_ = position;
-  world_up_ = up;
-  yaw_ = yaw;
-  pitch_ = pitch;
-  UpdateCameraVectors();
-}
+    Camera::Camera(glm::dvec3 position, glm::dvec3 up, double yaw, double pitch)
+            : front_(glm::dvec3(0.0f, 0.0f, -1.0f)), movement_speed_(kSpeed),
+              mouse_sensitivity_(kSensitivity), zoom_(kZoom) {
+        position_ = position;
+        world_up_ = up;
+        yaw_ = yaw;
+        pitch_ = pitch;
+        UpdateCameraVectors();
+    }
 
 // Constructor with scalar values
 Camera::Camera(double pos_x, double pos_y, double pos_z, double up_x,
@@ -118,3 +118,4 @@ glm::vec3 Camera::GetFrontVector() {
 }
 
 }  // namespace engine
+

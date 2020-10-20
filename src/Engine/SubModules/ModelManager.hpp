@@ -5,6 +5,7 @@
 #include <filesystem>
 
 class Shader;
+class PrefabGUI;
 
 class ModelManager {
   private:

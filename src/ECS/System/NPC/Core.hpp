@@ -9,7 +9,7 @@ namespace System {
      * @param [in,out] entity The target Entity.
      * @param [in] path The filesystem path to the target external file.
      */
-void NPCImport(entt::registry& registry, entt::entity& entity, std::string path);
+void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path);
 
     /**
      * @brief Exports an Entity's NPC component values to an external file.
@@ -17,28 +17,28 @@ void NPCImport(entt::registry& registry, entt::entity& entity, std::string path)
      * @param [in,out] entity The target Entity.
      * @param [in] path The filesystem path to the target external file.
      */
-void NPCExport(entt::registry& registry, entt::entity& entity, std::string path);
+void NPCExport(entt::registry& registry, const entt::entity& entity, std::string path);
 
     /**
      * @brief Updates an NPC's Beliefs and Desires from its perception of its environment.
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */
-void NPCObserve(entt::registry& registry, entt::entity& entity);
+void NPCObserve(entt::registry& registry, const entt::entity& entity);
 
     /**
      * @brief Updates an NPC's Intentions and Sub-Desires from its Beliefs and Desires.
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */
-void NPCPrepare(entt::registry& registry, entt::entity& entity);
+void NPCPrepare(entt::registry& registry, const entt::entity& entity);
 
     /**
      * @brief Tests an NPC's Intentions and responds to those triggered with Actions.
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */
-void NPCRespond(entt::registry& registry, entt::entity& entity);
+void NPCRespond(entt::registry& registry, const entt::entity& entity);
 
     /**
      * @brief Keeps an NPC idle, relative to its characteristics.
@@ -46,7 +46,7 @@ void NPCRespond(entt::registry& registry, entt::entity& entity);
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */
-void NPCIdle(entt::registry& registry, entt::entity& entity);
+void NPCIdle(entt::registry& registry, const entt::entity& entity);
 
     /**
      * @brief Updates all NPC Entity components and behaviours.

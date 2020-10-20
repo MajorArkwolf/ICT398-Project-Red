@@ -18,19 +18,19 @@ const static double MINIMUM_IDLE_TIME = 1.0;
 
 const static float INTERACTION_RANGE = 1.0f;
 
-void NPCImport(entt::registry& registry, entt::entity& entity, std::string path) {
+void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
     // Not enough time before the 27th, just hard-code the npc initialization for now
 }
 
-void NPCExport(entt::registry& registry, entt::entity& entity, std::string path) {
+void NPCExport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
     // Not enough time before the 27th, just hard-code the npc initialization for now
 }
 
-void NPCObserve(entt::registry& registry, entt::entity& entity) {
+void NPCObserve(entt::registry& registry, const entt::entity& entity) {
     // Gather the NPC's BDI and iterate through its Desires
-    auto npc_bdi = registry.get<component::BDI>(entity);
+    auto &npc_bdi = registry.get<component::BDI>(entity);
     for (auto &desire: npc_bdi.desires) {
         // Keep track of if this Desire resolution was identified
         npc::Outcomes desire_outcome = npc::Outcomes::kSuccess;
@@ -229,7 +229,7 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
         // Catch fulfilment of the Desire
         if (desire.second.history == npc::Outcomes::kSuccess) {
             // Generate a positive emotional response
-            auto emotional_data = registry.get<component::Characteristics>(entity);
+            auto &emotional_data = registry.get<component::Characteristics>(entity);
             component::EmotiveResponse reaction(entity, 0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
@@ -242,7 +242,7 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
         // Catch failure of the Desire
         else if (desire.second.history == npc::Outcomes::kFailure) {
             // Generate a negative emotional response
-            auto emotional_data = registry.get<component::Characteristics>(entity);
+            auto &emotional_data = registry.get<component::Characteristics>(entity);
             component::EmotiveResponse reaction(entity, -0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
@@ -253,34 +253,29 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
 
     // Move the NPC to the response phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
-    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond, -1.0);
 }
 
-void NPCPrepare(entt::registry& registry, entt::entity& entity) {
+void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     // Generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
     // TODO: This
     // Not enough time before the 27th, just treat the Desires and Intentions all as root for now
 
     // Move the NPC to the idle phase
-    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
     ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
 }
 
-void NPCRespond(entt::registry& registry, entt::entity& entity) {
-    // Gather the NPC's BDI and iterate through its Intentions
-    auto npc_bdi = registry.get<component::BDI>(entity);
-    for (auto desire: npc_bdi.desires) {
-
-    }
+void NPCRespond(entt::registry& registry, const entt::entity& entity) {
 }
 
-void NPCIdle(entt::registry& registry, entt::entity& entity) {
+void NPCIdle(entt::registry& registry, const entt::entity& entity) {
     // Calculate the NPC's idle time limit, relative to its overall mood intensity
-    auto npc_characteristics = registry.get<component::Characteristics>(entity);
+    auto &npc_characteristics = registry.get<component::Characteristics>(entity);
     double idle_time_limit = MINIMUM_IDLE_TIME + VARIABLE_IDLE_TIME * EmotionalStateOverallIntensity(npc_characteristics);
 
     // Catch if the NPC should be idling any longer
-    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
     if (idle_time_limit < npc_behaviour_state.current_dt) {
         // Move back to the observation state
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
@@ -290,14 +285,14 @@ void NPCIdle(entt::registry& registry, entt::entity& entity) {
 void NPCsUpdate(entt::registry& registry, double t, double dt) {
     // Loop through the NPCs that have all of the required data structures
     auto npc_view = registry.view<component::BDI, component::Characteristics, component::BehaviourState>();
-    for (auto npc_entity: npc_view) {
+    for (auto &npc_entity: npc_view) {
         // Get the NPC's BehaviourState and update the current behaviour state's delta timers
-        auto npc_state = npc_view.get<component::BehaviourState>(npc_entity);
+        auto &npc_state = npc_view.get<component::BehaviourState>(npc_entity);
         npc_state.current_dt += dt;
         npc_state.emotion_turnover_dt += dt;
 
         // Get the NPC's characteristics and calculate the mood reduction amount
-        auto npc_characteristics = npc_view.get<component::Characteristics>(npc_entity);
+        auto &npc_characteristics = npc_view.get<component::Characteristics>(npc_entity);
         auto mood_reduction = (float) (MOOD_INTENSITY_REDUCTION_RATE * dt);
 
         // Decrease the intensity of the NPC's mood

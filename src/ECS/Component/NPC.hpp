@@ -397,6 +397,9 @@ struct BehaviourState {
         /// The identifier of the current Intention the NPC is acting on.
     int current_intention;
 
+        /// The identifier of the prior Intention the NPC was acting on.
+    int prior_intention;
+
         /**
          * @brief Default object constructor, optionally initialises BehaviourState via parameters.
          * @param current_in The current stage of the NPC's behaviour.
@@ -406,7 +409,8 @@ struct BehaviourState {
                             double current_dt_in = 0.0f,
                             npc::Stages prior_in = npc::Stages::kIdle,
                             double emotion_turnover_dt_in = 0.0f,
-                            int current_intention_in = -1);
+                            int current_intention_in = -1,
+                            int prior_intention_in = -1);
 };
 
 } // namespace component

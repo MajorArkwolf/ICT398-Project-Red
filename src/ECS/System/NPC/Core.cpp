@@ -320,8 +320,10 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     }
 
     // Action the current Intention
+    // TODO: This
 
     // Move back to idling after the current action is done.
+    // TODO: This
 }
 
 void NPCIdle(entt::registry& registry, const entt::entity& entity) {

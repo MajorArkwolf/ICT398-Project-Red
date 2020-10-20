@@ -257,7 +257,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
 }
 
 void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
-    // Preferrably we would generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
+    // Preferably we would generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
     // This is no longer viable within the deadline, so instead the triggered Intentions will be tracked
     //   and a target Intention to perform will be identified.
 
@@ -265,9 +265,32 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     auto &npc_bdi = registry.get<component::BDI>(entity);
     std::map<int, std::set<int>> fulfilled_desires = FulfilledDesires(npc_bdi, 0, npc_bdi.root_desires);
 
-    // Determine which Desires would trigger an Intention
+    // Gather the Desire identifiers stored by the BDI's Intentions
+    std::set<int> desire_triggers;
+    for (auto &current_intention: npc_bdi.intentions) {
+        // Iterate through the Intention's plans
+        for (auto &current_plan: current_intention.second) {
+            // The nature of a set guarantees only a single copy of each identifier will be stored
+            desire_triggers.insert(current_plan.desire);
+        }
+    }
 
-    // Determine which Intention should be actioned
+    // Filter out the above data to only include Desire identifiers used by Intentions
+    std::set<int> intersect_store;
+    for (auto &current_layer: fulfilled_desires) {
+        // Only retain the identifiers that are also found in the gathered desire triggers
+        std::set_intersection(current_layer.second.begin(), current_layer.second.end(),
+                              desire_triggers.begin(), desire_triggers.end(),
+                              std::inserter(intersect_store, intersect_store.begin()));
+        current_layer.second = intersect_store;
+
+        // Clear the data from the temp store
+        intersect_store.clear();
+    }
+
+    // Determine which Intention should be actioned,
+    //   going backwards through the remaining fulfilled desires
+    // TODO: This
 
     // Move the NPC to the respond phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);

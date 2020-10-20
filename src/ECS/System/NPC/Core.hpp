@@ -27,7 +27,7 @@ void NPCExport(entt::registry& registry, const entt::entity& entity, std::string
 void NPCObserve(entt::registry& registry, const entt::entity& entity);
 
     /**
-     * @brief Updates an NPC's Intentions and Sub-Desires from its Beliefs and Desires.
+     * @brief Updates an NPC's Intentions and Desires from its Beliefs and Desires.
      * @param [in,out] registry The target Registry.
      * @param [in,out] entity The target Entity.
      */

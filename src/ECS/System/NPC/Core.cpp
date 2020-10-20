@@ -265,22 +265,19 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     auto &npc_bdi = registry.get<component::BDI>(entity);
     std::map<int, std::set<int>> fulfilled_desires = FulfilledDesires(npc_bdi, 0, npc_bdi.root_desires);
 
-    // Gather the Desire identifiers stored by the BDI's Intentions
-    std::set<int> desire_triggers;
+    // Gather the identifiers of Desires that would trigger an intention
+    std::set<int> trigger_desires;
     for (auto &current_intention: npc_bdi.intentions) {
-        // Iterate through the Intention's plans
-        for (auto &current_plan: current_intention.second) {
-            // The nature of a set guarantees only a single copy of each identifier will be stored
-            desire_triggers.insert(current_plan.desire);
-        }
+        // Store the identifier of the Desire that would trigger the Intention
+        trigger_desires.insert(current_intention.first);
     }
 
     // Filter out the above data to only include Desire identifiers used by Intentions
     std::set<int> intersect_store;
     for (auto &current_layer: fulfilled_desires) {
-        // Only retain the identifiers that are also found in the gathered desire triggers
+        // Only retain the identifiers that are also found in the gathered trigger Desires
         std::set_intersection(current_layer.second.begin(), current_layer.second.end(),
-                              desire_triggers.begin(), desire_triggers.end(),
+                              trigger_desires.begin(), trigger_desires.end(),
                               std::inserter(intersect_store, intersect_store.begin()));
         current_layer.second = intersect_store;
 
@@ -288,9 +285,25 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
         intersect_store.clear();
     }
 
-    // Determine which Intention should be actioned,
-    //   going backwards through the remaining fulfilled desires
-    // TODO: This
+    // Determine which Intention Plan should be actioned, going backwards through the hierarchy
+    for (auto current_desire_layer = fulfilled_desires.rbegin(); current_desire_layer != fulfilled_desires.rend(); ++current_desire_layer) {
+        // Catch if the current layer doesn't has any Desire identifiers remaining
+        if (current_desire_layer->second.size() < 1) {
+            // Move onto the layer above in the hierarchy, none remain after the filtering
+            continue;
+        }
+
+        // Determine which triggered Intention should be selected for processing
+        //TODO: THIS
+        //https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset
+
+        // Determine which plan from the selected intention should be Actioned
+        //TODO: THIS
+        // Make sure it respects: prior plan, action weighting (BDI personality)
+
+        // Break out of the loop, the current intention has been determined
+        break;
+    }
 
     // Move the NPC to the respond phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);

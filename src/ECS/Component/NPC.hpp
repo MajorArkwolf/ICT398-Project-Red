@@ -383,11 +383,11 @@ struct BehaviourState {
         /// The prior stage of the NPC's behaviour before it was updated.
     npc::Stages prior;
 
-        /// The amount of time the NPC behaviour has been in its prior behaviour state.
-    double prior_dt;
-
         /// An accumulated amount of time since the prior turnover of NPC emotions.
     double emotion_turnover_dt;
+
+        /// The identifier of the current Intention the NPC is acting on.
+    int current_intention;
 
         /**
          * @brief Default object constructor, optionally initialises BehaviourState via parameters.
@@ -396,9 +396,9 @@ struct BehaviourState {
          */
     explicit BehaviourState(npc::Stages current_in = npc::Stages::kIdle,
                             double current_dt_in = 0.0f,
-                            double emotion_turnover_dt_in = 0.0f,
                             npc::Stages prior_in = npc::Stages::kIdle,
-                            double prior_dt_in = 0.0f);
+                            double emotion_turnover_dt_in = 0.0f,
+                            int current_intention_in = -1);
 };
 
 } // namespace component

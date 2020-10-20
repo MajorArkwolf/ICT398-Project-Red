@@ -267,6 +267,7 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
 }
 
 void NPCRespond(entt::registry& registry, const entt::entity& entity) {
+
 }
 
 void NPCIdle(entt::registry& registry, const entt::entity& entity) {

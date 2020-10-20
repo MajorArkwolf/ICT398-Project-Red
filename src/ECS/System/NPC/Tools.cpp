@@ -41,11 +41,13 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
                             double starting_dt) {
     // Copy the current values from the current state to the prior
     target.prior = target.current;
-    target.prior_dt = target.current_dt;
 
     // Assign the current state the newly provided values
     target.current = new_state;
     target.current_dt = starting_dt;
+
+    // Guarantee the tracked Intention will not overlap with an actual identifier
+    target.current_intention = -1;
 }
 
 void TestGoal(component::Goal& target, float value) {

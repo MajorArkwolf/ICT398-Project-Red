@@ -61,7 +61,7 @@ void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int ro
      * @return The sets of fulfilled Desire identifiers, mapped to their hierarchy layer.
      */
 std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int current_layer,
-                                              std::set<int> child_identifiers,
+                                              std::set<int>& child_identifiers,
                                               std::map<int, std::set<int>> fulfilled_hierarchy = {{}});
 
 } // namespace System

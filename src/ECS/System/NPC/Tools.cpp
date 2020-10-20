@@ -94,9 +94,37 @@ void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int ro
 }
 
 std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int current_layer,
-                                              std::set<int> child_identifiers,
+                                              std::set<int>& child_identifiers,
                                               std::map<int, std::set<int>> fulfilled_hierarchy) {
-    // TODO: This
+    // Iterate through the current set of child Desire identifiers
+    for (auto current_identifier: child_identifiers) {
+        // Get access to the current Desire
+        auto current_desire = target.desires.find(current_identifier);
+
+        // Catch an invalid identifier
+        if (current_desire == target.desires.end()) {
+            // Remove the invalid child identifier from the tracked set
+            child_identifiers.erase(current_identifier);
+
+            // Skip to the next identifier in the loop
+            continue;
+        }
+
+        // Check if the currently accessed desire has been achieved
+        if (current_desire->second.history == npc::Outcomes::kSuccess) {
+            // Add the identifier of the current Desire to the fulfilled hierarchy
+            fulfilled_hierarchy[current_layer].insert(current_identifier);
+        }
+        else {
+            // Identify if this Desire's children have been fulfilled, this is recursive
+            FulfilledDesires(target, current_layer + 1,
+                             current_desire->second.children,
+                             fulfilled_hierarchy);
+        }
+    }
+
+    // Return the 'hierarchical' map of sets of identified Desires
+    return fulfilled_hierarchy;
 }
 
 } // namespace System

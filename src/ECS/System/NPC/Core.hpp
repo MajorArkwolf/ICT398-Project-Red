@@ -3,22 +3,6 @@
 namespace System {
 
     /**
-     * @brief Sets an Entity's NPC components to their default values.
-     * Also generates any NPC components the Entity is missing.
-     * @param [in,out] registry The target Registry.
-     * @param [in,out] entity The target Entity.
-     */
-void NPCInit(entt::registry& registry, entt::entity& entity);
-
-    /**
-     * @brief Deletes all NPC components from an Entity.
-     * Only deletes the NPC components, and does not delete the Entity itself.
-     * @param [in,out] registry The target Registry.
-     * @param [in,out] entity The target Entity.
-     */
-void NPCUnInit(entt::registry& registry, entt::entity& entity);
-
-    /**
      * @brief Sets an Entity's NPC components to values from an external file.
      * Also generates any NPC components the Entity is missing.
      * @param [in,out] registry The target Registry.

@@ -48,7 +48,7 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
     target.current_dt = starting_dt;
 }
 
-bool TestGoal(component::Goal& target, float value) {
+void TestGoal(component::Goal& target, float value) {
     // Perform the calculations depending on the requested condition
     bool result = false;
     switch (target.condition) {
@@ -75,7 +75,7 @@ bool TestGoal(component::Goal& target, float value) {
             result = false;
     }
 
-    // Update the Goal's history and return the test outcome
+    // Update the Goal's history
     if (result) {
         // Indicate success
         target.history = npc::Outcomes::kSuccess;
@@ -84,7 +84,11 @@ bool TestGoal(component::Goal& target, float value) {
         // Indicate failure
         target.history = npc::Outcomes::kFailure;
     }
-    return result;
+}
+
+void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int root) {
+    // TODO: This
+    // Not enough time before the 27th, just treat the Desires and Intentions all as root for now
 }
 
 } // namespace System

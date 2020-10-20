@@ -1,54 +1,258 @@
 #include "Core.hpp"
 
 #include "ECS/Component/NPC.hpp"
+#include "ECS/Component/Basic.hpp"
 #include "ECS/System/NPC/Tools.hpp"
+
+#include "glm/glm.hpp"
 
 namespace System {
 
-const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0f / 240.0f;
+const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
 
-const static double MOOD_INTENSITY_REDUCTION_RATE = 1.0f / 360.0f;
+const static double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
 
-const static double VARIABLE_IDLE_TIME = 3.5f;
+const static double VARIABLE_IDLE_TIME = 3.5;
 
-const static double MINIMUM_IDLE_TIME = 1.0f;
-
-void NPCInit(entt::registry& registry, entt::entity& entity) {
-    // Regenerate default values for all NPC components
-    registry.emplace_or_replace<component::BDI>(entity);
-
-    // The following lines are not required as EnTT dependencies should manage the rest.
-    //registry.emplace_or_replace<component::Characteristics>(entity);
-    //registry.emplace_or_replace<component::BehaviourState>(entity);
-}
-
-void NPCUnInit(entt::registry& registry, entt::entity& entity) {
-    // Delete any of the Entity's NPC components that exist
-    registry.remove_if_exists<component::BDI>(entity);
-
-    // The following lines are not required as EnTT dependencies should manage the rest.
-    //registry.remove_if_exists<component::Characteristics>(entity);
-    //registry.remove_if_exists<component::BehaviourState>(entity);
-}
+const static double MINIMUM_IDLE_TIME = 1.0;
 
 void NPCImport(entt::registry& registry, entt::entity& entity, std::string path) {
-
+    // TODO: This
+    // Not enough time before the 27th, just hard-code the npc initialization for now
 }
 
 void NPCExport(entt::registry& registry, entt::entity& entity, std::string path) {
-
+    // TODO: This
+    // Not enough time before the 27th, just hard-code the npc initialization for now
 }
 
 void NPCObserve(entt::registry& registry, entt::entity& entity) {
+    // Gather the NPC's BDI and iterate through its Desires
+    auto npc_bdi = registry.get<component::BDI>(entity);
+    for (auto desire: npc_bdi.desires) {
+        // Keep track of if this Desire resolution was identified
+        npc::Outcomes desire_outcome = npc::Outcomes::kSuccess;
 
+        // Iterate through the current Desire's Goals
+        for (auto goal: desire.second.goals) {
+            // Observe only if the Entity has a Belief about the Goal's target Entity
+            auto target_entity_beliefs = npc_bdi.beliefs_properties.find(goal.entity);
+            if (target_entity_beliefs != npc_bdi.beliefs_properties.end()) {
+                // Observe only if the Beliefs of the target Entity includes the Goal's property
+                if (target_entity_beliefs->second.find(goal.property) != target_entity_beliefs->second.end()) {
+                    // Check if the Goal's target Entity exists within the registry
+                    if (registry.valid(goal.entity)) {
+                        // Track the value of the target property
+                        bool found_value = false;
+                        float value_gathered = 0.0f;
+                        void* component_returned = nullptr;
+
+                        // Split logic here for the gathering of target property values
+                        switch (goal.property) {
+                            case npc::Properties::kExists:
+                                // We know the entity exists, so pass a value of 1 in
+                                value_gathered = 1.0f;
+                                found_value = true;
+                                break;
+                            case npc::Properties::kType:
+                                // Currently unsupported
+                                break;
+                            case npc::Properties::kSize:
+                                // Attempt to get the component if it exists
+                                component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                if (component_returned != nullptr) {
+                                    // Gather the component's property value
+                                    value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->mass;
+                                    found_value = true;
+                                }
+                                break;
+                            case npc::Properties::kMass:
+                                {
+                                    // Attempt to get the component if it exists
+                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                    if (component_returned != nullptr) {
+                                        // Gather the value from the specified axis
+                                        switch (goal.element) {
+                                            case npc::Components::kDefault:
+                                            case npc::Components::kAxisX:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.x;
+                                                break;
+                                            case npc::Components::kAxisY:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.y;
+                                                break;
+                                            case npc::Components::kAxisZ:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.z;
+                                                break;
+                                        }
+                                        found_value = true;
+                                    }
+                                }
+                                break;
+                            case npc::Properties::kShape:
+                                // Currently unsupported
+                                break;
+                            case npc::Properties::kPosition:
+                                {
+                                    // Attempt to get the component if it exists
+                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                    if (component_returned != nullptr) {
+                                        // Gather the value from the specified axis
+                                        switch (goal.element) {
+                                            case npc::Components::kDefault:
+                                            case npc::Components::kAxisX:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.x;
+                                                break;
+                                            case npc::Components::kAxisY:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.y;
+                                                break;
+                                            case npc::Components::kAxisZ:
+                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.z;
+                                                break;
+                                        }
+                                        found_value = true;
+                                    }
+                                }
+                                break;
+                            case npc::Properties::kVelocity:
+                                {
+                                    // Attempt to get the component if it exists
+                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                    if (component_returned != nullptr) {
+                                        // Gather the value from the specified axis
+                                        switch (goal.element) {
+                                            case npc::Components::kDefault:
+                                            case npc::Components::kAxisX:
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().x;
+                                                break;
+                                            case npc::Components::kAxisY:
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().y;
+                                                break;
+                                            case npc::Components::kAxisZ:
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().z;
+                                                break;
+                                        }
+                                        found_value = true;
+                                    }
+                                }
+                                break;
+                            case npc::Properties::kAcceleration:
+                                // Currently unsupported
+                                break;
+                            case npc::Properties::kOrientation:
+                                {
+                                    // Attempt to get the component if it exists
+                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                    if (component_returned != nullptr) {
+                                        // Gather the value from the specified axis
+                                        switch (goal.element) {
+                                            case npc::Components::kDefault:
+                                                [[fallthrough]];
+                                            case npc::Components::kAxisX:
+                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).x);
+                                            break;
+                                            case npc::Components::kAxisY:
+                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).y);
+                                            break;
+                                            case npc::Components::kAxisZ:
+                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).z);
+                                            break;
+                                        }
+                                        found_value = true;
+                                    }
+                                }
+                                break;
+                            case npc::Properties::kRange:
+                                // TODO: IMPLEMENT THIS
+                                break;
+                            case npc::Properties::kGrabber:
+                                // Not supported
+                                break;
+                            case npc::Properties::kGrabbee:
+                                // Not supported
+                                break;
+                        }
+
+                        // If the property was gathered, test it
+                        if (found_value) {
+                            TestGoal(goal, value_gathered);
+                        }
+                        else {
+                            // Indicate that the outcome of the Goal and Desire could not be identified
+                            goal.history = npc::Outcomes::kUnknown;
+                        }
+                    }
+                    else {
+                        // Catch the goal being that the NPC doesn't want the target Entity to exist
+                        if (goal.property == npc::Properties::kExists) {
+                            TestGoal(goal, 0.0f);
+                        }
+                        else {
+                            // Indicate that the outcome of the Goal and Desire could not be identified
+                            goal.history = npc::Outcomes::kUnknown;
+                        }
+                    }
+                }
+                else {
+                    // Indicate that the outcome of the Goal and Desire could not be identified
+                    goal.history = npc::Outcomes::kUnknown;
+                }
+            }
+            else {
+                // Indicate that the outcome of the Goal and Desire could not be identified
+                goal.history = npc::Outcomes::kUnknown;
+            }
+
+            // Update the tracked Desire outcome if required
+            if (goal.history < desire_outcome) {
+                desire_outcome = goal.history;
+            }
+        }
+
+        // Store the Desire's history
+        desire.second.history = desire_outcome;
+
+        // Catch fulfilment of the Desire
+        if (desire.second.history == npc::Outcomes::kSuccess) {
+            // Generate a positive emotional response
+            auto emotional_data = registry.get<component::Characteristics>(entity);
+            component::EmotiveResponse reaction(entity, 0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            emotional_data.emotions.push_back(reaction);
+
+            // Add a slight change to the NPC's mood
+            emotional_data.mood += 0.05;
+
+            // Delete the child Desires as they are no longer needed
+            DeleteDesireChildren(npc_bdi.desires, desire.first);
+        }
+        // Catch failure of the Desire
+        else if (desire.second.history == npc::Outcomes::kFailure) {
+            // Generate a negative emotional response
+            auto emotional_data = registry.get<component::Characteristics>(entity);
+            component::EmotiveResponse reaction(entity, -0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            emotional_data.emotions.push_back(reaction);
+
+            // Add a slight change to the NPC's mood
+            emotional_data.mood -= 0.05;
+        }
+    }
+
+    // Move the NPC to the response phase
+    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond);
 }
 
 void NPCPrepare(entt::registry& registry, entt::entity& entity) {
+    // Generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
+    // TODO: This
+    // Not enough time before the 27th, just treat the Desires and Intentions all as root for now
 
+    // Move the NPC to the idle phase
+    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
 }
 
 void NPCRespond(entt::registry& registry, entt::entity& entity) {
-
+    // Test the
 }
 
 void NPCIdle(entt::registry& registry, entt::entity& entity) {

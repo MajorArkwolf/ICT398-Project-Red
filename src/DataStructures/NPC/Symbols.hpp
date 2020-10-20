@@ -53,9 +53,9 @@ enum class Components {
      * @warning Lists only symbolic representations, not values, of outcomes!
      */
 enum class Outcomes {
-    kUnknown, ///< For use when the outcome cannot be determined.
-    kSuccess, ///< Indicates a positive outcome to an NPC event or action.
-    kFailure ///< Indicates a negative outcome to an NPC event or action.
+    kUnknown = 0, ///< For use when the outcome cannot be determined.
+    kSuccess = 2, ///< Indicates a positive outcome to an NPC event or action.
+    kFailure = 1 ///< Indicates a negative outcome to an NPC event or action.
 };
 
     /**

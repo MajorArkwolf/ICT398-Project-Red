@@ -13,5 +13,10 @@
     },
     "Scale": 0.1
   },
-  "Physics": true
+  "Physics": true,
+  "LinearVelocity": {
+    "X": 1,
+    "Y": 0,
+    "Z": 0
+  }
 }

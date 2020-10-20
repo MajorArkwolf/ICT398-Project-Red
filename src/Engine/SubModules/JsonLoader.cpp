@@ -155,6 +155,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 }
                 phys.colliders = prefab.colliders_;
                 phys.centre_mass = prefab.centre_of_mass;
+                if (j.contains("LinearVelocity")) {
+                    phys.linear_velocity.x = j.at("LinearVelocity").at("X").get<float>();
+                    phys.linear_velocity.y = j.at("LinearVelocity").at("Y").get<float>();
+                    phys.linear_velocity.z = j.at("LinearVelocity").at("Z").get<float>();
+                }
+
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";

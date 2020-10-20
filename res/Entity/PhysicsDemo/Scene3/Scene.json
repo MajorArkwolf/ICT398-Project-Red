@@ -1,5 +1,3 @@
 {
-  "Entity": ["Desk.json", "Block3.json" ]
+  "Entity": []
 }
-
-//"Entity": [ "Ball.json", "Block1.json", "Block2.json", "Chair.json", "Desk.json"]

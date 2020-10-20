@@ -29,12 +29,12 @@ void NPCExport(entt::registry& registry, entt::entity& entity, std::string path)
 void NPCObserve(entt::registry& registry, entt::entity& entity) {
     // Gather the NPC's BDI and iterate through its Desires
     auto npc_bdi = registry.get<component::BDI>(entity);
-    for (auto desire: npc_bdi.desires) {
+    for (auto &desire: npc_bdi.desires) {
         // Keep track of if this Desire resolution was identified
         npc::Outcomes desire_outcome = npc::Outcomes::kSuccess;
 
         // Iterate through the current Desire's Goals
-        for (auto goal: desire.second.goals) {
+        for (auto &goal: desire.second.goals) {
             // Observe only if the Entity has a Belief about the Goal's target Entity
             auto target_entity_beliefs = npc_bdi.beliefs_properties.find(goal.entity);
             if (target_entity_beliefs != npc_bdi.beliefs_properties.end()) {
@@ -237,7 +237,7 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
     }
 
     // Move the NPC to the response phase
-    auto npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
     ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond);
 }
 
@@ -252,7 +252,11 @@ void NPCPrepare(entt::registry& registry, entt::entity& entity) {
 }
 
 void NPCRespond(entt::registry& registry, entt::entity& entity) {
-    // Test the
+    // Gather the NPC's BDI and iterate through its Intentions
+    auto npc_bdi = registry.get<component::BDI>(entity);
+    for (auto desire: npc_bdi.desires) {
+
+    }
 }
 
 void NPCIdle(entt::registry& registry, entt::entity& entity) {

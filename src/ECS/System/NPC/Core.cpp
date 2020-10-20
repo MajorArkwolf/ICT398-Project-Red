@@ -234,7 +234,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood += 0.05;
+            emotional_data.mood += 0.05f;
 
             // Delete the child Desires as they are no longer needed
             DeleteDesireChildren(npc_bdi.desires, desire.first);
@@ -247,7 +247,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood -= 0.05;
+            emotional_data.mood -= 0.05f;
         }
     }
 
@@ -267,7 +267,16 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
 }
 
 void NPCRespond(entt::registry& registry, const entt::entity& entity) {
+    // Catch if the NPC has not yet determined which Intention to action
+    auto &state = registry.get<component::BehaviourState>(entity);
+    if (state.current_intention < 0) {
+        // Determine which Intention to Action
 
+    }
+
+    // Action the current Intention
+
+    // Move back to idling after the current action is done.
 }
 
 void NPCIdle(entt::registry& registry, const entt::entity& entity) {

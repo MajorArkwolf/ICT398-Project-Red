@@ -34,10 +34,12 @@ BDI::BDI(entt::entity entity_in,
          std::initializer_list<npc::Properties> beliefs_properties_in,
          std::initializer_list<npc::Actions> beliefs_affordances_in,
          std::initializer_list<std::pair<const int, Desire>> desires_in,
+         std::initializer_list<int> root_desires_in,
          std::initializer_list<std::pair<const int, std::set<Plan>>> intentions_in)
         : beliefs_properties({{entity_in, beliefs_properties_in}}),
           beliefs_affordances({{entity_in, beliefs_affordances_in}}),
           desires(desires_in),
+          root_desires(root_desires_in),
           intentions(intentions_in) {
     // Guarantee an initial belief in the existence of the identified entity
     beliefs_properties[entity_in].insert(npc::Properties::kExists);

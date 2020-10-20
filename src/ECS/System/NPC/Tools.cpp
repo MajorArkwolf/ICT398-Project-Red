@@ -8,7 +8,7 @@ float EmotionalStateOverall(component::Characteristics& target) {
     for (int i = 0; i < target.emotions.size(); i++) {
         // Calculate the weighting for this emotion
         float relative_pos = (float)(i + 1) / (float)target.emotions.size();
-        float weighting = 0.25 + 0.5 * relative_pos;
+        float weighting = 0.25f + 0.5f * relative_pos;
 
         // Add the weighted emotional response to the total
         collective_emotions += target.emotions[i].emotion * weighting;

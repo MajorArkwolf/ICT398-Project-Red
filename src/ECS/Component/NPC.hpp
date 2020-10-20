@@ -203,6 +203,12 @@ struct BDI {
     std::map<int, Desire> desires;
 
         /**
+         * @brief The NPC's root Desires from its hierarchical collection.
+         * @warning No Desire should be mapped to a value of 0 or less!
+         */
+    std::set<int> root_desires;
+
+        /**
          * @brief The NPC's intended set of reactions to a Desire's resolution.
          * A set of one to many Plans is mapped to a trigger Desire's identifier.
          */
@@ -222,6 +228,7 @@ struct BDI {
          * @param [in] beliefs_properties_in The initial property Beliefs for the specified entity.
          * @param [in] beliefs_affordances_in The initial affordance Beliefs for the specified entity.
          * @param [in] desires_in The initial set of Desires, paired with their identifying value.
+         * @param [in] root_desires_in The initial root Desires.
          * @param [in] intentions_in The initial set of Intentions, paired with their identifying value.
          * @warning Any Desires/Intentions with matching identifiers will be overwritten/dropped!
          */
@@ -230,6 +237,7 @@ struct BDI {
         std::initializer_list<npc::Properties> beliefs_properties_in = {},
         std::initializer_list<npc::Actions> beliefs_affordances_in = {},
         std::initializer_list<std::pair<const int, Desire>> desires_in = {},
+        std::initializer_list<int> root_desires_in = {},
         std::initializer_list<std::pair<const int, std::set<Plan>>> intentions_in = {});
 };
 

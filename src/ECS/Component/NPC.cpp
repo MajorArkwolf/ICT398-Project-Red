@@ -35,7 +35,7 @@ BDI::BDI(entt::entity entity_in,
          std::initializer_list<npc::Actions> beliefs_affordances_in,
          std::initializer_list<std::pair<const int, Desire>> desires_in,
          std::initializer_list<int> root_desires_in,
-         std::initializer_list<std::pair<const int, std::set<Plan>>> intentions_in)
+         std::initializer_list<std::pair<const int, std::vector<Plan>>> intentions_in)
         : beliefs_properties({{entity_in, beliefs_properties_in}}),
           beliefs_affordances({{entity_in, beliefs_affordances_in}}),
           desires(desires_in),
@@ -64,7 +64,8 @@ Characteristics::Characteristics(float mood_in,
 
 BehaviourState::BehaviourState(npc::Stages current_in, double current_dt_in,
                                npc::Stages prior_in, double emotion_turnover_dt_in,
-                               int current_intention_in, int prior_intention_in)
+                               std::pair<int, int> current_intention_in,
+                               std::pair<int, int> prior_intention_in)
         : current(current_in),
           current_dt(current_dt_in),
           prior(prior_in),

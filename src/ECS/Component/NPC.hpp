@@ -212,7 +212,7 @@ struct BDI {
          * @brief The NPC's intended set of reactions to a Desire's resolution.
          * A set of one to many Plans is mapped to a trigger Desire's identifier.
          */
-    std::map<int, std::set<Plan>> intentions;
+    std::map<int, std::vector<Plan>> intentions;
 
         /**
          * @brief Default object constructor, initialises BDI to default values.
@@ -238,7 +238,7 @@ struct BDI {
         std::initializer_list<npc::Actions> beliefs_affordances_in = {},
         std::initializer_list<std::pair<const int, Desire>> desires_in = {},
         std::initializer_list<int> root_desires_in = {},
-        std::initializer_list<std::pair<const int, std::set<Plan>>> intentions_in = {});
+        std::initializer_list<std::pair<const int, std::vector<Plan>>> intentions_in = {});
 };
 
     /// An emotional response to a specific NPC perception, construct, or circumstance.
@@ -394,11 +394,11 @@ struct BehaviourState {
         /// An accumulated amount of time since the prior turnover of NPC emotions.
     double emotion_turnover_dt;
 
-        /// The identifier of the current Intention the NPC is acting on.
-    int current_intention;
+        /// The identifier of the current Intention (and Plan) the NPC is acting on.
+    std::pair<int, int> current_intention;
 
-        /// The identifier of the prior Intention the NPC was acting on.
-    int prior_intention;
+        /// The identifier of the prior Intention (and Plan) the NPC was acting on.
+    std::pair<int, int> prior_intention;
 
         /**
          * @brief Default object constructor, optionally initialises BehaviourState via parameters.
@@ -409,8 +409,8 @@ struct BehaviourState {
                             double current_dt_in = 0.0f,
                             npc::Stages prior_in = npc::Stages::kIdle,
                             double emotion_turnover_dt_in = 0.0f,
-                            int current_intention_in = -1,
-                            int prior_intention_in = -1);
+                            std::pair<int, int> current_intention_in = {-1, -1},
+                            std::pair<int, int> prior_intention_in = {-1, -1});
 };
 
 } // namespace component

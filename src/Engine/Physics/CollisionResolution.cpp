@@ -37,56 +37,47 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto& first_physbody = first_object->GetComponent<component::PhysicBody>();
     auto& second_physbody = second_object->GetComponent<component::PhysicBody>();
 
-    auto& lvelocity1 = first_physbody.linear_velocity;
-    auto& wvelocity1 = first_physbody.angular_velocity;
-    auto& lvelocity2 = second_physbody.linear_velocity;
-    auto& wvelocity2 = second_physbody.angular_velocity;
+    const auto& m1 = first_physbody.mass;
+    const auto& m2 = second_physbody.mass;
 
-    auto first_linear_momentum = first_physbody.mass * first_physbody.linear_velocity;
-    auto second_linear_momentum = second_physbody.mass * second_physbody.linear_velocity;
+    const auto& im1 = first_physbody.inverse_mass;
+    const auto& im2 = second_physbody.inverse_mass;
+
+    //first linear and angular vel
+    auto& lv1 = first_physbody.linear_velocity;
+    auto& wv1 = first_physbody.angular_velocity;
+
+    //second object linear and angular vel
+    auto& lv2 = second_physbody.linear_velocity;
+    auto& wv2 = second_physbody.angular_velocity;
+
+    //objects momentums
+    auto p1 = first_physbody.mass * first_physbody.linear_velocity;
+    auto p2 = second_physbody.mass * second_physbody.linear_velocity;
+
+
     std::stringstream log_text;
 
-    auto relative_velocity = first_physbody.linear_velocity - second_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
+        auto com_to_col1 = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
+        auto com_to_col2 = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";
         log_text << " Body 2: {"
                  << n.second_body_contact_point.x << "," << n.second_body_contact_point.y << "," << n.second_body_contact_point.z << "}";
         logger.AddLog(ConsoleLog::LogType::Collision, log_text.str(), __LINE__, __FILE__);*/
 
-        auto relative_normal_velocity = glm::dot(relative_velocity, n.collision_normal);
-        if (relative_normal_velocity > 1) {
-            auto impulse_scalar = glm::dot(first_physbody.linear_velocity - second_physbody.linear_velocity, n.collision_normal);
-            impulse_scalar *= -(1 + restitution) * first_physbody.mass * second_physbody.mass;
-            impulse_scalar /= (first_physbody.mass + second_physbody.mass);
-            auto impulse = impulse_scalar * n.collision_normal;
+        glm::vec3 rv = lv2 - lv1;
+        auto cv = glm::dot(rv, n.collision_normal);
 
-            first_physbody.linear_velocity += (impulse * first_physbody.inverse_mass) ;
-            second_physbody.linear_velocity -= (impulse * second_physbody.inverse_mass) ;
-            auto first_distance_to_com = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
-            auto second_distance_to_com = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
 
-            first_physbody.angular_velocity += (first_physbody.inverse_inertia_tensor * glm::cross(impulse, first_distance_to_com));
-            second_physbody.angular_velocity += (second_physbody.inverse_inertia_tensor * glm::cross(impulse, second_distance_to_com));
+        auto j = (-1.0f + restitution) * cv;
+        j /= (im1 + im2);
+        auto impulse = j * n.collision_normal;
+        lv1 -= im1 * impulse;
+        lv2 += im2 * impulse;
 
-            if (first_physbody.static_object) {
-                second_physbody.should_apply_gravity = false;
-            } 
-            if (second_physbody.static_object) {
-                first_physbody.should_apply_gravity = false;
-            } 
-            //const auto k_slop = 0.01f;// Penetration allowance
-            //const auto percent = 0.01f;// Penetration percentage to correct
-            //auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * (n.collision_normal);
-            //if (!first_physbody.static_object) {
-            //    first_transform.pos += second_physbody.mass * correction;
-            //}
-            //if (!second_physbody.static_object) {
-            //    second_transform.pos -= first_physbody.mass * correction;
-            //}
-
-        } else {
-
-        }
+         wv1 -= glm::cross(m1 * impulse, com_to_col1) * first_physbody.inverse_inertia_tensor;
+         wv2 += glm::cross(com_to_col2, m2 * impulse) * second_physbody.inverse_inertia_tensor;
     }
 }

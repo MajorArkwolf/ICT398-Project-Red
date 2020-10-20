@@ -44,7 +44,9 @@ static inline glm::quat ConvertQuaternion(const reactphysics3d::Quaternion &reac
 
 void PhysicsEngine::FixedUpdate(double t, double dt) {
     collision_detection_.FixedUpdate(t, dt);
-    collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
+    for (size_t i = 0; i < 7; i++) {
+        collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
+    }
     IntegrateVelocities(dt);
     IntegratePositions(dt);
 

@@ -49,4 +49,19 @@ void TestGoal(component::Goal& target, float value);
      */
 void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int root);
 
+    /**
+     * @brief Gathers the identifiers of Desires that have been fulfilled, including their children.
+     * If a Desire is fulfilled, its tracked children will be ignored.
+     * @note This will call itself recursively when the child Desires have tracked children.
+     * @param [in] target The BDI component of the target NPC.
+     * @param [in] current_layer The identifier of the current layer in the Desire hierarchy
+     * @param [in] child_identifiers The collection of identifiers for child Desire identifiers.
+     * @param [in] fulfilled_hierarchy The sets of already known fulfilled Desire identifiers, mapped to their hierarchy layer.
+     * @warning Different Desires with the same or recursive children will lead to undefined behaviour!
+     * @return The sets of fulfilled Desire identifiers, mapped to their hierarchy layer.
+     */
+std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int current_layer,
+                                              std::set<int> child_identifiers,
+                                              std::map<int, std::set<int>> fulfilled_hierarchy = {{}});
+
 } // namespace System

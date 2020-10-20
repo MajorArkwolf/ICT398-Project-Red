@@ -90,7 +90,13 @@ void TestGoal(component::Goal& target, float value) {
 
 void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int root) {
     // TODO: This
-    // Not enough time before the 27th, just treat the Desires and Intentions all as root for now
+    // Not enough time before the 27th, this will not be used for the short-term solution
+}
+
+std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int current_layer,
+                                              std::set<int> child_identifiers,
+                                              std::map<int, std::set<int>> fulfilled_hierarchy) {
+    // TODO: This
 }
 
 } // namespace System

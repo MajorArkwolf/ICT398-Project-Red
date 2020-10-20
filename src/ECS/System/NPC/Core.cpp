@@ -251,27 +251,36 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
         }
     }
 
-    // Move the NPC to the response phase
+    // Move the NPC to the prepare phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
-    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond, -1.0);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kPrepare, -1.0);
 }
 
 void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
-    // Generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
-    // TODO: This
-    // Not enough time before the 27th, just treat the Desires and Intentions all as root for now
+    // Preferrably we would generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
+    // This is no longer viable within the deadline, so instead the triggered Intentions will be tracked
+    //   and a target Intention to perform will be identified.
 
-    // Move the NPC to the idle phase
+    // Determine what Desires have been fulfilled and assign a priority by their hierarchy
+    auto &npc_bdi = registry.get<component::BDI>(entity);
+    std::map<int, std::set<int>> fulfilled_desires = FulfilledDesires(npc_bdi, 0, npc_bdi.root_desires);
+
+    // Determine which Desires would trigger an Intention
+
+    // Determine which Intention should be actioned
+
+    // Move the NPC to the respond phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
-    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond);
 }
 
 void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     // Catch if the NPC has not yet determined which Intention to action
     auto &state = registry.get<component::BehaviourState>(entity);
     if (state.current_intention < 0) {
-        // Determine which Intention to Action
-
+        // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
+        auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
     }
 
     // Action the current Intention

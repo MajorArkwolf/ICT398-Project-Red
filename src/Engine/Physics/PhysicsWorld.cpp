@@ -136,3 +136,13 @@ void physics::PhysicsWorld::SetGravity(const glm::vec3& gravity_) {
 ECS* physics::PhysicsWorld::GetECS() {
     return ecs_;
 }
+
+void PhysicsWorld::ResetWorld() {
+    auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
+    physics_engine.DestroyPhysicsWorld(world_);
+    world_ = physics_engine.CreatePhysicsWorld();
+    event_listener_ = RedEngineEventListener(&collision_entity_coupling_);
+    world_->setEventListener(&event_listener_);
+    entity_collision_coupling_.clear();
+    collision_entity_coupling_.clear();
+}

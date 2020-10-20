@@ -1,5 +1,7 @@
 #include "ECS/Component/NPC.hpp"
 
+#include <utility>
+
 namespace component {
 
 Plan::Plan(npc::Actions action_in, entt::entity entity_in, int desire_in,
@@ -70,7 +72,7 @@ BehaviourState::BehaviourState(npc::Stages current_in, double current_dt_in,
           current_dt(current_dt_in),
           prior(prior_in),
           emotion_turnover_dt(emotion_turnover_dt_in),
-          current_intention(current_intention_in),
-          prior_intention(prior_intention_in) {}
+          current_intention(std::move(current_intention_in)),
+          prior_intention(std::move(prior_intention_in)) {}
 
 } // namespace component

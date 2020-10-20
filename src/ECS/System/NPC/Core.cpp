@@ -16,6 +16,8 @@ const static double VARIABLE_IDLE_TIME = 3.5;
 
 const static double MINIMUM_IDLE_TIME = 1.0;
 
+const static float INTERACTION_RANGE = 1.0f;
+
 void NPCImport(entt::registry& registry, entt::entity& entity, std::string path) {
     // TODO: This
     // Not enough time before the 27th, just hard-code the npc initialization for now
@@ -46,6 +48,7 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
                         bool found_value = false;
                         float value_gathered = 0.0f;
                         void* component_returned = nullptr;
+                        void* component2_returned = nullptr;
 
                         // Split logic here for the gathering of target property values
                         switch (goal.property) {
@@ -122,13 +125,13 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
                                         switch (goal.element) {
                                             case npc::Components::kDefault:
                                             case npc::Components::kAxisX:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().x;
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.x;
                                                 break;
                                             case npc::Components::kAxisY:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().y;
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.y;
                                                 break;
                                             case npc::Components::kAxisZ:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->GetVelocity().z;
+                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.z;
                                                 break;
                                         }
                                         found_value = true;
@@ -162,7 +165,19 @@ void NPCObserve(entt::registry& registry, entt::entity& entity) {
                                 }
                                 break;
                             case npc::Properties::kRange:
-                                // TODO: IMPLEMENT THIS
+                                {
+                                    // Attempt to get the components if they exist
+                                    component_returned = registry.try_get<component::Transform>(entity);
+                                    component2_returned = registry.try_get<component::Transform>(goal.entity);
+                                    if ((component_returned != nullptr) && (component2_returned != nullptr)) {
+                                        // Calculate if the entity is within range and test the Desire
+                                        TestGoal(goal,
+                                                 INTERACTION_RANGE >= (glm::distance(
+                                                     static_cast<component::Transform*>(component_returned)->pos,
+                                                     static_cast<component::Transform*>(component2_returned)->pos)));
+                                        found_value = true;
+                                    }
+                                }
                                 break;
                             case npc::Properties::kGrabber:
                                 // Not supported

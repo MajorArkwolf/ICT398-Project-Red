@@ -29,7 +29,7 @@ float EmotionalStateOverall(component::Characteristics& target) {
     return overall;
 }
 
-float EmotionalStateIntensity(component::Characteristics& target) {
+float EmotionalStateOverallIntensity(component::Characteristics& target) {
     // Get the overall emotional state of the NPC and just prevent negative values
     float intensity = EmotionalStateOverall(target);
     if (intensity < 0.0f)

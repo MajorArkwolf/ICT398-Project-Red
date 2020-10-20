@@ -1,8 +1,162 @@
 {
-  "Name": "Chair",
   "Model": {
-    "ModelFilePath": "res/model/Chair/Chair_Low.fbx",
-    "ShaderFilePath": "res/shader/model_shader"
+    "ModelFilePath": "res/model/Chair/Chair_Low.fbx"
+  },
+  "Name": "Chair",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 1.5,
+          "Y": 45.0,
+          "Z": 1.5
+        },
+        "Mass": 1.0,
+        "Name": "Leg1",
+        "Position": {
+          "X": 21.5,
+          "Y": 41.5,
+          "Z": -0.25
+        },
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 1.5,
+          "Y": 45.0,
+          "Z": 1.5
+        },
+        "Mass": 1.0,
+        "Name": "Leg2",
+        "Position": {
+          "X": -21.5,
+          "Y": 41.5,
+          "Z": -0.25
+        },
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 20.0,
+          "Y": 2.5,
+          "Z": 20.0
+        },
+        "Mass": 1.0,
+        "Name": "Seat",
+        "Position": {
+          "X": 0.0,
+          "Y": 48.5,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 24.0,
+          "Y": 10.0,
+          "Z": 2.5
+        },
+        "Mass": 1.0,
+        "Name": "Back",
+        "Position": {
+          "X": 0.0,
+          "Y": 90.0,
+          "Z": -22.5
+        },
+        "Rotation": {
+          "X": -25.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 2.0,
+          "Y": 28.0,
+          "Z": 2.0
+        },
+        "Mass": 0.0,
+        "Name": "Leg3",
+        "Position": {
+          "X": 22.0,
+          "Y": 27.0,
+          "Z": -17.0
+        },
+        "Rotation": {
+          "X": 11.459163665771484,
+          "Y": -0.0,
+          "Z": 1.878302100521978e-05
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 2.0,
+          "Y": 28.0,
+          "Z": 2.0
+        },
+        "Mass": 0.0,
+        "Name": "Leg4",
+        "Position": {
+          "X": -22.0,
+          "Y": 27.0,
+          "Z": -17.0
+        },
+        "Rotation": {
+          "X": 11.459141731262207,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": false
   },
   "Transform": {
     "Position": {
@@ -16,111 +170,5 @@
       "Z": 0.0
     },
     "Scale": 1.0
-  },
-  "Physics": {
-    "Static": false,
-    "Collision_Shapes": "Yes",
-    "Colliders": [
-      {
-        "Name": "Leg1",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 1.5,
-          "Y": 45,
-          "Z": 1.5
-        },
-        "Position": {
-          "X": 21.5,
-          "Y": 41.5,
-          "Z": -0.25
-        },
-        "Rotation": {
-          "X": -25.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Mass": 1,
-        "CentreOfMass": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        }
-      },
-      {
-        "Name": "Leg2",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 1.5,
-          "Y": 45,
-          "Z": 1.5
-        },
-        "Position": {
-          "X": -21.5,
-          "Y": 41.5,
-          "Z": -0.25
-        },
-        "Rotation": {
-          "X": -25.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Mass": 1,
-        "CentreOfMass": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        }
-      },
-      {
-        "Name": "Seat",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 20,
-          "Y": 2.5,
-          "Z": 20
-        },
-        "Position": {
-          "X": 0,
-          "Y": 48.5,
-          "Z": 0.0
-        },
-        "Rotation": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Mass": 1,
-        "CentreOfMass": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        }
-      },
-      {
-        "Name": "Back",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 24,
-          "Y": 10,
-          "Z": 2.5
-        },
-        "Position": {
-          "X": 0,
-          "Y": 90,
-          "Z": -22.5
-        },
-        "Rotation": {
-          "X": -25.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Mass": 1,
-        "CentreOfMass": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        }
-      }
-    ]
   }
 }

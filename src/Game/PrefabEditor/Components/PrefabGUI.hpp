@@ -54,7 +54,7 @@ private:
     //Save stuff
     std::string save_location;
     nlohmann::json save_json;
-    redengine::Collider collider_;
+    redengine::Collider *collider_;
     size_t collider_index_ = 0;
     bool collider_index_set_ = false;
 
@@ -64,6 +64,7 @@ private:
     bool physics_edit_menu = false;
     bool collider_edit_menu_ = false;
     bool affordance_edit_menu = false;
+    bool collider_new_menu_ = false;
     bool physics_menu_ = false;
     bool save_to = false;
 
@@ -124,4 +125,9 @@ private:
      * Clean up function to set everything back to default when done.
      */
     void CleanUp();
+
+    /**
+     * Create a new collider.
+     */
+    void CreateCollider();
 };

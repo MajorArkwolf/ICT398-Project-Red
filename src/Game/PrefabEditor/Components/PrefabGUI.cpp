@@ -38,6 +38,7 @@ void PrefabGUI::CleanUp() {
     save_location = "";
     save_json = nlohmann::json();
     collider_index_ = 0;
+    collider_ = nullptr;
 }
 
 PrefabGUI::PrefabGUI() {
@@ -61,6 +62,7 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     collider_edit_menu_ ? ColliderEditor() : (void)0;
     affordance_edit_menu ? AffordanceMenu() : (void)0;
     physics_menu_ ? PhysicsMainMenu() : (void)0;
+    collider_new_menu_ ? CreateCollider() : (void)0;
     save_to ? SaveTo() : (void)0;
 
 
@@ -82,8 +84,8 @@ void PrefabGUI::Draw(Shader *shader, const glm::mat4 &projection, const glm::mat
     }
     if (collider_edit_menu_ && loaded_model != 0) {
         glm::mat4 model_matrix = glm::mat4(1.0f);
-        model_matrix = glm::translate(model_matrix, collider_.position_local);
-        model_matrix = model_matrix * glm::mat4_cast(collider_.rotation_local);
+        model_matrix = glm::translate(model_matrix, collider_->position_local);
+        model_matrix = model_matrix * glm::mat4_cast(collider_->rotation_local);
         model_matrix = glm::scale(model_matrix, collider_scale_);
         shader->SetMat4("model", model_matrix);
         shader->SetBool("isAnimated", false);
@@ -172,7 +174,6 @@ void PrefabGUI::MainEntityMenu() {
         physics_menu_ = true;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
-        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
         redengine::prefab::to_json(save_json, prefab_loaded_);
         save_to = true;
         //main_menu_ = true;
@@ -293,15 +294,14 @@ void PrefabGUI::PhysicsMainMenu() {
     if (ImGui::Button("Edit Collider", button_size_)) {
         if (static_cast<size_t>(listbox_item_current_) < list.size()) {
             collider_index_ = static_cast<size_t>(listbox_item_current_);
-            collider_ = prefab_loaded_.colliders_.at(collider_index_);
+            collider_ = &prefab_loaded_.colliders_.at(collider_index_);
             collider_index_set_ = true;
             collider_edit_menu_ = true;
         }
     }
     if (ImGui::Button("New Collider", button_size_)) {
             collider_index_set_ = false;
-            collider_ = redengine::Collider();
-            collider_edit_menu_ = true;
+            collider_new_menu_ = true;
     }
     if (ImGui::Button("Close", button_size_)) {
         physics_menu_ = false;
@@ -310,27 +310,66 @@ void PrefabGUI::PhysicsMainMenu() {
     ImGui::End();
 }
 
-void PrefabGUI::ColliderEditor() {
-    auto index = collider_.shape.index();
+void PrefabGUI::CreateCollider() {
+    static int selection = 0;
+    static std::vector<std::string> box_list = {"Sphere", "Box", "Capsule"};
+    static char collider_name[50] = {'\0'};
+    ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
+    ImGui::Begin("Collider Creator Menu", &collider_new_menu_,
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::InputText("Collider Name: ", collider_name, IM_ARRAYSIZE(collider_name));
+    ImGui::ListBox("Select Collider:", &selection, box_list);
+    if (ImGui::Button("Save", button_size_)) {
+        collider_ = &prefab_loaded_.colliders_.emplace_back();
+        collider_edit_menu_ = true;
+        physics_menu_ = false;
+        collider_new_menu_= false;
+        collider_->part_name = collider_name;
+        if (selection == 0) {
+            collider_->base_shape_name = "Sphere";
+            collider_->shape = redengine::Sphere();
+        } else if (selection == 1) {
+            collider_->base_shape_name = "Box";
+            collider_->shape = redengine::Box();
+        } else {
+            collider_->base_shape_name = "Capsule";
+            collider_->shape = redengine::Capsule();
+        }
+    }
+    if (ImGui::Button("Quit", button_size_)) {
+        collider_edit_menu_ = false;
+        physics_menu_ = true;
+        collider_new_menu_ = false;
+    }
+    ImGui::End();
+}
 
+void PrefabGUI::ColliderEditor() {
+    if (collider_ == nullptr) {
+        collider_edit_menu_ = false;
+        return;
+    }
+    auto index = collider_->shape.index();
     static glm::vec3 eulerRot;
     ImGui::SetNextWindowSize(ImVec2(500, 500), 1);
     ImGui::Begin("Collider Edit Menu", &collider_edit_menu_,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text("Prefab Name: %s", collider_.part_name.c_str());
-    ImGui::Text("Select Collider: %s", collider_.base_shape_name.c_str());
+    ImGui::Text("Prefab Name: %s", collider_->part_name.c_str());
+    ImGui::Text("Select Collider: %s", collider_->base_shape_name.c_str());
     ImGui::Text("Collider Position");
-    ThreeButtonMenu("X", "pos-col", collider_.position_local.x);
-    ThreeButtonMenu("Y", "pos-col", collider_.position_local.y);
-    ThreeButtonMenu("Z", "pos-col", collider_.position_local.z);
+    ImGui::Text("Current Position: X: %f, Y: %f Z: %f", collider_->position_local.x, collider_->position_local.y, collider_->position_local.z);
+    ThreeButtonMenu("X", "pos-col", collider_->position_local.x);
+    ThreeButtonMenu("Y", "pos-col", collider_->position_local.y);
+    ThreeButtonMenu("Z", "pos-col", collider_->position_local.z);
     ImGui::Text("Collider Rotation");
-    eulerRot = glm::eulerAngles(collider_.rotation_local);
+    eulerRot = glm::eulerAngles(collider_->rotation_local);
+    ImGui::Text("Current Position: X: %f, Y: %f Z: %f", eulerRot.x, eulerRot.y, eulerRot.z);
     ThreeButtonMenu("X", "rotation-col", eulerRot.x);
     ThreeButtonMenu("Y", "rotation-col", eulerRot.y);
     ThreeButtonMenu("Z", "rotation-col", eulerRot.z);
-    collider_.rotation_local = glm::quat(eulerRot);
+    collider_->rotation_local = glm::quat(eulerRot);
     if (index == 1) {
-        auto &cap = std::get<redengine::Sphere>(collider_.shape);
+        auto &cap = std::get<redengine::Sphere>(collider_->shape);
         collider_scale_.x = cap.radius;
         collider_scale_.y = cap.radius;
         collider_scale_.z = cap.radius;
@@ -339,7 +378,7 @@ void PrefabGUI::ColliderEditor() {
         ImGui::Text("Sphere Dimensions");
         ImGui::InputDouble("Radius", &cap.radius, 0.01f, 1.0f, "%.3f");
     } else if (index == 2 ) {
-        auto &cap = std::get<redengine::Box>(collider_.shape);
+        auto &cap = std::get<redengine::Box>(collider_->shape);
         collider_scale_ = cap.extents;
         collider_scale_ *= 2;
         collider_scale_ *= prefab_loaded_.scale_local.x;
@@ -349,7 +388,7 @@ void PrefabGUI::ColliderEditor() {
         ImGui::InputFloat("Y: ", &cap.extents.y, 0.01f, 1.0f, "%.3f");
         ImGui::InputFloat("Z: ", &cap.extents.z, 0.01f, 1.0f, "%.3f");
     } else if (index == 3) {
-        auto &cap = std::get<redengine::Capsule>(collider_.shape);
+        auto &cap = std::get<redengine::Capsule>(collider_->shape);
         collider_scale_.x = cap.radius;
         collider_scale_.y = cap.height;
         collider_scale_.z = cap.radius;
@@ -362,6 +401,7 @@ void PrefabGUI::ColliderEditor() {
         loaded_model = 0;
     }
     if (ImGui::Button("Save and Submit", button_size_)) {
+        collider_ = nullptr;
         collider_edit_menu_ = false;
         eulerRot = glm::vec3();
         loaded_model = 0;
@@ -375,27 +415,36 @@ void PrefabGUI::AffordanceMenu() {
 }
 
 void PrefabGUI::SaveTo() {
+    static bool has_copied = false;
     static char location[100] = {'\0'};
+    if (!has_copied) {
+        strcpy(location, prefab_loaded_.file_name.c_str());
+        has_copied = true;
+    }
     ImGui::SetNextWindowPos(ImVec2(0.5, 0.5), ImGuiCond_Always, ImVec2(-0.5, -0.5));
     ImGui::SetNextWindowSize(ImVec2(250, 500), 1);
     ImGui::Begin("Save to...", &save_to,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Path relative from prefab. Please include extension (.json)");
-    ImGui::InputText("Location", location, IM_ARRAYSIZE(location));
+    ImGui::InputText("Save Location", location, IM_ARRAYSIZE(location));
     if (ImGui::Button("Save", button_size_)) {
+        redengine::Engine::get().GetPrefabRepo().InsertPrefab(prefab_loaded_);
         auto path = redengine::Engine::get().GetBasePath();
         path = path / "res" / "prefab" / location;
         std::ofstream myfile;
         myfile.open(path);
+        assert(myfile.is_open());
         myfile << save_json;
         myfile.close();
         save_to = false;
         main_menu_ = true;
         CleanUp();
+        has_copied = false;
     }
     if (ImGui::Button("Dont Save", button_size_)) {
         save_to = false;
         main_menu_ = true;
+        has_copied = false;
         CleanUp();
     }
     ImGui::End();

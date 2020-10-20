@@ -1,7 +1,37 @@
 {
-  "Name": "Bench",
   "Model": {
     "ModelFilePath": "res/model/Bench/Bench.obj"
+  },
+  "Name": "Bench",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 830.0,
+          "Y": 400.0,
+          "Z": 740.0
+        },
+        "Mass": 1.0,
+        "Name": "main",
+        "Position": {
+          "X": -93.0,
+          "Y": 400.0,
+          "Z": -58.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": true
   },
   "Transform": {
     "Position": {
@@ -10,9 +40,9 @@
       "Z": 0.0
     },
     "Rotation": {
-      "X": 0.0,
-      "Y": 0.0,
-      "Z": 0.0
+      "X": -0.008029968477785587,
+      "Y": -0.0023546067532151937,
+      "Z": -0.0023927020374685526
     },
     "Scale": 1.0
   }

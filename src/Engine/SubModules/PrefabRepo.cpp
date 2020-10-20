@@ -92,5 +92,6 @@ std::vector<std::string> redengine::PrefabRepo::GetPrefabList() {
 }
 
 void redengine::PrefabRepo::InsertPrefab(const prefab& new_prefab) {
+    prefabMap_.erase(new_prefab.name);
     prefabMap_.insert({new_prefab.name, new_prefab});
 }

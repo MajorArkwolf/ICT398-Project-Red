@@ -35,6 +35,7 @@ struct Collider {
 struct prefab {
     bool render = true;
     std::string name;
+    std::string file_name;
     std::string model_dir;
     bool has_model = false;
     size_t model_id = 0;

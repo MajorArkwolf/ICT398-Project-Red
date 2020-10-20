@@ -112,6 +112,8 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                 ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::occupied);
                 move.move_list.pop();
             }
+            ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
+            move.last_node = next_dest;
         }
     }
 }

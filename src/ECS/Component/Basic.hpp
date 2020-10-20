@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include "DataStructures/Model/Animator.hpp"
 #include "Engine/SubModules/PrefabRepo.hpp"
+#include "Node.hpp"
 
 namespace component {
     struct Transform {
@@ -25,6 +26,9 @@ namespace component {
         bool is_moving = false;
         std::queue<entt::entity> move_list{};
         entt::entity last_node;
+        entt::entity going_to_node;
+        void SetLastNode(entt::registry &reg, entt::entity id);
+        void SetGoingToNode(entt::registry &reg, entt::entity id);
         float speed = 1.0f;
     };
     class PhysicBody {

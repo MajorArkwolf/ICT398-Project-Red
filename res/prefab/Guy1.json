@@ -1,8 +1,7 @@
 {
   "Name": "Guy1",
   "Model": {
-    "ModelFilePath": "res/model/Character/ClothedMan.gltf",
-    "ShaderFilePath": "res/shader/model_shader"
+    "ModelFilePath": "res/model/Character/ClothedMan.gltf"
   },
   "Transform": {
     "Position": {

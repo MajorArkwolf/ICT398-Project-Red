@@ -1,8 +1,7 @@
 {
   "Name": "Guy2",
   "Model": {
-    "ModelFilePath": "res/model/Character/BlueLight.gltf",
-    "ShaderFilePath": "res/shader/model_shader"
+    "ModelFilePath": "res/model/Character/BlueLight.gltf"
   },
   "Transform": {
     "Position": {
@@ -20,24 +19,15 @@
   "Physics": {
     "Static": false,
     "Collision_Shapes": "Yes",
-    "BaseShapes": [
-      {
-        "Name": "Person",
-        "Type": "Box",
-        "HalfExtents": {
-          "X": 50,
-          "Y": 100,
-          "Z": 50
-        }
-      }
-    ],
     "Colliders": [
       {
         "Name": "Person",
-        "BaseShape": "Person",
+        "Type": "Capsule",
+        "Radius": 2.0,
+        "Height":  5,
         "Position": {
           "X": 0.0,
-          "Y": 100,
+          "Y": 4.0,
           "Z": 0.0
         },
         "Rotation": {
@@ -45,12 +35,8 @@
           "Y": 0.0,
           "Z": 0.0
         },
-        "Scale": {
-          "X": 1.0,
-          "Y": 1.0,
-          "Z": 1.0
-        },
-        "Mass": 0.0,
+        "Scale": 1.0,
+        "Mass": 1.0,
         "CentreOfMass": {
           "X": 0.0,
           "Y": 0.0,

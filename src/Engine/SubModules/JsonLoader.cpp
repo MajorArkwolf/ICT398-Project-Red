@@ -107,7 +107,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                             std::cerr << "JSON Animation failed: " << e.what() << '\n';
                         }
                     }
-
+                    if (j.contains("Moving")) {
+                        ent->AddComponent<component::Moving>();
+                    }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }

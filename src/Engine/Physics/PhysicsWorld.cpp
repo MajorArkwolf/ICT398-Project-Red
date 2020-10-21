@@ -147,4 +147,6 @@ void PhysicsWorld::ResetWorld() {
     world_->setEventListener(&event_listener_);
     entity_collision_coupling_.clear();
     collision_entity_coupling_.clear();
+    ToggleRenderer();
+    ToggleRenderer();
 }

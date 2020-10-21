@@ -55,11 +55,11 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         glm::vec3 r1 = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
         glm::vec3 r2 = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
 
-        if (!first_physbody.is_sleeping || !first_physbody.static_object) {
-            first_transform.pos += n.contact_normal * (n.penetration * -1);
+        if (!first_physbody.is_sleeping && !first_physbody.static_object) {
+            first_transform.pos += n.contact_normal * ((n.penetration / 2) * -1);
         }
-        if (!second_physbody.is_sleeping || !second_physbody.static_object) {
-            second_transform.pos -= n.contact_normal * (n.penetration * -1);
+        if (!second_physbody.is_sleeping && !second_physbody.static_object) {
+            second_transform.pos -= n.contact_normal * ((n.penetration / 2) * -1);
         }
 
         //Transfer of momentum

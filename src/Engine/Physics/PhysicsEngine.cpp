@@ -135,6 +135,10 @@ entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec
     return collision_detection_.RayCastSingle(start, end);
 }
 
+void PhysicsEngine::SetTrigger(entt::entity entity, bool is_trigger) {
+    collision_detection_.SetTrigger(entity, is_trigger);
+}
+
 void physics::PhysicsEngine::IntegrateVelocities(double dt) {
     constexpr float angular_damping = 0.1f;
     const float damping_factor = std::pow(1.0 - angular_damping, float(dt));

@@ -1,8 +1,112 @@
 {
-  "Name": "Classroom",
   "Model": {
-    "ModelFilePath": "res/model/Classroom/Classroom.fbx",
-    "ShaderFilePath": "res/shader/model_shader"
+    "ModelFilePath": "res/model/Classroom/Classroom.fbx"
+  },
+  "Name": "Classroom",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 1.0,
+          "Y": 140.0,
+          "Z": 570.0
+        },
+        "Mass": 1.0,
+        "Name": "LeftSideWall",
+        "Position": {
+          "X": 172.0,
+          "Y": 136.0,
+          "Z": 205.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 1.0,
+          "Y": 140.0,
+          "Z": 570.0
+        },
+        "Mass": 1.0,
+        "Name": "RightSideWall",
+        "Position": {
+          "X": -673.0,
+          "Y": 132.0,
+          "Z": 200.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 400.0,
+          "Y": 140.0,
+          "Z": 1.0
+        },
+        "Mass": 0.0,
+        "Name": "RearWall",
+        "Position": {
+          "X": -260.0,
+          "Y": 140.0,
+          "Z": -367.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      },
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 400.0,
+          "Y": 140.0,
+          "Z": 1.0
+        },
+        "Mass": 0.0,
+        "Name": "FrontWall",
+        "Position": {
+          "X": -264.0,
+          "Y": 140.0,
+          "Z": 765.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": true
   },
   "Transform": {
     "Position": {

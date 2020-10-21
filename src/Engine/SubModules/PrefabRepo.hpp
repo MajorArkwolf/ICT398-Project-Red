@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <variant>
 #include <vector>
+#include <nlohmann/json.hpp>
+
 namespace redengine {
 struct Sphere {
     double radius = 0;
@@ -33,12 +35,14 @@ struct Collider {
 struct prefab {
     bool render = true;
     std::string name;
+    std::string file_name;
+    std::string model_dir;
     bool has_model = false;
     size_t model_id = 0;
     std::shared_ptr<Shader> model_shader;
     glm::vec3 position_local = {0.0f, 0.0f, 0.0f};
     glm::quat rotation_local = {1.0f, 0.0f, 0.0f, 0.0f};
-    double scale_local = 1.0;
+    glm::vec3 scale_local = {1.0f, 1.0f, 1.0f};
     bool has_animation = false;
     bool has_physics = false;
     bool is_static = false;
@@ -46,6 +50,9 @@ struct prefab {
     std::vector<Collider> colliders_;
     float mass = 0.0;
     glm::dvec3 centre_of_mass = {0, 0, 0};
+    static void to_json(nlohmann::json& json, const prefab& fab);
+    std::vector<std::string> GetColliderList();
+
 };
 
 class PrefabRepo {
@@ -60,8 +67,13 @@ class PrefabRepo {
     prefab& AddNewPrefab(const std::string& key);
     bool FindPrefab(const std::string& key);
     const prefab& GetPrefab(const std::string& key) const;
+    prefab &GetPrefabMut(const std::string &key);
+    std::vector<std::string> GetPrefabList();
+    void InsertPrefab(const prefab &new_prefab);
 
    private:
     std::unordered_map<std::string, prefab> prefabMap_ = {};
+
+
 };
 }// namespace redengine

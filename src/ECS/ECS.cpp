@@ -3,8 +3,10 @@
 #include "ECS/Entity.hpp"
 #include "ECS/System/System.hpp"
 #include "Engine/Renderer/Shader.hpp"
+#include "ECS/System/AISystem.hpp"
 
 void ECS::FixedUpdate(double t, double dt) {
+    System::AISystem::Moving(registry_, t, dt);
 }
 
 void ECS::Update(double t, double dt) {
@@ -21,7 +23,7 @@ std::shared_ptr<Entity> ECS::GetEntity(entt::entity id) {
         if (n->GetID() == id) {
             return n;
         }
-    } 
+    }
     return nullptr;
 }
 

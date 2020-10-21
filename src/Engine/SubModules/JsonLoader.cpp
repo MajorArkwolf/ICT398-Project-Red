@@ -107,7 +107,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                             std::cerr << "JSON Animation failed: " << e.what() << '\n';
                         }
                     }
-
+                    if (j.contains("Moving")) {
+                        ent->AddComponent<component::Moving>();
+                    }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }
@@ -157,6 +159,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 }
                 phys.colliders = prefab.colliders_;
                 phys.centre_mass = prefab.centre_of_mass;
+                if (j.contains("LinearVelocity")) {
+                    phys.linear_velocity.x = j.at("LinearVelocity").at("X").get<float>();
+                    phys.linear_velocity.y = j.at("LinearVelocity").at("Y").get<float>();
+                    phys.linear_velocity.z = j.at("LinearVelocity").at("Z").get<float>();
+                }
+
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";
@@ -201,8 +209,10 @@ void JSONLoader::LoadPrefabList() {
                 auto &prefab = prefabRepo.AddNewPrefab(p.at("Name").get<std::string>());
                 name = p.at("Name").get<std::string>();
                 prefab.name = name;
+                prefab.file_name = temp;
                 if (p.contains("Model")) {
                     prefab.has_model = true;
+                    prefab.model_dir = p.at("Model").at("ModelFilePath").get<std::string>();
                     std::filesystem::path m_path = p.at("Model").at("ModelFilePath").get<std::string>();
                     auto model_file_path = base_path / m_path;
                     prefab.model_id = engine.model_manager_.GetModelID(model_file_path);
@@ -239,7 +249,7 @@ void JSONLoader::LoadPrefabList() {
                         }
 
                         if (scale_field.has_value()) {
-                            prefab.scale_local = {scale_field->get().get<float>()};
+                            prefab.scale_local = glm::vec3{scale_field->get().get<float>(), scale_field->get().get<float>(), scale_field->get().get<float>()};
                         }
 
                         if (rotation_field.has_value()) {
@@ -290,6 +300,7 @@ void JSONLoader::LoadPrefabList() {
                                 auto mass = GetJsonField(json_collider, "Colliders", "Mass", JsonType::Number);
                                 if (mass.has_value()) {
                                     collider.mass = json_collider.at("Mass").get<float>();
+                                    collider.mass < 0.01 ? collider.mass = 1.0f : collider.mass;
                                 } else {
                                     std::stringstream error;
                                     error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Mass\" field, defaulting to 1.0kg.";

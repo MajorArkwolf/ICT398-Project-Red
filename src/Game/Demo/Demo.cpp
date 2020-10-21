@@ -25,6 +25,11 @@ Demo::Demo() {
     path.append("Demo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+}
+
+void Demo::Init() {
+    auto &board = ecs_.CreateEntity();
+    auto &board_component = board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
 
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();
@@ -44,7 +49,6 @@ Demo::Demo() {
     physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
     big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};
-    ;
     auto &anim =
         big_player.AddComponent<component::Animation>(
             big_player.GetComponent<component::Model>().id_);
@@ -65,12 +69,6 @@ Demo::Demo() {
             little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
-    /// Player instantiation completed
-    auto &board = ecs_.CreateEntity();
-    board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
-}
-
-void Demo::Init() {
 }
 
 void Demo::UnInit() {

@@ -47,6 +47,8 @@ void PhysicsDemo::GUIEnd() {
 }
 
 void PhysicsDemo::Update(double t, double dt) {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(camera);
     physics_world_.SetECS(&ecs_);
     ecs_.Update(t, dt);
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
@@ -183,6 +185,42 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                    } break;
                                    case input::VirtualKey::D: {
                                        right_ = false;
+                                   } break;
+                                   case input::VirtualKey::k1: {
+                                       ecs_ = {};
+                                       physics_world_.ResetWorld();
+                                       physics_world_.SetECS(&ecs_);
+                                       std::filesystem::path path;
+                                       path = path / "PhysicsDemo" / "Scene1" / "Scene.json";
+                                       JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+                                       redengine::Engine::get().GetMouseMode(relativeMouse);
+                                   } break;
+                                   case input::VirtualKey::k2: {
+                                       ecs_ = {};
+                                       physics_world_.ResetWorld();
+                                       physics_world_.SetECS(&ecs_);
+                                       std::filesystem::path path;
+                                       path = path / "PhysicsDemo" / "Scene2" / "Scene.json";
+                                       JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+                                       redengine::Engine::get().GetMouseMode(relativeMouse);
+                                   } break;
+                                   case input::VirtualKey::k3: {
+                                       ecs_ = {};
+                                       physics_world_.ResetWorld();
+                                       physics_world_.SetECS(&ecs_);
+                                       std::filesystem::path path;
+                                       path = path / "PhysicsDemo" / "Scene3" / "Scene.json";
+                                       JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+                                       redengine::Engine::get().GetMouseMode(relativeMouse);
+                                   } break;
+                                   case input::VirtualKey::k4: {
+                                       ecs_ = {};
+                                       physics_world_.ResetWorld();
+                                       physics_world_.SetECS(&ecs_);
+                                       std::filesystem::path path;
+                                       path = path / "PhysicsDemo" / "Scene4" / "Scene.json";
+                                       JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+                                       redengine::Engine::get().GetMouseMode(relativeMouse);
                                    } break;
                                    case input::VirtualKey::kEscape: {
                                        gui_manager.ToggleWindow("escapeMenu");

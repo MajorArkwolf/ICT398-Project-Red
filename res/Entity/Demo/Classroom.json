@@ -12,5 +12,6 @@
       "Z": 0.0
     },
     "Scale": 1.0
-  }
+  },
+  "Physics":  true
 }

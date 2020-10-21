@@ -141,7 +141,7 @@ void PhysicsEngine::SetTrigger(entt::entity entity, bool is_trigger) {
 
 void physics::PhysicsEngine::IntegrateVelocities(double dt) {
     constexpr float angular_damping = 0.1f;
-    const float damping_factor = std::pow(1.0 - angular_damping, float(dt));
+    const float damping_factor = std::pow(1.0 - angular_damping, static_cast<float>(dt));
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     auto &ecs = physics_world.ecs_;
     if (ecs != nullptr) {
@@ -154,8 +154,8 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
             auto &linear_velocity = phys_body.linear_velocity;
             auto &angular_velocity = phys_body.angular_velocity;
 
-            linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.added_force);
-            angular_velocity += float(dt) * (phys_body.inverse_inertia_tensor * phys_body.added_torque);
+            linear_velocity += static_cast<float>(dt) * (phys_body.inverse_mass * phys_body.added_force);
+            angular_velocity += static_cast<float>(dt) * (phys_body.inverse_inertia_tensor * phys_body.added_torque);
             angular_velocity *= damping_factor;
         }
 
@@ -165,7 +165,7 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
                 if (!phys_body.static_object && !phys_body.is_sleeping && phys_body.should_apply_gravity) {
                     auto &linear_velocity = phys_body.linear_velocity;
 
-                    linear_velocity += float(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
+                    linear_velocity += static_cast<float>(dt) * (phys_body.inverse_mass * phys_body.mass * physics_world.GetGravity());
                 }
             }
         }
@@ -187,8 +187,8 @@ void physics::PhysicsEngine::IntegratePositions(double dt) {
             auto &angular_velocity = phys_body.angular_velocity;
 
             if (!phys_body.static_object) {
-                tran.pos += linear_velocity * glm::vec3(dt);
-                tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * float(dt));
+                tran.pos += linear_velocity * static_cast<float>(dt);
+                tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * static_cast<float>(dt));
                 tran.rot = glm::normalize(tran.rot);
             }
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);

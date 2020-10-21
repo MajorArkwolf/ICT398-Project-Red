@@ -89,7 +89,7 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         lvelocity1 += impulse * first_physbody.inverse_mass;
         lvelocity2 -= impulse * second_physbody.inverse_mass;
 
-        auto rotational_impulse = impulse / n.collision_normal;
+        auto rotational_impulse = impulse /*/ n.collision_normal*/;
 
         wvelocity1 += rotational_impulse * r1xn;
         wvelocity2 -= rotational_impulse * r2xn;

@@ -78,7 +78,7 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         auto numerator = restitution_multiplier * n.collision_normal * relative_velocity + wvelocity1 * r1xn - wvelocity2 * r2xn;
 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
-        auto denominator = total_inverse_mass + r1xn * first_physbody.inverse_inertia_tensor * r1xn + r2xn * second_physbody.inverse_inertia_tensor * r2xn;
+        auto denominator = total_inverse_mass + r1xn * first_physbody.inertia_tensor * r1xn + r2xn * second_physbody.inertia_tensor * r2xn;
 
 
         //         -(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))

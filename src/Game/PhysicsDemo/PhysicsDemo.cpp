@@ -21,9 +21,6 @@ PhysicsDemo::PhysicsDemo() {
     camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
     relativeMouse = true;
     std::filesystem::path path = "";
-    path.append("PhysicsDemo");
-    path.append("Scene.json");
-    JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 }
 
 void PhysicsDemo::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) {

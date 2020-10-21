@@ -39,6 +39,13 @@ void PrefabGUI::CleanUp() {
     save_json = nlohmann::json();
     collider_index_ = 0;
     collider_ = nullptr;
+    model_component_ = false;
+    transform_component_ = false;
+    physics_edit_menu = false;
+    collider_edit_menu_ = false;
+    affordance_edit_menu = false;
+    collider_new_menu_ = false;
+    physics_menu_ = false;
 }
 
 PrefabGUI::PrefabGUI() {

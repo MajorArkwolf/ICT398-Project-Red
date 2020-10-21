@@ -31,20 +31,20 @@ void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData& 
 
 void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object) {
     constexpr float restitution = 0.6f;
-    auto& logger = redengine::Engine::get().GetLog();
-    auto& first_transform = first_object->GetComponent<component::Transform>();
-    auto& second_transform = second_object->GetComponent<component::Transform>();
-    auto& first_physbody = first_object->GetComponent<component::PhysicBody>();
-    auto& second_physbody = second_object->GetComponent<component::PhysicBody>();
+    auto &logger = redengine::Engine::get().GetLog();
+    auto &first_transform = first_object->GetComponent<component::Transform>();
+    auto &second_transform = second_object->GetComponent<component::Transform>();
+    auto &first_physbody = first_object->GetComponent<component::PhysicBody>();
+    auto &second_physbody = second_object->GetComponent<component::PhysicBody>();
 
-    auto& lvelocity1 = first_physbody.linear_velocity;
-    auto& wvelocity1 = first_physbody.angular_velocity;
-    auto& lvelocity2 = second_physbody.linear_velocity;
-    auto& wvelocity2 = second_physbody.angular_velocity;
+    auto &lvelocity1 = first_physbody.linear_velocity;
+    auto &wvelocity1 = first_physbody.angular_velocity;
+    auto &lvelocity2 = second_physbody.linear_velocity;
+    auto &wvelocity2 = second_physbody.angular_velocity;
 
     std::stringstream log_text;
 
-    for (auto& n : collision.contact_points) {
+    for (auto &n : collision.contact_points) {
 
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";
@@ -52,8 +52,8 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
                  << n.second_body_contact_point.x << "," << n.second_body_contact_point.y << "," << n.second_body_contact_point.z << "}";
         logger.AddLog(ConsoleLog::LogType::Collision, log_text.str(), __LINE__, __FILE__);*/
 
-        glm::vec3 r1 = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
-        glm::vec3 r2 = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
+        glm::vec3 r1 = n.first_body_contact_point - (first_transform.pos + first_physbody.centre_mass);
+        glm::vec3 r2 = n.second_body_contact_point - (second_transform.pos + second_physbody.centre_mass);
 
         if (!first_physbody.is_sleeping && !first_physbody.static_object) {
             first_transform.pos += n.contact_normal * ((n.penetration / 2) * -1);
@@ -84,24 +84,25 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         auto total_inverse_mass = first_physbody.inverse_mass + second_physbody.inverse_mass;
 
         //-(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
-        auto numerator = restitution_multiplier * (glm::dot(n.contact_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) - glm::dot(wvelocity2, r2xn));
+        auto numerator = restitution_multiplier *
+                         (glm::dot(n.contact_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) -
+                          glm::dot(wvelocity2, r2xn));
 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
-        float denominator = total_inverse_mass + glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) + glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn);
+        float denominator = total_inverse_mass + (glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) +
+                                                  glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn));
 
         //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
         // __________________________________________________________________________ * n̂
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
+        auto fucked_looking_a = (numerator / denominator);
+        auto impulse = (numerator / denominator) * n.contact_normal;
 
-            auto lambda = numerator / denominator;
-            auto impulse = (numerator / denominator) * n.contact_normal;
+        lvelocity1 += impulse / first_physbody.mass;
+        lvelocity2 -= impulse / second_physbody.mass;
 
-            lvelocity1 += impulse * first_physbody.inverse_mass;
-            lvelocity2 -= impulse * second_physbody.inverse_mass;
-
-            wvelocity1 += r1 * lambda * first_physbody.inverse_inertia_tensor * r1xn;
-            wvelocity2 -= r1 * lambda * second_physbody.inverse_inertia_tensor * r2xn;
-
+        wvelocity1 = wvelocity1 + (fucked_looking_a * first_physbody.inverse_inertia_tensor) * r1xn;
+        wvelocity2 = wvelocity2 - (fucked_looking_a * second_physbody.inverse_inertia_tensor) * r2xn;
     }
 }

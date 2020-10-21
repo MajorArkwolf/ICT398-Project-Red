@@ -44,10 +44,6 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
 
     std::stringstream log_text;
 
-    for (size_t i = 0; i < collision.contact_points.size(); i++) {
-    }
-
-    auto relative_velocity = first_physbody.linear_velocity - second_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";

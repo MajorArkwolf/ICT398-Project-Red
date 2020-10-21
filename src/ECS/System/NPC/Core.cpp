@@ -6,6 +6,8 @@
 
 #include "glm/glm.hpp"
 
+#include <random>
+
 namespace System {
 
 const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
@@ -261,8 +263,12 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     // This is no longer viable within the deadline, so instead the triggered Intentions will be tracked
     //   and a target Intention to perform will be identified.
 
-    // Determine what Desires have been fulfilled and assign a priority by their hierarchy
+    // Gather the NPC components
     auto &npc_bdi = registry.get<component::BDI>(entity);
+    auto &npc_characteristics = registry.get<component::Characteristics>(entity);
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+
+    // Determine what Desires have been fulfilled and assign a priority by their hierarchy
     std::map<int, std::set<int>> fulfilled_desires = FulfilledDesires(npc_bdi, 0, npc_bdi.root_desires);
 
     // Gather the identifiers of Desires that would trigger an intention
@@ -285,35 +291,106 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
         intersect_store.clear();
     }
 
-    // Determine which Intention Plan should be actioned, going backwards through the hierarchy
+    // Track the to-be-determined Intention & Plan
+    int new_trigger_identifier = -1;
+    int new_plan_identifier = -1;
+
+    // Determine which Intention & Plan should be actioned, going backwards through the hierarchy
     for (auto current_desire_layer = fulfilled_desires.rbegin(); current_desire_layer != fulfilled_desires.rend(); ++current_desire_layer) {
         // Catch if the current layer doesn't has any Desire identifiers remaining
-        if (current_desire_layer->second.size() < 1) {
+        if (current_desire_layer->second.empty()) {
             // Move onto the layer above in the hierarchy, none remain after the filtering
             continue;
         }
 
-        // Determine which triggered Intention should be selected for processing
-        //TODO: THIS
-        //https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset
+        // Determine which Desire trigger to respond to
+        auto target_desire_trigger = npc_bdi.intentions.begin();
+        if (current_desire_layer->second.size() == 1) {
+            // Save performance if possible
+            target_desire_trigger = npc_bdi.intentions.find(*current_desire_layer->second.begin());
+        }
+        else {
+            // Calculate the weighting for the triggered Intentions and gather their iterators
+            std::list<double> raw_distributions;
+            std::vector<std::map<int, std::vector<component::Plan>>::iterator> intention_iterators;
+            for (auto &current_trigger: current_desire_layer->second) {
+                // Store the iterator to the triggered Intentions and set its baseline distribution
+                intention_iterators.push_back(npc_bdi.intentions.find(current_trigger));
+                raw_distributions.push_back(0.5);
+
+                // If this was the same trigger as before, apply a modifier
+                if (npc_behaviour_state.prior_intention.first == current_trigger) {
+                    // Scale the modifier relative to the NPC's emotional state
+                    *raw_distributions.rbegin() -= 0.5 * (double) EmotionalStateOverall(npc_characteristics);
+                }
+            }
+
+            // Randomly pick from the triggered Intentions, using the calculated weightings
+            std::mt19937 random_number_generator (std::chrono::system_clock::now().time_since_epoch().count());
+            std::discrete_distribution<int> discrete_distributions(raw_distributions.begin(), raw_distributions.end());
+            target_desire_trigger = intention_iterators[discrete_distributions(random_number_generator)];
+        }
+
+        // Catch an empty set of Plans in the selected triggered Intention
+        if (target_desire_trigger->second.empty()) {
+            // Break out of the loop, this is undefined behaviour
+            break;
+        }
 
         // Determine which plan from the selected intention should be Actioned
-        //TODO: THIS
-        // Make sure it respects: prior plan, action weighting (BDI personality)
+        int target_intention_plan = 0;
+        if (target_desire_trigger->second.size() == 1) {
+            // Save performance if possible
+            new_trigger_identifier = target_desire_trigger->first;
+            new_plan_identifier = target_intention_plan;
+        }
+        else if (1 < target_desire_trigger->second.size()) {
+            // Calculate the weighting for the triggered Plans
+            std::list<double> raw_distributions;
+            std::vector<int> plan_identifiers;
+            for (auto &current_plan: target_desire_trigger->second) {
+                // Set the current Plan's baseline distribution
+                raw_distributions.push_back(0.5);
+                plan_identifiers.push_back(raw_distributions.size() - 1);
 
-        // Break out of the loop, the current intention has been determined
+                // If this was the same trigger as before, apply a modifier
+                if (npc_behaviour_state.prior_intention.second == raw_distributions.size() - 1) {
+                    // Scale the modifier relative to the NPC's emotional state
+                    *raw_distributions.rbegin() -= 0.5 * (double) EmotionalStateOverall(npc_characteristics);
+                }
+
+                // Catch the NPC's Characteristics being applicable
+                if (npc_characteristics.personality.find(current_plan.action) != npc_characteristics.personality.end()) {
+                    // Apply the modifier, no scaling will be done here for now
+                    *raw_distributions.rbegin() += npc_characteristics.personality[current_plan.action];
+                }
+            }
+
+            // Randomly pick from the triggered Intentions, using the calculated weightings
+            std::mt19937 random_number_generator (std::chrono::system_clock::now().time_since_epoch().count());
+            std::discrete_distribution<int> discrete_distributions(raw_distributions.begin(), raw_distributions.end());
+            target_intention_plan = plan_identifiers[discrete_distributions(random_number_generator)];
+
+            // Track the new target Intention & Plan
+            new_trigger_identifier = target_desire_trigger->first;
+            new_plan_identifier = target_intention_plan;
+        }
+
+        // Break out of the loop, job's done
         break;
     }
 
+    // Update the current Intention stored the the NPC's BehaviourState component
+    ChangeIntention(npc_behaviour_state, new_trigger_identifier, new_plan_identifier);
+
     // Move the NPC to the respond phase
-    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
     ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kRespond);
 }
 
 void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     // Catch if the NPC has not yet determined which Intention to action
     auto &state = registry.get<component::BehaviourState>(entity);
-    if (state.current_intention < 0) {
+    if ((state.current_intention.first < 0) || state.current_intention.second < 0) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);

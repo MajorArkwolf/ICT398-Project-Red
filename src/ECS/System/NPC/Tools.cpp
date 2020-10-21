@@ -45,9 +45,15 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
     // Assign the current state the newly provided values
     target.current = new_state;
     target.current_dt = starting_dt;
+}
 
-    // Guarantee the tracked Intention will not overlap with an actual identifier
-    target.current_intention = -1;
+void ChangeIntention(component::BehaviourState& target, int trigger, int plan) {
+    // Copy the current values from the current intention to the prior
+    target.prior_intention = target.current_intention;
+
+    // Assign the current Intention the newly assigned values
+    target.current_intention.first = trigger;
+    target.current_intention.second = plan;
 }
 
 void TestGoal(component::Goal& target, float value) {

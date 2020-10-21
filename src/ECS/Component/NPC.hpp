@@ -394,10 +394,10 @@ struct BehaviourState {
         /// An accumulated amount of time since the prior turnover of NPC emotions.
     double emotion_turnover_dt;
 
-        /// The identifier of the current Intention (and Plan) the NPC is acting on.
+        /// The identifier of the current Desire trigger and Intention the NPC is acting on.
     std::pair<int, int> current_intention;
 
-        /// The identifier of the prior Intention (and Plan) the NPC was acting on.
+        /// The identifier of the prior Desire trigger and Intention the NPC was acting on.
     std::pair<int, int> prior_intention;
 
         /**

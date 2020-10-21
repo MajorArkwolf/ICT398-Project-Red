@@ -31,6 +31,16 @@ void ChangeBehaviouralState(component::BehaviourState& target,
                          double starting_dt = 0.0f);
 
     /**
+     * @brief Assigns a new current Intention to an NPC's BehaviouralState component.
+     * Moves the current Intention over to the prior Intention.
+     * @param [in,out] target A BehaviourState component of an NPC.
+     * @param [in] trigger The trigger identifier of the new Intention.
+     * @param [in] plan The Plan identifier of the new Intention.
+     */
+void ChangeIntention(component::BehaviourState& target,
+                     int trigger = -1, int plan = -1);
+
+    /**
      * @brief Tests a provided value meets a Goal's conditions.
      * Additionally updated the Goal's history according to the outcome of the test result.
      * @param [in,out] target A Goal from a BDI Desire Component of an NPC.

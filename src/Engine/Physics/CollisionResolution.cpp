@@ -51,13 +51,12 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
                  << n.second_body_contact_point.x << "," << n.second_body_contact_point.y << "," << n.second_body_contact_point.z << "}";
         logger.AddLog(ConsoleLog::LogType::Collision, log_text.str(), __LINE__, __FILE__);*/
 
-        glm::vec3 com_to_col1 = first_transform.pos + first_physbody.centre_mass - n.first_body_contact_point;
-        glm::vec3 com_to_col2 = second_transform.pos + second_physbody.centre_mass - n.second_body_contact_point;
+        glm::vec3 com_to_col1 = n.first_body_contact_point - (first_transform.pos + first_physbody.centre_mass);
+        glm::vec3 com_to_col2 = n.second_body_contact_point - (second_transform.pos + second_physbody.centre_mass);
 
-
-        //         -(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
+        //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
         // __________________________________________________________________________ * n̂
-        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
+        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
         //  -(1 + ε)
         auto restitution_multiplier = -(1.0f + restitution);
@@ -74,14 +73,13 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         // (m₁⁻¹ + m₂⁻¹)
         auto total_inverse_mass = first_physbody.inverse_mass + second_physbody.inverse_mass;
 
-        //-(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
-        auto numerator = restitution_multiplier * n.collision_normal * relative_velocity + wvelocity1 * r1xn - wvelocity2 * r2xn;
+        //-(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
+        float numerator = restitution_multiplier * (glm::dot(n.collision_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) - glm::dot(wvelocity2, r2xn));
 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
-        auto denominator = total_inverse_mass + r1xn * first_physbody.inertia_tensor * r1xn + r2xn * second_physbody.inertia_tensor * r2xn;
+        float denominator = total_inverse_mass + glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) + glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn);
 
-
-        //         -(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
+        //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
         // __________________________________________________________________________ * n̂
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
         auto impulse = (numerator / denominator) * n.collision_normal;
@@ -89,11 +87,7 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         lvelocity1 += impulse * first_physbody.inverse_mass;
         lvelocity2 -= impulse * second_physbody.inverse_mass;
 
-        auto rotational_impulse = impulse /*/ n.collision_normal*/;
-
-        wvelocity1 += rotational_impulse * r1xn;
-        wvelocity2 -= rotational_impulse * r2xn;
-
-
+        wvelocity1 += glm::length(impulse) * first_physbody.inverse_inertia_tensor * r1xn;
+        wvelocity2 -= glm::length(impulse) * second_physbody.inverse_inertia_tensor * r2xn;
     }
 }

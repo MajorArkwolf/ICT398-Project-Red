@@ -78,7 +78,7 @@ namespace physics {
         void ResetWorld();
 
     private:
-        bool renderer_ = false;
+        bool renderer_ = true;
         ECS *ecs_ = nullptr;
         /// The react PhysicsWorld
         reactphysics3d::PhysicsWorld *world_ = nullptr;

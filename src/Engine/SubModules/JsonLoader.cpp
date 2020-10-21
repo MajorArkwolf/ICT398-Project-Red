@@ -107,7 +107,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                             std::cerr << "JSON Animation failed: " << e.what() << '\n';
                         }
                     }
-
+                    if (j.contains("Moving")) {
+                        ent->AddComponent<component::Moving>();
+                    }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }
@@ -205,6 +207,7 @@ void JSONLoader::LoadPrefabList() {
                 auto &prefab = prefabRepo.AddNewPrefab(p.at("Name").get<std::string>());
                 name = p.at("Name").get<std::string>();
                 prefab.name = name;
+                prefab.file_name = temp;
                 if (p.contains("Model")) {
                     prefab.has_model = true;
                     prefab.model_dir = p.at("Model").at("ModelFilePath").get<std::string>();
@@ -295,6 +298,7 @@ void JSONLoader::LoadPrefabList() {
                                 auto mass = GetJsonField(json_collider, "Colliders", "Mass", JsonType::Number);
                                 if (mass.has_value()) {
                                     collider.mass = json_collider.at("Mass").get<float>();
+                                    collider.mass < 0.01 ? collider.mass = 1.0f : collider.mass;
                                 } else {
                                     std::stringstream error;
                                     error << "File: " << prefab_full_path << " Collider: " << collider.part_name << " does not contain \"Mass\" field, defaulting to 1.0kg.";

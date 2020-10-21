@@ -15,7 +15,10 @@ namespace component {
         Board(ECS *ecs, const glm::vec3 &pos, size_t node_x, size_t node_y, float node_size);
         void Update(double t, double dt);
         void ToggleRenderer();
-        std::queue<entt::entity> FindPath(ECS *ecs, entt::entity first_node, entt::entity second_node);
+        std::queue<entt::entity> FindPath(entt::registry &ecs, entt::entity first_node, entt::entity second_node);
+        entt::entity GetFirstNode() {return first_board_piece_;}
+        entt::entity GetLastNode() {return last_board_piece_;}
+        size_t GetNumOfNodes() {return num_of_nodes_;}
     private:
         bool render_nodes_ = false;
         glm::vec3 position_{};
@@ -26,5 +29,8 @@ namespace component {
         Pathing::Grid grid_;
         std::unordered_map<Pathing::Node *, entt::entity> node_to_entity_{};
         std::unordered_map<entt::entity, Pathing::Node *> entity_to_node_{};
+        size_t num_of_nodes_;
+        entt::entity first_board_piece_;
+        entt::entity last_board_piece_;
     };
 }

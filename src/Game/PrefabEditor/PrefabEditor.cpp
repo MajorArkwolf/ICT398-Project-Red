@@ -93,19 +93,19 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
                     case input::InputType::kKeyPressed: {
                         switch (keyboard.key) {
                             case input::VirtualKey::W: {
-                                forward_ = true;
+                                //forward_ = true;
                             }
                                 break;
                             case input::VirtualKey::A: {
-                                left_ = true;
+                                //left_ = true;
                             }
                                 break;
                             case input::VirtualKey::S: {
-                                backward_ = true;
+                                //backward_ = true;
                             }
                                 break;
                             case input::VirtualKey::D: {
-                                right_ = true;
+                                //right_ = true;
                             }
                                 break;
                             case input::VirtualKey::kEscape: {

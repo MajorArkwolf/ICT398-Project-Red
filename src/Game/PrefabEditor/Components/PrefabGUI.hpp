@@ -44,16 +44,28 @@ private:
     bool main_edit_menu_ = false;
     /// physics menu that will let you add collidors.
 
+    //Models
+    size_t box_model = 0;
+    size_t sphere_model = 0;
+    size_t capsule_model = 0;
+    size_t loaded_model = 0;
+    glm::vec3 collider_scale_ = {};
 
     //Save stuff
     std::string save_location;
     nlohmann::json save_json;
+    redengine::Collider *collider_;
+    size_t collider_index_ = 0;
+    bool collider_index_set_ = false;
 
     //------Component Menu's-------
     bool model_component_ = false;
     bool transform_component_ = false;
     bool physics_edit_menu = false;
+    bool collider_edit_menu_ = false;
     bool affordance_edit_menu = false;
+    bool collider_new_menu_ = false;
+    bool physics_menu_ = false;
     bool save_to = false;
 
     ImVec2 button_size_ = ImVec2(150, 30);
@@ -103,4 +115,19 @@ private:
      * Used to save a json to a place
      */
     void SaveTo();
+
+    /**
+     * Editor for a specific collider.
+     */
+    void ColliderEditor();
+
+    /**
+     * Clean up function to set everything back to default when done.
+     */
+    void CleanUp();
+
+    /**
+     * Create a new collider.
+     */
+    void CreateCollider();
 };

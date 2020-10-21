@@ -32,7 +32,7 @@ class PhysicBody {
 
     //Secondary
     glm::vec3 linear_velocity = {};
-    glm::vec3 angular_velocity = {};
+    glm::vec3 angular_velocity = {0,0,0};
     glm::vec3 added_force = {};
     glm::vec3 added_torque = {};
 

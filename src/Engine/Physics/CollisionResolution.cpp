@@ -1,4 +1,4 @@
-#include "CollisionResolution.hpp"
+﻿#include "CollisionResolution.hpp"
 
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Player.hpp"
@@ -42,9 +42,10 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
     auto& lvelocity2 = second_physbody.linear_velocity;
     auto& wvelocity2 = second_physbody.angular_velocity;
 
-    auto first_linear_momentum = first_physbody.mass * first_physbody.linear_velocity;
-    auto second_linear_momentum = second_physbody.mass * second_physbody.linear_velocity;
     std::stringstream log_text;
+
+    for (size_t i = 0; i < collision.contact_points.size(); i++) {
+    }
 
     auto relative_velocity = first_physbody.linear_velocity - second_physbody.linear_velocity;
     for (auto& n : collision.contact_points) {
@@ -54,39 +55,49 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
                  << n.second_body_contact_point.x << "," << n.second_body_contact_point.y << "," << n.second_body_contact_point.z << "}";
         logger.AddLog(ConsoleLog::LogType::Collision, log_text.str(), __LINE__, __FILE__);*/
 
-        auto relative_normal_velocity = glm::dot(relative_velocity, n.collision_normal);
-        if (relative_normal_velocity > 1) {
-            auto impulse_scalar = glm::dot(first_physbody.linear_velocity - second_physbody.linear_velocity, n.collision_normal);
-            impulse_scalar *= -(1 + restitution) * first_physbody.mass * second_physbody.mass;
-            impulse_scalar /= (first_physbody.mass + second_physbody.mass);
-            auto impulse = impulse_scalar * n.collision_normal;
+        glm::vec3 com_to_col1 = first_transform.pos + first_physbody.centre_mass - n.first_body_contact_point;
+        glm::vec3 com_to_col2 = second_transform.pos + second_physbody.centre_mass - n.second_body_contact_point;
 
-            first_physbody.linear_velocity += (impulse * first_physbody.inverse_mass) ;
-            second_physbody.linear_velocity -= (impulse * second_physbody.inverse_mass) ;
-            auto first_distance_to_com = (first_transform.pos + first_physbody.centre_mass) - n.first_body_contact_point;
-            auto second_distance_to_com = (second_transform.pos + second_physbody.centre_mass) - n.second_body_contact_point;
 
-            first_physbody.angular_velocity += (first_physbody.inverse_inertia_tensor * glm::cross(impulse, first_distance_to_com));
-            second_physbody.angular_velocity += (second_physbody.inverse_inertia_tensor * glm::cross(impulse, second_distance_to_com));
+        //         -(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
+        // __________________________________________________________________________ * n̂
+        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
-            if (first_physbody.static_object) {
-                second_physbody.should_apply_gravity = false;
-            } 
-            if (second_physbody.static_object) {
-                first_physbody.should_apply_gravity = false;
-            } 
-            //const auto k_slop = 0.01f;// Penetration allowance
-            //const auto percent = 0.01f;// Penetration percentage to correct
-            //auto correction = (std::max(n.penetration - k_slop, 0.0f) / (first_physbody.mass + second_physbody.mass)) * percent * (n.collision_normal);
-            //if (!first_physbody.static_object) {
-            //    first_transform.pos += second_physbody.mass * correction;
-            //}
-            //if (!second_physbody.static_object) {
-            //    second_transform.pos -= first_physbody.mass * correction;
-            //}
+        //  -(1 + ε)
+        auto restitution_multiplier = -(1.0f + restitution);
 
-        } else {
+        // (v⁻₁ - v⁻₂)
+        auto relative_velocity = lvelocity1 - lvelocity2;
 
-        }
+        //(r₁ x n̂)
+        auto r1xn = glm::cross(com_to_col1, n.collision_normal);
+
+        //(r₂ x n̂)
+        auto r2xn = glm::cross(com_to_col2, n.collision_normal);
+
+        // (m₁⁻¹ + m₂⁻¹)
+        auto total_inverse_mass = first_physbody.inverse_mass + second_physbody.inverse_mass;
+
+        //-(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
+        auto numerator = restitution_multiplier * n.collision_normal * relative_velocity + wvelocity1 * r1xn - wvelocity2 * r2xn;
+
+        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
+        auto denominator = total_inverse_mass + r1xn * first_physbody.inverse_inertia_tensor * r1xn + r2xn * second_physbody.inverse_inertia_tensor * r2xn;
+
+
+        //         -(1 + ε) * (n̂ * (v⁻₁ - v⁻₂) + w⁻₁ * (r₁ x n̂) - w₂ * (r₂ x n̂))
+        // __________________________________________________________________________ * n̂
+        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
+        auto impulse = (numerator / denominator) * n.collision_normal;
+
+        lvelocity1 += impulse * first_physbody.inverse_mass;
+        lvelocity2 -= impulse * second_physbody.inverse_mass;
+
+        auto rotational_impulse = impulse / n.collision_normal;
+
+        wvelocity1 += rotational_impulse * r1xn;
+        wvelocity2 -= rotational_impulse * r2xn;
+
+
     }
 }

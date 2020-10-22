@@ -30,7 +30,7 @@ void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData &
 }
 
 void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object) {
-    constexpr float restitution = 0.8f;
+    constexpr float restitution = 0.6f;
     auto &logger = redengine::Engine::get().GetLog();
     auto &first_transform = first_object->GetComponent<component::Transform>();
     auto &second_transform = second_object->GetComponent<component::Transform>();

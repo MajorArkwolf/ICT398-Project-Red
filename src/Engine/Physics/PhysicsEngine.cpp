@@ -189,7 +189,8 @@ void physics::PhysicsEngine::IntegratePositions(double dt) {
             if (!phys_body.static_object) {
                 tran.pos += linear_velocity * static_cast<float>(dt);
                 //tran.rot = glm::quat(angular_velocity) * tran.rot * static_cast<float>(dt);
-                tran.rot += glm::quat(1.0, angular_velocity) * tran.rot * 0.5f * static_cast<float>(dt);
+                //tran.rot += glm::quat(1.0, angular_velocity) * tran.rot * 0.5f * static_cast<float>(dt);
+                tran.rot = tran.rot + glm::quat(0.0, angular_velocity) * tran.rot * 0.5f * static_cast<float>(dt);
                 //tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * static_cast<float>(dt));
                 tran.rot = glm::normalize(tran.rot);
             }

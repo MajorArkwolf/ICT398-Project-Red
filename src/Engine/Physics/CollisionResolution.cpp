@@ -97,10 +97,10 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
         auto fucked_looking_a = (numerator / denominator);
-        auto impulse = (numerator / denominator) * n.contact_normal;
+        auto impulse = fucked_looking_a * n.contact_normal;
 
-        lvelocity1 += impulse / first_physbody.mass;
-        lvelocity2 -= impulse / second_physbody.mass;
+        lvelocity1 += impulse * first_physbody.inverse_mass;
+        lvelocity2 -= impulse * second_physbody.inverse_mass;
 
         wvelocity1 = wvelocity1 + (fucked_looking_a * first_physbody.inverse_inertia_tensor) * r1xn;
         wvelocity2 = wvelocity2 - (fucked_looking_a * second_physbody.inverse_inertia_tensor) * r2xn;

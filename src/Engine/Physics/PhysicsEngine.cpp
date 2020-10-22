@@ -91,11 +91,11 @@ glm::mat3x3 physics::PhysicsEngine::CalculateInertiaTensor(redengine::Box shape,
     glm::mat3x3 tensor{};
     constexpr float calc = 1.f / 12.f;
     //length
-    tensor[0][0] = calc * mass * (shape.extents.y * shape.extents.y + shape.extents.z * shape.extents.z);
+    tensor[0][0] = calc * mass * (shape.extents.y * shape.extents.y + shape.extents.x * shape.extents.x);
     //height
-    tensor[1][1] = calc * mass * (shape.extents.x * shape.extents.x + shape.extents.z * shape.extents.z);
+    tensor[1][1] = calc * mass * (shape.extents.z * shape.extents.z + shape.extents.x * shape.extents.x);
     //width
-    tensor[2][2] = calc * mass * (shape.extents.x * shape.extents.x + shape.extents.y * shape.extents.y);
+    tensor[2][2] = calc * mass * (shape.extents.z * shape.extents.z + shape.extents.y * shape.extents.y);
     return tensor;
 }
 
@@ -188,7 +188,9 @@ void physics::PhysicsEngine::IntegratePositions(double dt) {
 
             if (!phys_body.static_object) {
                 tran.pos += linear_velocity * static_cast<float>(dt);
-                tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * static_cast<float>(dt));
+                //tran.rot = glm::quat(angular_velocity) * tran.rot * static_cast<float>(dt);
+                tran.rot += glm::quat(1.0, angular_velocity) * tran.rot * 0.5f * static_cast<float>(dt);
+                //tran.rot += (tran.rot * 0.5f * glm::quat(1.0, angular_velocity) * static_cast<float>(dt));
                 tran.rot = glm::normalize(tran.rot);
             }
             physics_world.UpdateCollisionBody(e, tran.pos, tran.rot);

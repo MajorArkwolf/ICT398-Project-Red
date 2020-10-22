@@ -156,7 +156,7 @@ void physics::PhysicsEngine::IntegrateVelocities(double dt) {
 
             linear_velocity += static_cast<float>(dt) * (phys_body.inverse_mass * phys_body.added_force);
             angular_velocity += static_cast<float>(dt) * (phys_body.inverse_inertia_tensor * phys_body.added_torque);
-            angular_velocity *= damping_factor;
+           // angular_velocity *= damping_factor;
         }
 
         if (physics_world.IsGravityEnabled()) {

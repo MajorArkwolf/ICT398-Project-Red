@@ -5,10 +5,10 @@
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
-void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& queue, double t, double dt) {
+void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData> &queue, double t, double dt) {
     ecs_ = redengine::Engine::get().game_stack_.getTop()->physics_world_.GetECS();
     while (!queue.empty()) {
-        auto& item = queue.front();
+        auto &item = queue.front();
         if (ecs_) {
             if (ecs_->GetRegistry().has<component::Player>(item.first_body)) {
                 ResolvePlayerCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
@@ -22,15 +22,15 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData>& que
     }
 }
 
-void physics::CollisionResolution::SetECS(ECS* ecs) {
+void physics::CollisionResolution::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
 }
 
-void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> player, std::shared_ptr<Entity> other) {
+void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> player, std::shared_ptr<Entity> other) {
 }
 
-void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData& collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object) {
-    constexpr float restitution = 0.6f;
+void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object) {
+    constexpr float restitution = 0.8f;
     auto &logger = redengine::Engine::get().GetLog();
     auto &first_transform = first_object->GetComponent<component::Transform>();
     auto &second_transform = second_object->GetComponent<component::Transform>();
@@ -84,25 +84,27 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData&
         auto total_inverse_mass = first_physbody.inverse_mass + second_physbody.inverse_mass;
 
         //-(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
-        auto numerator = restitution_multiplier *
-                         (glm::dot(n.contact_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) -
-                          glm::dot(wvelocity2, r2xn));
+        auto numerator = restitution_multiplier * (glm::dot(n.contact_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) - glm::dot(wvelocity2, r2xn));
 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
-        float denominator = total_inverse_mass + (glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) +
-                                                  glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn));
+        float denominator = total_inverse_mass + (glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) + glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn));
 
         //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
         // __________________________________________________________________________ * n̂
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
-        auto fucked_looking_a = (numerator / denominator);
-        auto impulse = fucked_looking_a * n.contact_normal;
+        //Transfer of momentum
+        auto lambda = (numerator / denominator);
 
-        lvelocity1 += impulse * first_physbody.inverse_mass;
-        lvelocity2 -= impulse * second_physbody.inverse_mass;
+        //linear impulse
+        auto linear_impulse = lambda * n.contact_normal;
 
-        wvelocity1 = wvelocity1 + (fucked_looking_a * first_physbody.inverse_inertia_tensor) * r1xn;
-        wvelocity2 = wvelocity2 - (fucked_looking_a * second_physbody.inverse_inertia_tensor) * r2xn;
+        // v⁺₁ = v⁻₁
+        lvelocity1 += linear_impulse * first_physbody.inverse_mass;
+        // v⁺₂ = v⁻₂
+        lvelocity2 -= linear_impulse * second_physbody.inverse_mass;
+
+        wvelocity1 = wvelocity1 + (lambda * first_physbody.inverse_inertia_tensor) * r1xn;
+        wvelocity2 = wvelocity2 - (lambda * second_physbody.inverse_inertia_tensor) * r2xn;
     }
 }

@@ -43,10 +43,11 @@ void Demo::Init() {
     auto &playerComp = big_player.GetComponent<component::Player>();
     big_player.AddComponent<component::PhysicBody>();
     auto &phys = big_player.GetComponent<component::PhysicBody>();
+    phys.is_player = true;
     physics_world_.AddCollisionBody(big_player.GetID(), playerComp.camera_.position_, glm::quat(glm::vec3(0, 0, 0)));
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
-    physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 70.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
     big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};
     auto &anim =
@@ -69,6 +70,8 @@ void Demo::Init() {
             little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
+    //physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
+    //physics_world_.SetGravityEnabled(true);
 }
 
 void Demo::UnInit() {

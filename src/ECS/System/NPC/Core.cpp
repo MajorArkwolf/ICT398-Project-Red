@@ -20,6 +20,8 @@ const static double MINIMUM_IDLE_TIME = 1.0;
 
 const static double SIT_IDLE_TIME = 6.0;
 
+const static double USE_IDLE_TIME = 4.0;
+
 const static float INTERACTION_RANGE = 1.0f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
@@ -462,7 +464,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 // Make the NPC somewhat statically 'sit'
                 if (registry.has<component::Animation>(entity)) {
                     auto &anim = registry.get<component::Animation>(entity);
-                    anim.animator_.LoadAnimation("WORK", true);
+                    anim.animator_.LoadAnimation("WORKING", true);
                 }
 
                 // Prevent this from being repeated
@@ -487,24 +489,39 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             break;
         case npc::Actions::kUse:
+            // Check that the NPC is within range of the target it will 'use'
+            if (registry.has<component::Transform>(current_plan.entity)) {
+                // Check if the NPC is within the interaction range
+                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+
+                // Catch if the NPC is not within the interaction range to be able to sit
+                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
+                    // Swap back to observing state, this will also deal with the emotional response
+                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                }
+            }
+            else {
+                // Swap back to observing state, this will also deal with the emotional response
+                ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            }
+
             // Init action (only perform once)
             if (!npc_behaviour_state.has_begun_response) {
-                // Do stuff like animation setup
+                // Make the NPC somewhat statically 'sit'
+                if (registry.has<component::Animation>(entity)) {
+                    auto &anim = registry.get<component::Animation>(entity);
+                    anim.animator_.LoadAnimation("PUNCH", true);
+                }
 
                 // Prevent this from being repeated
                 npc_behaviour_state.has_begun_response = true;
             }
 
-            // Perform action
-            //TODO: Use Action
-
             // Check if action has finished
-            if () {
+            if (USE_IDLE_TIME < npc_behaviour_state.current_dt) {
                 // Swap back to observing state, this will also deal with the emotional response
                 ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             }
-
-            // End of Sit Action
             break;
         default:
             // Catch other unsupported

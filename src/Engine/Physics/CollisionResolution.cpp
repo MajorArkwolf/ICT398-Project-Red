@@ -44,6 +44,9 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
     std::stringstream log_text;
 
     for (auto &n : collision.contact_points) {
+        if ((first_physbody.is_sleeping || first_physbody.static_object) && (second_physbody.is_sleeping || second_physbody.static_object)) {
+            continue;
+        }
 
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";

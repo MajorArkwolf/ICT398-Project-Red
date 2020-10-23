@@ -13,5 +13,6 @@
     },
     "Scale": 1.0
   },
-  "Physics":  true
+  "Physics":  true,
+  "Static" : true
 }

@@ -100,7 +100,7 @@ redengine::Engine::Engine() {
     last_window_x_size_ = 1920;
     last_window_y_size_ = 1080;
     window_ = glfwCreateWindow(last_window_x_size_, last_window_y_size_, "Project Red", nullptr, nullptr);
-    if (window_ == nullptr) {
+    if (window_ == nullptr || window_ == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }

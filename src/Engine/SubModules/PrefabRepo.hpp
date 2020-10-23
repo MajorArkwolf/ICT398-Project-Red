@@ -35,6 +35,7 @@ struct Collider {
 struct prefab {
     bool render = true;
     std::string name;
+    std::string file_name;
     std::string model_dir;
     bool has_model = false;
     size_t model_id = 0;
@@ -50,6 +51,8 @@ struct prefab {
     float mass = 0.0;
     glm::dvec3 centre_of_mass = {0, 0, 0};
     static void to_json(nlohmann::json& json, const prefab& fab);
+    std::vector<std::string> GetColliderList();
+
 };
 
 class PrefabRepo {

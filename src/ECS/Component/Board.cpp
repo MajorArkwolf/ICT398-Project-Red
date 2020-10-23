@@ -21,6 +21,7 @@ component::Board::Board(ECS *ecs, const glm::vec3 &pos, const size_t node_x, con
         node_array.resize(node_y);
         assert(node_array.size() == node_y);
     }
+    num_of_nodes_ = (node_x * node_y) - 1;
     BuildBoard(ecs);
 }
 
@@ -28,6 +29,7 @@ void component::Board::BuildBoard(ECS *ecs) {
     auto &pe = redengine::Engine::get().GetPhysicsEngine();
     auto &pw = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     assert(ecs != nullptr);
+    size_t count_down = num_of_nodes_;
     float new_pos_x = position_.x;
     auto adjusted_size = node_size_ - 0.1;
     auto box_size = glm::vec3(adjusted_size / 2, adjusted_size / 2, adjusted_size /2);
@@ -57,6 +59,12 @@ void component::Board::BuildBoard(ECS *ecs) {
             node_to_entity_.insert({node_comp.grid_node, node.GetID()});
             entity_to_node_.insert({node.GetID(), node_comp.grid_node});
             ++y;
+            if (count_down == num_of_nodes_) {
+                first_board_piece_ = node.GetID();
+            } if (count_down == 0) {
+                last_board_piece_ = node.GetID();
+            }
+            --count_down;
         }
         ++x;
         new_pos_x += node_size_;
@@ -76,12 +84,11 @@ void component::Board::ToggleRenderer() {
     }
 }
 
-std::queue<entt::entity> component::Board::FindPath(ECS *ecs, entt::entity first_node, entt::entity second_node) {
+std::queue<entt::entity> component::Board::FindPath(entt::registry &ecs, entt::entity first_node, entt::entity second_node) {
     std::queue<entt::entity> node_list = {};
-    auto &reg = ecs->GetRegistry();
-    if (reg.has<component::Node>(first_node) && reg.has<component::Node>(second_node)) {
-        auto *node_comp_first = reg.get<component::Node>(first_node).grid_node;
-        auto *node_comp_second = reg.get<component::Node>(second_node).grid_node;
+    if (ecs.has<component::Node>(first_node) && ecs.has<component::Node>(second_node)) {
+        auto *node_comp_first = ecs.get<component::Node>(first_node).grid_node;
+        auto *node_comp_second = ecs.get<component::Node>(second_node).grid_node;
         auto result = Pathing::Pathfinding::findPath(grid_, node_comp_first, node_comp_second, true);
         for (auto &e : result) {
             node_list.push(node_to_entity_.at(e));

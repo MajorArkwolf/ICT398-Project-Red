@@ -60,18 +60,18 @@ void System::UpdateColors(entt::registry& registry) {
         auto &mod = entities.get<component::Model>(e);
         auto &node = entities.get<component::Node>(e);
         if (mod.draw_model) {
-            if (node.n_o == node_occupancy::vacant) {
+            if (node.GetNodeStatus() == node_occupancy::vacant) {
                 mod.color.r = 0.0f;
                 mod.color.g = 1.0f;
                 mod.color.b = 0.0f;
                 mod.color.a = 1.0f;
-            } else if (node.n_o == node_occupancy::occupied) {
+            } else if (node.GetNodeStatus() == node_occupancy::occupied) {
                 mod.color.r = 1.0f;
                 mod.color.g = 0.0f;
                 mod.color.b = 0.0f;
                 mod.color.a = 1.0f;
 
-            } else if (node.n_o == node_occupancy::leaving) {
+            } else if (node.GetNodeStatus() == node_occupancy::leaving) {
                 mod.color.r = 1.0f;
                 mod.color.g = 1.0f;
                 mod.color.b = 0.0f;

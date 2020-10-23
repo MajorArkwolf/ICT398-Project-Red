@@ -1,6 +1,7 @@
 #include "InputManager.hpp"
 
 #include <variant>
+#include <functional>
 
 template<class... Ts>
 struct overload : Ts... {

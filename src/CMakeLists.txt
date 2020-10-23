@@ -57,6 +57,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     ECS/Component/Model.cpp
     ECS/Component/Basic.cpp
     ECS/Component/Board.cpp
+    ECS/Component/Node.cpp
     ECS/Component/NPC.cpp
     #----Pathing
     ECS/Component/Pathing/Grid.cpp

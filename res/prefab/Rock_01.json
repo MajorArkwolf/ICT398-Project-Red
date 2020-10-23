@@ -1,7 +1,37 @@
 {
-  "Name": "Rock_01",
   "Model": {
     "ModelFilePath": "res/model/Terrain/SM_Env_Rock_01.fbx"
+  },
+  "Name": "Rock_01",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 80.0,
+          "Y": 40.0,
+          "Z": 70.0
+        },
+        "Mass": 1.0,
+        "Name": "main",
+        "Position": {
+          "X": 0.0,
+          "Y": 27.0,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": true
   },
   "Transform": {
     "Position": {

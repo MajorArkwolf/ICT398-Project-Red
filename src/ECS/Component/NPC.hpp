@@ -400,6 +400,9 @@ struct BehaviourState {
         /// The identifier of the prior Desire trigger and Intention the NPC was acting on.
     std::pair<int, int> prior_intention;
 
+        /// A flag used to track if the current Intention has been actioned yet.
+    bool has_begun_response;
+
         /**
          * @brief Default object constructor, optionally initialises BehaviourState via parameters.
          * @param current_in The current stage of the NPC's behaviour.
@@ -410,7 +413,8 @@ struct BehaviourState {
                             npc::Stages prior_in = npc::Stages::kIdle,
                             double emotion_turnover_dt_in = 0.0f,
                             std::pair<int, int> current_intention_in = {-1, -1},
-                            std::pair<int, int> prior_intention_in = {-1, -1});
+                            std::pair<int, int> prior_intention_in = {-1, -1},
+                            bool has_begun_response_in = false);
 };
 
 } // namespace component

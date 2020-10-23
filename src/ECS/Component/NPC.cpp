@@ -67,12 +67,14 @@ Characteristics::Characteristics(float mood_in,
 BehaviourState::BehaviourState(npc::Stages current_in, double current_dt_in,
                                npc::Stages prior_in, double emotion_turnover_dt_in,
                                std::pair<int, int> current_intention_in,
-                               std::pair<int, int> prior_intention_in)
+                               std::pair<int, int> prior_intention_in,
+                               bool has_begun_response_in)
         : current(current_in),
           current_dt(current_dt_in),
           prior(prior_in),
           emotion_turnover_dt(emotion_turnover_dt_in),
           current_intention(std::move(current_intention_in)),
-          prior_intention(std::move(prior_intention_in)) {}
+          prior_intention(std::move(prior_intention_in)),
+          has_begun_response(has_begun_response_in) {}
 
 } // namespace component

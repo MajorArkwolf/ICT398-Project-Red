@@ -18,6 +18,8 @@ const static double VARIABLE_IDLE_TIME = 3.5;
 
 const static double MINIMUM_IDLE_TIME = 1.0;
 
+const static double SIT_IDLE_TIME = 6.0;
+
 const static float INTERACTION_RANGE = 1.0f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
@@ -182,8 +184,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                 }
                                 break;
                             case npc::Properties::kGrabber:
-                                // Not supported
-                                break;
+                                [[fallthrough]];
                             case npc::Properties::kGrabbee:
                                 // Not supported
                                 break;
@@ -389,27 +390,148 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
 
 void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     // Catch if the NPC has not yet determined which Intention to action
-    auto &state = registry.get<component::BehaviourState>(entity);
-    if ((state.current_intention.first < 0) || state.current_intention.second < 0) {
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    if ((npc_behaviour_state.current_intention.first < 0) || npc_behaviour_state.current_intention.second < 0) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
-        auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
     }
 
-    // Action the current Intention
-    // TODO: This
+    // Catch invalid Intentions
+    auto &npc_bdi = registry.get<component::BDI>(entity);
+    if (npc_bdi.intentions.find(npc_behaviour_state.current_intention.first) == npc_bdi.intentions.end()) {
+        // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
+        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+    }
+    else if ((npc_behaviour_state.current_intention.second < 0) ||
+             (npc_bdi.intentions[npc_behaviour_state.current_intention.first].size() < npc_behaviour_state.current_intention.second)) {
+        // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
+        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+    }
 
-    // Move back to idling after the current action is done.
-    // TODO: This
+    // Keep a simple and quick reference to the current Intention/Plan
+    component::Plan &current_plan = npc_bdi.intentions[npc_behaviour_state.current_intention.first][npc_behaviour_state.current_intention.second];
+
+    // Attempt to respond the current Intention using the NPC's Plan.
+    auto &npc_transform = registry.get<component::Transform>(entity);
+    switch (current_plan.action) {
+        case npc::Actions::kTraverse:
+            // Init action (only perform once)
+            if (!npc_behaviour_state.has_begun_response) {
+                // Start the NPC's animation
+                if (registry.has<component::Animation>(entity)) {
+                    auto &anim = registry.get<component::Animation>(entity);
+                    anim.animator_.LoadAnimation("WALK", false);
+                }
+
+                // Prevent this from being repeated
+                npc_behaviour_state.has_begun_response = true;
+            }
+
+            // Perform action
+            //TODO: Traverse Action
+
+            // Check if action has finished
+            if () {
+                // Ending actions
+
+                // Swap back to observing state, this will also deal with the emotional response
+                ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            }
+
+            // End of Traverse Action
+            break;
+        case npc::Actions::kSit:
+            // Check that the NPC is within range of the target it will 'sit' on/at
+            if (registry.has<component::Transform>(current_plan.entity)) {
+                // Check if the NPC is within the interaction range
+                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+
+                // Catch if the NPC is not within the interaction range to be able to sit
+                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
+                    // Swap back to observing state, this will also deal with the emotional response
+                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                }
+            }
+            else {
+                // Swap back to observing state, this will also deal with the emotional response
+                ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            }
+
+            // Init action (only perform once)
+            if (!npc_behaviour_state.has_begun_response) {
+                // Make the NPC somewhat statically 'sit'
+                if (registry.has<component::Animation>(entity)) {
+                    auto &anim = registry.get<component::Animation>(entity);
+                    anim.animator_.LoadAnimation("WORK", true);
+                }
+
+                // Prevent this from being repeated
+                npc_behaviour_state.has_begun_response = true;
+            }
+
+            // Check if action has finished
+            if (SIT_IDLE_TIME < npc_behaviour_state.current_dt) {
+                // Swap back to observing state, this will also deal with the emotional response
+                ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            }
+            break;
+        case npc::Actions::kReorient:
+        case npc::Actions::kPush:
+        case npc::Actions::kGrab:
+        case npc::Actions::kDrop:
+            // Currently unsupported
+            ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+            break;
+        case npc::Actions::kObserve:
+            // Just swap back to the observation stage
+            ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            break;
+        case npc::Actions::kUse:
+            // Init action (only perform once)
+            if (!npc_behaviour_state.has_begun_response) {
+                // Do stuff like animation setup
+
+                // Prevent this from being repeated
+                npc_behaviour_state.has_begun_response = true;
+            }
+
+            // Perform action
+            //TODO: Use Action
+
+            // Check if action has finished
+            if () {
+                // Swap back to observing state, this will also deal with the emotional response
+                ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+            }
+
+            // End of Sit Action
+            break;
+        default:
+            // Catch other unsupported
+            ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+            break;
+    }
 }
 
 void NPCIdle(entt::registry& registry, const entt::entity& entity) {
+    // Catch prior NPC Response action animations passing through
+    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
+    if (!npc_behaviour_state.has_begun_response) {
+        // Start the NPC's animation
+        if (registry.has<component::Animation>(entity)) {
+            auto &anim = registry.get<component::Animation>(entity);
+            anim.animator_.LoadAnimation("WALK", false);
+        }
+
+        // Prevent this from being repeated
+        npc_behaviour_state.has_begun_response = true;
+    }
+
     // Calculate the NPC's idle time limit, relative to its overall mood intensity
     auto &npc_characteristics = registry.get<component::Characteristics>(entity);
     double idle_time_limit = MINIMUM_IDLE_TIME + VARIABLE_IDLE_TIME * EmotionalStateOverallIntensity(npc_characteristics);
 
     // Catch if the NPC should be idling any longer
-    auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
     if (idle_time_limit < npc_behaviour_state.current_dt) {
         // Move back to the observation state
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);

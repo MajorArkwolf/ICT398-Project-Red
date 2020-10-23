@@ -45,6 +45,9 @@ void ChangeBehaviouralState(component::BehaviourState& target, npc::Stages new_s
     // Assign the current state the newly provided values
     target.current = new_state;
     target.current_dt = starting_dt;
+
+    // Indicate the current response has yet to be begin
+    target.has_begun_response = false;
 }
 
 void ChangeIntention(component::BehaviourState& target, int trigger, int plan) {
@@ -54,6 +57,9 @@ void ChangeIntention(component::BehaviourState& target, int trigger, int plan) {
     // Assign the current Intention the newly assigned values
     target.current_intention.first = trigger;
     target.current_intention.second = plan;
+
+    // Indicate the current response has yet to be begin
+    target.has_begun_response = false;
 }
 
 void TestGoal(component::Goal& target, float value) {

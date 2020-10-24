@@ -122,6 +122,10 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                             tran.pos.z = node_tran.pos.z;
                         }
                     }
+                    if (j.contains("NPC")) {
+                        auto& npc = ent->AddComponent<component::NPCPersonalityID>();
+                        npc.ID = j.at("NPC").get<int>();
+                    }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }

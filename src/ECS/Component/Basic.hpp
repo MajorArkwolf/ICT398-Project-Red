@@ -62,4 +62,10 @@ class PhysicBody {
     void AddForce(glm::vec3 additional_force);
     void AddTorque(glm::vec3 additional_force);
 };
+
+struct NPCPersonalityID {
+    int ID = 0;
+};
+
 }// namespace component
+

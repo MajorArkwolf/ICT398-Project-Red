@@ -8,6 +8,7 @@
 #include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
@@ -108,7 +109,18 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         }
                     }
                     if (j.contains("Moving")) {
-                        ent->AddComponent<component::Moving>();
+                        auto& moving = ent->AddComponent<component::Moving>();
+
+                        auto& reg = ecs->GetRegistry();
+                        auto view = reg.view<component::Board>();
+                        for (auto e : view) {
+                            auto &board_comp = reg.get<component::Board>(e);
+                            auto &tran = ent->GetComponent<component::Transform>();
+                            moving.SetLastNode(reg, board_comp.GetClosestNode(tran.pos));
+                            auto &node_tran = reg.get<component::Transform>(moving.last_node);
+                            tran.pos.x = node_tran.pos.x;
+                            tran.pos.z = node_tran.pos.z;
+                        }
                     }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';

@@ -96,3 +96,23 @@ std::queue<entt::entity> component::Board::FindPath(entt::registry &ecs, entt::e
     }
     return node_list;
 }
+entt::entity component::Board::GetClosestNode(const glm::vec3& world_cord) {
+    entt::entity result;
+    if (nodes_.empty() || nodes_.at(0).empty()) {
+        assert(false);
+    }
+    Entity closest_entity = nodes_.at(0).at(0);
+    auto& first_tran = closest_entity.GetComponent<component::Transform>();
+    float distance = glm::distance(first_tran.pos, world_cord);
+    for (auto &node_array : nodes_) {
+        for (auto& node : node_array) {
+            auto& tran = node.GetComponent<component::Transform>();
+            float new_dist = glm::distance(tran.pos, world_cord);
+            if (new_dist < distance) {
+                distance = new_dist;
+                result = node.GetID();
+            }
+        }
+    }
+    return result;
+}

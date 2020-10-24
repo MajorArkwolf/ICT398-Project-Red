@@ -19,6 +19,7 @@ namespace component {
         entt::entity GetFirstNode() {return first_board_piece_;}
         entt::entity GetLastNode() {return last_board_piece_;}
         size_t GetNumOfNodes() {return num_of_nodes_;}
+        entt::entity GetClosestNode(const glm::vec3& world_cord);
     private:
         bool render_nodes_ = false;
         glm::vec3 position_{};

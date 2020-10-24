@@ -37,6 +37,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Demo Scene
     Game/Demo/Demo.cpp
     Game/Demo/Components/Player.cpp
+    #--Demo Scene
+    Game/NPCDemo/NPCDemo.cpp
     #--Physics Demo Scene
     Game/PhysicsDemo/PhysicsDemo.cpp
     #--PrefabEditor

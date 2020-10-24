@@ -8,7 +8,7 @@ namespace component {
         float height_ = 170.f;
         entt::entity selected_entity;
 
-        void Update(double t, double dt) {
+        void Update([[maybe_unused]] double t, [[maybe_unused]] double dt) {
 
         }
     };

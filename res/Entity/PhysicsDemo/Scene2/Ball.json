@@ -3,7 +3,7 @@
   "Transform": {
     "Position": {
       "X": 20.0,
-      "Y": 7.0,
+      "Y": 8.0,
       "Z": -10.0
     },
     "Rotation": {
@@ -21,6 +21,6 @@
   "LinearVelocity": {
     "X": 0,
     "Y": 0,
-    "Z": 2
+    "Z": 3
   }
 }

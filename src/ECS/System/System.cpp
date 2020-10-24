@@ -15,6 +15,8 @@ void System::Draw(entt::registry& registry, Shader *shader, const glm::mat4& pro
         auto &tran = entities.get<component::Transform>(e);
         auto &mod = entities.get<component::Model>(e);
         if (mod.draw_model) {
+            //tran.rot *= glm::quat(glm::radians(glm::vec3(0.1, 0, 0))); 
+
             glm::mat4 model_matrix = glm::mat4(1.0f);
             model_matrix = glm::translate(model_matrix,tran.pos);
             model_matrix = model_matrix * glm::mat4_cast(tran.rot);

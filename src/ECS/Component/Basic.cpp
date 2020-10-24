@@ -28,4 +28,8 @@ namespace component {
             this->going_to_node = id;
         }
     }
+void PhysicBody::AddTorque(glm::vec3 additional_force) {
+    added_torque = additional_force;
+}
+
 }// namespace component

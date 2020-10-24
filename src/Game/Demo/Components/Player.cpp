@@ -14,8 +14,9 @@ void Player::Update(double t, double dt) {
     auto &camera_position = player.GetComponent<component::Player>().camera_.position_;
     auto &position = player.GetComponent<component::Transform>().pos;
     auto &rotation = player.GetComponent<component::Transform>().rot;
-    position.x = camera_position.x;
-    position.z = camera_position.z;
+    position.y = 0.0f;
+    camera_position.x = position.x;
+    camera_position.z = position.z;
     rotation = glm::quat(glm::vec3{0.0f, glm::radians(model_rotation_offset_ - player.GetComponent<component::Player>().camera_.yaw_ ), 0.0f});
 }
 
@@ -58,14 +59,15 @@ void Player::ProcessKeyboardInput(bool forward, bool backward, bool left,
 
     const auto velocity =
             static_cast<float>(move_speed * delta_time * 1000.0);
+    front_cam.y = 0.0f;
     if (forward)
-        camera_position += front_cam * velocity;
+        position += front_cam * velocity;
     if (backward)
-        camera_position -= front_cam * velocity;
+        position -= front_cam * velocity;
     if (left)
-        camera_position -= right_cam * velocity;
+        position -= right_cam * velocity;
     if (right)
-        camera_position += right_cam * velocity;
+        position += right_cam * velocity;
 
     camera_position.y = GetActivePlayer().GetComponent<component::Player>().height_;
 

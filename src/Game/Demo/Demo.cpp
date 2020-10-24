@@ -1,12 +1,12 @@
 #include "Demo.hpp"
 
+#include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Player.hpp"
-#include "ECS/Component/Board.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
-#include "DataStructures/Model/Overload.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     if (pe.GetRendererStatus() != val) {
@@ -43,15 +43,16 @@ void Demo::Init() {
     auto &playerComp = big_player.GetComponent<component::Player>();
     big_player.AddComponent<component::PhysicBody>();
     auto &phys = big_player.GetComponent<component::PhysicBody>();
+    phys.is_player = true;
     physics_world_.AddCollisionBody(big_player.GetID(), playerComp.camera_.position_, glm::quat(glm::vec3(0, 0, 0)));
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
-    physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 0.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 70.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
     big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};
     auto &anim =
-            big_player.AddComponent<component::Animation>(
-                    big_player.GetComponent<component::Model>().id_);
+        big_player.AddComponent<component::Animation>(
+            big_player.GetComponent<component::Model>().id_);
     auto idle = "IDLE";
     anim.animator_.LoadAnimation(idle);
     player_.SetBigPlayer(big_player);
@@ -65,10 +66,12 @@ void Demo::Init() {
     little_p.camera_.position_ = glm::vec3{-465.0f, 82.8f, 330.0f};
     little_p.height_ = 83.0f;
     auto &little_anim =
-            little_player.AddComponent<component::Animation>(
-                    little_player.GetComponent<component::Model>().id_);
+        little_player.AddComponent<component::Animation>(
+            little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
+    //physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
+    //physics_world_.SetGravityEnabled(true);
 }
 
 void Demo::UnInit() {
@@ -207,8 +210,10 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            case input::InputType::kMouseScrolled: {
                                double amountScrolledY = static_cast<double>(vec.y);
                                player_.GetActiveCamera().ProcessMouseScroll(amountScrolledY);
-                           }
-                           default:
+                           } break;
+                           default: {
+
+                           };
                                break;
                        }
                    }},

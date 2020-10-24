@@ -73,8 +73,10 @@ void PhysicsWorld::UpdateCollisionBody(const entt::entity &entity_id, const glm:
     if (entity_collision_coupling_.find(entity_id) != entity_collision_coupling_.end()) {
         auto body = entity_collision_coupling_.at(entity_id);
         assert(body != nullptr);
-        reactphysics3d::Transform new_transform(ConvertVector(pos), ConvertQuaternion(rot));
-        body->setTransform(new_transform);
+        if (body != nullptr) {
+            reactphysics3d::Transform new_transform(ConvertVector(pos), ConvertQuaternion(rot));
+            body->setTransform(new_transform);
+        }
     }
 }
 
@@ -145,4 +147,6 @@ void PhysicsWorld::ResetWorld() {
     world_->setEventListener(&event_listener_);
     entity_collision_coupling_.clear();
     collision_entity_coupling_.clear();
+    ToggleRenderer();
+    ToggleRenderer();
 }

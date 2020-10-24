@@ -133,6 +133,17 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 auto &phys = ent->AddComponent<component::PhysicBody>();
                 pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
 
+                auto static_field = GetJsonField(j, prefab.name, "Static", JsonType::Boolean);
+                if (static_field.has_value()) {
+                    phys.static_object = static_field->get().get<bool>();
+                }
+                if (phys.static_object) {
+                    phys.mass = 50000;
+                    phys.inverse_mass = 1 / phys.mass;
+                } else {
+                    phys.mass = prefab.mass;
+                    phys.inverse_mass = 1 / prefab.mass;
+                }
                 for (const auto &n : prefab.colliders_) {
                     std::visit(overload{
                                    [&](std::monostate) {
@@ -146,6 +157,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                    [&](redengine::Box shape) {
                                        auto box = physics_engine.CreateBoxShape(shape.extents * trans.scale.x);
                                        pw->AddCollider(ent->GetID(), box, n.position_local * trans.scale.x, n.rotation_local);
+                                       auto extents = shape.extents * 2.f * trans.scale.x;
+                                       phys.inertia_tensor = physics_engine.CalculateInertiaTensor(redengine::Box{extents}, phys.mass);
+                                       phys.inverse_inertia_tensor = glm::inverse(phys.inertia_tensor);
                                        console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " added box shape.", __LINE__, __FILE__);
                                    },
                                    [&](redengine::Sphere shape) {
@@ -154,18 +168,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                                        console_log.AddLog(ConsoleLog::LogType::Collision, "Collider: " + n.part_name + " added sphere shape.", __LINE__, __FILE__);
                                    }},
                                n.shape);
-                }
-
-                auto static_field = GetJsonField(j, prefab.name, "Static", JsonType::Boolean);
-                if (static_field.has_value()) {
-                    phys.static_object = static_field->get().get<bool>();
-                }
-                if (phys.static_object) {
-                    phys.mass = 50000;
-                    phys.inverse_mass = 1 / phys.mass;
-                } else {
-                    phys.mass = prefab.mass;
-                    phys.inverse_mass = 1 / prefab.mass;
                 }
                 phys.colliders = prefab.colliders_;
                 phys.centre_mass = prefab.centre_of_mass;
@@ -267,7 +269,7 @@ void JSONLoader::LoadPrefabList() {
                             auto y_field = GetJsonField(rotation_field->get(), "Prefab Position Y", "Y", JsonType::Number);
                             auto z_field = GetJsonField(rotation_field->get(), "Prefab Position Z", "Z", JsonType::Number);
                             if (x_field.has_value() && y_field.has_value() && z_field.has_value()) {
-                                prefab.rotation_local = {glm::dquat(glm::dvec3(glm::radians(x_field->get().get<float>()), glm::radians(y_field->get().get<float>()), glm::radians(z_field->get().get<float>())))};
+                                prefab.rotation_local = {glm::quat(glm::vec3(glm::radians(x_field->get().get<float>()), glm::radians(y_field->get().get<float>()), glm::radians(z_field->get().get<float>())))};
                             } else {
                                 std::stringstream error;
                                 error << "File: " << prefab_full_path << " Transform: Rotation does not contain all coordinate fields, aborting read.";

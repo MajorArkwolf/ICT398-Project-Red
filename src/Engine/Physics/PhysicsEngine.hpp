@@ -2,6 +2,7 @@
 
 #include "Engine/Physics/CollisionDetection.hpp"
 #include "Engine/Physics/CollisionResolution.hpp"
+#include <Engine\SubModules\PrefabRepo.hpp>
 
 class Shader;
 
@@ -82,6 +83,9 @@ namespace physics {
         reactphysics3d::PhysicsWorld *CreatePhysicsWorld();
 
         void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world);
+        glm::mat3x3 CalculateInertiaTensor(redengine::Box shape, float mass);
+        glm::mat3x3 CalculateInertiaTensor(redengine::Capsule shape, float mass);
+        glm::mat3x3 CalculateInertiaTensor(redengine::Sphere shape, float mass);
 
         void Init();
 

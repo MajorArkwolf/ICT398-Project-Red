@@ -433,7 +433,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             //TODO: Traverse Action
 
             // Check if action has finished
-            if () {
+            if (true) {
                 // Ending actions
 
                 // Swap back to observing state, this will also deal with the emotional response

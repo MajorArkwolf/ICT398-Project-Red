@@ -67,5 +67,17 @@ struct NPCPersonalityID {
     int ID = 0;
 };
 
+struct InteractableObject {
+    enum class Type {
+        unknown,
+        npc,
+        book,
+        tree,
+        bench,
+        rock,
+    };
+    Type type = Type::unknown;
+};
+
 }// namespace component
 

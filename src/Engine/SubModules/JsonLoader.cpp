@@ -126,6 +126,24 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         auto& npc = ent->AddComponent<component::NPCPersonalityID>();
                         npc.ID = j.at("NPC").get<int>();
                     }
+                    //"OBJType": "npc"
+                    if (j.contains("OBJType")) {
+                        auto& npc = ent->AddComponent<component::InteractableObject>();
+                        auto value = j.at("OBJType").get<std::string>();
+                        if (value == "npc") {
+                            npc.type = component::InteractableObject::Type::npc;
+                        } else if (value == "book") {
+                            npc.type = component::InteractableObject::Type::book;
+                        } else if (value == "tree") {
+                            npc.type = component::InteractableObject::Type::tree;
+                        } else if (value == "bench") {
+                            npc.type = component::InteractableObject::Type::bench;
+                        } else if (value == "rock") {
+                            npc.type = component::InteractableObject::Type::rock;
+                        } else {
+                            npc.type = component::InteractableObject::Type::unknown;
+                        }
+                    }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';
                 }

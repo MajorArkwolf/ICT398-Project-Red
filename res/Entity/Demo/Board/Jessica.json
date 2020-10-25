@@ -18,5 +18,6 @@
   },
   "Physics" : true,
   "Moving": true,
-  "NPC": 2
+  "NPC": 2,
+  "OBJType": "npc"
 }

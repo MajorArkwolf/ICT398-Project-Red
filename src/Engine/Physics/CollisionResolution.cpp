@@ -10,13 +10,8 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData> &que
     while (!queue.empty()) {
         auto &item = queue.front();
         if (ecs_) {
-            if (ecs_->GetRegistry().has<component::Player>(item.first_body)) {
-                ResolvePlayerCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
-            } else if (ecs_->GetRegistry().has<component::Player>(item.second_body)) {
-                ResolvePlayerCollision(item, ecs_->GetEntity(item.second_body), ecs_->GetEntity(item.first_body));
-            } else {
-                ResolvePhysicsCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
-            }
+            ResolvePhysicsCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
+
         }
         queue.pop();
     }
@@ -26,10 +21,14 @@ void physics::CollisionResolution::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
 }
 
-void physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> player, std::shared_ptr<Entity> other) {
+void
+physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> player,
+                                                     std::shared_ptr<Entity> other) {
 }
 
-void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> first_object, std::shared_ptr<Entity> second_object) {
+void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData &collision,
+                                                           std::shared_ptr<Entity> first_object,
+                                                           std::shared_ptr<Entity> second_object) {
     constexpr float restitution = 0.6f;
     auto &logger = redengine::Engine::get().GetLog();
     auto &first_transform = first_object->GetComponent<component::Transform>();
@@ -37,14 +36,17 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
     auto &first_physbody = first_object->GetComponent<component::PhysicBody>();
     auto &second_physbody = second_object->GetComponent<component::PhysicBody>();
 
-    auto &lvelocity1 = first_physbody.linear_velocity;
-    auto &wvelocity1 = first_physbody.angular_velocity;
-    auto &lvelocity2 = second_physbody.linear_velocity;
-    auto &wvelocity2 = second_physbody.angular_velocity;
+    auto lvelocity1 = first_physbody.linear_velocity;
+    auto wvelocity1 = first_physbody.angular_velocity;
+    auto lvelocity2 = second_physbody.linear_velocity;
+    auto wvelocity2 = second_physbody.angular_velocity;
 
     std::stringstream log_text;
 
     for (auto &n : collision.contact_points) {
+        if ((first_physbody.is_sleeping || first_physbody.static_object) && (second_physbody.is_sleeping || second_physbody.static_object)) {
+            continue;
+        }
 
         /*log_text << "Body 1: {"
                  << n.first_body_contact_point.x << "," << n.first_body_contact_point.y << "," << n.first_body_contact_point.z << "}";
@@ -106,5 +108,13 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
 
         wvelocity1 = wvelocity1 + (lambda * first_physbody.inverse_inertia_tensor) * r1xn;
         wvelocity2 = wvelocity2 - (lambda * second_physbody.inverse_inertia_tensor) * r2xn;
+    }
+    if (!first_physbody.is_player) {
+        first_physbody.linear_velocity = lvelocity1;
+        first_physbody.angular_velocity = wvelocity1;
+    }
+    if (!second_physbody.is_player) {
+        second_physbody.linear_velocity = lvelocity2;
+        second_physbody.angular_velocity = wvelocity2;
     }
 }

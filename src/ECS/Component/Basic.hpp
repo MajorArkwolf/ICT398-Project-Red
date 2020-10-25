@@ -37,6 +37,7 @@ class PhysicBody {
     bool static_object = false;
     bool is_sleeping = false;
     bool should_apply_gravity = true;
+    bool is_player = false;
     
     size_t id = 0;
     //Primary

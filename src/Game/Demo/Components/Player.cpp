@@ -1,22 +1,30 @@
-#include <ECS/Component/Model.hpp>
 #include "Player.hpp"
-#include "ECS/Component/Player.hpp"
+
+#include <ECS/Component/Model.hpp>
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Player.hpp"
 using namespace demo;
 
 Player::Player() {
-
 }
 
 void Player::Update(double t, double dt) {
     auto &player = GetActivePlayer();
+    auto &player_comp = player.GetComponent<component::Player>();
     GetActivePlayer().GetComponent<component::Player>().Update(t, dt);
     auto &camera_position = player.GetComponent<component::Player>().camera_.position_;
     auto &position = player.GetComponent<component::Transform>().pos;
     auto &rotation = player.GetComponent<component::Transform>().rot;
     position.x = camera_position.x;
     position.z = camera_position.z;
-    rotation = glm::quat(glm::vec3{0.0f, glm::radians(model_rotation_offset_ - player.GetComponent<component::Player>().camera_.yaw_ ), 0.0f});
+    rotation = glm::quat(glm::vec3{0.0f, glm::radians(model_rotation_offset_ - player.GetComponent<component::Player>().camera_.yaw_), 0.0f});
+    if (registry_ != nullptr && holding_object_ == true) {
+        auto &transform = registry_->get<component::Transform>(grabbed_object_);
+        auto &phys = registry_->get<component::PhysicBody>(grabbed_object_);
+
+        transform.pos = player_comp.camera_.position_ + player_comp.camera_.front_ * 10.f;
+    }
 }
 
 void Player::SetBigPlayer(Entity player) {
@@ -57,7 +65,7 @@ void Player::ProcessKeyboardInput(bool forward, bool backward, bool left,
     auto &camera_rotation = player.GetComponent<component::Player>().camera_;
 
     const auto velocity =
-            static_cast<float>(move_speed * delta_time * 1000.0);
+        static_cast<float>(move_speed * delta_time * 1000.0);
     if (forward)
         camera_position += front_cam * velocity;
     if (backward)
@@ -68,7 +76,37 @@ void Player::ProcessKeyboardInput(bool forward, bool backward, bool left,
         camera_position += right_cam * velocity;
 
     camera_position.y = GetActivePlayer().GetComponent<component::Player>().height_;
-
 }
 
+void demo::Player::GrabObject(entt::entity grabbed_object) {
 
+    if (!holding_object_ && registry_ != nullptr && registry_->has<component::PhysicBody>(grabbed_object)) {
+        auto &phys = registry_->get<component::PhysicBody>(grabbed_object);
+        if (!phys.static_object) {
+            phys.is_sleeping = true;
+            grabbed_object_ = grabbed_object;
+            holding_object_ = true;
+        }
+    }
+}
+
+void demo::Player::ThrowObject(glm::vec3 force) {
+    if (holding_object_ && registry_ != nullptr) {
+        auto &phys = registry_->get<component::PhysicBody>(grabbed_object_);
+        phys.is_sleeping = false;
+        phys.AddForce(force);
+        DropObject();
+    }
+}
+
+void demo::Player::DropObject() {
+    if (holding_object_ && registry_ != nullptr) {
+        auto &phys = registry_->get<component::PhysicBody>(grabbed_object_);
+        phys.is_sleeping = false;
+        holding_object_ = false;
+    }
+}
+
+void demo::Player::SetRegistry(entt::registry &the_registry) {
+    registry_ = &the_registry;
+}

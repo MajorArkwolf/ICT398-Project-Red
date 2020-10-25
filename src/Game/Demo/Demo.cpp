@@ -69,6 +69,7 @@ void Demo::Init() {
             little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
+    player_.SetRegistry(ecs_.GetRegistry());
 }
 
 void Demo::UnInit() {
@@ -128,7 +129,21 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
 
                    },
                    [&](InputEvent::MouseEvent mouse) {
+                       switch (mouse.button) {
+                           case input::MouseButton::kRight: {
+                               auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
 
+                               auto entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 100.0f);
+                               player_.GrabObject(entity);
+
+                           } break;
+                           case input::MouseButton::kLeft: {
+                               auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
+
+                               player_.ThrowObject(currentCam.GetFrontVector() * 100.f);
+
+                           } break;
+                       }
                    },
                    [&](InputEvent::KeyboardEvent keyboard) {
                        switch (inputData.type) {
@@ -210,8 +225,7 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            } break;
                            default: {
 
-                           };
-                               break;
+                           } break;
                        }
                    }},
                inputData.data);

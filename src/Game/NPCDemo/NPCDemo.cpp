@@ -7,6 +7,8 @@
 #include "ECS/Component/Player.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/SubModules/JsonLoader.hpp"
+#include "ECS/System/NPC/Core.hpp"
+#include "ECS/System/NPC/Tools.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     // Only toggle if the provided value is different
@@ -38,6 +40,9 @@ NPCDemo::NPCDemo() {
     path.append("Demo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
+
+    // Initialize the NPC ECS component dependencies and systems
+    System::NPCSystemInit(ecs_.GetRegistry());
 }
 
 void NPCDemo::Init() {
@@ -82,33 +87,101 @@ void NPCDemo::Init() {
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
 
-    // Gather the existing NPCs and configure their NPC components
-    std::cout << "Big player ID: " << (int) big_player.GetID() << "\n";
-    std::cout << "Little player ID: " << (int) little_player.GetID() << "\n";
-    std::cout << "====================================================\n";
-    auto npc1_entity = ecs_.GetEntity(big_player.GetID() - 1);
-    auto npc1_transform = npc1_entity->GetComponent<component::Transform>();
-    std::cout << "Pos X: " << npc1_transform.pos.x;
-    std::cout << "Pos Y: " << npc1_transform.pos.y;
-    std::cout << "Pos Z: " << npc1_transform.pos.z;
-    std::cout << "----------------------------------------------------\n";
-    auto npc2_entity = ecs_.GetEntity(big_player.GetID() - 2);
-    auto npc2_transform = npc1_entity->GetComponent<component::Transform>();
-    std::cout << "Pos X: " << npc2_transform.pos.x;
-    std::cout << "Pos Y: " << npc2_transform.pos.y;
-    std::cout << "Pos Z: " << npc2_transform.pos.z;
-    std::cout << "----------------------------------------------------\n";
-    auto npc3_entity = ecs_.GetEntity(big_player.GetID() - 3);
-    auto npc3_transform = npc1_entity->GetComponent<component::Transform>();
-    std::cout << "Pos X: " << npc3_transform.pos.x;
-    std::cout << "Pos Y: " << npc3_transform.pos.y;
-    std::cout << "Pos Z: " << npc3_transform.pos.z;
-    std::cout << "----------------------------------------------------\n";
-    auto npc4_entity = ecs_.GetEntity(big_player.GetID() - 4);
-    auto npc4_transform = npc1_entity->GetComponent<component::Transform>();
-    std::cout << "Pos X: " << npc4_transform.pos.x;
-    std::cout << "Pos Y: " << npc4_transform.pos.y;
-    std::cout << "Pos Z: " << npc4_transform.pos.z;
+    // Find the Identifiers of the Entities with the hook component and store their identifiers
+    auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
+    entt::entity id_npc0;
+    entt::entity id_npc1;
+    entt::entity id_npc2;
+    entt::entity id_npc3;
+    for (auto &npc_hook_id: npc_hook_view) {
+        // Catch the type
+        auto npc_entity = ecs_.GetEntity(npc_hook_id);
+        switch (npc_entity->GetComponent<component::NPCPersonalityID>().ID) {
+            case 0:
+                // Track the entity's identifier
+                id_npc0 = npc_entity->GetID();
+                break;
+            case 1:
+                // Track the entity's identifier
+                id_npc1 = npc_entity->GetID();
+                break;
+            case 2:
+                // Track the entity's identifier
+                id_npc2 = npc_entity->GetID();
+                break;
+            case 3:
+                // Track the entity's identifier
+                id_npc3 = npc_entity->GetID();
+                break;
+            default:
+                assert(false);
+                break;
+        }
+    }
+
+    // Iterate through all of the Entity's that have a NPCPersonalityID hook component
+    for (auto &npc_hook_id: npc_hook_view) {
+        // Update the NPC to have the specified Personality
+        auto npc_entity = ecs_.GetEntity(npc_hook_id);
+        switch (npc_entity->GetComponent<component::NPCPersonalityID>().ID) {
+            case 0: {
+                // Configure the initial BDI
+                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+
+                // Configure the initial Characteristics
+                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+
+                // Configure the initial BehaviourState
+                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+
+                // Finished configuring the NPC
+                break;
+            }
+            case 1: {
+                // Configure the initial BDI
+                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+
+                // Configure the initial Characteristics
+                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+
+                // Configure the initial BehaviourState
+                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+
+                // Finished configuring the NPC
+                break;
+            }
+            case 2: {
+                // Configure the initial BDI
+                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+
+                // Configure the initial Characteristics
+                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+
+                // Configure the initial BehaviourState
+                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+
+                // Finished configuring the NPC
+                break;
+            }
+            case 3: {
+                // Configure the initial BDI
+                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+
+                // Configure the initial Characteristics
+                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+
+                // Configure the initial BehaviourState
+                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+
+                // Finished configuring the NPC
+                break;
+            }
+            default:
+                // Throw an error in debug mode
+                assert(false);
+                break;
+        }
+    }
 }
 
 void NPCDemo::UnInit() {
@@ -147,6 +220,7 @@ void NPCDemo::Update(double t, double dt) {
     camera.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player_.ProcessKeyboardInput(forward_, backward_, left_, right_, dt);
     player_.Update(t, dt);
+    System::NPCsUpdate(ecs_.GetRegistry(), t, dt);
     //TODO: fix this to use just the phyiscs world instead.
     auto &physics_engine = redengine::Engine::get().GetPhysicsEngine();
     physics_engine.Update(t, dt);

@@ -58,6 +58,7 @@ void component::Board::BuildBoard(ECS *ecs, physics::PhysicsWorld *pw) {
                 pb.static_object = true;
                 pw->AddCollisionBody(node.GetID(), trans.pos, trans.rot);
                 pw->AddCollider(node.GetID(), box, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+                pe.SetTrigger(pw, node.GetID(), true);
             }
             node_to_entity_.insert({node_comp.grid_node, node.GetID()});
             entity_to_node_.insert({node.GetID(), node_comp.grid_node});

@@ -4,7 +4,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <queue>
-
+#include "Engine/Physics/PhysicsWorld.hpp"
 #include "Engine/Renderer/Shader.hpp"
 #include "PhysicsShape.hpp"
 #include "Logger.hpp"
@@ -68,6 +68,7 @@ namespace physics {
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &end);
 
         void SetTrigger(entt::entity entity, bool is_trigger);
+        void SetTrigger(physics::PhysicsWorld *pw, entt::entity entity, bool is_trigger);
 
     private:
 

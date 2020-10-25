@@ -74,7 +74,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                 component_returned = registry.try_get<component::PhysicBody>(goal.entity);
                                 if (component_returned != nullptr) {
                                     // Gather the component's property value
-                                    value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->mass;
+                                    value_gathered = static_cast<component::PhysicBody*>(component_returned)->mass;
                                     found_value = true;
                                 }
                                 break;
@@ -87,13 +87,13 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                         switch (goal.element) {
                                             case npc::Components::kDefault:
                                             case npc::Components::kAxisX:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.x;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.x;
                                                 break;
                                             case npc::Components::kAxisY:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.y;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.y;
                                                 break;
                                             case npc::Components::kAxisZ:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->scale.z;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.z;
                                                 break;
                                         }
                                         found_value = true;
@@ -112,13 +112,13 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                         switch (goal.element) {
                                             case npc::Components::kDefault:
                                             case npc::Components::kAxisX:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.x;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.x;
                                                 break;
                                             case npc::Components::kAxisY:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.y;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.y;
                                                 break;
                                             case npc::Components::kAxisZ:
-                                                value_gathered = (float) static_cast<component::Transform*>(component_returned)->pos.z;
+                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.z;
                                                 break;
                                         }
                                         found_value = true;
@@ -134,13 +134,13 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                         switch (goal.element) {
                                             case npc::Components::kDefault:
                                             case npc::Components::kAxisX:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.x;
+                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.x;
                                                 break;
                                             case npc::Components::kAxisY:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.y;
+                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.y;
                                                 break;
                                             case npc::Components::kAxisZ:
-                                                value_gathered = (float) static_cast<component::PhysicBody*>(component_returned)->linear_velocity.z;
+                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.z;
                                                 break;
                                         }
                                         found_value = true;
@@ -553,7 +553,7 @@ void NPCIdle(entt::registry& registry, const entt::entity& entity) {
         // Start the NPC's animation
         if (registry.has<component::Animation>(entity)) {
             auto &anim = registry.get<component::Animation>(entity);
-            anim.animator_.LoadAnimation("WALK", false);
+            anim.animator_.LoadAnimation("IDLE", false);
         }
 
         // Prevent this from being repeated
@@ -562,7 +562,7 @@ void NPCIdle(entt::registry& registry, const entt::entity& entity) {
 
     // Calculate the NPC's idle time limit, relative to its overall mood intensity
     auto &npc_characteristics = registry.get<component::Characteristics>(entity);
-    double idle_time_limit = MINIMUM_IDLE_TIME + VARIABLE_IDLE_TIME * EmotionalStateOverallIntensity(npc_characteristics);
+    double idle_time_limit = MINIMUM_IDLE_TIME + VARIABLE_IDLE_TIME * static_cast<double>(EmotionalStateOverallIntensity(npc_characteristics));
 
     // Catch if the NPC should be idling any longer
     if (idle_time_limit < npc_behaviour_state.current_dt) {
@@ -609,7 +609,7 @@ void NPCsUpdate(entt::registry& registry, double t, double dt) {
         }
 
         // Gradually reduce the contents of the NPC's emotional queue
-        if (1.0f < npc_state.emotion_turnover_dt * EMOTION_QUEUE_TURNOVER_RATE) {
+        if (1.0 < npc_state.emotion_turnover_dt * EMOTION_QUEUE_TURNOVER_RATE) {
             // Avoid popping the emotion queue if it is empty
             if (!npc_characteristics.emotions.empty()) {
                 // Pop the oldest emotion from the NPC's emotional queue
@@ -617,7 +617,7 @@ void NPCsUpdate(entt::registry& registry, double t, double dt) {
             }
 
             // Clear the NPC's emotional turnover timer
-            npc_state.emotion_turnover_dt = 0.0f;
+            npc_state.emotion_turnover_dt = 0.0;
         }
 
         // Check the NPC's current state and call the appropriate behaviour state manager

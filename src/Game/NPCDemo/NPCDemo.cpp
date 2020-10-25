@@ -89,6 +89,7 @@ void NPCDemo::Init() {
 
     // Find the Identifiers of the Entities with the hook component and store their identifiers
     auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
+    auto &reg = ecs_.GetRegistry();
     entt::entity id_npc0;
     entt::entity id_npc1;
     entt::entity id_npc2;
@@ -118,60 +119,59 @@ void NPCDemo::Init() {
                 break;
         }
     }
-
     // Iterate through all of the Entity's that have a NPCPersonalityID hook component
     for (auto &npc_hook_id: npc_hook_view) {
         // Update the NPC to have the specified Personality
-        auto npc_entity = ecs_.GetEntity(npc_hook_id);
-        switch (npc_entity->GetComponent<component::NPCPersonalityID>().ID) {
+
+        switch (reg.get<component::NPCPersonalityID>(npc_hook_id).ID) {
             case 0: {
                 // Configure the initial BDI
-                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
                 // Configure the initial Characteristics
-                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
 
                 // Configure the initial BehaviourState
-                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
 
                 // Finished configuring the NPC
                 break;
             }
             case 1: {
                 // Configure the initial BDI
-                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
                 // Configure the initial Characteristics
-                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
 
                 // Configure the initial BehaviourState
-                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
 
                 // Finished configuring the NPC
                 break;
             }
             case 2: {
                 // Configure the initial BDI
-                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
                 // Configure the initial Characteristics
-                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
 
                 // Configure the initial BehaviourState
-                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
 
                 // Finished configuring the NPC
                 break;
             }
             case 3: {
                 // Configure the initial BDI
-                auto &npc_bdi = npc_entity->AddComponent<component::BDI>();
+                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
                 // Configure the initial Characteristics
-                auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+                //auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
 
                 // Configure the initial BehaviourState
-                auto &npc_behaviour_state = npc_entity->AddComponent<component::BehaviourState>();
+                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
 
                 // Finished configuring the NPC
                 break;

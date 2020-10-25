@@ -526,7 +526,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 // Make the NPC somewhat statically 'sit'
                 if (registry.has<component::Animation>(entity)) {
                     auto &anim = registry.get<component::Animation>(entity);
-                    anim.animator_.LoadAnimation("PUNCH", true);
+                    anim.animator_.LoadAnimation("PUNCH", false);
                 }
 
                 // Prevent this from being repeated

@@ -136,7 +136,7 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            case input::MouseButton::kRight: {
                                auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
 
-                               auto entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 100.0f);
+                               auto entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 50.f);
                                player_.GrabObject(entity);
 
                            } break;

@@ -29,7 +29,7 @@ Demo::Demo() {
 
 void Demo::Init() {
     auto &board = ecs_.CreateEntity();
-    auto &board_component = board.AddComponent<component::Board>(&ecs_, glm::vec3(-506.0f, 81.5f, 303.0f), 37, 24, 2.3f);
+    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-506.0f, 81.5f, 303.0f), 37, 24, 2.3f);
 
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();

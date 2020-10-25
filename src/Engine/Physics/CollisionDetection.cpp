@@ -132,7 +132,7 @@ void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const
 
 void CollisionDetection::FixedUpdate(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    physics_world.world_->update(dt);
+    physics_world.world_->update(static_cast<float>(dt));
 }
 
 void CollisionDetection::Update(double t, double dt) {

@@ -414,7 +414,18 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     }
 
     // Keep a simple and quick reference to the current Intention/Plan
-    component::Plan &current_plan = npc_bdi.intentions[npc_behaviour_state.current_intention.first][npc_behaviour_state.current_intention.second];
+    //std::cout << npc_behaviour_state.current_intention.first << " " << npc_behaviour_state.current_intention.second << std::endl;
+    auto find_first = npc_bdi.intentions.find(npc_behaviour_state.current_intention.first);
+    if (find_first == npc_bdi.intentions.end()) {
+        std::cout << "ERROR: NPC Respond first intention out of range!\n";
+        return;
+    }
+    auto var = npc_bdi.intentions.at(npc_behaviour_state.current_intention.first);
+    if (var.empty() && npc_behaviour_state.current_intention.second < 0 || npc_behaviour_state.current_intention.second > var.size()) {
+        std::cout << "ERROR: NPC Respond second intention out of range!\n";
+        return;
+    }
+    component::Plan &current_plan = var.at(npc_behaviour_state.current_intention.second);
 
     // Attempt to respond the current Intention using the NPC's Plan.
     auto &npc_transform = registry.get<component::Transform>(entity);

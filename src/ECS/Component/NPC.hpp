@@ -189,33 +189,33 @@ struct BDI {
          * Each entity is tracked individually, being mapped to a unique property set.
          * @note An NPC should only gather values for Properties listed here.
          */
-    std::map<entt::entity, std::set<npc::Properties>> beliefs_properties;
+    std::map<entt::entity, std::set<npc::Properties>> beliefs_properties = {};
 
         /**
          * @brief The NPC's collection of entity interactions it can perform.
          * Each entity is tracked individually, being mapped to a unique action set.
          * @note An NPC should only plan or perform Actions listed here.
          */
-    std::map<entt::entity, std::set<npc::Actions>> beliefs_affordances;
+    std::map<entt::entity, std::set<npc::Actions>> beliefs_affordances = {};
 
         /**
          * @brief The NPC's hierarchical collection of Desires to resolve.
          * All Desires are mapped to their unique identifier.
          * @warning No Desire should be mapped to a value of 0 or less!
          */
-    std::map<int, Desire> desires;
+    std::map<int, Desire> desires = {};
 
         /**
          * @brief The NPC's root Desires from its hierarchical collection.
          * @warning No Desire should be mapped to a value of 0 or less!
          */
-    std::set<int> root_desires;
+    std::set<int> root_desires = {};
 
         /**
          * @brief The NPC's intended set of reactions to a Desire's resolution.
          * A set of one to many Plans is mapped to a trigger Desire's identifier.
          */
-    std::map<int, std::vector<Plan>> intentions;
+    std::map<int, std::vector<Plan>> intentions = {};
 
         /**
          * @brief Default object constructor, initialises BDI to default values.
@@ -386,25 +386,25 @@ struct Characteristics {
      */
 struct BehaviourState {
         /// The current stage of the NPC's behaviour.
-    npc::Stages current;
+    npc::Stages current = {};
 
         /// The amount of time the NPC behaviour has been in its current behaviour state.
-    double current_dt;
+    double current_dt = {};
 
         /// The prior stage of the NPC's behaviour before it was updated.
-    npc::Stages prior;
+    npc::Stages prior = {};
 
         /// An accumulated amount of time since the prior turnover of NPC emotions.
-    double emotion_turnover_dt;
+    double emotion_turnover_dt = {};
 
         /// The identifier of the current Desire trigger and Intention the NPC is acting on.
-    std::pair<int, int> current_intention;
+    std::pair<int, int> current_intention = {};
 
         /// The identifier of the prior Desire trigger and Intention the NPC was acting on.
-    std::pair<int, int> prior_intention;
+    std::pair<int, int> prior_intention = {};
 
         /// A flag used to track if the current Intention has been actioned yet.
-    bool has_begun_response;
+    bool has_begun_response = {};
 
         /**
          * @brief Default object constructor, optionally initialises BehaviourState via parameters.

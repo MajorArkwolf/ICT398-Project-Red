@@ -87,99 +87,352 @@ void NPCDemo::Init() {
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
 
-    // Find the Identifiers of the Entities with the hook component and store their identifiers
+    // Find the Identifiers of the Entities with the NPC personality hook component and store them
     auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
     auto &reg = ecs_.GetRegistry();
-    entt::entity id_npc0;
-    entt::entity id_npc1;
-    entt::entity id_npc2;
-    entt::entity id_npc3;
+    std::set<entt::entity> id_npcs_tom;
+    std::set<entt::entity> id_npcs_alistair;
+    std::set<entt::entity> id_npcs_jessica;
+    std::set<entt::entity> id_npcs_kiera;
     for (auto &npc_hook_id: npc_hook_view) {
         // Catch the type
         auto npc_entity = ecs_.GetEntity(npc_hook_id);
         switch (npc_entity->GetComponent<component::NPCPersonalityID>().ID) {
             case 0:
                 // Track the entity's identifier
-                id_npc0 = npc_entity->GetID();
+                id_npcs_tom.insert(npc_entity->GetID());
                 break;
             case 1:
                 // Track the entity's identifier
-                id_npc1 = npc_entity->GetID();
+                id_npcs_alistair.insert(npc_entity->GetID());
                 break;
             case 2:
                 // Track the entity's identifier
-                id_npc2 = npc_entity->GetID();
+                id_npcs_jessica.insert(npc_entity->GetID());
                 break;
             case 3:
                 // Track the entity's identifier
-                id_npc3 = npc_entity->GetID();
+                id_npcs_kiera.insert(npc_entity->GetID());
                 break;
             default:
                 assert(false);
                 break;
         }
     }
+
+    // Find the Identifiers of the Entities with the Type hook component and store them
+    auto interactive_hook_view = ecs_.GetRegistry().view<component::InteractableObject>();
+    std::set<entt::entity> id_interactables_bench;
+    std::set<entt::entity> id_interactables_book;
+    std::set<entt::entity> id_interactables_rock;
+    std::set<entt::entity> id_interactables_tree;
+    for (auto &interactive_hook_id: interactive_hook_view) {
+        // Catch the type
+        auto interactive_entity = ecs_.GetEntity(interactive_hook_id);
+        switch (interactive_entity->GetComponent<component::InteractableObject>().type) {
+            case component::InteractableObject::Type::bench:
+                // Track the entity's identifier
+                id_interactables_bench.insert(interactive_hook_id);
+                break;
+            case component::InteractableObject::Type::book:
+                // Track the entity's identifier
+                id_interactables_book.insert(interactive_hook_id);
+                break;
+            case component::InteractableObject::Type::rock:
+                // Track the entity's identifier
+                id_interactables_rock.insert(interactive_hook_id);
+                break;
+            case component::InteractableObject::Type::tree:
+                // Track the entity's identifier
+                id_interactables_tree.insert(interactive_hook_id);
+                break;
+            case component::InteractableObject::Type::npc:
+                break;
+            default:
+                assert(false);
+                break;
+        }
+    }
+
     // Iterate through all of the Entity's that have a NPCPersonalityID hook component
     for (auto &npc_hook_id: npc_hook_view) {
-        // Update the NPC to have the specified Personality
+        // Generate and gather the NPC's BDI component
+        auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
+        // Configure the NPC's generic property beliefs about itself
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kExists);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kSize);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kMass);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kPosition);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kVelocity);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kOrientation);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kRange);
+        npc_bdi.beliefs_properties[npc_hook_id].insert(npc::Properties::kType);
+
+        // Configure the NPC's generic affordance beliefs about itself
+        npc_bdi.beliefs_affordances[npc_hook_id].insert(npc::Actions::kObserve);
+        npc_bdi.beliefs_affordances[npc_hook_id].insert(npc::Actions::kTraverse);
+
+        // Iterate through all of the known "Tom" NPCs
+        for (auto &tom_identifier: id_npcs_tom) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kSize);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[tom_identifier].insert(npc::Actions::kPush);
+            npc_bdi.beliefs_affordances[tom_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[tom_identifier].insert(npc::Actions::kUse);
+            npc_bdi.beliefs_affordances[tom_identifier].insert(npc::Actions::kTraverse);
+        }
+
+        // Iterate through all of the known "Alistair" NPCs
+        for (auto &alistair_identifier: id_npcs_alistair) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kSize);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[alistair_identifier].insert(npc::Actions::kPush);
+            npc_bdi.beliefs_affordances[alistair_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[alistair_identifier].insert(npc::Actions::kUse);
+            npc_bdi.beliefs_affordances[alistair_identifier].insert(npc::Actions::kTraverse);
+        }
+
+        // Iterate through all of the known "Jessica" NPCs
+        for (auto &jessica_identifier: id_npcs_jessica) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kSize);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[jessica_identifier].insert(npc::Actions::kPush);
+            npc_bdi.beliefs_affordances[jessica_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[jessica_identifier].insert(npc::Actions::kUse);
+            npc_bdi.beliefs_affordances[jessica_identifier].insert(npc::Actions::kTraverse);
+        }
+
+        // Iterate through all of the known "Kiera" NPCs
+        for (auto &kiera_identifier: id_npcs_kiera) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kSize);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[kiera_identifier].insert(npc::Actions::kPush);
+            npc_bdi.beliefs_affordances[kiera_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[kiera_identifier].insert(npc::Actions::kUse);
+            npc_bdi.beliefs_affordances[kiera_identifier].insert(npc::Actions::kTraverse);
+        }
+
+        // Iterate through all of the known book entities
+        for (auto &book_identifier: id_interactables_book) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kShape);
+            npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kTraverse);
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kUse);
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kPush);
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kGrab);
+            npc_bdi.beliefs_affordances[book_identifier].insert(npc::Actions::kDrop);
+        }
+
+        // Iterate through all of the known tree entities
+        for (auto &tree_identifier: id_interactables_tree) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kShape);
+            npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[tree_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[tree_identifier].insert(npc::Actions::kTraverse);
+        }
+
+        // Iterate through all of the known bench entities
+        for (auto &bench_identifier: id_interactables_bench) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kShape);
+            npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[bench_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[bench_identifier].insert(npc::Actions::kTraverse);
+            npc_bdi.beliefs_affordances[bench_identifier].insert(npc::Actions::kSit);
+        }
+
+        // Iterate through all of the known rock entities
+        for (auto &rock_identifier: id_interactables_rock) {
+            // Configure the NPC's generic property beliefs about the entity at the current identifier
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kExists);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kPosition);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kOrientation);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kVelocity);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kMass);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kRange);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kShape);
+            npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kType);
+
+            // Configure the NPC's generic affordance beliefs about the entity at the current identifier
+            npc_bdi.beliefs_affordances[rock_identifier].insert(npc::Actions::kObserve);
+            npc_bdi.beliefs_affordances[rock_identifier].insert(npc::Actions::kTraverse);
+            npc_bdi.beliefs_affordances[rock_identifier].insert(npc::Actions::kSit);
+            npc_bdi.beliefs_affordances[rock_identifier].insert(npc::Actions::kPush);
+        }
+
+        // Get the other NPC component data structures
+        auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
+        auto &npc_behavior_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
+
+        // Configure unique properties for the NPC
         switch (reg.get<component::NPCPersonalityID>(npc_hook_id).ID) {
+                // "Tom"-specific configuration
             case 0: {
-                // Configure the initial BDI
-                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
+                // "Tom"-specific BDI Desires
+                npc_bdi.desires[1].parent = 0;
+                npc_bdi.desires[1].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[1].children.insert(2);
+                npc_bdi.desires[1].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_tom.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kInRange));
+                npc_bdi.desires[2].parent = 1;
+                npc_bdi.desires[2].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[2].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_tom.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
 
-                // Configure the initial Characteristics
-                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
+                // "Tom"-specific BDI Root Desires
+                npc_bdi.root_desires.insert(1);
 
-                // Configure the initial BehaviourState
-                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
+                // "Tom"-specific BDI Intentions
+                npc_bdi.intentions[1].emplace_back(
+                    component::Plan(
+                        npc::Actions::kUse, *id_npcs_tom.begin(),
+                        -1, {0}));
+                npc_bdi.intentions[2].emplace_back(
+                    component::Plan(
+                        npc::Actions::kTraverse, *id_npcs_tom.begin(),
+                        1, {0}));
 
-                // Finished configuring the NPC
+                // "Tom"-specific Characteristics
+                npc_characteristics.mood = 0.85f;
+
+                // "Tom"-specific BehaviourState
+                npc_behavior_state.current = npc::Stages::kObserve;
+                npc_behavior_state.current_intention = {-1, -1};
                 break;
             }
+                // "Alistair"-specific configuration
             case 1: {
-                // Configure the initial BDI
-                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
+                // "Alistair"-specific BDI Desires
+                npc_bdi.desires;
 
-                // Configure the initial Characteristics
-                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
+                // "Alistair"-specific BDI Root Desires
+                npc_bdi.root_desires;
 
-                // Configure the initial BehaviourState
-                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
+                // "Alistair"-specific BDI Intentions
+                npc_bdi.intentions;
 
-                // Finished configuring the NPC
+                // "Alistair"-specific Characteristics
+                // TODO: this
+
+                // "Alistair"-specific BehaviourState
+                // TODO: this
                 break;
             }
+                // "Jessica"-specific configuration
             case 2: {
-                // Configure the initial BDI
-                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
+                // "Jessica"-specific BDI Desires
+                npc_bdi.desires;
 
-                // Configure the initial Characteristics
-                auto &npc_characteristics = reg.emplace_or_replace<component::Characteristics>(npc_hook_id);
+                // "Jessica"-specific BDI Root Desires
+                npc_bdi.root_desires;
 
-                // Configure the initial BehaviourState
-                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
+                // "Jessica"-specific BDI Intentions
+                npc_bdi.intentions;
 
-                // Finished configuring the NPC
+                // "Jessica"-specific Characteristics
+                //TODO: this
+
+                // "Jessica"-specific BehaviourState
+                //TODO: this
                 break;
             }
+                // "Kiera"-specific configuration
             case 3: {
-                // Configure the initial BDI
-                auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
+                // "Kiera"-specific BDI Desires
+                npc_bdi.desires;
 
-                // Configure the initial Characteristics
-                //auto &npc_characteristics = npc_entity->AddComponent<component::Characteristics>();
+                // "Kiera"-specific BDI Root Desires
+                npc_bdi.root_desires;
 
-                // Configure the initial BehaviourState
-                auto &npc_behaviour_state = reg.emplace_or_replace<component::BehaviourState>(npc_hook_id);
+                // "Kiera"-specific BDI Intentions
+                npc_bdi.intentions;
 
-                // Finished configuring the NPC
+                // "Kiera"-specific Characteristics
+                //TODO: this
+
+                // "Kiera"-specific BehaviourState
+                //TODO: this
                 break;
             }
-            default:
+            default: {
                 // Throw an error in debug mode
                 assert(false);
                 break;
+            }
         }
     }
 }

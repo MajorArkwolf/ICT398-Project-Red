@@ -33,7 +33,7 @@ struct Plan {
 
         /**
          * @brief The identifier of the Desire that the NPC has planned to resolve.
-         * @warning This should NEVER be 0, that identifier is reserved for the desire root.
+         * @Note When no target Desire exists this should be less than 0.
          */
     int desire;
 

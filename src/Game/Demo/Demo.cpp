@@ -70,8 +70,8 @@ void Demo::Init() {
             little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
-    //physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
-    //physics_world_.SetGravityEnabled(true);
+    physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
+    physics_world_.SetGravityEnabled(true);
     player_.SetRegistry(ecs_.GetRegistry());
 }
 
@@ -143,7 +143,7 @@ void Demo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                            case input::MouseButton::kLeft: {
                                auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
 
-                               player_.ThrowObject(currentCam.GetFrontVector() * 100.f);
+                               player_.ThrowObject(currentCam.GetFrontVector() * 1000.f);
 
                            } break;
                        }

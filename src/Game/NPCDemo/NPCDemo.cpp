@@ -545,8 +545,8 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                        player_.TogglePlayer();
                                    } break;
                                    case input::VirtualKey::R: {
-                                       auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
-                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
+                                       auto &player = player_.GetActivePlayer().GetComponent<component::Player>();
+                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(player.camera_.position_, player.camera_.front_, 50.0f);
                                    } break;
                                    case input::VirtualKey::Q: {
                                        auto ent = ecs_.GetRegistry().view<component::Board>();

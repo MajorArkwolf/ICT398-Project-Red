@@ -450,8 +450,8 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                     auto &board = registry.get<component::Board>(e);
                     auto &moving = registry.emplace<component::Moving>(entity);
                     moving.speed = NPC_SPEED;
-                    //moving.SetLastNode(registry, board.GetClosestNode(npc_transform.pos));
-                    moving.SetLastNode(registry, board.FindClosestNodePoint(registry, npc_transform.pos, entity));
+                    moving.SetLastNode(registry, board.GetClosestNode(npc_transform.pos));
+                    //moving.SetLastNode(registry, board.FindClosestNodePoint(registry, npc_transform.pos, entity));
                 }
                 auto e = registry.view<component::Board>()[0];
                 if (!registry.has<component::Board>(e)) {
@@ -460,7 +460,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 auto &board = registry.get<component::Board>(e);
                 auto &moving = registry.get<component::Moving>(entity);
                 moving.speed = NPC_SPEED;
-                moving.move_list = board.FindPath(registry, moving.last_node, board.GetClosestNode(registry.get<component::Transform>(current_plan.entity).pos));
+                moving.move_list = board.FindPath(registry, moving.last_node, board.FindClosestNodePoint(registry, npc_transform.pos, current_plan.entity));
                 //This may cause strange behaviour if an object is out of distance but in the same node.
                 if (!moving.move_list.empty()) {
                     moving.is_moving = true;

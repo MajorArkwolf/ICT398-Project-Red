@@ -50,6 +50,9 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
             if (ecs.has<component::Transform>(e)) {
                 auto &tran = entities.get<component::Transform>(e);
                 auto entity_id = move.going_to_node;
+                if (!ecs.has<component::Transform>(entity_id)) {
+                    continue;
+                }
                 auto moving_to = ecs.get<component::Transform>(entity_id).pos;
                 auto dist = moving_to - tran.pos;
                 // We check to see if the object is within a certain epsilion before determining it is at a given node.

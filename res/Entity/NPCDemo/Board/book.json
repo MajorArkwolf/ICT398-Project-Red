@@ -2,7 +2,7 @@
   "Prefab": "book",
   "Transform": {
     "Position": {
-      "X": -450.0,
+      "X": -465.0,
       "Y": 80.0,
       "Z": 354.0
     },
@@ -14,6 +14,6 @@
     "Scale": 1.0
   },
   "Physics" : true,
-  "Static" : true,
+  "Static" : false,
   "OBJType": "book"
 }

@@ -33,7 +33,7 @@ NPCDemo::NPCDemo() {
 
     // Setup the pathfinding
     auto &board = ecs_.CreateEntity();
-    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-505.0f, 80.f, 303.0f), 36, 24, 2.3f);
+    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-505.0f, 79.f, 305.0f), 34, 22, 2.5f);
 
     // Load the scene and objects from file
     std::filesystem::path path = "";
@@ -548,8 +548,8 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                        player_.TogglePlayer();
                                    } break;
                                    case input::VirtualKey::R: {
-                                       auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
-                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
+                                       auto &player = player_.GetActivePlayer().GetComponent<component::Player>();
+                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(player.camera_.position_, player.camera_.front_, 50.0f);
                                    } break;
                                    case input::VirtualKey::Q: {
                                        auto ent = ecs_.GetRegistry().view<component::Board>();

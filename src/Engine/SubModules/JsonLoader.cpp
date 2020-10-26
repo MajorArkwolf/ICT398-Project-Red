@@ -44,7 +44,8 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
             auto &ent = entity.value();
             auto &model = ent->AddComponent<component::Model>(prefab.model_id);
             model.draw_model = prefab.render;
-
+            auto &name_comp = ent->AddComponent<component::Name>();
+            name_comp.name = prefab.name;
             auto &transform_component = ent->AddComponent<component::Transform>();
             auto transform = GetJsonField(j, "Colliders", "Transform", JsonType::Json);
             if (transform.has_value()) {

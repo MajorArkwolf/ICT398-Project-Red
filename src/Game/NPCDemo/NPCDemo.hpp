@@ -2,7 +2,7 @@
 
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
-#include "Game/Demo/Components/Player.hpp"
+#include "Game/NPCDemo/Components/Player.hpp"
 
 class NPCDemo : public BaseState {
 public:

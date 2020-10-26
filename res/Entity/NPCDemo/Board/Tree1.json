@@ -1,0 +1,18 @@
+{
+  "Prefab": "Tree_01",
+  "Transform": {
+    "Position": {
+      "X": -426.0,
+      "Y": 79.0,
+      "Z": 354.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 0.06
+  },
+  "Physics" : true,
+  "Static" : true
+}

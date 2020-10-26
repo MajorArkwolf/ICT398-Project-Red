@@ -33,7 +33,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
     for (auto &e : entities) {
         // We store the moving component then check if the there is a que.
         auto &move = entities.get<component::Moving>(e);
-        if (!move.move_list.empty()) {
+        if (!move.move_list.empty() && move.is_moving) {
             auto &next_node = ecs.get<component::Node>(move.move_list.front());
             if (next_node.GetNodeStatus() != node_occupancy::vacant) {
                 auto board_id = ecs.view<component::Board>()[0];
@@ -82,7 +82,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                 }
             }
         } else {
-            if (ecs.has<component::Animation>(e)) {
+            if (ecs.has<component::Animation>(e) && move.is_moving) {
                 auto &anim = ecs.get<component::Animation>(e);
                 if (anim.animator_.loaded_animation_ != nullptr) {
                     if (anim.animator_.loaded_animation_->GetName() == "WALK") {
@@ -90,30 +90,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                     }
                 }
             }
-            auto board_id = ecs.view<component::Board>()[0];
-            auto &board = ecs.get<component::Board>(board_id);
-            auto offset_id = GenerateRandom(0, board.GetNumOfNodes());
-            auto entity_id = static_cast<size_t>(board.GetFirstNode());
-            auto next_dest = entt::entity(entity_id + offset_id);
-            if (!move.is_moving) {
-                move.is_moving = true;
-                if (ecs.has<component::Node>(move.last_node)) {
-                    ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-                }
-                move.last_node = next_dest;
-                move.speed = 3.f;
-            }
-            move.move_list = board.FindPath(ecs, move.last_node, next_dest);
-            if (!move.move_list.empty()) {
-                if (ecs.has<component::Node>(move.going_to_node)) {
-                    ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::vacant);
-                }
-                move.going_to_node = move.move_list.front();
-                ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::occupied);
-                move.move_list.pop();
-            }
-            ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-            move.last_node = next_dest;
+            move.is_moving = false;
         }
     }
 }

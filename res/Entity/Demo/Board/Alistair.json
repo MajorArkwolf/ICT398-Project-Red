@@ -4,7 +4,7 @@
     "Position": {
       "X": -465.0,
       "Y": 79.0,
-      "Z": 330.0
+      "Z": 310.0
     },
     "Rotation": {
       "X": 0.0,
@@ -17,5 +17,7 @@
     "IDLE": "IDLE"
   },
   "Physics" : true,
-  "Moving": true
+  "Moving": true,
+  "NPC": 1,
+  "OBJType": "npc"
 }

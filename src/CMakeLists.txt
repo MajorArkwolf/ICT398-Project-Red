@@ -37,6 +37,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Demo Scene
     Game/Demo/Demo.cpp
     Game/Demo/Components/Player.cpp
+    #--Demo Scene
+    Game/NPCDemo/NPCDemo.cpp
     #--Physics Demo Scene
     Game/PhysicsDemo/PhysicsDemo.cpp
     #--PrefabEditor
@@ -58,6 +60,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     ECS/Component/Basic.cpp
     ECS/Component/Board.cpp
     ECS/Component/Node.cpp
+    ECS/Component/NPC.cpp
     #----Pathing
     ECS/Component/Pathing/Grid.cpp
     ECS/Component/Pathing/Node.cpp
@@ -65,6 +68,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     #--Systems
     ECS/System/System.cpp
     ECS/System/AISystem.cpp
+    ECS/System/NPC/Core.cpp
+    ECS/System/NPC/Tools.cpp
 )
 
 # Include project header files.

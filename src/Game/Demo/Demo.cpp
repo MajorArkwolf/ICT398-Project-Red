@@ -21,6 +21,8 @@ Demo::Demo() {
     relativeMouse = true;
     auto &engine = redengine::Engine::get();
     engine.GetMouseMode(relativeMouse);
+    auto &board = ecs_.CreateEntity();
+    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
     std::filesystem::path path = "";
     path.append("Demo");
     path.append("Scene.json");
@@ -28,9 +30,6 @@ Demo::Demo() {
 }
 
 void Demo::Init() {
-    auto &board = ecs_.CreateEntity();
-    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-506.0f, 81.5f, 303.0f), 37, 24, 2.3f);
-
     /// This is messy, this instantiates the two main players for our scene.
     auto big_player = ecs_.CreateEntity();
     big_player.AddComponent<component::Player>();

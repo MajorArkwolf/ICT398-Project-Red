@@ -25,8 +25,6 @@ constexpr double SIT_IDLE_TIME = 6.0;
 
 constexpr double USE_IDLE_TIME = 4.0;
 
-constexpr float INTERACTION_RANGE = 3.0f;
-
 constexpr float NPC_SPEED = 3.0f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
@@ -180,15 +178,18 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                 // Attempt to get the components if they exist
                                 component_returned = registry.try_get<component::Transform>(entity);
                                 component2_returned = registry.try_get<component::Transform>(goal.entity);
+                                auto target_type = registry.try_get<component::InteractableObject>(goal.entity);
                                 if ((component_returned != nullptr) && (component2_returned != nullptr)) {
                                     // Calculate if the entity is within range and test the Desire
-                                    if (INTERACTION_RANGE >= (glm::distance(
-                                        static_cast<component::Transform*>(component_returned)->pos,
-                                        static_cast<component::Transform*>(component2_returned)->pos))) {
+                                    if (EntityIsWithinRange(
+                                            static_cast<component::Transform*>(component_returned)->pos,
+                                            static_cast<component::Transform*>(component2_returned)->pos,
+                                            target_type->type)) {
                                         // Set the value gathered to 1.0 to indicate the entity is within range
                                         value_gathered = 1.0f;
                                     }
-                                    // By default the found valuewill be 0.0f, so that doesn't need to be added
+
+                                    // By default the found value will be 0.0f, so that doesn't need to be added
                                     found_value = true;
                                 }
                             }

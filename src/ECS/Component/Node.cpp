@@ -20,6 +20,7 @@ void component::Node::onTrigger(entt::registry &reg, entt::entity ent, PhysicsTr
         if (reg.get<component::InteractableObject>(ent).type != InteractableObject::Type::npc) {
             if (event == PhysicsTriggerData::Event::start) {
                 this->AlterNodeGrid(node_occupancy::occupied);
+                current_obj = ent;
             } else if (event == PhysicsTriggerData::Event::exit) {
                 this->AlterNodeGrid(node_occupancy::vacant);
             }

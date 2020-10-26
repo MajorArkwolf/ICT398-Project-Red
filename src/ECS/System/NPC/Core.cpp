@@ -449,8 +449,10 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                     }
                     auto &board = registry.get<component::Board>(e);
                     auto &moving = registry.emplace<component::Moving>(entity);
+
                     moving.speed = NPC_SPEED;
-                    moving.SetLastNode(registry, board.GetClosestNode(npc_transform.pos));
+                    //moving.SetLastNode(registry, board.GetClosestNode(npc_transform.pos));
+                    moving.SetLastNode(registry, board.FindClosestNodePoint(registry, npc_transform.pos, entity));
                 }
                 auto e = registry.view<component::Board>()[0];
                 if (!registry.has<component::Board>(e)) {

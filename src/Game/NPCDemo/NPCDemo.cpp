@@ -587,20 +587,9 @@ void NPCDemo::Init() {
                         npc::Components::kDefault,
                         0.99f, 1.01f,
                         npc::Conditions::kInRange));
-                npc_bdi.desires[7].parent = 0;
-                npc_bdi.desires[7].history = npc::Outcomes::kUnknown;
-                npc_bdi.desires[7].children.insert(0);
-                npc_bdi.desires[7].goals.emplace_back(
-                    component::Goal(
-                        *id_interactables_bench.begin(),
-                        npc::Properties::kVelocity,
-                        npc::Components::kDefault,
-                        0.01f, 0.011f,
-                        npc::Conditions::kBelowRange));
 
                 // "Jessica"-specific BDI Root Desires
                 npc_bdi.root_desires.insert(1);
-                npc_bdi.root_desires.insert(7);
 
                 // "Jessica"-specific BDI Intentions
                 npc_bdi.intentions[1].emplace_back(
@@ -669,11 +658,6 @@ void NPCDemo::Init() {
                         *id_interactables_bench.begin(),
                         1, {0}));
                 npc_bdi.intentions[6].emplace_back(
-                    component::Plan(
-                        npc::Actions::kTraverse,
-                        *id_npcs_alistair.begin(),
-                        1, {0}));
-                npc_bdi.intentions[7].emplace_back(
                     component::Plan(
                         npc::Actions::kTraverse,
                         *id_npcs_alistair.begin(),

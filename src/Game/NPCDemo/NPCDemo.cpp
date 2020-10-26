@@ -33,7 +33,7 @@ NPCDemo::NPCDemo() {
 
     // Setup the pathfinding
     auto &board = ecs_.CreateEntity();
-    auto &board_component = board.AddComponent<component::Board>(&ecs_, glm::vec3(-505.0f, 81.5f, 305.0f), 34, 22, 2.5f);
+    auto &board_component = board.AddComponent<component::Board>(&ecs_, &physics_world_, glm::vec3(-505.0f, 80.f, 305.0f), 34, 22, 2.5f);
 
     // Load the scene and objects from file
     std::filesystem::path path = "";

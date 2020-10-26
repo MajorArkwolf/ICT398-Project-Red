@@ -47,8 +47,8 @@ void PhysicsEngine::FixedUpdate(double t, double dt) {
     IntegrateVelocities(dt);
     IntegratePositions(dt);
     collision_resolution_.Resolve(collision_detection_.GetCollisions(), t, dt);
-
     ResetAddedForces();
+    TriggerEvents();
 }
 
 void PhysicsEngine::Update(double t, double dt) {
@@ -139,6 +139,10 @@ void PhysicsEngine::SetTrigger(entt::entity entity, bool is_trigger) {
     collision_detection_.SetTrigger(entity, is_trigger);
 }
 
+void PhysicsEngine::SetTrigger(physics::PhysicsWorld *pw, entt::entity entity, bool is_trigger) {
+    collision_detection_.SetTrigger(pw, entity, is_trigger);
+}
+
 void physics::PhysicsEngine::IntegrateVelocities(double dt) {
     constexpr float angular_damping = 0.1f;
     const float damping_factor = std::pow(1.0 - angular_damping, static_cast<float>(dt));
@@ -213,5 +217,22 @@ void physics::PhysicsEngine::ResetAddedForces() {
             phys_body.added_torque = {0.f, 0.f, 0.f};
             phys_body.should_apply_gravity = true;
         }
+    }
+}
+
+void physics::PhysicsEngine::TriggerEvents() {
+    auto &trig = collision_detection_.GetTriggerCollisions();
+    while(!trig.empty()) {
+        DistributeTriggers(trig.front().first_body, trig.front().second_body, trig.front().trigger_event);
+        DistributeTriggers(trig.front().second_body, trig.front().first_body, trig.front().trigger_event);
+        trig.pop();
+    }
+}
+
+void physics::PhysicsEngine::DistributeTriggers(entt::entity first, entt::entity second, PhysicsTriggerData::Event event) {
+    auto &reg = redengine::Engine::get().game_stack_.getTop()->physics_world_.ecs_->GetRegistry();
+    if (reg.has<component::Node>(first)) {
+        auto &comp = reg.get<component::Node>(first);
+        comp.onTrigger(reg, second, event);
     }
 }

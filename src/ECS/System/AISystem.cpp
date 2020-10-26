@@ -1,9 +1,11 @@
 #include "AISystem.hpp"
+
+#include <random>
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/Component/Node.hpp"
 #include "ECS/Component/Pathing/Node.hpp"
-#include "ECS/Component/Board.hpp"
-#include <random>
 #define EPSILON 0.1f
 
 #include <chrono>
@@ -11,15 +13,7 @@
 static inline size_t GenerateRandom(size_t min, size_t max) {
     size_t returnValue = 0;
     std::random_device rd;
-    std::mt19937::result_type seed = rd() ^ (
-            (std::mt19937::result_type)
-                    std::chrono::duration_cast<std::chrono::seconds>(
-                            std::chrono::system_clock::now().time_since_epoch()
-                    ).count() +
-            (std::mt19937::result_type)
-                    std::chrono::duration_cast<std::chrono::microseconds>(
-                            std::chrono::high_resolution_clock::now().time_since_epoch()
-                    ).count() );
+    std::mt19937::result_type seed = rd() ^ ((std::mt19937::result_type) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() + (std::mt19937::result_type) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
 
     std::mt19937 gen(seed);
     std::uniform_int_distribution<size_t> distrib(min, max);
@@ -50,6 +44,9 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
             if (ecs.has<component::Transform>(e)) {
                 auto &tran = entities.get<component::Transform>(e);
                 auto entity_id = move.going_to_node;
+                if (!ecs.has<component::Transform>(entity_id)) {
+                    continue;
+                }
                 auto moving_to = ecs.get<component::Transform>(entity_id).pos;
                 auto dist = moving_to - tran.pos;
                 // We check to see if the object is within a certain epsilion before determining it is at a given node.

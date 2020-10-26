@@ -4,6 +4,7 @@
     "Guy1.json",
     "Guy2.json",
     "Guy3.json",
+    "Guy4.json",
     "Female1.json",
     "Female2.json",
     "Chair.json",
@@ -15,6 +16,7 @@
     "Bench.json",
     "Tree_01.json",
     "Rock_01.json",
-    "UnitTestBlock.json"
+    "UnitTestBlock.json",
+    "book.json"
   ]
 }

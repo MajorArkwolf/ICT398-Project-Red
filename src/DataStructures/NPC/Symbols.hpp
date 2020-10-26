@@ -7,16 +7,16 @@ namespace npc {
      * @warning Lists only symbolic representations, not values, of properties!
      */
 enum class Properties {
-    kExists, ///< Object permanence.
+    kExists, ///< Object permanence. Supported
     kType, ///< Entity type.
-    kSize, ///< Physics body size.
-    kMass, ///< Physics body mass.
+    kSize, ///< Physics body size. Supported
+    kMass, ///< Physics body mass. Supported
     kShape, ///< Physics body shape.
-    kPosition, ///< Physics body position.
-    kVelocity, ///< Physics body velocity.
+    kPosition, ///< Physics body position. Supported
+    kVelocity, ///< Physics body velocity. Supported
     kAcceleration, ///< Physics body acceleration.
-    kOrientation, ///< Physics body orientation.
-    kRange, ///< Entity interaction range.
+    kOrientation, ///< Physics body orientation. Supported
+    kRange, ///< Entity interaction range. Supported
     kGrabber, ///< Identifier of holding entity.
     kGrabbee ///< Identifier of held entity.
 };
@@ -26,14 +26,14 @@ enum class Properties {
      * @warning Lists only symbolic representations, not systems, of actions!
      */
 enum class Actions {
-    kTraverse, ///< Move its physics body to a specific location.
-    kSit, ///< Move its physics body on top of another physics body.
+    kTraverse, ///< Move its physics body to a specific location. Supported
+    kSit, ///< Move its physics body on top of another physics body. Supported
     kReorient, ///< Rotate its physics body to a specific orientation.
     kPush, ///< Apply a force to a physics body other than its own.
     kGrab, ///< Hold a physics body other than its own.
     kDrop, ///< Release a physics body other than its own.
-    kObserve, ///< Gather a more in-depth view of an entity.
-    kUse ///< Perform a non-physics interaction with an entity.
+    kObserve, ///< Gather a more in-depth view of an entity. Supported
+    kUse ///< Perform a non-physics interaction with an entity. Supported
 };
 
     /**

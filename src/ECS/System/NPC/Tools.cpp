@@ -129,9 +129,9 @@ std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int curren
         }
         else {
             // Identify if this Desire's children have been fulfilled, this is recursive
-            FulfilledDesires(target, current_layer + 1,
-                             current_desire->second.children,
-                             fulfilled_hierarchy);
+            fulfilled_hierarchy = FulfilledDesires(target, current_layer + 1,
+                                                   current_desire->second.children,
+                                                   fulfilled_hierarchy);
         }
     }
 

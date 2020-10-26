@@ -11,21 +11,23 @@
 
 namespace System {
 
-const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
+constexpr double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
 
-const static double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
+constexpr double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
 
-const static double VARIABLE_IDLE_TIME = 3.5;
+constexpr double EMOTIONAL_CHANGE_BASELINE_AMOUNT = 0.02;
 
-const static double MINIMUM_IDLE_TIME = 1.0;
+constexpr double VARIABLE_IDLE_TIME = 3.5;
 
-const static double SIT_IDLE_TIME = 6.0;
+constexpr double MINIMUM_IDLE_TIME = 1.0;
 
-const static double USE_IDLE_TIME = 4.0;
+constexpr double SIT_IDLE_TIME = 6.0;
 
-const static float INTERACTION_RANGE = 1.0f;
+constexpr double USE_IDLE_TIME = 4.0;
 
-constexpr float NPC_SPEED = 3.0f;
+constexpr float INTERACTION_RANGE = 3.0f;
+
+constexpr float NPC_SPEED = 4.6f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
@@ -85,16 +87,16 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                     if (component_returned != nullptr) {
                                         // Gather the value from the specified axis
                                         switch (goal.element) {
-                                            case npc::Components::kDefault:
-                                            case npc::Components::kAxisX:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.x;
-                                                break;
-                                            case npc::Components::kAxisY:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.y;
-                                                break;
-                                            case npc::Components::kAxisZ:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->scale.z;
-                                                break;
+                                        case npc::Components::kDefault:
+                                        case npc::Components::kAxisX:
+                                            value_gathered = static_cast<component::Transform*>(component_returned)->scale.x;
+                                            break;
+                                        case npc::Components::kAxisY:
+                                            value_gathered = static_cast<component::Transform*>(component_returned)->scale.y;
+                                            break;
+                                        case npc::Components::kAxisZ:
+                                            value_gathered = static_cast<component::Transform*>(component_returned)->scale.z;
+                                            break;
                                         }
                                         found_value = true;
                                     }
@@ -104,92 +106,94 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                 // Currently unsupported
                                 break;
                             case npc::Properties::kPosition:
-                                {
-                                    // Attempt to get the component if it exists
-                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
-                                    if (component_returned != nullptr) {
-                                        // Gather the value from the specified axis
-                                        switch (goal.element) {
-                                            case npc::Components::kDefault:
-                                            case npc::Components::kAxisX:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.x;
-                                                break;
-                                            case npc::Components::kAxisY:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.y;
-                                                break;
-                                            case npc::Components::kAxisZ:
-                                                value_gathered = static_cast<component::Transform*>(component_returned)->pos.z;
-                                                break;
-                                        }
-                                        found_value = true;
+                            {
+                                // Attempt to get the component if it exists
+                                component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                if (component_returned != nullptr) {
+                                    // Gather the value from the specified axis
+                                    switch (goal.element) {
+                                    case npc::Components::kDefault:
+                                    case npc::Components::kAxisX:
+                                        value_gathered = static_cast<component::Transform*>(component_returned)->pos.x;
+                                        break;
+                                    case npc::Components::kAxisY:
+                                        value_gathered = static_cast<component::Transform*>(component_returned)->pos.y;
+                                        break;
+                                    case npc::Components::kAxisZ:
+                                        value_gathered = static_cast<component::Transform*>(component_returned)->pos.z;
+                                        break;
                                     }
+                                    found_value = true;
                                 }
-                                break;
+                            }
+                            break;
                             case npc::Properties::kVelocity:
-                                {
-                                    // Attempt to get the component if it exists
-                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
-                                    if (component_returned != nullptr) {
-                                        // Gather the value from the specified axis
-                                        switch (goal.element) {
-                                            case npc::Components::kDefault:
-                                            case npc::Components::kAxisX:
-                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.x;
-                                                break;
-                                            case npc::Components::kAxisY:
-                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.y;
-                                                break;
-                                            case npc::Components::kAxisZ:
-                                                value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.z;
-                                                break;
-                                        }
-                                        found_value = true;
+                            {
+                                // Attempt to get the component if it exists
+                                component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                if (component_returned != nullptr) {
+                                    // Gather the value from the specified axis
+                                    switch (goal.element) {
+                                    case npc::Components::kDefault:
+                                    case npc::Components::kAxisX:
+                                        value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.x;
+                                        break;
+                                    case npc::Components::kAxisY:
+                                        value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.y;
+                                        break;
+                                    case npc::Components::kAxisZ:
+                                        value_gathered = static_cast<component::PhysicBody*>(component_returned)->linear_velocity.z;
+                                        break;
                                     }
+                                    found_value = true;
                                 }
-                                break;
+                            }
+                            break;
                             case npc::Properties::kAcceleration:
                                 // Currently unsupported
                                 break;
                             case npc::Properties::kOrientation:
-                                {
-                                    // Attempt to get the component if it exists
-                                    component_returned = registry.try_get<component::PhysicBody>(goal.entity);
-                                    if (component_returned != nullptr) {
-                                        // Gather the value from the specified axis
-                                        switch (goal.element) {
-                                            case npc::Components::kDefault:
-                                                [[fallthrough]];
-                                            case npc::Components::kAxisX:
-                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).x);
-                                            break;
-                                            case npc::Components::kAxisY:
-                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).y);
-                                            break;
-                                            case npc::Components::kAxisZ:
-                                                value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).z);
-                                            break;
-                                        }
-                                        found_value = true;
+                            {
+                                // Attempt to get the component if it exists
+                                component_returned = registry.try_get<component::PhysicBody>(goal.entity);
+                                if (component_returned != nullptr) {
+                                    // Gather the value from the specified axis
+                                    switch (goal.element) {
+                                    case npc::Components::kDefault:
+                                        [[fallthrough]];
+                                    case npc::Components::kAxisX:
+                                        value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).x);
+                                        break;
+                                    case npc::Components::kAxisY:
+                                        value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).y);
+                                        break;
+                                    case npc::Components::kAxisZ:
+                                        value_gathered = glm::degrees(glm::eulerAngles(static_cast<component::Transform*>(component_returned)->rot).z);
+                                        break;
                                     }
+                                    found_value = true;
                                 }
+                            }
                                 break;
                             case npc::Properties::kRange:
-                                {
-                                    // Attempt to get the components if they exist
-                                    component_returned = registry.try_get<component::Transform>(entity);
-                                    component2_returned = registry.try_get<component::Transform>(goal.entity);
-                                    if ((component_returned != nullptr) && (component2_returned != nullptr)) {
-                                        // Calculate if the entity is within range and test the Desire
-                                        TestGoal(goal,
-                                                 INTERACTION_RANGE >= (glm::distance(
-                                                     static_cast<component::Transform*>(component_returned)->pos,
-                                                     static_cast<component::Transform*>(component2_returned)->pos)));
-                                        found_value = true;
+                            {
+                                // Attempt to get the components if they exist
+                                component_returned = registry.try_get<component::Transform>(entity);
+                                component2_returned = registry.try_get<component::Transform>(goal.entity);
+                                if ((component_returned != nullptr) && (component2_returned != nullptr)) {
+                                    // Calculate if the entity is within range and test the Desire
+                                    if (INTERACTION_RANGE >= (glm::distance(
+                                        static_cast<component::Transform*>(component_returned)->pos,
+                                        static_cast<component::Transform*>(component2_returned)->pos))) {
+                                        // Set the value gathered to 1.0 to indicate the entity is within range
+                                        value_gathered = 1.0f;
                                     }
+                                    // By default the found valuewill be 0.0f, so that doesn't need to be added
+                                    found_value = true;
                                 }
+                            }
                                 break;
                             case npc::Properties::kGrabber:
-                                [[fallthrough]];
                             case npc::Properties::kGrabbee:
                                 // Not supported
                                 break;
@@ -238,30 +242,32 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
         if (desire.second.history == npc::Outcomes::kSuccess) {
             // Generate a positive emotional response
             auto &emotional_data = registry.get<component::Characteristics>(entity);
-            component::EmotiveResponse reaction(entity, 0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            component::EmotiveResponse reaction(entity, (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
+                std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood += 0.05f;
+            emotional_data.mood += EMOTIONAL_CHANGE_BASELINE_AMOUNT;
 
             // Delete the child Desires as they are no longer needed
-            DeleteDesireChildren(npc_bdi.desires, desire.first);
+            //DeleteDesireChildren(npc_bdi.desires, desire.first);
         }
         // Catch failure of the Desire
         else if (desire.second.history == npc::Outcomes::kFailure) {
             // Generate a negative emotional response
             auto &emotional_data = registry.get<component::Characteristics>(entity);
-            component::EmotiveResponse reaction(entity, -0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            component::EmotiveResponse reaction(entity, (-1.0f) * (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
+                std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood -= 0.05f;
+            emotional_data.mood -= EMOTIONAL_CHANGE_BASELINE_AMOUNT;
         }
     }
 
     // Move the NPC to the prepare phase
     auto &npc_behaviour_state = registry.get<component::BehaviourState>(entity);
-    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kPrepare, -1.0);
+    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kPrepare);
 }
 
 void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
@@ -399,6 +405,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     if ((npc_behaviour_state.current_intention.first < 0) || npc_behaviour_state.current_intention.second < 0) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
 
     // Catch invalid Intentions
@@ -406,15 +413,28 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     if (npc_bdi.intentions.find(npc_behaviour_state.current_intention.first) == npc_bdi.intentions.end()) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
     else if ((npc_behaviour_state.current_intention.second < 0) ||
              (npc_bdi.intentions[npc_behaviour_state.current_intention.first].size() < npc_behaviour_state.current_intention.second)) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
 
     // Keep a simple and quick reference to the current Intention/Plan
-    component::Plan &current_plan = npc_bdi.intentions[npc_behaviour_state.current_intention.first][npc_behaviour_state.current_intention.second];
+    //std::cout << npc_behaviour_state.current_intention.first << " " << npc_behaviour_state.current_intention.second << std::endl;
+    auto find_first = npc_bdi.intentions.find(npc_behaviour_state.current_intention.first);
+    if (find_first == npc_bdi.intentions.end()) {
+        std::cout << "ERROR: NPC Respond first intention out of range!\n";
+        return;
+    }
+    auto var = npc_bdi.intentions.at(npc_behaviour_state.current_intention.first);
+    if (var.empty() && npc_behaviour_state.current_intention.second < 0 || npc_behaviour_state.current_intention.second > var.size()) {
+        std::cout << "ERROR: NPC Respond second intention out of range!\n";
+        return;
+    }
+    component::Plan &current_plan = var.at(npc_behaviour_state.current_intention.second);
 
     // Attempt to respond the current Intention using the NPC's Plan.
     auto &npc_transform = registry.get<component::Transform>(entity);
@@ -442,6 +462,8 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 //This may cause strange behaviour if an object is out of distance but in the same node.
                 if (!moving.move_list.empty()) {
                     moving.is_moving = true;
+                    moving.SetGoingToNode(registry, moving.move_list.front());
+                    moving.move_list.pop();
                 }
                 // Prevent this from being repeated
                 npc_behaviour_state.has_begun_response = true;
@@ -526,7 +548,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 // Make the NPC somewhat statically 'sit'
                 if (registry.has<component::Animation>(entity)) {
                     auto &anim = registry.get<component::Animation>(entity);
-                    anim.animator_.LoadAnimation("PUNCH", true);
+                    anim.animator_.LoadAnimation("PUNCH", false);
                 }
 
                 // Prevent this from being repeated

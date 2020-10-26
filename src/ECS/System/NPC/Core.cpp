@@ -281,10 +281,6 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
 }
 
 void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
-    // Preferably we would generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
-    // This is no longer viable within the deadline, so instead the triggered Intentions will be tracked
-    //   and a target Intention to perform will be identified.
-
     // Gather the NPC components
     auto &npc_bdi = registry.get<component::BDI>(entity);
     auto &npc_characteristics = registry.get<component::Characteristics>(entity);
@@ -317,8 +313,8 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     int new_trigger_identifier = -1;
     int new_plan_identifier = -1;
 
-    // Determine which Intention & Plan should be actioned, going backwards through the hierarchy
-    for (auto current_desire_layer = fulfilled_desires.rbegin(); current_desire_layer != fulfilled_desires.rend(); ++current_desire_layer) {
+    // Determine which Intention & Plan should be actioned
+    for (auto current_desire_layer = fulfilled_desires.begin(); current_desire_layer != fulfilled_desires.end(); ++current_desire_layer) {
         // Catch if the current layer doesn't has any Desire identifiers remaining
         if (current_desire_layer->second.empty()) {
             // Move onto the layer above in the hierarchy, none remain after the filtering

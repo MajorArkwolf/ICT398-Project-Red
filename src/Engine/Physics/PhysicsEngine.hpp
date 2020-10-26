@@ -116,5 +116,9 @@ namespace physics {
         CollisionResolution collision_resolution_ = {};
 
         void ResetAddedForces();
+
+        void TriggerEvents();
+
+        void DistributeTriggers(entt::entity first, entt::entity second, PhysicsTriggerData::Event event);
     };
 }

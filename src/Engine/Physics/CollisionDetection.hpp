@@ -44,6 +44,12 @@ namespace physics {
         /// This que is used for handling collisions both detection and resolution.
         std::queue<PhysicsCollisionData> &GetCollisions();
 
+        /**
+         * Get all the triggered collisions
+         * @return a que of triggers.
+         */
+        std::queue<PhysicsTriggerData>& GetTriggerCollisions();
+
         /// Gets the render status of the renderer.
         bool GetRendererStatus() const;
 

@@ -64,6 +64,10 @@ std::queue<PhysicsCollisionData>& CollisionDetection::GetCollisions() {
     return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsQueue();
 }
 
+std::queue<PhysicsTriggerData>& CollisionDetection::GetTriggerCollisions() {
+    return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsTriggerQueue();
+}
+
 void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     if (physics_world.renderer_) {

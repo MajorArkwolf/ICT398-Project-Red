@@ -15,6 +15,8 @@ constexpr double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
 
 constexpr double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
 
+constexpr double EMOTIONAL_CHANGE_BASELINE_AMOUNT = 0.02;
+
 constexpr double VARIABLE_IDLE_TIME = 3.5;
 
 constexpr double MINIMUM_IDLE_TIME = 1.0;
@@ -240,11 +242,12 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
         if (desire.second.history == npc::Outcomes::kSuccess) {
             // Generate a positive emotional response
             auto &emotional_data = registry.get<component::Characteristics>(entity);
-            component::EmotiveResponse reaction(entity, 0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            component::EmotiveResponse reaction(entity, (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
+                std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood += 0.05f;
+            emotional_data.mood += EMOTIONAL_CHANGE_BASELINE_AMOUNT;
 
             // Delete the child Desires as they are no longer needed
             //DeleteDesireChildren(npc_bdi.desires, desire.first);
@@ -253,11 +256,12 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
         else if (desire.second.history == npc::Outcomes::kFailure) {
             // Generate a negative emotional response
             auto &emotional_data = registry.get<component::Characteristics>(entity);
-            component::EmotiveResponse reaction(entity, -0.5f, std::tuple<int, component::Desire>(desire.first, desire.second));
+            component::EmotiveResponse reaction(entity, (-1.0f) * (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
+                std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
             // Add a slight change to the NPC's mood
-            emotional_data.mood -= 0.05f;
+            emotional_data.mood -= EMOTIONAL_CHANGE_BASELINE_AMOUNT;
         }
     }
 

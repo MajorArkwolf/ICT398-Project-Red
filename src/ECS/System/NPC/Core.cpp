@@ -11,21 +11,21 @@
 
 namespace System {
 
-const static double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
+constexpr double EMOTION_QUEUE_TURNOVER_RATE = 1.0 / 60.0;
 
-const static double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
+constexpr double MOOD_INTENSITY_REDUCTION_RATE = 1.0 / 150.0;
 
-const static double VARIABLE_IDLE_TIME = 3.5;
+constexpr double VARIABLE_IDLE_TIME = 3.5;
 
-const static double MINIMUM_IDLE_TIME = 1.0;
+constexpr double MINIMUM_IDLE_TIME = 1.0;
 
-const static double SIT_IDLE_TIME = 6.0;
+constexpr double SIT_IDLE_TIME = 6.0;
 
-const static double USE_IDLE_TIME = 4.0;
+constexpr double USE_IDLE_TIME = 4.0;
 
-const static float INTERACTION_RANGE = 1.0f;
+constexpr float INTERACTION_RANGE = 3.0f;
 
-constexpr float NPC_SPEED = 0.4f;
+constexpr float NPC_SPEED = 3.6f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This

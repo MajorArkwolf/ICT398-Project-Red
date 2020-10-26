@@ -6,7 +6,6 @@
 #include <Engine/Renderer/OpenGL.hpp>
 
 #include "Engine/SubModules/JsonLoader.hpp"
-#include "Game/Demo/Demo.hpp"
 #include "Game/NPCDemo/NPCDemo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
 #include "Game/PrefabEditor/PrefabEditor.hpp"

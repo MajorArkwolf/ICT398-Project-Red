@@ -458,6 +458,8 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 //This may cause strange behaviour if an object is out of distance but in the same node.
                 if (!moving.move_list.empty()) {
                     moving.is_moving = true;
+                    moving.SetGoingToNode(registry, moving.move_list.front());
+                    moving.move_list.pop();
                 }
                 // Prevent this from being repeated
                 npc_behaviour_state.has_begun_response = true;

@@ -26,7 +26,7 @@ namespace component {
     void Moving::SetGoingToNode(entt::registry &reg, entt::entity id) {
         if (reg.has<component::Node>(id)) {
             if (reg.has<component::Node>(last_node)) {
-                auto &old_node = reg.get<component::Node>(this->going_to_node);
+                auto &old_node = reg.get<component::Node>(last_node);
                 old_node.AlterNodeGrid(node_occupancy::leaving);
             }
             if (reg.has<component::Node>(id)) {

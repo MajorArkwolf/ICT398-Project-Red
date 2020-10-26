@@ -23,31 +23,31 @@ struct Plan {
          * @brief The action that the NPC has planned to perform.
          * @warning Not guaranteed to be possible for the NPC to perform!
          */
-    npc::Actions action;
+    npc::Actions action = {};
 
         /**
          * @brief The identifier of the target entity for the planned action.
          * @note Can be used to set the NPC itself as its target.
          */
-    entt::entity entity;
+    entt::entity entity = {};
 
         /**
          * @brief The identifier of the Desire that the NPC has planned to resolve.
          * @Note When no target Desire exists this should be less than 0.
          */
-    int desire;
+    int desire = {};
 
         /**
          * @brief The identifier(s) of the Desire's Goal(s) that the NPC has planned to resolve.
          * @note Can include 0 due to its referential nature as an iterator.
          */
-    std::set<int> goals;
+    std::set<int> goals = {};
 
         /**
          * @brief The previous outcome of attempting this Plan.
          * @note Assumes that kUnknown indicates no prior attempts have been made.
          */
-    npc::Outcomes history;
+    npc::Outcomes history = {};
 
         /// The default constructor is not permitted for use.
     Plan() = delete;
@@ -75,37 +75,37 @@ struct Goal {
          * @brief The identifier of the target entity to check.
          * @note Can be used to set the NPC itself as its target.
          */
-    entt::entity entity;
+    entt::entity entity = {};
 
         /// The identifier of the target entity's property to check.
-    npc::Properties property;
+    npc::Properties property = {};
 
         /**
          * @brief The identifier of the target property's component to check.
          * @note Invalid values should be ignored and replaced with kDefault.
          */
-    npc::Components element;
+    npc::Components element = {};
 
         /**
          * @brief The lower bounds of the conditional range.
          * @warning Must be a smaller value than range_max_!
          */
-    float range_min;
+    float range_min = {};
 
         /**
          * @brief The upper bounds of the conditional range.
          * @warning Must be a larger value than range_min_!
          */
-    float range_max;
+    float range_max = {};
 
         /// The identifier of the Goal's conditional requirement.
-    npc::Conditions condition;
+    npc::Conditions condition = {};
 
         /**
          * @brief The previous outcome of attempting to resolve this Goal.
          * @note Assumes that kUnknown indicates no prior attempts have been made.
          */
-    npc::Outcomes history;
+    npc::Outcomes history = {};
 
         /// The default constructor is not permitted for use.
     Goal() = delete;
@@ -136,7 +136,7 @@ struct Desire {
          * @note A value of 0 is used to indicate this is a root desire and has no parent.
          * @warning No checks will be made to avoid circular relationships between Desires!
          */
-    int parent;
+    int parent = {};
 
         /**
          * @brief The identifiers of the child Desires.
@@ -144,14 +144,14 @@ struct Desire {
          * @note The identifier 0 is invalid for use here, and will likely be ignored.
          * @warning No checks will be made to avoid circular relationships between Desires!
          */
-    std::set<int> children;
+    std::set<int> children = {};
 
         /**
          * @brief The Desire's collection of conditional requirements.
          * The Desire is only resolved when all of its Goals have been met.
          * @warning This should never be empty!
          */
-    std::vector<Goal> goals;
+    std::vector<Goal> goals = {};
 
         /**
          * @brief The previous outcome of attempting to resolve this Desire.
@@ -159,7 +159,7 @@ struct Desire {
          * Failure only occurs when a Desire's Goal could not be met.
          * @note Assumes that kUnknown indicates no prior attempts have been made.
          */
-    npc::Outcomes history;
+    npc::Outcomes history = {};
 
         /**
          * @brief The default constructor, assigns a root parent and unknown history.
@@ -295,21 +295,21 @@ struct EmotiveResponse {
          * @brief The identifier of the entity causing the emotive response.
          * @note Can be used to set the NPC itself as its target.
          */
-    entt::entity entity;
+    entt::entity entity = {};
 
         /**
          * @brief The emotional response to the NPC perception, construct, or circumstance.
          * Higher values are positive, lower values are negative, zero is apathetic.
          * @note Values are expected to be within a range of 1.0f and -1.0f.
          */
-    float emotion;
+    float emotion = {};
 
         /**
          * @brief The source of the emotive response, relative to the tracked entity.
          * @warning This is a type-safe union (std::variant), and must be treated with care!
          * @see EmotiveResponse::SourceWhat
          */
-    SourceWhat what;
+    SourceWhat what = {};
 
         /// The default constructor is not permitted for use.
     EmotiveResponse() = delete;

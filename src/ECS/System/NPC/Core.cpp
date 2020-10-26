@@ -47,7 +47,7 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
         // Iterate through the current Desire's Goals
         for (auto &goal: desire.second.goals) {
             // Observe only if the Entity has a Belief about the Goal's target Entity
-            auto &target_entity_beliefs = npc_bdi.beliefs_properties.find(goal.entity);
+            auto target_entity_beliefs = npc_bdi.beliefs_properties.find(goal.entity);
             if (target_entity_beliefs != npc_bdi.beliefs_properties.end()) {
                 // Observe only if the Beliefs of the target Entity includes the Goal's property
                 if (target_entity_beliefs->second.find(goal.property) != target_entity_beliefs->second.end()) {

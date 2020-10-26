@@ -367,12 +367,14 @@ void NPCDemo::Init() {
                 // "Tom"-specific BDI Intentions
                 npc_bdi.intentions[1].emplace_back(
                     component::Plan(
-                        npc::Actions::kUse, *id_npcs_alistair.begin(),
+                        npc::Actions::kUse,
+                        *id_npcs_alistair.begin(),
                         -1, {0}));
                 npc_bdi.intentions[2].emplace_back(
                     component::Plan(
-                        npc::Actions::kTraverse, *id_npcs_alistair.begin(),
-                        1, {0}));
+                        npc::Actions::kTraverse,
+                        *id_npcs_alistair.begin(),
+                        1, {1}));
 
                 // "Tom"-specific Characteristics
                 npc_characteristics.mood = 0.85f;
@@ -386,19 +388,131 @@ void NPCDemo::Init() {
                 // "Alistair"-specific configuration
             case 1: {
                 // "Alistair"-specific BDI Desires
-                npc_bdi.desires;
+                npc_bdi.desires[1].parent = 0;
+                npc_bdi.desires[1].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[1].children.insert(4);
+                npc_bdi.desires[1].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_tom.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
+                npc_bdi.desires[1].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_rock.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kInRange));
+                npc_bdi.desires[2].parent = 0;
+                npc_bdi.desires[2].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[2].children.insert(5);
+                npc_bdi.desires[2].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_tom.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
+                npc_bdi.desires[2].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_tree.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kInRange));
+                npc_bdi.desires[3].parent = 0;
+                npc_bdi.desires[3].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[3].children.insert(6);
+                npc_bdi.desires[3].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_tom.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
+                npc_bdi.desires[3].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_bench.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kInRange));
+                npc_bdi.desires[4].parent = 1;
+                npc_bdi.desires[4].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[4].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_rock.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
+                npc_bdi.desires[5].parent = 2;
+                npc_bdi.desires[5].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[5].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_tree.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
+                npc_bdi.desires[6].parent = 3;
+                npc_bdi.desires[6].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[6].goals.emplace_back(
+                    component::Goal(
+                        *id_interactables_bench.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
 
                 // "Alistair"-specific BDI Root Desires
-                npc_bdi.root_desires;
+                npc_bdi.root_desires.insert(1);
+                npc_bdi.root_desires.insert(2);
+                npc_bdi.root_desires.insert(3);
 
                 // "Alistair"-specific BDI Intentions
-                npc_bdi.intentions;
+                npc_bdi.intentions[1].emplace_back(
+                    component::Plan(
+                        npc::Actions::kSit,
+                        *id_interactables_rock.begin(),
+                        -1, {0}));
+                npc_bdi.intentions[2].emplace_back(
+                    component::Plan(
+                        npc::Actions::kSit,
+                        *id_interactables_tree.begin(),
+                        -1, {0}));
+                npc_bdi.intentions[3].emplace_back(
+                    component::Plan(
+                        npc::Actions::kSit,
+                        *id_interactables_bench.begin(),
+                        -1, {0}));
+                npc_bdi.intentions[4].emplace_back(
+                    component::Plan(
+                        npc::Actions::kTraverse,
+                        *id_interactables_rock.begin(),
+                        -1, {1}));
+                npc_bdi.intentions[5].emplace_back(
+                    component::Plan(
+                        npc::Actions::kTraverse,
+                        *id_interactables_tree.begin(),
+                        -1, {2}));
+                npc_bdi.intentions[6].emplace_back(
+                    component::Plan(
+                        npc::Actions::kTraverse,
+                        *id_interactables_bench.begin(),
+                        -1, {3}));
 
                 // "Alistair"-specific Characteristics
-                // TODO: this
+                npc_characteristics.mood = 0.65f;
+                npc_characteristics.personality[npc::Actions::kSit] = 0.3;
+                npc_characteristics.personality[npc::Actions::kTraverse] = 0.1;
 
                 // "Alistair"-specific BehaviourState
-                // TODO: this
+                npc_behavior_state.current = npc::Stages::kObserve;
+                npc_behavior_state.current_intention.first = -1;
+                npc_behavior_state.current_intention.second = -1;
                 break;
             }
                 // "Jessica"-specific configuration

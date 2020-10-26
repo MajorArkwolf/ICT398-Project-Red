@@ -48,7 +48,8 @@ void Demo::Init() {
     auto playerShape = physics_engine.CreateCapsuleShape(50, 100);
     physics_world_.AddCollider(big_player.GetID(), playerShape, {0.f, 70.f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     big_player.GetComponent<component::Player>().camera_.movement_speed_ = 0.15f;
-    big_player.GetComponent<component::Player>().camera_.position_ = glm::vec3{0.f, 0.f, 0.f};
+    big_player.GetComponent<component::Player>().camera_.position_ = trans.pos;
+    big_player.GetComponent<component::Player>().camera_height_offset_ = 170.0f;
     auto &anim =
         big_player.AddComponent<component::Animation>(
             big_player.GetComponent<component::Model>().id_);
@@ -62,13 +63,20 @@ void Demo::Init() {
     auto &little_tran = little_player.AddComponent<component::Transform>();
     little_tran.pos = glm::vec3{-465.0f, 80.0f, 330.0f};
     little_tran.scale = glm::vec3{0.5f, 0.5f, 0.5f};
+    little_p.height_ = 80.f;
+    little_p.camera_height_offset_ = 2.8f;
     little_p.camera_.position_ = glm::vec3{-465.0f, 82.8f, 330.0f};
-    little_p.height_ = 83.0f;
+    little_p.camera_.movement_speed_ = 0.01f;
     auto &little_anim =
         little_player.AddComponent<component::Animation>(
             little_player.GetComponent<component::Model>().id_);
     little_anim.animator_.LoadAnimation(idle);
     player_.SetLittlePlayer(little_player);
+    auto &phys_little = little_player.AddComponent<component::PhysicBody>();
+    phys_little.is_player = true;
+    physics_world_.AddCollisionBody(little_player.GetID(), playerComp.camera_.position_, glm::quat(glm::vec3(0, 0, 0)));
+    auto playerShapeLittle = physics_engine.CreateCapsuleShape(1, 3);
+    physics_world_.AddCollider(little_player.GetID(), playerShapeLittle, {0.f, 1.7f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     //physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
     //physics_world_.SetGravityEnabled(true);
 }

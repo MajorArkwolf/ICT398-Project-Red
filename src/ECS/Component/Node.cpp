@@ -18,7 +18,7 @@ void component::Node::AlterNodeGrid(node_occupancy current) {
 void component::Node::onTrigger(entt::registry &reg, entt::entity ent, PhysicsTriggerData::Event event) {
     if (reg.has<component::InteractableObject>(ent)) {
         if (reg.get<component::InteractableObject>(ent).type != InteractableObject::Type::npc) {
-            if (event == PhysicsTriggerData::Event::start) {
+            if (event == PhysicsTriggerData::Event::start || event == PhysicsTriggerData::Event::stay) {
                 this->AlterNodeGrid(node_occupancy::occupied);
                 current_obj = ent;
             } else if (event == PhysicsTriggerData::Event::exit) {

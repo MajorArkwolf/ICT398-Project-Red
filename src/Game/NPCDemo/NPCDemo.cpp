@@ -600,6 +600,7 @@ void NPCDemo::Init() {
 
                 // "Jessica"-specific BDI Root Desires
                 npc_bdi.root_desires.insert(1);
+                npc_bdi.root_desires.insert(7);
 
                 // "Jessica"-specific BDI Intentions
                 npc_bdi.intentions[1].emplace_back(

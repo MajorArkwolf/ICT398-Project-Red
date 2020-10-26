@@ -107,6 +107,11 @@ void MainMenu::MainMenuGUI() {
     ImGui::Separator();
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
+    if (ImGui::Button("Basic Demo", ImVec2(285, 40))) {
+        auto p = std::make_shared<Demo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
+    }
     if (ImGui::Button("NPC AI Demo", ImVec2(285, 40))) {
         auto p = std::make_shared<NPCDemo>();
         p->Init();

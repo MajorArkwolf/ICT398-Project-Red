@@ -257,6 +257,7 @@ void input::InputManager::PopulateInputMap() {
     input_map.emplace(PhysicalKey::kSemiColon, VirtualKey::kSemiColon);
     input_map.emplace(PhysicalKey::kApostrophe, VirtualKey::kApostrophe);
     input_map.emplace(PhysicalKey::kBackspace, VirtualKey::kBackspace);
+    input_map.emplace(PhysicalKey::kSpacebar, VirtualKey::kSpacebar);
     input_map.emplace(PhysicalKey::kEqual, VirtualKey::kEqual);
     input_map.emplace(PhysicalKey::kHyphen, VirtualKey::kHyphen);
     input_map.emplace(PhysicalKey::kTilde, VirtualKey::kTilde);
@@ -347,6 +348,7 @@ void input::InputManager::PopulateGLFWKeyMap() {
     glfw_key_map.emplace(GLFW_KEY_SEMICOLON, VirtualKey::kSemiColon);
     glfw_key_map.emplace(GLFW_KEY_APOSTROPHE, VirtualKey::kApostrophe);
     glfw_key_map.emplace(GLFW_KEY_BACKSPACE, VirtualKey::kBackspace);
+    glfw_key_map.emplace(GLFW_KEY_SPACE, VirtualKey::kSpacebar);
     glfw_key_map.emplace(GLFW_KEY_EQUAL, VirtualKey::kEqual);
     glfw_key_map.emplace(GLFW_KEY_MINUS, VirtualKey::kHyphen);
     glfw_key_map.emplace(GLFW_KEY_GRAVE_ACCENT, VirtualKey::kTilde);
@@ -427,6 +429,7 @@ void input::InputManager::PopulateStringMap() {
     key_string_map.emplace(PhysicalKey::kSemiColon, "SemiColon");
     key_string_map.emplace(PhysicalKey::kApostrophe, "Apostrophe");
     key_string_map.emplace(PhysicalKey::kBackspace, "Backspace");
+    key_string_map.emplace(PhysicalKey::kSpacebar, "Spacebar");
     key_string_map.emplace(PhysicalKey::kEqual, "Equal");
     key_string_map.emplace(PhysicalKey::kHyphen, "Hyphen");
     key_string_map.emplace(PhysicalKey::kTilde, "Tilde");

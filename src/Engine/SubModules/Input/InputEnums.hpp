@@ -111,6 +111,7 @@ namespace input
 		kSemiColon,
 		kApostrophe,
 		kBackspace,
+		kSpacebar,
 		kEqual,
 		kHyphen,
 		kTilde,

@@ -338,7 +338,7 @@ void NPCDemo::Init() {
                 npc_bdi.desires[1].children.insert(2);
                 npc_bdi.desires[1].goals.emplace_back(
                     component::Goal(
-                        *id_npcs_tom.begin(),
+                        *id_npcs_alistair.begin(),
                         npc::Properties::kRange,
                         npc::Components::kDefault,
                         0.99f, 1.01f,
@@ -347,7 +347,7 @@ void NPCDemo::Init() {
                 npc_bdi.desires[2].history = npc::Outcomes::kUnknown;
                 npc_bdi.desires[2].goals.emplace_back(
                     component::Goal(
-                        *id_npcs_tom.begin(),
+                        *id_npcs_alistair.begin(),
                         npc::Properties::kRange,
                         npc::Components::kDefault,
                         0.99f, 1.01f,
@@ -359,11 +359,11 @@ void NPCDemo::Init() {
                 // "Tom"-specific BDI Intentions
                 npc_bdi.intentions[1].emplace_back(
                     component::Plan(
-                        npc::Actions::kUse, *id_npcs_tom.begin(),
+                        npc::Actions::kUse, *id_npcs_alistair.begin(),
                         -1, {0}));
                 npc_bdi.intentions[2].emplace_back(
                     component::Plan(
-                        npc::Actions::kTraverse, *id_npcs_tom.begin(),
+                        npc::Actions::kTraverse, *id_npcs_alistair.begin(),
                         1, {0}));
 
                 // "Tom"-specific Characteristics
@@ -371,7 +371,8 @@ void NPCDemo::Init() {
 
                 // "Tom"-specific BehaviourState
                 npc_behavior_state.current = npc::Stages::kObserve;
-                npc_behavior_state.current_intention = {-1, -1};
+                npc_behavior_state.current_intention.first = -1;
+                npc_behavior_state.current_intention.second = -1;
                 break;
             }
                 // "Alistair"-specific configuration

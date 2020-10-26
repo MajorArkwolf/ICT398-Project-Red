@@ -25,7 +25,7 @@ const static double USE_IDLE_TIME = 4.0;
 
 const static float INTERACTION_RANGE = 1.0f;
 
-constexpr float NPC_SPEED = 3.0f;
+constexpr float NPC_SPEED = 0.4f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
@@ -401,6 +401,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     if ((npc_behaviour_state.current_intention.first < 0) || npc_behaviour_state.current_intention.second < 0) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
 
     // Catch invalid Intentions
@@ -408,11 +409,13 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
     if (npc_bdi.intentions.find(npc_behaviour_state.current_intention.first) == npc_bdi.intentions.end()) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
     else if ((npc_behaviour_state.current_intention.second < 0) ||
              (npc_bdi.intentions[npc_behaviour_state.current_intention.first].size() < npc_behaviour_state.current_intention.second)) {
         // Move the NPC to the idle phase, hopefully the next loop will trigger an Intention
         ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kIdle);
+        return;
     }
 
     // Keep a simple and quick reference to the current Intention/Plan

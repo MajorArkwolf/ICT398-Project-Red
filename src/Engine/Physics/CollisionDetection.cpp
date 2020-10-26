@@ -64,6 +64,10 @@ std::queue<PhysicsCollisionData>& CollisionDetection::GetCollisions() {
     return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsQueue();
 }
 
+std::queue<PhysicsTriggerData>& CollisionDetection::GetTriggerCollisions() {
+    return redengine::Engine::get().game_stack_.getTop()->physics_world_.event_listener_.GetPhysicsTriggerQueue();
+}
+
 void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const glm::mat4& view) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
     if (physics_world.renderer_) {
@@ -132,7 +136,7 @@ void CollisionDetection::Draw(Shader *shader, const glm::mat4& projection, const
 
 void CollisionDetection::FixedUpdate(double t, double dt) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    physics_world.world_->update(dt);
+    physics_world.world_->update(static_cast<float>(dt));
 }
 
 void CollisionDetection::Update(double t, double dt) {
@@ -196,7 +200,11 @@ entt::entity CollisionDetection::RayCastSingle(const glm::vec3 &start, const glm
 
 void CollisionDetection::SetTrigger(entt::entity entity, bool is_trigger) {
     auto &physics_world = redengine::Engine::get().game_stack_.getTop()->physics_world_;
-    auto coll_body = physics_world.entity_collision_coupling_.at(entity);
+    SetTrigger(&physics_world, entity, is_trigger);
+}
+
+void CollisionDetection::SetTrigger(physics::PhysicsWorld *pw, entt::entity entity, bool is_trigger) {
+    auto coll_body = pw->entity_collision_coupling_.at(entity);
     for (unsigned i = 0; i < coll_body->getNbColliders(); ++i) {
         auto *col = coll_body->getCollider(i);
         col->setIsTrigger(is_trigger);

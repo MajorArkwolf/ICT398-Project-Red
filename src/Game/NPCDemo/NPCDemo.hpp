@@ -2,12 +2,12 @@
 
 #include "ECS/ECS.hpp"
 #include "Game/BaseState.hpp"
-#include "Game/Demo/Components/Player.hpp"
+#include "Game/NPCDemo/Components/Player.hpp"
 
-class Demo : public BaseState {
+class NPCDemo : public BaseState {
 public:
-    Demo();
-    ~Demo() override = default;
+    NPCDemo();
+    ~NPCDemo() override = default;
     void Init() override;
     void UnInit() override;
     void Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) override;

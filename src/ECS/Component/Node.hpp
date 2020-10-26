@@ -1,4 +1,6 @@
 #pragma once
+#include <entt/entt.hpp>
+#include "Engine/Physics/PhysicsData.hpp"
 
 namespace Pathing{
     class Node;
@@ -16,6 +18,7 @@ namespace component {
     public:
         void AlterNodeGrid(node_occupancy current);
         node_occupancy GetNodeStatus() {return n_o;}
+        void onTrigger(entt::registry& reg, entt::entity ent, PhysicsTriggerData::Event event);
     private:
         node_occupancy n_o = node_occupancy::vacant;
         Pathing::Node *grid_node = nullptr;

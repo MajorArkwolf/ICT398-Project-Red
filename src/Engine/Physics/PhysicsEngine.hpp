@@ -107,6 +107,7 @@ namespace physics {
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance);
 
         void SetTrigger(entt::entity entity, bool is_trigger);
+        void SetTrigger(physics::PhysicsWorld *pw, entt::entity entity, bool is_trigger);
         void IntegrateVelocities(double dt);
         void IntegratePositions(double dt);
 
@@ -115,5 +116,9 @@ namespace physics {
         CollisionResolution collision_resolution_ = {};
 
         void ResetAddedForces();
+
+        void TriggerEvents();
+
+        void DistributeTriggers(entt::entity first, entt::entity second, PhysicsTriggerData::Event event);
     };
 }

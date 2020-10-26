@@ -4,7 +4,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <queue>
-
+#include "Engine/Physics/PhysicsWorld.hpp"
 #include "Engine/Renderer/Shader.hpp"
 #include "PhysicsShape.hpp"
 #include "Logger.hpp"
@@ -44,6 +44,12 @@ namespace physics {
         /// This que is used for handling collisions both detection and resolution.
         std::queue<PhysicsCollisionData> &GetCollisions();
 
+        /**
+         * Get all the triggered collisions
+         * @return a que of triggers.
+         */
+        std::queue<PhysicsTriggerData>& GetTriggerCollisions();
+
         /// Gets the render status of the renderer.
         bool GetRendererStatus() const;
 
@@ -68,6 +74,7 @@ namespace physics {
         entt::entity RayCastSingle(const glm::vec3 &start, const glm::vec3 &end);
 
         void SetTrigger(entt::entity entity, bool is_trigger);
+        void SetTrigger(physics::PhysicsWorld *pw, entt::entity entity, bool is_trigger);
 
     private:
 

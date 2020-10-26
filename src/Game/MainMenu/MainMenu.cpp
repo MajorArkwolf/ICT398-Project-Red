@@ -6,7 +6,7 @@
 #include <Engine/Renderer/OpenGL.hpp>
 
 #include "Engine/SubModules/JsonLoader.hpp"
-#include "Game/Demo/Demo.hpp"
+#include "Game/NPCDemo/NPCDemo.hpp"
 #include "Game/PhysicsDemo/PhysicsDemo.hpp"
 #include "Game/PrefabEditor/PrefabEditor.hpp"
 #include "DataStructures/Model/Overload.hpp"
@@ -106,8 +106,8 @@ void MainMenu::MainMenuGUI() {
     ImGui::Separator();
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
-    if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        auto p = std::make_shared<Demo>();
+    if (ImGui::Button("NPC Demo", ImVec2(285, 40))) {
+        auto p = std::make_shared<NPCDemo>();
         p->Init();
         engine.game_stack_.AddToStack(p);
     }

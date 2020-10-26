@@ -22,3 +22,14 @@ struct PhysicsCollisionData {
     entt::entity second_body = entt::entity{0};
     std::vector<ContactPoints> contact_points = {};
 };
+
+struct PhysicsTriggerData {
+    enum class Event {
+        start,
+        exit,
+        stay
+    };
+    entt::entity first_body = entt::entity{0};
+    entt::entity second_body = entt::entity{0};
+    Event trigger_event = {};
+};

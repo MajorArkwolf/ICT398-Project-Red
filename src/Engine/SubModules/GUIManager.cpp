@@ -8,6 +8,8 @@
 #include "Engine/Engine.hpp"
 #include <Engine/Renderer/OpenGL.hpp>
 #include "ECS/Component/Model.hpp"
+#include "ECS/Component/NPC.hpp"
+#include "ECS/System/NPC/Tools.hpp"
 
 GUIManager::GUIManager() {
     InitialiseWindowOpenMap();
@@ -120,12 +122,17 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
 void GUIManager::DisplayAI(entt::entity &entity, entt::registry& registry) {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     bool &window_open = window_open_map.at("aiviewer");
-    if (window_open && entity != entt::entity(-1)) {
+    ImGui::Begin("AI Menu", &window_open, ImGuiWindowFlags_NoCollapse);
+    if (registry.has<component::Model>(entity)) {
         auto &model = registry.get<component::Model>(entity);
-        ImGui::Begin("AI Menu", &window_open, ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Model ID: %d", model.id_);
-        ImGui::End();
     }
+    if (registry.has<component::Characteristics>(entity)) {
+        auto &character = registry.get<component::Characteristics>(entity);
+        auto overall = System::EmotionalStateOverall(character);
+        ImGui::Text("Emotional State: %f", overall);
+    }
+    ImGui::End();
 }
 
 void GUIManager::DisplayConsoleLog() {

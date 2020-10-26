@@ -34,6 +34,9 @@ void view::OpenGL::Draw() {
         model_shader_->Use();
         model_shader_->SetMat4("projection", projection);
         model_shader_->SetMat4("view", view);
+        model_shader_->SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        model_shader_->SetVec3("lightPos", -250.0f, 180.0f, 170.0f);
+        model_shader_->SetVec3("viewPos", camera_->position_);
         engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
         engine.GetPhysicsEngine().Draw(model_shader_.get(), projection, view);
         // be sure to activate shader when setting uniforms/drawing objects

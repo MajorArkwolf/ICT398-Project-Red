@@ -3,12 +3,14 @@
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
 
+#include "ECS/Component/Basic.hpp"
 #include <sstream>
 
-#include "Engine/Engine.hpp"
-#include <Engine/Renderer/OpenGL.hpp>
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/NPC.hpp"
+#include "ECS/System/NPC/Tools.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/Renderer/OpenGL.hpp"
 
 GUIManager::GUIManager() {
     InitialiseWindowOpenMap();
@@ -121,15 +123,23 @@ void GUIManager::DisplayDevScreen(engine::Camera &camera) {
 void GUIManager::DisplayAI(entt::entity &entity, entt::registry& registry) {
     // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     bool &window_open = window_open_map.at("aiviewer");
-    ImGui::Begin("AI Menu", &window_open, ImGuiWindowFlags_NoCollapse);
-    if (registry.has<component::Model>(entity)) {
-        auto &model = registry.get<component::Model>(entity);
-        ImGui::Text("Model ID: %d", model.id_);
+    if (window_open) {
+        ImGui::Begin("AI Menu", &window_open, ImGuiWindowFlags_NoCollapse);
+        if (registry.has<component::Name>(entity)) {
+            auto &name_comp = registry.get<component::Name>(entity);
+            ImGui::Text("Name: %s", name_comp.name.c_str());
+        }
+        if (registry.has<component::Model>(entity)) {
+            auto &model = registry.get<component::Model>(entity);
+            ImGui::Text("Model ID: %d", model.id_);
+        }
+        if (registry.has<component::Characteristics>(entity)) {
+            auto &character = registry.get<component::Characteristics>(entity);
+            auto overall = System::EmotionalStateOverall(character);
+            ImGui::Text("Emotional State: %f", overall);
+        }
+        ImGui::End();
     }
-    if (registry.has<component::Characteristics>(entity)) {
-        auto &character = registry.get<component::Characteristics>(entity);
-    }
-    ImGui::End();
 }
 
 void GUIManager::DisplayConsoleLog() {

@@ -8,6 +8,9 @@
 #include "Node.hpp"
 
 namespace component {
+    struct Name {
+        std::string name;
+    };
     struct Transform {
         glm::vec3 pos = {0.0f, 0.0f, 0.0f};
         glm::quat rot = {1.0f, 0.0f, 0.0f, 0.0f};

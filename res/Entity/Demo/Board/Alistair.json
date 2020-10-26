@@ -17,7 +17,5 @@
     "IDLE": "IDLE"
   },
   "Physics" : true,
-  "Moving": true,
-  "NPC": 1,
-  "OBJType": "npc"
+  "Moving": true
 }

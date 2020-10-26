@@ -37,7 +37,7 @@ NPCDemo::NPCDemo() {
 
     // Load the scene and objects from file
     std::filesystem::path path = "";
-    path.append("Demo");
+    path.append("NPCDemo");
     path.append("Scene.json");
     JSONLoader::LoadScene(path, &ecs_, &physics_world_);
 

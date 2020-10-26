@@ -27,7 +27,7 @@ constexpr double USE_IDLE_TIME = 4.0;
 
 constexpr float INTERACTION_RANGE = 3.0f;
 
-constexpr float NPC_SPEED = 3.6f;
+constexpr float NPC_SPEED = 4.6f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This

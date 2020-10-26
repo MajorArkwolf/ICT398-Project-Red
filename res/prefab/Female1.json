@@ -23,11 +23,11 @@
       {
         "Name": "Person",
         "Type": "Capsule",
-        "Radius": 2.0,
-        "Height":  5,
+        "Radius": 150,
+        "Height":  350,
         "Position": {
           "X": 0.0,
-          "Y": 4.0,
+          "Y": 350,
           "Z": 0.0
         },
         "Rotation": {

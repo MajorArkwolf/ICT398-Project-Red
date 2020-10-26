@@ -94,6 +94,9 @@ void NPCDemo::Init() {
     physics_world_.AddCollisionBody(little_player.GetID(), playerComp.camera_.position_, glm::quat(glm::vec3(0, 0, 0)));
     auto playerShapeLittle = physics_engine.CreateCapsuleShape(1, 3);
     physics_world_.AddCollider(little_player.GetID(), playerShapeLittle, {0.f, 1.7f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
+    physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
+    physics_world_.SetGravityEnabled(true);
+    player_.SetRegistry(ecs_.GetRegistry());
 
     // Find the Identifiers of the Entities with the NPC personality hook component and store them
     auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
@@ -504,7 +507,21 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
 
                    },
                    [&](InputEvent::MouseEvent mouse) {
+                       switch (mouse.button) {
+                           case input::MouseButton::kRight: {
+                               auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
 
+                               auto entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 50.f);
+                               player_.GrabObject(entity);
+
+                           } break;
+                           case input::MouseButton::kLeft: {
+                               auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
+
+                               player_.ThrowObject(currentCam.GetFrontVector() * 1000.f);
+
+                           } break;
+                       }
                    },
                    [&](InputEvent::KeyboardEvent keyboard) {
                        switch (inputData.type) {
@@ -546,7 +563,7 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                    } break;
                                    case input::VirtualKey::R: {
                                        auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
-                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 1000.0f);
+                                       player_.GetActivePlayer().GetComponent<component::Player>().selected_entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_ + currentCam.front_, currentCam.front_, 100.0f);
                                    } break;
                                    case input::VirtualKey::Q: {
                                        auto ent = ecs_.GetRegistry().view<component::Board>();

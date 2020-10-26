@@ -23,15 +23,29 @@ namespace physics {
         void onContact(const reactphysics3d::CollisionCallback::CallbackData &callbackData) override;
 
         /**
+         * Detects when a trigger with a trigger body and collision body occures.
+         * @param callbackData call back function pointer.
+         */
+        void onTrigger(const reactphysics3d::OverlapCallback::CallbackData &callbackData) override;
+
+        /**
          * Gets the collision detection que.
-         * @return
+         * @return all the collision points of data.
          */
         std::queue<PhysicsCollisionData> &GetPhysicsQueue();
+
+        /**
+         * Return all the triggers from the event listener.
+         * @return a que of event triggers.
+         */
+        std::queue<PhysicsTriggerData>& GetPhysicsTriggerQueue();
 
         /// Used to look up entities from collision bodies.
         std::unordered_map<reactphysics3d::CollisionBody *, entt::entity> *collision_entity_coupling_ = nullptr;
         /// The que that will be used for handling entities.
         std::queue<PhysicsCollisionData> physics_que_ = {};
+        /// The que that will handle all trigger collisions.
+        std::queue<PhysicsTriggerData> physics_trigger_que_ = {};
     };
 
     class RedEngineRayCast : public reactphysics3d::RaycastCallback {

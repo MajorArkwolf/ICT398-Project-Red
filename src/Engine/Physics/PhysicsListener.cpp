@@ -29,7 +29,7 @@ static inline reactphysics3d::Quaternion ConvertQuaternion(const glm::quat& glm_
 void physics::RedEngineEventListener::onContact(const reactphysics3d::CollisionCallback::CallbackData& callbackData) {
     using namespace reactphysics3d;
     // For each contact pair
-    for (uint p = 0; p < callbackData.getNbContactPairs(); p++) {
+    for (uint p = 0; p < callbackData.getNbContactPairs(); ++p) {
         PhysicsCollisionData p_c_d = {};
         // Get the contact pair
         CollisionCallback::ContactPair contact_pair = callbackData.getContactPair(p);
@@ -57,6 +57,31 @@ void physics::RedEngineEventListener::onContact(const reactphysics3d::CollisionC
     }
 }
 
+void physics::RedEngineEventListener::onTrigger(const reactphysics3d::OverlapCallback::CallbackData &callbackData) {
+    using namespace reactphysics3d;
+    // For each contact pair
+    for (uint p = 0; p < callbackData.getNbOverlappingPairs(); ++p) {
+        PhysicsTriggerData p_c_d = {};
+        // Get the contact pair
+        auto contact_pair = callbackData.getOverlappingPair(p);
+        p_c_d.first_body = collision_entity_coupling_->at(contact_pair.getBody1());
+        p_c_d.second_body = collision_entity_coupling_->at(contact_pair.getBody2());
+        auto ev = contact_pair.getEventType();
+        switch (ev) {
+            case OverlapCallback::OverlapPair::EventType::OverlapStart:
+                p_c_d.trigger_event = PhysicsTriggerData::Event::start;
+                break;
+            case OverlapCallback::OverlapPair::EventType::OverlapStay:
+                p_c_d.trigger_event = PhysicsTriggerData::Event::stay;
+                break;
+            case OverlapCallback::OverlapPair::EventType::OverlapExit:
+                p_c_d.trigger_event = PhysicsTriggerData::Event::exit;
+                break;
+        }
+        physics_trigger_que_.push(p_c_d);
+    }
+}
+
 physics::RedEngineEventListener::RedEngineEventListener(
         std::unordered_map<reactphysics3d::CollisionBody*, entt::entity>* c_e_c) {
     collision_entity_coupling_ = c_e_c;
@@ -64,6 +89,10 @@ physics::RedEngineEventListener::RedEngineEventListener(
 
 std::queue<PhysicsCollisionData>& physics::RedEngineEventListener::GetPhysicsQueue() {
     return physics_que_;
+}
+
+std::queue<PhysicsTriggerData>& physics::RedEngineEventListener::GetPhysicsTriggerQueue() {
+    return physics_trigger_que_;
 }
 
 float physics::RedEngineRayCast::notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {

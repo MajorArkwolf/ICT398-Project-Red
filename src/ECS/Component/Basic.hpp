@@ -60,4 +60,22 @@ class PhysicBody {
     void AddForce(glm::vec3 additional_force);
     void AddTorque(glm::vec3 additional_force);
 };
+
+struct NPCPersonalityID {
+    int ID = 0;
+};
+
+struct InteractableObject {
+    enum class Type {
+        unknown,
+        npc,
+        book,
+        tree,
+        bench,
+        rock,
+    };
+    Type type = Type::unknown;
+};
+
 }// namespace component
+

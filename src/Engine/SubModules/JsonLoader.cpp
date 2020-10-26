@@ -8,6 +8,7 @@
 #include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
 #include "ECS/Component/Model.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
@@ -108,7 +109,40 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         }
                     }
                     if (j.contains("Moving")) {
-                        ent->AddComponent<component::Moving>();
+                        auto& moving = ent->AddComponent<component::Moving>();
+
+                        auto& reg = ecs->GetRegistry();
+                        auto view = reg.view<component::Board>();
+                        for (auto e : view) {
+                            auto &board_comp = reg.get<component::Board>(e);
+                            auto &tran = ent->GetComponent<component::Transform>();
+                            moving.SetLastNode(reg, board_comp.GetClosestNode(tran.pos));
+                            auto &node_tran = reg.get<component::Transform>(moving.last_node);
+                            tran.pos.x = node_tran.pos.x;
+                            tran.pos.z = node_tran.pos.z;
+                        }
+                    }
+                    if (j.contains("NPC")) {
+                        auto& npc = ent->AddComponent<component::NPCPersonalityID>();
+                        npc.ID = j.at("NPC").get<int>();
+                    }
+                    //"OBJType": "npc"
+                    if (j.contains("OBJType")) {
+                        auto& npc = ent->AddComponent<component::InteractableObject>();
+                        auto value = j.at("OBJType").get<std::string>();
+                        if (value == "npc") {
+                            npc.type = component::InteractableObject::Type::npc;
+                        } else if (value == "book") {
+                            npc.type = component::InteractableObject::Type::book;
+                        } else if (value == "tree") {
+                            npc.type = component::InteractableObject::Type::tree;
+                        } else if (value == "bench") {
+                            npc.type = component::InteractableObject::Type::bench;
+                        } else if (value == "rock") {
+                            npc.type = component::InteractableObject::Type::rock;
+                        } else {
+                            npc.type = component::InteractableObject::Type::unknown;
+                        }
                     }
                 } catch (const std::exception &e) {
                     std::cerr << "JSON Transform failed: " << e.what() << '\n';

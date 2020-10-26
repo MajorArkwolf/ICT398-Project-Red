@@ -1,9 +1,11 @@
 #include "AISystem.hpp"
+
+#include <random>
+
 #include "ECS/Component/Basic.hpp"
+#include "ECS/Component/Board.hpp"
 #include "ECS/Component/Node.hpp"
 #include "ECS/Component/Pathing/Node.hpp"
-#include "ECS/Component/Board.hpp"
-#include <random>
 #define EPSILON 0.1f
 
 #include <chrono>
@@ -11,15 +13,7 @@
 static inline size_t GenerateRandom(size_t min, size_t max) {
     size_t returnValue = 0;
     std::random_device rd;
-    std::mt19937::result_type seed = rd() ^ (
-            (std::mt19937::result_type)
-                    std::chrono::duration_cast<std::chrono::seconds>(
-                            std::chrono::system_clock::now().time_since_epoch()
-                    ).count() +
-            (std::mt19937::result_type)
-                    std::chrono::duration_cast<std::chrono::microseconds>(
-                            std::chrono::high_resolution_clock::now().time_since_epoch()
-                    ).count() );
+    std::mt19937::result_type seed = rd() ^ ((std::mt19937::result_type) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() + (std::mt19937::result_type) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
 
     std::mt19937 gen(seed);
     std::uniform_int_distribution<size_t> distrib(min, max);
@@ -33,7 +27,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
     for (auto &e : entities) {
         // We store the moving component then check if the there is a que.
         auto &move = entities.get<component::Moving>(e);
-        if (!move.move_list.empty()) {
+        if (!move.move_list.empty() && move.is_moving) {
             auto &next_node = ecs.get<component::Node>(move.move_list.front());
             if (next_node.GetNodeStatus() != node_occupancy::vacant) {
                 auto board_id = ecs.view<component::Board>()[0];
@@ -50,6 +44,9 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
             if (ecs.has<component::Transform>(e)) {
                 auto &tran = entities.get<component::Transform>(e);
                 auto entity_id = move.going_to_node;
+                if (!ecs.has<component::Transform>(entity_id)) {
+                    continue;
+                }
                 auto moving_to = ecs.get<component::Transform>(entity_id).pos;
                 auto dist = moving_to - tran.pos;
                 // We check to see if the object is within a certain epsilion before determining it is at a given node.
@@ -82,7 +79,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                 }
             }
         } else {
-            if (ecs.has<component::Animation>(e)) {
+            if (ecs.has<component::Animation>(e) && move.is_moving) {
                 auto &anim = ecs.get<component::Animation>(e);
                 if (anim.animator_.loaded_animation_ != nullptr) {
                     if (anim.animator_.loaded_animation_->GetName() == "WALK") {
@@ -90,30 +87,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                     }
                 }
             }
-            auto board_id = ecs.view<component::Board>()[0];
-            auto &board = ecs.get<component::Board>(board_id);
-            auto offset_id = GenerateRandom(0, board.GetNumOfNodes());
-            auto entity_id = static_cast<size_t>(board.GetFirstNode());
-            auto next_dest = entt::entity(entity_id + offset_id);
-            if (!move.is_moving) {
-                move.is_moving = true;
-                if (ecs.has<component::Node>(move.last_node)) {
-                    ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-                }
-                move.last_node = next_dest;
-                move.speed = 3.f;
-            }
-            move.move_list = board.FindPath(ecs, move.last_node, next_dest);
-            if (!move.move_list.empty()) {
-                if (ecs.has<component::Node>(move.going_to_node)) {
-                    ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::vacant);
-                }
-                move.going_to_node = move.move_list.front();
-                ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::occupied);
-                move.move_list.pop();
-            }
-            ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-            move.last_node = next_dest;
+            move.is_moving = false;
         }
     }
 }

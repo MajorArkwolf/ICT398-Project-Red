@@ -21,7 +21,7 @@ constexpr double VARIABLE_IDLE_TIME = 3.5;
 
 constexpr double MINIMUM_IDLE_TIME = 1.0;
 
-constexpr double SIT_IDLE_TIME = 6.0;
+constexpr double SIT_IDLE_TIME = 8.0;
 
 constexpr double USE_IDLE_TIME = 4.0;
 

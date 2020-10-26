@@ -247,11 +247,14 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                 std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
+            // Catch if the emotional response queue has become too large
+            if (20 < emotional_data.emotions.size()) {
+                // Pop the oldest emotional response from the queue
+                emotional_data.emotions.pop_front();
+            }
+
             // Add a slight change to the NPC's mood
             emotional_data.mood += EMOTIONAL_CHANGE_BASELINE_AMOUNT;
-
-            // Delete the child Desires as they are no longer needed
-            //DeleteDesireChildren(npc_bdi.desires, desire.first);
         }
         // Catch failure of the Desire
         else if (desire.second.history == npc::Outcomes::kFailure) {
@@ -260,6 +263,12 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
             component::EmotiveResponse reaction(entity, (-1.0f) * (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
                 std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
+
+            // Catch if the emotional response queue has become too large
+            if (20 < emotional_data.emotions.size()) {
+                // Pop the oldest emotional response from the queue
+                emotional_data.emotions.pop_front();
+            }
 
             // Add a slight change to the NPC's mood
             emotional_data.mood -= EMOTIONAL_CHANGE_BASELINE_AMOUNT;

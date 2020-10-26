@@ -486,13 +486,14 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
         case npc::Actions::kSit:
             // Check that the NPC is within range of the target it will 'sit' on/at
             if (registry.has<component::Transform>(current_plan.entity)) {
-                // Check if the NPC is within the interaction range
-                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-
-                // Catch if the NPC is not within the interaction range to be able to sit
-                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
-                    // Swap back to observing state, this will also deal with the emotional response
-                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                if (registry.has<component::InteractableObject>(current_plan.entity)) {
+                    // Gather the required data and perform the check
+                    auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+                    auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+                    if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+                        // Swap back to observing state, this will also deal with the emotional response
+                        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                    }
                 }
             }
             else {
@@ -532,13 +533,14 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
         case npc::Actions::kUse:
             // Check that the NPC is within range of the target it will 'use'
             if (registry.has<component::Transform>(current_plan.entity)) {
-                // Check if the NPC is within the interaction range
-                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-
-                // Catch if the NPC is not within the interaction range to be able to sit
-                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
-                    // Swap back to observing state, this will also deal with the emotional response
-                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                if (registry.has<component::InteractableObject>(current_plan.entity)) {
+                    // Gather the required data and perform the check
+                    auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+                    auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+                    if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+                        // Swap back to observing state, this will also deal with the emotional response
+                        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                    }
                 }
             }
             else {

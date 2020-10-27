@@ -21,11 +21,15 @@ constexpr double VARIABLE_IDLE_TIME = 3.5;
 
 constexpr double MINIMUM_IDLE_TIME = 1.0;
 
-constexpr double SIT_IDLE_TIME = 8.0;
+constexpr double SIT_IDLE_TIME_MINIMUM = 2.0;
 
-constexpr double USE_IDLE_TIME = 4.0;
+constexpr double SIT_IDLE_TIME_MAXIMUM = 6.0;
 
-constexpr float NPC_SPEED = 3.0f;
+constexpr double USE_IDLE_TIME_MINIMUM = 4.5;
+
+constexpr double USE_IDLE_TIME_MAXIMUM = 3.0;
+
+constexpr float NPC_SPEED = 3.2f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
@@ -492,13 +496,16 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             // Check that the NPC is within range of the target it will 'sit' on/at
             if (registry.has<component::Transform>(current_plan.entity)) {
                 if (registry.has<component::InteractableObject>(current_plan.entity)) {
-                    // Gather the required data and perform the check
-                    auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-                    auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
-                    if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
-                        // Swap back to observing state, this will also deal with the emotional response
-                        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
-                    }
+                    // Check that a minimum amount of time pas passed
+					if (SIT_IDLE_TIME_MINIMUM < npc_behaviour_state.current_dt) {
+						// Gather the required data and perform the check
+						auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+						auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+						if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+							// Swap back to observing state, this will also deal with the emotional response
+							ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+						}
+					}
                 }
             }
             else {
@@ -519,7 +526,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             }
 
             // Check if action has finished
-            if (SIT_IDLE_TIME < npc_behaviour_state.current_dt) {
+            if (SIT_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
                 // Swap back to observing state, this will also deal with the emotional response
                 ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             }
@@ -539,13 +546,16 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             // Check that the NPC is within range of the target it will 'use'
             if (registry.has<component::Transform>(current_plan.entity)) {
                 if (registry.has<component::InteractableObject>(current_plan.entity)) {
-                    // Gather the required data and perform the check
-                    auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-                    auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
-                    if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
-                        // Swap back to observing state, this will also deal with the emotional response
-                        ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
-                    }
+                    // Check that the minimum amount of time has passed
+					if (USE_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
+						// Gather the required data and perform the check
+						auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+						auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+						if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+							// Swap back to observing state, this will also deal with the emotional response
+							ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+						}
+					}
                 }
             }
             else {
@@ -566,7 +576,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             }
 
             // Check if action has finished
-            if (USE_IDLE_TIME < npc_behaviour_state.current_dt) {
+            if (USE_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
                 // Swap back to observing state, this will also deal with the emotional response
                 ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             }

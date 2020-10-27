@@ -124,3 +124,26 @@ entt::entity component::Board::GetClosestNode(const glm::vec3& world_cord) {
     }
     return result;
 }
+
+entt::entity component::Board::FindClosestNodePoint(entt::registry& reg, glm::vec3 &currentPos, entt::entity going_to) {
+    entt::entity result;
+    if (nodes_.empty() || nodes_.at(0).empty()) {
+        assert(false);
+    }
+    result = GetClosestNode(reg.get<component::Transform>(going_to).pos);
+    float distance = glm::distance(currentPos, reg.get<component::Transform>(going_to).pos);
+    for (auto &node_array : nodes_) {
+        for (auto &node : node_array) {
+            auto& node_comp = node.GetComponent<component::Node>();
+            if (node_comp.current_obj == going_to && node_comp.GetNodeStatus() != node_occupancy::vacant) {
+                auto& tran = node.GetComponent<component::Transform>();
+                float new_dist = glm::distance(tran.pos, currentPos);
+                if (new_dist < distance) {
+                    distance = new_dist;
+                    result = node.GetID();
+                }
+            }
+        }
+    }
+    return result;
+}

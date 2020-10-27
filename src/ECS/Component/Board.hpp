@@ -21,6 +21,7 @@ namespace component {
         entt::entity GetLastNode() {return last_board_piece_;}
         size_t GetNumOfNodes() {return num_of_nodes_;}
         entt::entity GetClosestNode(const glm::vec3& world_cord);
+        entt::entity FindClosestNodePoint(entt::registry &reg, glm::vec3 &currentPos, entt::entity going_to);
     private:
         bool render_nodes_ = false;
         glm::vec3 position_{};

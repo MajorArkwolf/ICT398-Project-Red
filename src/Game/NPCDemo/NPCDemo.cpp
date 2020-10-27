@@ -363,7 +363,7 @@ void NPCDemo::Init() {
                         npc::Conditions::kNotInRange));
                 npc_bdi.desires[3].parent = 0;
                 npc_bdi.desires[3].history = npc::Outcomes::kUnknown;
-                npc_bdi.desires[3].children.insert(4);
+                npc_bdi.desires[3].children.insert(2);
                 npc_bdi.desires[3].goals.emplace_back(
                     component::Goal(
                         *id_npcs_jessica.begin(),
@@ -371,9 +371,9 @@ void NPCDemo::Init() {
                         npc::Components::kDefault,
                         0.99f, 1.01f,
                         npc::Conditions::kInRange));
-                npc_bdi.desires[4].parent = 3;
-                npc_bdi.desires[4].history = npc::Outcomes::kUnknown;
-                npc_bdi.desires[4].goals.emplace_back(
+                npc_bdi.desires[3].parent = 1;
+                npc_bdi.desires[3].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[3].goals.emplace_back(
                     component::Goal(
                         *id_npcs_jessica.begin(),
                         npc::Properties::kRange,
@@ -394,12 +394,12 @@ void NPCDemo::Init() {
                 npc_bdi.intentions[2].emplace_back(
                     component::Plan(
                         npc::Actions::kTraverse,
-                        *id_npcs_jessica.begin(),
+                        *id_npcs_alistair.begin(),
                         1, {0}));
                 npc_bdi.intentions[3].emplace_back(
                     component::Plan(
                         npc::Actions::kUse,
-                        *id_npcs_alistair.begin(),
+                        *id_npcs_jessica.begin(),
                         -1, {0}));
                 npc_bdi.intentions[4].emplace_back(
                     component::Plan(

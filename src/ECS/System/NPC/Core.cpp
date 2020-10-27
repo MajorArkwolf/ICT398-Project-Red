@@ -29,7 +29,7 @@ constexpr double USE_IDLE_TIME_MINIMUM = 4.5;
 
 constexpr double USE_IDLE_TIME_MAXIMUM = 3.0;
 
-constexpr float NPC_SPEED = 3.2f;
+constexpr float NPC_SPEED = 4.5f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This

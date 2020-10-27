@@ -539,9 +539,9 @@ void NPCDemo::Init() {
 
                 // "Alistair"-specific Characteristics
                 npc_characteristics.mood = 0.65f;
-                npc_characteristics.traits[npc::Properties::kRange] = -0.15;
-                npc_characteristics.personality[npc::Actions::kSit] = 0.3;
-                npc_characteristics.personality[npc::Actions::kTraverse] = 0.1;
+                npc_characteristics.traits[npc::Properties::kRange] = -0.15f;
+                npc_characteristics.personality[npc::Actions::kSit] = 0.3f;
+                npc_characteristics.personality[npc::Actions::kTraverse] = 0.1f;
 
                 // "Alistair"-specific BehaviourState
                 npc_behavior_state.current = npc::Stages::kObserve;
@@ -851,7 +851,7 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
                                prev_y = y;
                            } break;
                            case input::InputType::kMouseScrolled: {
-                               double amountScrolledY = static_cast<double>(vec.y);
+                               auto amountScrolledY = static_cast<double>(vec.y);
                                player_.GetActiveCamera().ProcessMouseScroll(amountScrolledY);
                            } break;
                            default: {

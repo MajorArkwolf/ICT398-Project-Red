@@ -24,7 +24,7 @@
         "Name": "Person",
         "Type": "Capsule",
         "Radius": 150,
-        "Height":  350,
+        "Height": 350,
         "Position": {
           "X": 0.0,
           "Y": 350,

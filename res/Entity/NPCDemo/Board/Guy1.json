@@ -16,5 +16,6 @@
   "Animation": {
     "IDLE": "IDLE"
   },
-  "Physics" : true
+  "Physics": true,
+  "Static": true
 }

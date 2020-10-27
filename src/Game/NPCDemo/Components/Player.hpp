@@ -66,6 +66,7 @@ class Player {
     void ThrowObject(glm::vec3 force);
     void DropObject();
     void SetRegistry(entt::registry &the_registry);
+    bool GetIsHoldingObject();
 
    private:
     /// The camera offset from the model.

@@ -24,7 +24,9 @@ void Player::Update(double t, double dt) {
    if (registry_ != nullptr && holding_object_ == true) {
         auto &transform = registry_->get<component::Transform>(grabbed_object_);
         auto &phys = registry_->get<component::PhysicBody>(grabbed_object_);
-
+        phys.linear_velocity = {0,0,0};
+        phys.angular_velocity = {0, 0, 0};
+        transform.rot = {0,0,0,0};
         transform.pos = player_comp.camera_.position_ + player_comp.camera_.front_ * 10.f;
     }
 }
@@ -112,4 +114,8 @@ void demo::Player::DropObject() {
 
 void demo::Player::SetRegistry(entt::registry &the_registry) {
     registry_ = &the_registry;
+}
+
+bool demo::Player::GetIsHoldingObject() {
+    return holding_object_;
 }

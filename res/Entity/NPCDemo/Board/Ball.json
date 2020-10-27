@@ -2,7 +2,7 @@
   "Prefab": "Ball",
   "Transform": {
     "Position": {
-      "X": -500.0,
+      "X": -470.0,
       "Y": 85.0,
       "Z": 320.0
     },
@@ -17,5 +17,7 @@
       "Z": 1.0
     }
   },
-  "Physics": true
+  "Physics": true,
+  "Mass": 0.25,
+  "OBJType": "unknown"
 }

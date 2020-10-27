@@ -161,7 +161,7 @@ void NPCDemo::Init() {
             case component::InteractableObject::Type::npc:
                 break;
             default:
-                assert(false);
+                //assert(false);
                 break;
         }
     }

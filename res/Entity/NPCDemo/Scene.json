@@ -47,6 +47,7 @@
     "Board/Alistair.json",
     "Board/book.json",
     "Board/Block1.json",
-    "Board/Ball.json"
+    "Board/Ball.json",
+    "Board/Cube.json"
   ]
 }

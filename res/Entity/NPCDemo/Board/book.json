@@ -14,6 +14,6 @@
     "Scale": 1.0
   },
   "Physics" : true,
-  "Static" : false,
+  "Static" : true,
   "OBJType": "book"
 }

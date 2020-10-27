@@ -131,8 +131,10 @@ entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec
 }
 
 entt::entity PhysicsEngine::RayCastSingle(const glm::vec3 &start, const glm::vec3 &front, float distance) {
-    glm::vec3 end = start;
-    end += distance * front;
+    glm::vec3 end = distance * front + start;
+//    std::cout << "Front X: " << front.x << " Y: " << front.y << " Z: " << front.z << "\n";
+//    std::cout << "Start X: " << start.x << " Y: " << start.y << " Z: " << start.z << "\n";
+//    std::cout << "End X: " << end.x << " Y: " << end.y << " Z: " << end.z << "\n" << std::endl;
     return collision_detection_.RayCastSingle(start, end);
 }
 

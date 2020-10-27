@@ -41,6 +41,8 @@ void component::Board::BuildBoard(ECS *ecs, physics::PhysicsWorld *pw) {
         for (auto &node : node_array) {
             node = ecs->CreateEntity();
             auto &trans = node.AddComponent<component::Transform>();
+            auto &name_comp = node.AddComponent<component::Name>();
+            name_comp.name = "Board Node";
             trans.pos.x = new_pos_x;
             trans.pos.y = position_.y;
             trans.pos.z = new_pos_z;

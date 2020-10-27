@@ -21,13 +21,15 @@ constexpr double VARIABLE_IDLE_TIME = 3.5;
 
 constexpr double MINIMUM_IDLE_TIME = 1.0;
 
-constexpr double SIT_IDLE_TIME = 6.0;
+constexpr double SIT_IDLE_TIME_MINIMUM = 2.0;
 
-constexpr double USE_IDLE_TIME = 4.0;
+constexpr double SIT_IDLE_TIME_MAXIMUM = 6.0;
 
-constexpr float INTERACTION_RANGE = 3.0f;
+constexpr double USE_IDLE_TIME_MINIMUM = 4.5;
 
-constexpr float NPC_SPEED = 3.0f;
+constexpr double USE_IDLE_TIME_MAXIMUM = 3.0;
+
+constexpr float NPC_SPEED = 4.5f;
 
 void NPCImport(entt::registry& registry, const entt::entity& entity, std::string path) {
     // TODO: This
@@ -180,15 +182,18 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                                 // Attempt to get the components if they exist
                                 component_returned = registry.try_get<component::Transform>(entity);
                                 component2_returned = registry.try_get<component::Transform>(goal.entity);
+                                auto target_type = registry.try_get<component::InteractableObject>(goal.entity);
                                 if ((component_returned != nullptr) && (component2_returned != nullptr)) {
                                     // Calculate if the entity is within range and test the Desire
-                                    if (INTERACTION_RANGE >= (glm::distance(
-                                        static_cast<component::Transform*>(component_returned)->pos,
-                                        static_cast<component::Transform*>(component2_returned)->pos))) {
+                                    if (EntityIsWithinRange(
+                                            static_cast<component::Transform*>(component_returned)->pos,
+                                            static_cast<component::Transform*>(component2_returned)->pos,
+                                            target_type->type)) {
                                         // Set the value gathered to 1.0 to indicate the entity is within range
                                         value_gathered = 1.0f;
                                     }
-                                    // By default the found valuewill be 0.0f, so that doesn't need to be added
+
+                                    // By default the found value will be 0.0f, so that doesn't need to be added
                                     found_value = true;
                                 }
                             }
@@ -246,11 +251,14 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
                 std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
 
+            // Catch if the emotional response queue has become too large
+            if (20 < emotional_data.emotions.size()) {
+                // Pop the oldest emotional response from the queue
+                emotional_data.emotions.pop_front();
+            }
+
             // Add a slight change to the NPC's mood
             emotional_data.mood += EMOTIONAL_CHANGE_BASELINE_AMOUNT;
-
-            // Delete the child Desires as they are no longer needed
-            //DeleteDesireChildren(npc_bdi.desires, desire.first);
         }
         // Catch failure of the Desire
         else if (desire.second.history == npc::Outcomes::kFailure) {
@@ -259,6 +267,12 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
             component::EmotiveResponse reaction(entity, (-1.0f) * (float) EMOTIONAL_CHANGE_BASELINE_AMOUNT,
                 std::tuple<int, component::Desire>(desire.first, desire.second));
             emotional_data.emotions.push_back(reaction);
+
+            // Catch if the emotional response queue has become too large
+            if (20 < emotional_data.emotions.size()) {
+                // Pop the oldest emotional response from the queue
+                emotional_data.emotions.pop_front();
+            }
 
             // Add a slight change to the NPC's mood
             emotional_data.mood -= EMOTIONAL_CHANGE_BASELINE_AMOUNT;
@@ -271,10 +285,6 @@ void NPCObserve(entt::registry& registry, const entt::entity& entity) {
 }
 
 void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
-    // Preferably we would generate a tree of Desires and Intentions to establish a plan to achieve the root Desire
-    // This is no longer viable within the deadline, so instead the triggered Intentions will be tracked
-    //   and a target Intention to perform will be identified.
-
     // Gather the NPC components
     auto &npc_bdi = registry.get<component::BDI>(entity);
     auto &npc_characteristics = registry.get<component::Characteristics>(entity);
@@ -307,8 +317,8 @@ void NPCPrepare(entt::registry& registry, const entt::entity& entity) {
     int new_trigger_identifier = -1;
     int new_plan_identifier = -1;
 
-    // Determine which Intention & Plan should be actioned, going backwards through the hierarchy
-    for (auto current_desire_layer = fulfilled_desires.rbegin(); current_desire_layer != fulfilled_desires.rend(); ++current_desire_layer) {
+    // Determine which Intention & Plan should be actioned
+    for (auto current_desire_layer = fulfilled_desires.begin(); current_desire_layer != fulfilled_desires.end(); ++current_desire_layer) {
         // Catch if the current layer doesn't has any Desire identifiers remaining
         if (current_desire_layer->second.empty()) {
             // Move onto the layer above in the hierarchy, none remain after the filtering
@@ -449,7 +459,9 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                     }
                     auto &board = registry.get<component::Board>(e);
                     auto &moving = registry.emplace<component::Moving>(entity);
+                    moving.speed = NPC_SPEED;
                     moving.SetLastNode(registry, board.GetClosestNode(npc_transform.pos));
+                    //moving.SetLastNode(registry, board.FindClosestNodePoint(registry, npc_transform.pos, entity));
                 }
                 auto e = registry.view<component::Board>()[0];
                 if (!registry.has<component::Board>(e)) {
@@ -458,7 +470,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
                 auto &board = registry.get<component::Board>(e);
                 auto &moving = registry.get<component::Moving>(entity);
                 moving.speed = NPC_SPEED;
-                moving.move_list = board.FindPath(registry, moving.last_node, board.GetClosestNode(registry.get<component::Transform>(current_plan.entity).pos));
+                moving.move_list = board.FindPath(registry, moving.last_node, board.FindClosestNodePoint(registry, npc_transform.pos, current_plan.entity));
                 //This may cause strange behaviour if an object is out of distance but in the same node.
                 if (!moving.move_list.empty()) {
                     moving.is_moving = true;
@@ -483,13 +495,17 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
         case npc::Actions::kSit:
             // Check that the NPC is within range of the target it will 'sit' on/at
             if (registry.has<component::Transform>(current_plan.entity)) {
-                // Check if the NPC is within the interaction range
-                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-
-                // Catch if the NPC is not within the interaction range to be able to sit
-                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
-                    // Swap back to observing state, this will also deal with the emotional response
-                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                if (registry.has<component::InteractableObject>(current_plan.entity)) {
+                    // Check that a minimum amount of time pas passed
+					if (SIT_IDLE_TIME_MINIMUM < npc_behaviour_state.current_dt) {
+						// Gather the required data and perform the check
+						auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+						auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+						if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+							// Swap back to observing state, this will also deal with the emotional response
+							ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+						}
+					}
                 }
             }
             else {
@@ -510,7 +526,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             }
 
             // Check if action has finished
-            if (SIT_IDLE_TIME < npc_behaviour_state.current_dt) {
+            if (SIT_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
                 // Swap back to observing state, this will also deal with the emotional response
                 ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             }
@@ -529,13 +545,17 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
         case npc::Actions::kUse:
             // Check that the NPC is within range of the target it will 'use'
             if (registry.has<component::Transform>(current_plan.entity)) {
-                // Check if the NPC is within the interaction range
-                auto &target_transform = registry.get<component::Transform>(current_plan.entity);
-
-                // Catch if the NPC is not within the interaction range to be able to sit
-                if (INTERACTION_RANGE < glm::distance(npc_transform.pos, target_transform.pos)) {
-                    // Swap back to observing state, this will also deal with the emotional response
-                    ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+                if (registry.has<component::InteractableObject>(current_plan.entity)) {
+                    // Check that the minimum amount of time has passed
+					if (USE_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
+						// Gather the required data and perform the check
+						auto &target_transform = registry.get<component::Transform>(current_plan.entity);
+						auto &target_type = registry.get<component::InteractableObject>(current_plan.entity);
+						if (!EntityIsWithinRange(npc_transform.pos, target_transform.pos, target_type.type)) {
+							// Swap back to observing state, this will also deal with the emotional response
+							ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
+						}
+					}
                 }
             }
             else {
@@ -556,7 +576,7 @@ void NPCRespond(entt::registry& registry, const entt::entity& entity) {
             }
 
             // Check if action has finished
-            if (USE_IDLE_TIME < npc_behaviour_state.current_dt) {
+            if (USE_IDLE_TIME_MAXIMUM < npc_behaviour_state.current_dt) {
                 // Swap back to observing state, this will also deal with the emotional response
                 ChangeBehaviouralState(npc_behaviour_state, npc::Stages::kObserve);
             }

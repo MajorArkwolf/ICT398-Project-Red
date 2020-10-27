@@ -1,4 +1,7 @@
 #include "ECS/Component/NPC.hpp"
+#include "ECS/Component/Basic.hpp"
+
+#include "glm/glm.hpp"
 
 namespace System {
 
@@ -73,5 +76,16 @@ void DeleteDesireChildren(std::map<int, component::Desire>& desire_store, int ro
 std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int current_layer,
                                               std::set<int>& child_identifiers,
                                               std::map<int, std::set<int>> fulfilled_hierarchy = {{}});
+
+    /**
+     * @brief Calculates if the NPC is within range of a target Entity.
+     * If the provided type is invalid, the NPC should never be within range.
+     * @param entity_position The position of the NPC Entity.
+     * @param target_position The position of the target Entity.
+     * @param target_type The type of Entity that has been targeted.
+     * @return True if the NPC is within range, False otherwise.
+     */
+bool EntityIsWithinRange(glm::vec3& entity_position, glm::vec3& target_position,
+                         component::InteractableObject::Type target_type);
 
 } // namespace System

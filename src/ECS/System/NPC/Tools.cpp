@@ -2,6 +2,16 @@
 
 namespace System {
 
+constexpr float INTERACTION_RANGE_NPC = 3.5f;
+
+constexpr float INTERACTION_RANGE_BOOK = 3.0f;
+
+constexpr float INTERACTION_RANGE_TREE = 8.0f;
+
+constexpr float INTERACTION_RANGE_BENCH = 7.5f;
+
+constexpr float INTERACTION_RANGE_ROCK = 7.0f;
+
 float EmotionalStateOverall(component::Characteristics& target) {
     // Determine the collective weighted emotional response from the NPC's queue
     float collective_emotions = 0.0f;
@@ -137,6 +147,32 @@ std::map<int, std::set<int>> FulfilledDesires(component::BDI& target, int curren
 
     // Return the 'hierarchical' map of sets of identified Desires
     return fulfilled_hierarchy;
+}
+
+bool EntityIsWithinRange(glm::vec3& entity_position, glm::vec3& target_position,
+                         component::InteractableObject::Type target_type) {
+    // Determine the range limit depending on the provided type
+    float range_limit = -1.0f;
+    switch (target_type) {
+        case component::InteractableObject::Type::npc:
+            range_limit = INTERACTION_RANGE_NPC;
+            break;
+        case component::InteractableObject::Type::rock:
+            range_limit = INTERACTION_RANGE_ROCK;
+            break;
+        case component::InteractableObject::Type::bench:
+            range_limit = INTERACTION_RANGE_BENCH;
+            break;
+        case component::InteractableObject::Type::tree:
+            range_limit = INTERACTION_RANGE_TREE;
+            break;
+        case component::InteractableObject::Type::book:
+            range_limit = INTERACTION_RANGE_BOOK;
+            break;
+    }
+
+    // Check if the NPC is within the range of the Entity, returning the result
+    return (range_limit >= (glm::distance(entity_position,target_position)));
 }
 
 } // namespace System

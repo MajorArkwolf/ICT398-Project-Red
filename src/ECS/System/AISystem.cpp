@@ -27,19 +27,19 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
     for (auto &e : entities) {
         // We store the moving component then check if the there is a que.
         auto &move = entities.get<component::Moving>(e);
-        if (!move.move_list.empty() && move.is_moving) {
-            auto &next_node = ecs.get<component::Node>(move.move_list.front());
-            if (next_node.GetNodeStatus() != node_occupancy::vacant) {
-                auto board_id = ecs.view<component::Board>()[0];
-                auto &board = ecs.get<component::Board>(board_id);
-                ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::vacant);
-                ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-                move.move_list = board.FindPath(ecs, move.move_list.front(), move.last_node);
-                if (move.move_list.empty()) {
-                    continue;
+        if (move.is_moving) {
+            if (!move.move_list.empty()) {
+                auto &next_node = ecs.get<component::Node>(move.move_list.front());
+                if (next_node.GetNodeStatus() != node_occupancy::vacant) {
+                    auto board_id = ecs.view<component::Board>()[0];
+                    auto &board = ecs.get<component::Board>(board_id);
+                    move.move_list = board.FindPath(ecs, move.move_list.front(), move.last_node);
+                    if (move.move_list.empty()) {
+                        continue;
+                    }
+                    move.going_to_node = move.move_list.front();
+                    move.move_list.pop();
                 }
-                move.going_to_node = move.move_list.front();
-                move.move_list.pop();
             }
             if (ecs.has<component::Transform>(e)) {
                 auto &tran = entities.get<component::Transform>(e);
@@ -52,7 +52,7 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                 // We check to see if the object is within a certain epsilion before determining it is at a given node.
                 if (!(abs(dist.x) < EPSILON && abs(dist.z) < EPSILON)) {
                     auto &node_comp = ecs.get<component::Node>(entity_id);
-                    node_comp.AlterNodeGrid(node_occupancy::occupied);
+                    //node_comp.AlterNodeGrid(node_occupancy::occupied);
                     auto first = tran.pos;
                     auto second = moving_to;
                     first.y = 0.f;
@@ -66,16 +66,21 @@ void System::AISystem::Moving(entt::registry &ecs, double t, double dt) {
                         anim.animator_.LoadAnimation("WALK", false);
                     }
                 } else {
-                    if (ecs.has<component::Node>(move.going_to_node)) {
-                        ecs.get<component::Node>(move.going_to_node).AlterNodeGrid(node_occupancy::leaving);
-                        //node_comp.AlterNodeGrid(node_occupancy::leaving);
-                    }
-                    if (ecs.has<component::Node>(move.last_node)) {
-                        ecs.get<component::Node>(move.last_node).AlterNodeGrid(node_occupancy::vacant);
-                    }
                     move.last_node = move.going_to_node;
-                    move.going_to_node = move.move_list.front();
-                    move.move_list.pop();
+                    if (!move.move_list.empty()) {
+                        move.going_to_node = move.move_list.front();
+                        move.move_list.pop();
+                    } else {
+                        if (ecs.has<component::Animation>(e) && move.is_moving) {
+                            auto &anim = ecs.get<component::Animation>(e);
+                            if (anim.animator_.loaded_animation_ != nullptr) {
+                                if (anim.animator_.loaded_animation_->GetName() == "WALK") {
+                                    anim.animator_.LoadAnimation("IDLE", false);
+                                }
+                            }
+                        }
+                        move.is_moving = false;
+                    };
                 }
             }
         } else {

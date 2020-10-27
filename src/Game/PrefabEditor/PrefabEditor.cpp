@@ -108,6 +108,12 @@ void PrefabEditor::HandleInputData(input::InputEvent inputData, double deltaTime
                                 //right_ = true;
                             }
                                 break;
+                            case input::VirtualKey::kSpacebar: {
+                                camera.position_.y += 1;
+                            } break;                           
+                            case input::VirtualKey::kLeftControl: {
+                                camera.position_.y -= 1;
+                            } break;
                             case input::VirtualKey::kEscape: {
 
                             }
@@ -190,7 +196,7 @@ void PrefabEditor::ArcBallCamera(double dx, double dy) {
         glm::dvec2 viewport = redengine::Engine::get().renderer_.GetViewPort();
         double deltaAngleX = (2 * M_PI / viewport.x); // a movement from left to right = 2*PI = 360 deg
         double deltaAngleY = (M_PI / viewport.y);  // a movement from top to bottom = PI = 180 deg
-        double xAngle = (dx) * deltaAngleX;
+        double xAngle = -(dx) * deltaAngleX;
         double yAngle = (dy) * deltaAngleY;
 
         // step 2: Rotate the camera around the pivot point on the first axis.

@@ -1,0 +1,49 @@
+{
+  "Model": {
+    "ModelFilePath": "res/model/Debug/box.obj"
+  },
+  "Name": "Cube",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 0.5099999904632568,
+          "Y": 0.5099999904632568,
+          "Z": 0.5099999904632568
+        },
+        "Mass": 0.0,
+        "Name": "Cube",
+        "Position": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": false
+  },
+  "Transform": {
+    "Position": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 1.0
+  }
+}

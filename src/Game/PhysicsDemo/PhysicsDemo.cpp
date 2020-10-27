@@ -145,7 +145,13 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                    } break;
                                    case input::VirtualKey::M: {
                                        physics_world_.SetGravity(glm::vec3(0, -9.8f, 0));
-                                       physics_world_.SetGravityEnabled(true);
+                                       if (physics_world_.IsGravityEnabled()) {
+                                           physics_world_.SetGravityEnabled(false);
+                                       } else {
+                                           physics_world_.SetGravityEnabled(true);
+
+                                       }
+
                                    } break;
                                    case input::VirtualKey::V: {
                                        auto entity = ecs_.CreateEntity();
@@ -156,7 +162,7 @@ void PhysicsDemo::HandleInputData(input::InputEvent inputData, double deltaTime)
                                        trans.rot = {1, 0, 0, 0};
                                        trans.scale = glm::vec3{1.0f, 1.0f, 1.0f};
                                        auto &physbody = entity.AddComponent<component::PhysicBody>();
- 
+
                                        physbody.mass = 20;
                                        physbody.inverse_mass = 1 / 20;
 

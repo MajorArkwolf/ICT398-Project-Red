@@ -7,8 +7,8 @@
 
 #include "DataStructures/Model/Overload.hpp"
 #include "ECS/Component/Basic.hpp"
-#include "ECS/Component/Model.hpp"
 #include "ECS/Component/Board.hpp"
+#include "ECS/Component/Model.hpp"
 #include "ECS/ECS.hpp"
 #include "ECS/Entity.hpp"
 #include "Engine/Engine.hpp"
@@ -110,9 +110,9 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         }
                     }
                     if (j.contains("Moving")) {
-                        auto& moving = ent->AddComponent<component::Moving>();
+                        auto &moving = ent->AddComponent<component::Moving>();
 
-                        auto& reg = ecs->GetRegistry();
+                        auto &reg = ecs->GetRegistry();
                         auto view = reg.view<component::Board>();
                         for (auto e : view) {
                             auto &board_comp = reg.get<component::Board>(e);
@@ -124,12 +124,12 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                         }
                     }
                     if (j.contains("NPC")) {
-                        auto& npc = ent->AddComponent<component::NPCPersonalityID>();
+                        auto &npc = ent->AddComponent<component::NPCPersonalityID>();
                         npc.ID = j.at("NPC").get<int>();
                     }
                     //"OBJType": "npc"
                     if (j.contains("OBJType")) {
-                        auto& npc = ent->AddComponent<component::InteractableObject>();
+                        auto &npc = ent->AddComponent<component::InteractableObject>();
                         auto value = j.at("OBJType").get<std::string>();
                         if (value == "npc") {
                             npc.type = component::InteractableObject::Type::npc;
@@ -155,7 +155,7 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 auto &trans = ent->GetComponent<component::Transform>();
                 auto &phys = ent->AddComponent<component::PhysicBody>();
                 pw->AddCollisionBody(ent->GetID(), trans.pos, trans.rot);
-
+              
                 auto static_field = GetJsonField(j, prefab.name, "Static", JsonType::Boolean);
                 if (static_field.has_value()) {
                     phys.static_object = static_field->get().get<bool>();
@@ -166,6 +166,10 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                 } else {
                     phys.mass = prefab.mass;
                     phys.inverse_mass = 1 / prefab.mass;
+                }
+                if (j.contains("Mass")) {
+                    phys.mass = j.at("Mass").get<float>();
+                    phys.inverse_mass = 1.0f / phys.mass;
                 }
                 for (const auto &n : prefab.colliders_) {
                     std::visit(overload{
@@ -199,7 +203,6 @@ std::optional<std::shared_ptr<Entity>> JSONLoader::LoadEntity(
                     phys.linear_velocity.y = j.at("LinearVelocity").at("Y").get<float>();
                     phys.linear_velocity.z = j.at("LinearVelocity").at("Z").get<float>();
                 }
-
             }
         } else {
             std::cerr << "ERROR: Prefab not specified or was incorrect in Entity creation.\n";

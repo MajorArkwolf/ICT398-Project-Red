@@ -101,13 +101,16 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
         //linear impulse
         auto linear_impulse = lambda * n.contact_normal;
 
-        // v⁺₁ = v⁻₁
-        lvelocity1 += linear_impulse * first_physbody.inverse_mass;
-        // v⁺₂ = v⁻₂
-        lvelocity2 -= linear_impulse * second_physbody.inverse_mass;
+        if (lambda < 0) {
+            // v⁺₁ = v⁻₁
+            lvelocity1 += linear_impulse * first_physbody.inverse_mass;
+            // v⁺₂ = v⁻₂
+            lvelocity2 -= linear_impulse * second_physbody.inverse_mass;
 
-        wvelocity1 = wvelocity1 + (lambda * first_physbody.inverse_inertia_tensor) * r1xn;
-        wvelocity2 = wvelocity2 - (lambda * second_physbody.inverse_inertia_tensor) * r2xn;
+            wvelocity1 = wvelocity1 + (lambda * first_physbody.inverse_inertia_tensor) * r1xn;
+            wvelocity2 = wvelocity2 - (lambda * second_physbody.inverse_inertia_tensor) * r2xn;
+        }
+
     }
     if (!first_physbody.is_player) {
         first_physbody.linear_velocity = lvelocity1;

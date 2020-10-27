@@ -5,10 +5,10 @@
 #include "ECS/Component/Board.hpp"
 #include "ECS/Component/Model.hpp"
 #include "ECS/Component/Player.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/SubModules/JsonLoader.hpp"
 #include "ECS/System/NPC/Core.hpp"
 #include "ECS/System/NPC/Tools.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/SubModules/JsonLoader.hpp"
 
 static inline void ToggleRenderer(physics::PhysicsWorld &pe, bool val) {
     // Only toggle if the provided value is different
@@ -95,6 +95,10 @@ void NPCDemo::Init() {
     physics_world_.AddCollider(little_player.GetID(), playerShapeLittle, {0.f, 1.7f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     player_.SetLittlePlayer(little_player);
 
+    physics_world_.SetGravity(glm::vec3(0.0f, -9.8f, 0.0f));
+    physics_world_.SetGravityEnabled(true);
+    player_.SetRegistry(ecs_.GetRegistry());
+
     // Find the Identifiers of the Entities with the NPC personality hook component and store them
     auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
     auto &reg = ecs_.GetRegistry();
@@ -102,7 +106,7 @@ void NPCDemo::Init() {
     std::set<entt::entity> id_npcs_alistair;
     std::set<entt::entity> id_npcs_jessica;
     std::set<entt::entity> id_npcs_kiera;
-    for (auto &npc_hook_id: npc_hook_view) {
+    for (auto &npc_hook_id : npc_hook_view) {
         // Catch the type
         auto npc_entity = ecs_.GetEntity(npc_hook_id);
         switch (npc_entity->GetComponent<component::NPCPersonalityID>().ID) {
@@ -134,7 +138,7 @@ void NPCDemo::Init() {
     std::set<entt::entity> id_interactables_book;
     std::set<entt::entity> id_interactables_rock;
     std::set<entt::entity> id_interactables_tree;
-    for (auto &interactive_hook_id: interactive_hook_view) {
+    for (auto &interactive_hook_id : interactive_hook_view) {
         // Catch the type
         auto interactive_entity = ecs_.GetEntity(interactive_hook_id);
         switch (interactive_entity->GetComponent<component::InteractableObject>().type) {
@@ -157,13 +161,13 @@ void NPCDemo::Init() {
             case component::InteractableObject::Type::npc:
                 break;
             default:
-                assert(false);
+                //assert(false);
                 break;
         }
     }
 
     // Iterate through all of the Entity's that have a NPCPersonalityID hook component
-    for (auto &npc_hook_id: npc_hook_view) {
+    for (auto &npc_hook_id : npc_hook_view) {
         // Generate and gather the NPC's BDI component
         auto &npc_bdi = reg.emplace_or_replace<component::BDI>(npc_hook_id);
 
@@ -182,7 +186,7 @@ void NPCDemo::Init() {
         npc_bdi.beliefs_affordances[npc_hook_id].insert(npc::Actions::kTraverse);
 
         // Iterate through all of the known "Tom" NPCs
-        for (auto &tom_identifier: id_npcs_tom) {
+        for (auto &tom_identifier : id_npcs_tom) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[tom_identifier].insert(npc::Properties::kSize);
@@ -201,7 +205,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known "Alistair" NPCs
-        for (auto &alistair_identifier: id_npcs_alistair) {
+        for (auto &alistair_identifier : id_npcs_alistair) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[alistair_identifier].insert(npc::Properties::kSize);
@@ -220,7 +224,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known "Jessica" NPCs
-        for (auto &jessica_identifier: id_npcs_jessica) {
+        for (auto &jessica_identifier : id_npcs_jessica) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[jessica_identifier].insert(npc::Properties::kSize);
@@ -239,7 +243,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known "Kiera" NPCs
-        for (auto &kiera_identifier: id_npcs_kiera) {
+        for (auto &kiera_identifier : id_npcs_kiera) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[kiera_identifier].insert(npc::Properties::kSize);
@@ -258,7 +262,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known book entities
-        for (auto &book_identifier: id_interactables_book) {
+        for (auto &book_identifier : id_interactables_book) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[book_identifier].insert(npc::Properties::kPosition);
@@ -279,7 +283,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known tree entities
-        for (auto &tree_identifier: id_interactables_tree) {
+        for (auto &tree_identifier : id_interactables_tree) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[tree_identifier].insert(npc::Properties::kPosition);
@@ -296,7 +300,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known bench entities
-        for (auto &bench_identifier: id_interactables_bench) {
+        for (auto &bench_identifier : id_interactables_bench) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[bench_identifier].insert(npc::Properties::kPosition);
@@ -314,7 +318,7 @@ void NPCDemo::Init() {
         }
 
         // Iterate through all of the known rock entities
-        for (auto &rock_identifier: id_interactables_rock) {
+        for (auto &rock_identifier : id_interactables_rock) {
             // Configure the NPC's generic property beliefs about the entity at the current identifier
             npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kExists);
             npc_bdi.beliefs_properties[rock_identifier].insert(npc::Properties::kPosition);
@@ -774,7 +778,30 @@ void NPCDemo::HandleInputData(input::InputEvent inputData, double deltaTime) {
 
                    },
                    [&](InputEvent::MouseEvent mouse) {
+                       switch (inputData.type) {
+                           case input::InputType::kButtonReleased: {
+                               switch (mouse.button) {
+                                   case input::MouseButton::kRight: {
+                                       if (player_.GetIsHoldingObject()) {
+                                           player_.DropObject();
+                                       } else {
+                                           auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
 
+                                           auto entity = engine.GetPhysicsEngine().RayCastSingle(currentCam.position_, currentCam.front_, 10.f);
+                                           player_.GrabObject(entity);
+                                       }
+
+                                   } break;
+                                   case input::MouseButton::kLeft: {
+                                       auto &currentCam = player_.GetActivePlayer().GetComponent<component::Player>().camera_;
+
+                                       player_.ThrowObject(currentCam.GetFrontVector() * 1000.f);
+
+                                   } break;
+                               }
+                           } break;
+                       }
+                      
                    },
                    [&](InputEvent::KeyboardEvent keyboard) {
                        switch (inputData.type) {

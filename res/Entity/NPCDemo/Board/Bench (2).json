@@ -13,7 +13,6 @@
     },
     "Scale": 0.003
   },
-  "Physics": true,
-  "Static": true,
+  "Physics" : true,
   "OBJType": "bench"
 }

@@ -16,8 +16,9 @@
   "Animation": {
     "IDLE": "IDLE"
   },
-  "Physics" : true,
+  "Physics": true,
   "Moving": true,
+  "Static": true,
   "NPC": 0,
   "OBJType": "npc"
 }

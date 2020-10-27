@@ -96,8 +96,6 @@ void NPCDemo::Init() {
     physics_world_.AddCollider(little_player.GetID(), playerShapeLittle, {0.f, 1.7f, 0.f}, {1.0f, 0.f, 0.f, 0.f});
     player_.SetLittlePlayer(little_player);
 
-
-
     // Find the Identifiers of the Entities with the NPC personality hook component and store them
     auto npc_hook_view = ecs_.GetRegistry().view<component::NPCPersonalityID>();
     auto &reg = ecs_.GetRegistry();
@@ -363,9 +361,29 @@ void NPCDemo::Init() {
                         npc::Components::kDefault,
                         0.99f, 1.01f,
                         npc::Conditions::kNotInRange));
+                npc_bdi.desires[3].parent = 0;
+                npc_bdi.desires[3].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[3].children.insert(4);
+                npc_bdi.desires[3].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_jessica.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kInRange));
+                npc_bdi.desires[4].parent = 3;
+                npc_bdi.desires[4].history = npc::Outcomes::kUnknown;
+                npc_bdi.desires[4].goals.emplace_back(
+                    component::Goal(
+                        *id_npcs_jessica.begin(),
+                        npc::Properties::kRange,
+                        npc::Components::kDefault,
+                        0.99f, 1.01f,
+                        npc::Conditions::kNotInRange));
 
                 // "Tom"-specific BDI Root Desires
                 npc_bdi.root_desires.insert(1);
+                npc_bdi.root_desires.insert(3);
 
                 // "Tom"-specific BDI Intentions
                 npc_bdi.intentions[1].emplace_back(
@@ -376,8 +394,18 @@ void NPCDemo::Init() {
                 npc_bdi.intentions[2].emplace_back(
                     component::Plan(
                         npc::Actions::kTraverse,
+                        *id_npcs_jessica.begin(),
+                        1, {0}));
+                npc_bdi.intentions[3].emplace_back(
+                    component::Plan(
+                        npc::Actions::kUse,
                         *id_npcs_alistair.begin(),
-                        1, {1}));
+                        -1, {0}));
+                npc_bdi.intentions[4].emplace_back(
+                    component::Plan(
+                        npc::Actions::kTraverse,
+                        *id_npcs_jessica.begin(),
+                        3, {0}));
 
                 // "Tom"-specific Characteristics
                 npc_characteristics.mood = 0.85f;
@@ -498,17 +526,17 @@ void NPCDemo::Init() {
                     component::Plan(
                         npc::Actions::kTraverse,
                         *id_interactables_rock.begin(),
-                        -1, {1}));
+                        -1, {0}));
                 npc_bdi.intentions[5].emplace_back(
                     component::Plan(
                         npc::Actions::kTraverse,
                         *id_interactables_tree.begin(),
-                        -1, {2}));
+                        -1, {0}));
                 npc_bdi.intentions[6].emplace_back(
                     component::Plan(
                         npc::Actions::kTraverse,
                         *id_interactables_bench.begin(),
-                        -1, {3}));
+                        -1, {0}));
 
                 // "Alistair"-specific Characteristics
                 npc_characteristics.mood = 0.65f;

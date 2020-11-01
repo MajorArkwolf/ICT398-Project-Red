@@ -12,15 +12,17 @@ Player::Player() {
 void Player::Update(double t, double dt) {
     auto &player = GetActivePlayer();
     auto &player_comp = player.GetComponent<component::Player>();
-    GetActivePlayer().GetComponent<component::Player>().Update(t, dt);
     auto &camera_position = player.GetComponent<component::Player>().camera_.position_;
     auto &position = player.GetComponent<component::Transform>().pos;
     auto &rotation = player.GetComponent<component::Transform>().rot;
+
+    GetActivePlayer().GetComponent<component::Player>().Update(t, dt);
     position.y = player.GetComponent<component::Player>().height_;
     camera_position.y = player.GetComponent<component::Player>().camera_height_offset_ + position.y;
     camera_position.x = position.x;
     camera_position.z = position.z;
     rotation = glm::quat(glm::vec3{0.0f, glm::radians(model_rotation_offset_ - player.GetComponent<component::Player>().camera_.yaw_ ), 0.0f});
+
    if (registry_ != nullptr && holding_object_ == true) {
         auto &transform = registry_->get<component::Transform>(grabbed_object_);
         auto &phys = registry_->get<component::PhysicBody>(grabbed_object_);

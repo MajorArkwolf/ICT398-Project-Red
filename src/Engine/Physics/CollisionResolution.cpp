@@ -10,8 +10,7 @@ void physics::CollisionResolution::Resolve(std::queue<PhysicsCollisionData> &que
     while (!queue.empty()) {
         auto &item = queue.front();
         if (ecs_) {
-            ResolvePhysicsCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body));
-
+            ResolvePhysicsCollision(item, ecs_->GetEntity(item.first_body), ecs_->GetEntity(item.second_body), dt);
         }
         queue.pop();
     }
@@ -21,14 +20,9 @@ void physics::CollisionResolution::SetECS(ECS *ecs) {
     this->ecs_ = ecs;
 }
 
-void
-physics::CollisionResolution::ResolvePlayerCollision(PhysicsCollisionData &collision, std::shared_ptr<Entity> player,
-                                                     std::shared_ptr<Entity> other) {
-}
-
 void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData &collision,
                                                            std::shared_ptr<Entity> first_object,
-                                                           std::shared_ptr<Entity> second_object) {
+                                                           std::shared_ptr<Entity> second_object, double dt) {
     constexpr float restitution = 0.6f;
     auto &logger = redengine::Engine::get().GetLog();
     auto &first_transform = first_object->GetComponent<component::Transform>();
@@ -57,17 +51,17 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
         glm::vec3 r1 = n.first_body_contact_point - (first_transform.pos + first_physbody.centre_mass);
         glm::vec3 r2 = n.second_body_contact_point - (second_transform.pos + second_physbody.centre_mass);
 
-        if (!first_physbody.is_sleeping && !first_physbody.static_object) {
+        if (first_physbody.is_player && !first_physbody.static_object) {
             first_transform.pos += n.contact_normal * ((n.penetration / 2) * -1);
         }
-        if (!second_physbody.is_sleeping && !second_physbody.static_object) {
+        if (second_physbody.is_player && !second_physbody.static_object) {
             second_transform.pos -= n.contact_normal * ((n.penetration / 2) * -1);
         }
 
         //Transfer of momentum
 
         //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
-        // __________________________________________________________________________ * n̂
+        // __________________________________________________________________________ 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
         //  -(1 + ε)
@@ -86,31 +80,35 @@ void physics::CollisionResolution::ResolvePhysicsCollision(PhysicsCollisionData 
         auto total_inverse_mass = first_physbody.inverse_mass + second_physbody.inverse_mass;
 
         //-(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
-        auto numerator = restitution_multiplier * (glm::dot(n.contact_normal, relative_velocity) + glm::dot(wvelocity1, r1xn) - glm::dot(wvelocity2, r2xn));
+        auto numerator = restitution_multiplier * (glm::dot(n.contact_normal, relative_velocity)
+            + glm::dot(wvelocity1, r1xn) - glm::dot(wvelocity2, r2xn));
 
         // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
-        float denominator = total_inverse_mass + (glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn) + glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn));
+        float denominator = total_inverse_mass + (glm::dot(r1xn, first_physbody.inverse_inertia_tensor * r1xn)
+            + glm::dot(r2xn, second_physbody.inverse_inertia_tensor * r2xn));
 
         //         -(1 + ε) * (n̂ • (v⁻₁ - v⁻₂) + w⁻₁ • (r₁ x n̂) - w₂ • (r₂ x n̂))
-        // __________________________________________________________________________ * n̂
-        // (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
+        // λ = __________________________________________________________________________ 
+        //       (m₁⁻¹ + m₂⁻¹) + ((r₁ x n̂)ᵀ * J₁⁻¹ * (r₁ x n̂) + (r₂ x n̂)ᵀ * J₂⁻¹ * (r₂ x n̂)
 
+        auto CalcBaumgarte = [&](float dt, float penetration_depth) {
+            constexpr float baumgarte_coefficient = 0.03;
+
+            return -(baumgarte_coefficient / dt) * penetration_depth;
+        };
         //Transfer of momentum
-        auto lambda = (numerator / denominator);
+        auto lambda = (CalcBaumgarte(dt, n.penetration) + numerator / denominator);
 
         //linear impulse
         auto linear_impulse = lambda * n.contact_normal;
 
         if (lambda < 0) {
-            // v⁺₁ = v⁻₁
             lvelocity1 += linear_impulse * first_physbody.inverse_mass;
-            // v⁺₂ = v⁻₂
             lvelocity2 -= linear_impulse * second_physbody.inverse_mass;
 
             wvelocity1 = wvelocity1 + (lambda * first_physbody.inverse_inertia_tensor) * r1xn;
             wvelocity2 = wvelocity2 - (lambda * second_physbody.inverse_inertia_tensor) * r2xn;
         }
-
     }
     if (!first_physbody.is_player) {
         first_physbody.linear_velocity = lvelocity1;

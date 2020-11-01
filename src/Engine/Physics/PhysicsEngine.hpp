@@ -74,6 +74,10 @@ namespace physics {
          */
         bool GetRendererStatus();
 
+        /**
+        * Creates a shape based on the passed in parametesr
+        * @param extents The half extents of the shape to add
+        */
         PhysicsShape CreateBoxShape(glm::vec3 extents);
 
         PhysicsShape CreateCapsuleShape(float radius, float height);
@@ -83,8 +87,24 @@ namespace physics {
         reactphysics3d::PhysicsWorld *CreatePhysicsWorld();
 
         void DestroyPhysicsWorld(reactphysics3d::PhysicsWorld *world);
+
+        /**
+        * Calculates the inertia tensor for a box shape based on its mass
+        * @param shape The shape to generate the inertia tensor for
+        * @param mass The mass of the object in kg
+        */
         glm::mat3x3 CalculateInertiaTensor(redengine::Box shape, float mass);
+        /**
+        * Calculates the inertia tensor for a box shape based on its mass
+        * @param shape The shape to generate the inertia tensor for
+        * @param mass The mass of the object in kg
+        */
         glm::mat3x3 CalculateInertiaTensor(redengine::Capsule shape, float mass);
+        /**
+        * Calculates the inertia tensor for a box shape based on its mass
+        * @param shape The shape to generate the inertia tensor for
+        * @param mass The mass of the object in kg
+        */
         glm::mat3x3 CalculateInertiaTensor(redengine::Sphere shape, float mass);
 
         void Init();

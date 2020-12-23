@@ -3,6 +3,7 @@
 namespace npc {
 
     /**
+     * @author William Vlahos
      * @brief The set of entity properties that an NPC can perceive.
      * @warning Lists only symbolic representations, not values, of properties!
      */
@@ -22,6 +23,7 @@ enum class Properties {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of actions that an NPC can perform.
      * @warning Lists only symbolic representations, not systems, of actions!
      */
@@ -37,6 +39,7 @@ enum class Actions {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of components within a property that an NPC can perceive.
      * @note Used to resolve several data structures, such as an int or vec3.
      * @warning Lists only symbolic representations, not contents, of components!
@@ -49,6 +52,7 @@ enum class Components {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of outcomes that can occur to NPC events and actions.
      * @warning Lists only symbolic representations, not values, of outcomes!
      */
@@ -59,6 +63,7 @@ enum class Outcomes {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of conditions that can be used to establish NPC Goals.
      * @warning Lists only symbolic representations of conditional logic!
      */
@@ -72,6 +77,7 @@ enum class Conditions {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of events that an NPC can emotionally react to.
      * @warning Lists only symbolic representations, not details, of events!
      */
@@ -83,6 +89,7 @@ enum class Events {
 };
 
     /**
+     * @author William Vlahos
      * @brief The set of generic stages of an NPC's behaviour.
      * @warning Lists only symbolic representations of general behaviour characteristics!
      */

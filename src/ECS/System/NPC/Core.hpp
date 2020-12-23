@@ -3,6 +3,7 @@
 namespace System {
 
     /**
+     * @author William Vlahos
      * @brief Sets an Entity's NPC components to values from an external file.
      * Also generates any NPC components the Entity is missing.
      * @param [in,out] registry The target Registry.

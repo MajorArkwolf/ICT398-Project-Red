@@ -14,6 +14,7 @@
 namespace component {
 
     /**
+     * @author William Vlahos
      * @brief A declaration of an NPC's possible resolution for a Goal.
      * @note This is used as a component of the BDI's Intentions.
      * @warning All identifiers stored must be verified before their use!

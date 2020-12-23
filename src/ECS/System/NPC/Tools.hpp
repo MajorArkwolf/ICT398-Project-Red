@@ -6,6 +6,7 @@
 namespace System {
 
     /**
+     * @author William Vlahos
      * @brief Calculates the overall emotional state of an NPC from its mood and emotional queue.
      * @note Emotional responses are weighted relative to their position in the queue.
      * @param [in] target A Characteristics component storing an NPC's mood and emotional states.

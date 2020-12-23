@@ -1,0 +1,49 @@
+{
+  "Model": {
+    "ModelFilePath": "res/model/book.obj"
+  },
+  "Name": "book",
+  "Physics": {
+    "Colliders": [
+      {
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "HalfExtents": {
+          "X": 0.30000001192092896,
+          "Y": 0.05000000074505806,
+          "Z": 0.44999998807907104
+        },
+        "Mass": 0.0,
+        "Name": "book",
+        "Position": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": -0.0,
+          "Z": 0.0
+        },
+        "Type": "Box"
+      }
+    ],
+    "Static": false
+  },
+  "Transform": {
+    "Position": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 1.0
+  }
+}

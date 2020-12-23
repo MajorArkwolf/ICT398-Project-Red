@@ -46,10 +46,10 @@ class GameStack {
 
     /**
      * Add a new state onto the stack.
-     * @param newState the state to be added onto the stack.
+     * @param new_state the state to be added onto the stack.
      */
-    void AddToStack(T newState) {
-        gameStack.push(newState);
+    void AddToStack(T new_state) {
+        game_stack_.push(new_state);
     }
 
     /**
@@ -57,36 +57,64 @@ class GameStack {
      * @return the top element
      */
     T& getTop() {
-        return gameStack.top();
+        return game_stack_.top();
     }
     /**
-     * Deletes the top element
+     * Get ready to pop the top.
      */
     void popTop() {
-        removeTopFlag = true;
+        remove_top_flag_ = true;
     }
 
+    /**
+     * Checks if the top is ready to pop and if so pop up.
+     */
     void checkTop() {
-        if (removeTopFlag) {
+        if (remove_top_flag_) {
             removeTop();
         }
     }
 
+    /**
+     * Checks to see if the stack wants to deallocate something.
+     * @return true if ready.
+     */
     bool isRemoveTopFlag() const {
-        return removeTopFlag;
+        return remove_top_flag_;
+    }
+
+    /**
+     * Checks to see if deallocating will cause their to be no scene.
+     * @return true if 1 or less is on the stack.
+     */
+    bool WillBeEmpty() {
+        return game_stack_.size() <= 1;
+    }
+
+    /**
+     * Checks to see if the stack is empty.
+     * @return true if empty
+     */
+    bool Empty() {
+        return game_stack_.empty();
+    }
+
+    void Clear() {
+        while (!game_stack_.empty()) {
+            game_stack_.pop();
+        }
     }
 
 private:
-    bool removeTopFlag = false;
-    size_t size = 0;
+    bool remove_top_flag_ = false;
     /// The stack itself.
-    std::stack<T> gameStack;
+    std::stack<T> game_stack_;
 
     /*
-     * Finds an element on the stack.
+     * Removes the top when its safe to do so.
      */
     void removeTop() {
-        gameStack.pop();
-        removeTopFlag = false;
+        game_stack_.pop();
+        remove_top_flag_ = false;
     }
 };

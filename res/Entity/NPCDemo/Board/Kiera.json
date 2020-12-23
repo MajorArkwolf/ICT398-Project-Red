@@ -1,0 +1,24 @@
+{
+  "Prefab": "Guy2",
+  "Transform": {
+    "Position": {
+      "X": -435.0,
+      "Y": 79.0,
+      "Z": 300.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 300.0,
+      "Z": 0.0
+    },
+    "Scale": 0.5
+  },
+  "Animation": {
+    "IDLE": "IDLE"
+  },
+  "Physics": true,
+  "Moving": true,
+  "Static": true,
+  "NPC": 3,
+  "OBJType": "npc"
+}

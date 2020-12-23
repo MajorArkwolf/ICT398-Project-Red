@@ -1,0 +1,62 @@
+{
+  "Name": "Guy3",
+  "Model": {
+    "ModelFilePath": "res/model/Character/GreenDark.gltf",
+    "ShaderFilePath": "res/shader/model_shader"
+  },
+  "Transform": {
+    "Position": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 1.0
+  },
+  "Physics": {
+    "Static": false,
+    "Collision_Shapes": "Yes",
+    "BaseShapes": [
+      {
+        "Name": "Person",
+        "Type": "Box",
+        "HalfExtents": {
+          "X": 50,
+          "Y": 100,
+          "Z": 50
+        }
+      }
+    ],
+    "Colliders": [
+      {
+        "Name": "Person",
+        "BaseShape": "Person",
+        "Position": {
+          "X": 0.0,
+          "Y": 100,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "Mass": 0.0,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      }
+    ]
+  }
+}

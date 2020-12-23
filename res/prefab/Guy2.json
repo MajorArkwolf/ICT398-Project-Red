@@ -1,0 +1,48 @@
+{
+  "Name": "Guy2",
+  "Model": {
+    "ModelFilePath": "res/model/Character/BlueLight.gltf"
+  },
+  "Transform": {
+    "Position": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Rotation": {
+      "X": 0.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": 1.0
+  },
+  "Physics": {
+    "Static": false,
+    "Collision_Shapes": "Yes",
+    "Colliders": [
+      {
+        "Name": "Person",
+        "Type": "Capsule",
+        "Radius": 2.0,
+        "Height":  5,
+        "Position": {
+          "X": 0.0,
+          "Y": 4.0,
+          "Z": 0.0
+        },
+        "Rotation": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": 1.0,
+        "Mass": 1.0,
+        "CentreOfMass": {
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        }
+      }
+    ]
+  }
+}

@@ -2,5 +2,5 @@
 #include "Engine/Engine.hpp"
 
 int main() {
-    RedEngine::Engine::run();
+    redengine::Engine::Run();
 }

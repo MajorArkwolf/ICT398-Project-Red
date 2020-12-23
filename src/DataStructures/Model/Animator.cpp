@@ -1,38 +1,38 @@
 #include "Animator.hpp"
 #include "Engine/Engine.hpp"
 
-void Model::Animator::BoneTransform(double TimeInSeconds) {
-    Transforms.resize(100);
-    animationTime += TimeInSeconds;
-    if (animatedModel != nullptr) {
-        if (loadedAnimation != nullptr) {
-            if (animatedModel->isAnimated) {
-                double TicksPerSecond = loadedAnimation->getTicksPerSecond();
-                double TimeInTicks    = animationTime * TicksPerSecond;
-                if (endWhenCompleted) {
-                    if (TimeInTicks >= loadedAnimation->getDuration()) {
-                        clipEnded = true;
+void model::Animator::BoneTransform(double TimeInSeconds) {
+    transforms_.resize(100);
+    animation_time_ += TimeInSeconds;
+    if (animated_model_ != nullptr) {
+        if (loaded_animation_ != nullptr) {
+            if (animated_model_->is_animated_) {
+                double ticks_per_second = loaded_animation_->GetTicksPerSecond();
+                double time_in_ticks    = animation_time_ * ticks_per_second;
+                if (end_when_completed_) {
+                    if (time_in_ticks >= loaded_animation_->GetDuration()) {
+                        clip_ended_ = true;
                         return;
                     }
                 }
-                glm::mat4 Identity(1.0f);
+                glm::mat4 identity(1.0f);
 
-                double AnimationTime = fmod(TimeInTicks, loadedAnimation->getDuration());
+                double animation_time = fmod(time_in_ticks, loaded_animation_->GetDuration());
 
-                ReadNodeHeirarchy(AnimationTime, animatedModel->rootJoint, Identity);
+                ReadNodeHeirarchy(animation_time, animated_model_->root_joint_, identity);
             }
         } else {
             for (unsigned i = 0; i < 100; i++) {
-                Transforms[i] = glm::mat4(1.0f);
+                transforms_[i] = glm::mat4(1.0f);
             }
         }
     }
 }
-void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
-                       const glm::mat4 &ParentTransform) {
-    glm::mat4 NodeTransformation(jN.Transform);
+void model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const JointsName& jN,
+                                        const glm::mat4 &ParentTransform) {
+    glm::mat4 node_transformation(jN.transform);
 
-    const auto* pNodeAnim = loadedAnimation->FindNodeAnim(jN.name);
+    const auto* pNodeAnim = loaded_animation_->FindNodeAnim(jN.name);
 
     if (pNodeAnim) {
         // Interpolate scaling and generate scaling transformation matrix
@@ -42,90 +42,89 @@ void Model::Animator::ReadNodeHeirarchy(const double &AnimationTime, const Joint
 //        ScalingM.InitScaleTransform(Scaling.x, Scaling.y, Scaling.z);
 
         // Interpolate rotation and generate rotation transformation matrix
-        glm::mat4 RotationM = glm::mat4(CalcInterpolatedRotation(AnimationTime, pNodeAnim));
+        glm::mat4 rotation_m = glm::mat4(CalcInterpolatedRotation(AnimationTime, pNodeAnim));
 
         // Interpolate translation and generate translation transformation matrix
         //TranslationM.InitTranslationTransform(Translation.x, Translation.y, Translation.z);
-        glm::mat4 TranslationM = glm::translate(glm::mat4(1.0f), CalcInterpolatedPosition(AnimationTime, pNodeAnim));
+        glm::mat4 translation_m = glm::translate(glm::mat4(1.0f), CalcInterpolatedPosition(AnimationTime, pNodeAnim));
 
         // Combine the above transformations
-        NodeTransformation = TranslationM * RotationM /** ScalingM*/;
+        node_transformation = translation_m * rotation_m /** ScalingM*/;
     }
 
-    glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
+    glm::mat4 global_transformation = ParentTransform * node_transformation;
 
-    if (animatedModel->boneMapping.find(jN.name) != animatedModel->boneMapping.end()) {
-        unsigned BoneIndex = animatedModel->boneMapping[jN.name];
-       Transforms[BoneIndex] = animatedModel->globalInverseTransform * GlobalTransformation *
-                                                                 animatedModel->boneInfo[BoneIndex].BoneOffset;
+    if (animated_model_->bone_mapping_.find(jN.name) != animated_model_->bone_mapping_.end()) {
+        unsigned bone_index = animated_model_->bone_mapping_[jN.name];
+       transforms_[bone_index] = animated_model_->global_inverse_transform_ * global_transformation *
+                               animated_model_->bone_info_[bone_index].bone_offset;
     }
 
     for (auto &child : jN.children) {
-        ReadNodeHeirarchy(AnimationTime, child, GlobalTransformation);
+        ReadNodeHeirarchy(AnimationTime, child, global_transformation);
     }
 }
 
-glm::quat Model::Animator::CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim) {
-    glm::quat Out;
+glm::quat model::Animator::CalcInterpolatedRotation(double AnimationTime, const AnimJointNode *pNodeAnim) {
+    glm::quat out;
     // we need at least two values to interpolate...
-    if (pNodeAnim->numRotKeys == 1) {
-        Out = pNodeAnim->rotKey[0].second;
-        return Out;
+    if (pNodeAnim->num_rot_keys == 1) {
+        out = pNodeAnim->rot_key[0].second;
+        return out;
     }
-    unsigned RotationIndex = loadedAnimation->FindRotation(AnimationTime, pNodeAnim);
-    unsigned NextRotationIndex = (RotationIndex + 1);
-    assert(NextRotationIndex < pNodeAnim->numRotKeys);
-    double DeltaTime = pNodeAnim->rotKey[NextRotationIndex].first - pNodeAnim->rotKey[RotationIndex].first;
-    double Factor = (AnimationTime - pNodeAnim->rotKey[RotationIndex].first) / DeltaTime;
+    unsigned rotation_index = loaded_animation_->FindRotation(AnimationTime, pNodeAnim);
+    unsigned new_rotation_index = (rotation_index + 1);
+    assert(new_rotation_index < pNodeAnim->num_rot_keys);
+    double delta_time = pNodeAnim->rot_key[new_rotation_index].first - pNodeAnim->rot_key[rotation_index].first;
+    double factor = (AnimationTime - pNodeAnim->rot_key[rotation_index].first) / delta_time;
     //assert(Factor >= 0.0f && Factor <= 1.0f);
-    const glm::quat& StartRotationQ = pNodeAnim->rotKey[RotationIndex].second;
-        const glm::quat& EndRotationQ = pNodeAnim->rotKey[NextRotationIndex].second;
-    Out = glm::slerp(StartRotationQ, EndRotationQ, static_cast<float>(Factor));
-    Out = glm::normalize(Out);
-    return Out;
+    const glm::quat& start_rotation_q = pNodeAnim->rot_key[rotation_index].second;
+        const glm::quat& end_rotation_q = pNodeAnim->rot_key[new_rotation_index].second;
+    out = glm::slerp(start_rotation_q, end_rotation_q, static_cast<float>(factor));
+    out = glm::normalize(out);
+    return out;
 }
-glm::vec3 Model::Animator::CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim) {
-    glm::vec3 Out;
-    if (pNodeAnim->numPosKeys == 1) {
-        Out = pNodeAnim->posKey[0].second;
-        return Out;
+glm::vec3 model::Animator::CalcInterpolatedPosition(double AnimationTime, const AnimJointNode *pNodeAnim) {
+    glm::vec3 out;
+    if (pNodeAnim->num_pos_keys == 1) {
+        out = pNodeAnim->pos_key[0].second;
+        return out;
     }
-
-    unsigned PositionIndex = loadedAnimation->FindPosition(AnimationTime, pNodeAnim);
-    unsigned NextPositionIndex = (PositionIndex + 1);
-    assert(NextPositionIndex < pNodeAnim->numPosKeys);
-    double DeltaTime = pNodeAnim->posKey[NextPositionIndex].first - pNodeAnim->posKey[PositionIndex].first;
-    double Factor = (AnimationTime - pNodeAnim->posKey[PositionIndex].first) / DeltaTime;
+    unsigned position_index = loaded_animation_->FindPosition(AnimationTime, pNodeAnim);
+    unsigned next_position_index = (position_index + 1);
+    assert(next_position_index < pNodeAnim->num_pos_keys);
+    double delta_time = pNodeAnim->pos_key[next_position_index].first - pNodeAnim->pos_key[position_index].first;
+    double factor = (AnimationTime - pNodeAnim->pos_key[position_index].first) / delta_time;
     //assert(Factor >= 0.0f && Factor <= 1.0f);
-    const glm::vec3& Start = pNodeAnim->posKey[PositionIndex].second;
-    const glm::vec3& End = pNodeAnim->posKey[NextPositionIndex].second;
-    glm::vec3 Delta = End - Start;
-    Out = Start + static_cast<float>(Factor) * Delta;
-    return Out;
+    const glm::vec3& start = pNodeAnim->pos_key[position_index].second;
+    const glm::vec3& end = pNodeAnim->pos_key[next_position_index].second;
+    glm::vec3 delta = end - start;
+    out = start + static_cast<float>(factor) * delta;
+    return out;
 }
 
 //ALL CHECKS WITH THE STRING MUST BE UPPERCASE
-void Model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
+void model::Animator::LoadAnimation(const std::string& newAnim, bool endWhenCompletedFlag) {
     size_t index = 0;
-    if (loadedAnimation != nullptr) {
-        index = loadedAnimation->getName().find(newAnim);
+    if (loaded_animation_ != nullptr) {
+        index = loaded_animation_->GetName().find(newAnim);
     } else {
         index = std::string::npos;
     }
     if (index == std::string::npos) {
-        animationTime = 0.0;
-        loadedAnimation = animatedModel->getAnimation(newAnim);
-        endWhenCompleted = endWhenCompletedFlag;
-        clipEnded = false;
+        animation_time_ = 0.0;
+        loaded_animation_ = animated_model_->GetAnimation(newAnim);
+        end_when_completed_ = endWhenCompletedFlag;
+        clip_ended_ = false;
     }
 }
 
-void Model::Animator::ResetAnimationTime() {
-    animationTime = 0.0;
+void model::Animator::ResetAnimationTime() {
+    animation_time_ = 0.0;
 }
-bool Model::Animator::IsAnimationedEnded() const {
-    return clipEnded;
+bool model::Animator::IsAnimationedEnded() const {
+    return clip_ended_;
 }
-void Model::Animator::LinkToModel(size_t modelID) {
-    animatedModel = RedEngine::Engine::get().modelManager.getModel(modelID);
+void model::Animator::LinkToModel(size_t modelID) {
+    animated_model_ = redengine::Engine::get().model_manager_.getModel(modelID);
 }

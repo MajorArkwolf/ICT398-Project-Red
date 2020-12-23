@@ -1,44 +1,65 @@
-BasedOnStyle: LLVM
-Language: Cpp
-Standard: Cpp11
-ColumnLimit: 100
-IndentWidth: 4
-TabWidth: 4
-BreakInheritanceList: AfterColon
-AlignAfterOpenBracket: true
-ConstructorInitializerIndentWidth: 4
-PenaltyExcessCharacter: 4
-BreakBeforeBraces: Attach
-IndentPPDirectives: AfterHash
-AllowShortFunctionsOnASingleLine: Empty
-PointerAlignment: Right
-SpaceBeforeParens: ControlStatements
-IncludeBlocks: Regroup
-NamespaceIndentation: All
-Cpp11BracedListStyle: true
-IndentCaseLabels: true
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: false
-AlignTrailingComments: true
-SortIncludes: true
-SpaceBeforeAssignmentOperators: true
-UseTab: Never
-FixNamespaceComments: false
-SpaceAfterTemplateKeyword: false
-SpacesInContainerLiterals: false
-SpacesInSquareBrackets: false
-AlwaysBreakTemplateDeclarations: true
-SortUsingDeclarations: true
-BreakBeforeTernaryOperators: true
-AlignOperands: true
+# Generated from CLion C/C++ Code Style settings
+BasedOnStyle: Google
+AccessModifierOffset: -1
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignOperands: false
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortCaseLabelsOnASingleLine: true
-IncludeCategories:
-# Standard library headers
-  - Regex:           '^<[^\/]*$'
-    Priority:        1
-# Other headers
-  - Regex:           '^<.*'
-    Priority:        2
-# Project headers
-  - Regex:           '.*'
-    Priority:        3
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Always
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+ColumnLimit: 0
+CompactNamespaces: false
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentPPDirectives: None
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+ObjCSpaceAfterProperty: false
+ObjCSpaceBeforeProtocolList: true
+PointerAlignment: Right
+ReflowComments: false
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 0
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+TabWidth: 4
+UseTab: Never

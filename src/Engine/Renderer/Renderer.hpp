@@ -2,7 +2,7 @@
 #include <utility>
 #include <vector>
 
-namespace View {
+namespace view {
     class Renderer {
     public:
         virtual ~Renderer() = default;

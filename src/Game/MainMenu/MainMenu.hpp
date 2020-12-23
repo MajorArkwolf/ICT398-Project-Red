@@ -1,8 +1,8 @@
 #pragma once
 #include "Game/BaseState.hpp"
 //#include "Controller/InputManager.hpp"
+#include "ECS/ECS.hpp"
 #include "Engine/EulerCamera.hpp"
-#include "ECS/Ecs.hpp"
 
 class MainMenu : public BaseState {
 public:
@@ -19,7 +19,7 @@ public:
     /**
      * Display method for the scene.
      */
-    auto Display(const glm::mat4& projection, const glm::mat4& view) -> void override;
+    auto Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) -> void override;
 
     /**
      * Update function for main menu.
@@ -50,12 +50,12 @@ public:
      * @param inputData events
      * @param deltaTime delta time
      */
-    //void handleInputData(Controller::Input::InputData inputData, double deltaTime) override;
+    void HandleInputData(input::InputEvent inputData, double deltaTime) override;
 
     /**
      * Function to start our game.
      */
-    //void startGame(Model::Difficulty newDifficulty);
+    //void startGame(model::Difficulty newDifficulty);
 
     /**
      * Starts the GUI
@@ -71,12 +71,12 @@ private:
     /**
      * Handles window events.
      */
-    void handleWindowEvent();
+    void HandleWindowEvent();
 
     /// Camera for the scene
     //Engine::Camera camera;
     void MainMenuGUI();
-    bool displayDifficultyMenu = false;
+    bool display_difficulty_menu = false;
     ECS ecs = {};
 };
 

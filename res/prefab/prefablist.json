@@ -1,0 +1,23 @@
+{
+  "Prefab": [
+    "Error.json",
+    "Guy1.json",
+    "Guy2.json",
+    "Guy3.json",
+    "Guy4.json",
+    "Female1.json",
+    "Female2.json",
+    "Chair.json",
+    "Desk.json",
+    "Classroom.json",
+    "Ball.json",
+    "Block.json",
+    "Board.json",
+    "Bench.json",
+    "Tree_01.json",
+    "Rock_01.json",
+    "UnitTestBlock.json",
+    "book.json",
+    "Cube.json"
+  ]
+}

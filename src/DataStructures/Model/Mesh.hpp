@@ -1,50 +1,63 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include <assimp/anim.h>
+
 #include <glm/fwd.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <string>
+#include <vector>
 
 #include "DataStructures/Model/DataTypes.hpp"
 #include "Engine/Renderer/DrawStruct.hpp"
 #include "Engine/Renderer/Shader.hpp"
 
+namespace model {
+    struct Material {
+        glm::vec3 Diffuse;
+        glm::vec3 Specular;
+        glm::vec3 Ambient;
+        float Shininess;
+    };
+}
+
 class Mesh {
   public:
     /// Vertices used in the mesh.
-    std::vector<Vertex> vertices = {};
+    std::vector<Vertex> vertices_ = {};
     /// Indices used in the mesh.
-    std::vector<unsigned int> indices = {};
+    std::vector<unsigned int> indices_ = {};
     /// Textures used in a mesh.
-    std::vector<TextureB> textures = {};
+    std::vector<TextureB> textures_ = {};
     /// Index buffer location.
-    unsigned int VAO = {};
+    unsigned int vao_ = {};
+    /// Materials
+    model::Material material_ = {};
+    /// Transform
+    glm::mat4 transform_ = {};
 
     /**
      * Constructs a mesh object.
-     * @param newVertices vertices used in the mesh.
-     * @param newIndices indices used in the mesh.
-     * @param newTextures textures used in a mesh.
+     * @param new_vertices vertices used in the mesh.
+     * @param new_indices indices used in the mesh.
+     * @param new_textures textures used in a mesh.
      */
-    Mesh(std::vector<Vertex> newVertices, std::vector<unsigned int> newIndices,
-         std::vector<TextureB> newTextures);
+    Mesh(std::vector<Vertex> new_vertices, std::vector<unsigned int> new_indices,
+         std::vector<TextureB> new_textures, model::Material material, glm::mat4 transformation);
 
     /**
      * Draw function for the model.
      * @param shader used to draw the model.
      */
-    void Draw(Shader& shader);
+    void Draw(Shader* shader, const glm::mat4& model_matrix);
 
     /**
      * Add bone data to the the given vertix.
-     * @param VectorID vertex to add bone data too
-     * @param BoneID the bone id
-     * @param Weight the weight of the given bone
+     * @param vector_id vertex to add bone data too
+     * @param bone_id the bone id
+     * @param weight the weight of the given bone
      */
-    void AddBoneData(unsigned VectorID, int BoneID, float Weight);
+    void AddBoneData(unsigned vector_id, int bone_id, float weight);
 
     /**
      * Move the data onto the GPU
@@ -53,5 +66,5 @@ class Mesh {
 
   private:
     /// Buffer ID's.
-    unsigned int VBO = 0, EBO = 0;
+    unsigned int vbo_ = 0, ebo_ = 0;
 };

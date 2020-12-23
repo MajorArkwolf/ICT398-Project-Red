@@ -1,8 +1,11 @@
 #pragma once
 
-//#include "Controller/InputManager.hpp"
-#include "Engine/EulerCamera.hpp"
+#include "Engine/SubModules/Input/InputManager.hpp"
 #include <glm/matrix.hpp>
+#include "Engine/EulerCamera.hpp"
+#include "Engine/Renderer/Shader.hpp"
+#include "Engine/Physics/PhysicsWorld.hpp"
+
 
 /**
  * @class BaseState
@@ -28,7 +31,7 @@ class BaseState {
      * @brief Virtual soft initialisation function for a game state
      * Used separately from a hard init to reset variables needed for games tate function
      */
-    virtual void Display(const glm::mat4& projection, const glm::mat4& view) = 0;
+    virtual void Display(Shader *shader, const glm::mat4& projection, const glm::mat4& view) = 0;
 
     /**
      * @brief Virtual un-initialisation function for a game state
@@ -39,10 +42,10 @@ class BaseState {
     /**
      * @brief Virtual function for handling input events encased within a a custom Input Event
      * All input events will be sent to the current game state at the top of the stack
-     * @param inputData The InputData event that contains the user input
+     * @param input_data The InputData event that contains the user input
      * @param deltaTime time since last frame
      */
-    //virtual void handleInputData(Controller::Input::InputData inputData, double deltaTime) = 0;
+    virtual void HandleInputData(input::InputEvent input_data, double delta_time) = 0;
 
     /**
      * @brief Virtual update function for updating physics within a game state
@@ -71,5 +74,6 @@ class BaseState {
      */
     virtual void GUIEnd() = 0;
 
-    Engine::Camera camera;
+    engine::Camera camera;
+    physics::PhysicsWorld physics_world_;
 };

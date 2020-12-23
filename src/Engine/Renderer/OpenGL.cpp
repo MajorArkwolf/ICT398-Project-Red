@@ -1,38 +1,77 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #include "OpenGL.hpp"
 #include <iostream>
 #include "Engine/Engine.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 #include <algorithm>
 
-void View::OpenGL::Draw() {
-    auto &engine = RedEngine::Engine::get();
-    if (!windowMinimized()) {
-        camera = &engine.gameStack.getTop()->camera;
+static std::filesystem::path FixWindowsPath(const std::string& file_path) {
+    auto path = file_path;
+#if defined(__APPLE__) || defined(__linux__)
+    std::replace(path.begin(), path.end(), '\\', '/');
+#endif
+    return std::filesystem::path{path};
+}
+
+void view::OpenGL::Draw() {
+    auto &engine = redengine::Engine::get();
+    if (!WindowMinimized()) {
+        if (camera_ == nullptr) {
+            camera_ = &engine.game_stack_.getTop()->camera;
+        }
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        engine.gameStack.getTop()->GUIStart();
+        engine.game_stack_.getTop()->GUIStart();
         int width = 0, height = 0;
-        glfwGetWindowSize(engine.window, &width, &height);
+        glfwGetWindowSize(engine.window_, &width, &height);
+
         glm::mat4 projection =
-                glm::perspective(glm::radians(camera->Zoom),
-                                 static_cast<double>(width) / static_cast<double>(height), 0.1, 100000.0);
-        glm::mat4 view = camera->GetViewMatrix();
-        glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-        engine.gameStack.getTop()->Display(projection, view);
+                glm::perspective(glm::radians(camera_->zoom_),
+                                 static_cast<double>(width) / static_cast<double>(height), 0.1, 10000000.0);
+        glm::mat4 view = camera_->GetViewMatrix();
+
+        model_shader_->Use();
+        model_shader_->SetMat4("projection", projection);
+        model_shader_->SetMat4("view", view);
+        engine.game_stack_.getTop()->Display(model_shader_.get(), projection, view);
+        engine.GetPhysicsEngine().Draw(model_shader_.get(), projection, view);
+        // be sure to activate shader when setting uniforms/drawing objects
+//        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+//        light_shader_->Use();
+//        light_shader_->SetMat4("projection", projection);
+//        light_shader_->SetMat4("view", view);
+//        light_shader_->SetVec3("light.position", lightPos);
+//        light_shader_->SetVec3("viewPos", camera_->position_);
+
+        // light properties
+//        glm::vec3 lightColor;
+//
+//        lightColor.x = sin(glfwGetTime() * 2.0f);
+//        lightColor.y = sin(glfwGetTime() * 0.7f);
+//        lightColor.z = sin(glfwGetTime() * 1.3f);
+//        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+//        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+//        light_shader_->SetVec3("light.ambient", ambientColor);
+//        light_shader_->SetVec3("light.diffuse", diffuseColor);
+//        light_shader_->SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        //engine.game_stack_.getTop()->Display(light_shader_.get(), projection, view);
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        skyBox.draw(skyboxView, projection);
-        engine.gameStack.getTop()->GUIEnd();
+        glm::mat4 skybox_view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
+        sky_box_.draw(skybox_view, projection);
+        engine.game_stack_.getTop()->GUIEnd();
     }
-    glfwSwapBuffers(engine.window);
+    glfwSwapBuffers(engine.window_);
 }
-void View::OpenGL::Init() {
-    int width  = 0;
+
+void view::OpenGL::Init() {
+    int width = 0;
     int height = 0;
 
-    auto &engine = RedEngine::Engine::get();
-    glfwGetWindowSize(engine.window, &width, &height);
+    auto &engine = redengine::Engine::get();
+    auto base_path = engine.GetBasePath();
+    glfwGetWindowSize(engine.window_, &width, &height);
     glViewport(0, 0, width, height);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -40,52 +79,25 @@ void View::OpenGL::Init() {
     glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    skyBox.Init();
+    sky_box_.Init();
+
+
+    auto model_vert = base_path / "res" / "shader" / "model_shader.vs";
+    auto model_frag = base_path / "res" / "shader" / "model_shader.fs";
+    model_shader_ = std::make_shared<Shader>(model_vert, model_frag, "");
+
+    auto lighting_vert = base_path / "res" / "shader" / "lighting_shader.vs";
+    auto lighting_frag = base_path / "res" / "shader" / "lighting_shader.fs";
+    light_shader_ = std::make_shared<Shader>(lighting_vert, lighting_frag, "");
 
 }
-void View::OpenGL::DeInit() {
+
+void view::OpenGL::DeInit() {
 
 }
 
-void View::OpenGL::DrawModel(Shader& shader, unsigned int &VAO, const std::vector<TextureB> &textures,
-               const std::vector<unsigned int> &indices) {
-    // bind appropriate textures
-    unsigned int diffuseNr  = 1;
-    unsigned int specularNr = 1;
-    unsigned int normalNr   = 1;
-    unsigned int heightNr   = 1;
-    for (unsigned int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
-        std::string number;
-        std::string name = textures[i].type;
-        if (name == "texture_diffuse")
-            number = std::to_string(diffuseNr++);
-        else if (name == "texture_specular")
-            number =
-                    std::to_string(specularNr++); // transfer unsigned int to stream
-        else if (name == "texture_normal")
-            number = std::to_string(normalNr++); // transfer unsigned int to stream
-        else if (name == "texture_height")
-            number = std::to_string(heightNr++); // transfer unsigned int to stream
-
-        // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(shader.getId(), (name + number).c_str()), i);
-        // and finally bind the texture
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-
-    // draw mesh
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-
-    // always good practice to set everything back to defaults once configured.
-    glActiveTexture(GL_TEXTURE0);
-}
-
-void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int &EBO,
-               std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
+void view::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int &EBO,
+                             std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
     // create buffers/arrays
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -109,85 +121,92 @@ void View::OpenGL::SetupMesh(unsigned int &VAO, unsigned int &VBO, unsigned int 
     // vertex normals
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void*>(offsetof(Vertex, Normal)));
+                          reinterpret_cast<void *>(offsetof(Vertex, normal)));
     // vertex texture coords
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, TexCoords)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tex_coords)));
     // vertex tangent
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Tangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, tangent)));
     // vertex bitangent
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, Bitangent)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bitangent)));
     // BoneID's
     glEnableVertexAttribArray(5);
     glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex),
-                           reinterpret_cast<void *>(offsetof(Vertex, BoneIDs)));
+                           reinterpret_cast<void *>(offsetof(Vertex, bone_ids)));
     //Bone Weights
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          reinterpret_cast<void *>(offsetof(Vertex, BoneWeight)));
+                          reinterpret_cast<void *>(offsetof(Vertex, bone_weight)));
 
     glBindVertexArray(0);
 }
 
-void View::OpenGL::ResizeWindow() {
-    auto &engine = RedEngine::Engine::get();
+void view::OpenGL::ResizeWindow() {
+    auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
-    glfwGetWindowSize(engine.window, &width, &height);
-    engine.setLastWindowXSize(width);
-    engine.setLastWindowYSize(height);
+    glfwGetWindowSize(engine.window_, &width, &height);
+    engine.SetLastWindowXSize(width);
+    engine.SetLastWindowYSize(height);
     UpdateViewPort(0, 0, width, height);
 }
 
-unsigned int View::OpenGL::TextureFromFile(const std::string& path, std::filesystem::path directory,
+unsigned int view::OpenGL::TextureFromFile(const std::string &path, const std::filesystem::path &directory,
                                            [[maybe_unused]] bool gamma) {
-    std::filesystem::path filename = directory.remove_filename() / path;
+
+    auto new_dir = directory;
+    auto ext = FixWindowsPath(path);
+    ext.make_preferred();
+    ext = ext.filename();
+    auto filename = new_dir.remove_filename() / ext;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-    // filename to C string may not work on other OS's please verify it does.
-    unsigned char *data =
-            stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
-    if (data) {
-        GLenum format = 1;
+    unsigned char *data = stbi_load(filename.string().c_str(), &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format = 3;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
             format = GL_RGB;
         else if (nrComponents == 4)
             format = GL_RGBA;
-
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
-                     GL_UNSIGNED_BYTE, data);
+        if (nrComponents == 3) {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        // Enable should you need alpha, this will clamp textures to the edge to
-        // ensure that weird stuff doesnt happen.
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-    } else {
-        std::cout << "Texture failed to load at path: " << filename << std::endl;
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
+
     return textureID;
 }
-void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
-    camera = &mainCamera;
+
+void view::OpenGL::SetCameraOnRender(engine::Camera &main_camera) {
+    camera_ = &main_camera;
+}
+
+void view::OpenGL::ClearCamera() {
+    camera_ = nullptr;
 }
 
 //void View::OpenGL::sortDrawDistance() {
@@ -201,18 +220,24 @@ void View::OpenGL::SetCameraOnRender(Engine::Camera &mainCamera) {
 //         });
 //}
 
-void View::OpenGL::ToggleWireFrame() {
-    wireFrame = !wireFrame;
+void view::OpenGL::ToggleWireFrame() {
+    wire_frame_ = !wire_frame_;
+    if (wire_frame_) {
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    } else {
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    }
+
 }
 
-bool View::OpenGL::windowMinimized() {
-    auto &engine = RedEngine::Engine::get();
+bool view::OpenGL::WindowMinimized() {
+    auto &engine = redengine::Engine::get();
     int width = 0, height = 0;
-    glfwGetWindowSize(engine.window, &width, &height);
+    glfwGetWindowSize(engine.window_, &width, &height);
     return width == 0 || height == 0;
 }
 
-void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
+void view::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
     glViewport(bl, br, tl, tr);
 }
 
@@ -220,6 +245,16 @@ void View::OpenGL::UpdateViewPort(int bl, int br, int tl, int tr) {
 //    drawQueTransparent.push_back(drawItem);
 //}
 
-View::OpenGL::~OpenGL() {
+view::OpenGL::~OpenGL() {
 
+}
+
+glm::vec2 view::OpenGL::GetViewPort() {
+    glm::vec2 window_size = {};
+    auto *window = redengine::Engine::get().window_;
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    window_size.x = static_cast<float>(width);
+    window_size.y = static_cast<float>(height);
+    return window_size;
 }

@@ -1,36 +1,39 @@
-#include <Engine/Renderer/OpenGL.hpp>
-#include <Engine/Engine.hpp>
 #include "MainMenu.hpp"
-#include "DataStructures/Model/Animation.hpp"
-#include <imgui.h>
-#include "Engine/SubModules/GUIManager.hpp"
-#include "Game/Demo/Demo.hpp"
-#include "Engine/SubModules/JsonLoader.hpp"
 
-//using Controller::Input::BLUE_InputAction;
-//using Controller::Input::BLUE_InputType;
+#include <imgui.h>
+
+#include <Engine/Engine.hpp>
+#include <Engine/Renderer/OpenGL.hpp>
+
+#include "Engine/SubModules/JsonLoader.hpp"
+#include "Game/NPCDemo/NPCDemo.hpp"
+#include "Game/PhysicsDemo/PhysicsDemo.hpp"
+#include "Game/PrefabEditor/PrefabEditor.hpp"
+#include "DataStructures/Model/Overload.hpp"
 
 MainMenu::MainMenu() {
-    auto &window = RedEngine::Engine::get().window;
+    auto &window = redengine::Engine::get().window_;
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 MainMenu::~MainMenu() = default;
 
 void MainMenu::Init() {
-    camera = Engine::Camera();
-    camera.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-    auto basepath = RedEngine::Engine::get().getBasePath();
-    JSONLoader::LoadScene("MainScreen/Scene.json", ecs);
-    camera.Pitch -= 20.0;
-    camera.updateCameraVectors();
+    camera = engine::Camera();
+    camera.position_ = glm::vec3(0.0f, 10.0f, 0.0f);
+    std::filesystem::path path = "";
+    path.append("MainScreen");
+    path.append("Scene.json");
+    JSONLoader::LoadScene(path, &ecs, nullptr);
+    camera.pitch_ -= 20.0;
+    camera.UpdateCameraVectors();
 }
 
-auto MainMenu::Display(const glm::mat4& projection, const glm::mat4& view) -> void {
-    auto &engine   = RedEngine::Engine::get();
-    auto &renderer = RedEngine::Engine::get().renderer;
+auto MainMenu::Display(Shader *shader, const glm::mat4 &projection, const glm::mat4 &view) -> void {
+    auto &engine = redengine::Engine::get();
+    auto &renderer = redengine::Engine::get().renderer_;
     renderer.SetCameraOnRender(camera);
-    ecs.Draw(projection, view, camera.getLocation());
+    ecs.Draw(shader, projection, view);
 }
 
 auto MainMenu::FixedUpdate(double t, double dt) -> void {
@@ -38,92 +41,63 @@ auto MainMenu::FixedUpdate(double t, double dt) -> void {
 }
 
 auto MainMenu::Update(double t, double dt) -> void {
+    auto &renderer = redengine::Engine::get().renderer_;
+    renderer.SetCameraOnRender(camera);
     ecs.Update(t, dt);
 }
 
 void MainMenu::UnInit() {
-
 }
 
-void MainMenu::handleWindowEvent() {
-    auto &engine = RedEngine::Engine::get();
-    engine.renderer.ResizeWindow();
+void MainMenu::HandleWindowEvent() {
+    auto &engine = redengine::Engine::get();
+    engine.renderer_.ResizeWindow();
 }
 
-//void MainMenu::handleInputData(Controller::Input::InputData inputData, double deltaTime) {
-//    auto &engine      = RedEngine::Engine::get();
-//    auto &guiManager  = engine.getGuiManager();
-//    auto handledMouse = false;
-//
-//    switch (inputData.inputType) {
-//        case BLUE_InputType::KEY_PRESS: { //  Key Press events
-//
-//            switch (inputData.inputAction) {
-//                case BLUE_InputAction::INPUT_MOVE_FORWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_BACKWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_LEFT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_RIGHT: {
-//                } break;
-//                default: break;
-//            }
-//        } break;
-//        case BLUE_InputType::KEY_RELEASE: { // Key Release events
-//            switch (inputData.inputAction) {
-//                case BLUE_InputAction::INPUT_MOVE_FORWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_BACKWARD: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_LEFT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_MOVE_RIGHT: {
-//                } break;
-//                case BLUE_InputAction::INPUT_JUMP: {
-//                } break;
-//                case BLUE_InputAction::INPUT_CROUCH: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_2: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_3: {
-//                } break;
-//                case BLUE_InputAction::INPUT_ACTION_4: {
-//                } break;
-//                default: break;
-//            }
-//        } break;
-//        case BLUE_InputType::MOUSE_MOTION: { // Mouse motion event
-//            if (!engine.getMouseMode()) {
-////                 auto x = static_cast<double>(inputData.mouseMotionRelative.x);
-////                 auto y = static_cast<double>(inputData.mouseMotionRelative.y);
-////                 y      = y * -1.0;
-////                 camera.ProcessMouseMovement(x, y);
-////                 handledMouse = true;
-//            }
-//        } break;
-//        case BLUE_InputType::MOUSE_WHEEL: { // Mouse Wheel event
-//            auto amountScrolledY = static_cast<double>(inputData.mouseWheelMotion);
-//            //camera.ProcessMouseScroll(amountScrolledY);
-//        } break;
-//        case BLUE_InputType::WINDOW_RESIZE: {
-//            this->handleWindowEvent();
-//        } break;
-//        default: break;
-//    }
-//    if (!handledMouse) {
-//        engine.mouse = {0.0f, 0.0f};
-//    }
-//}
+void MainMenu::HandleInputData(input::InputEvent inputData, double deltaTime) {
+    using namespace input;
+    auto &engine = redengine::Engine::get();
+    auto &gui_manager = engine.GetGuiManager();
+    auto handledMouse = false;
+    std::visit(overload{
+                   [&](std::monostate) {
+
+                   },
+                   [&](InputEvent::MouseEvent mouse) {
+
+                   },
+                   [&](InputEvent::KeyboardEvent keyboard) {
+                       switch (inputData.type) {
+                           case input::InputType::kKeyPressed: {
+                               switch (keyboard.key) {
+                               }
+                           } break;
+                           case input::InputType::kKeyReleased: {
+                               switch (keyboard.key) {
+                               }
+                           } break;
+                       }
+                   },
+                   [&](InputEvent::dVector2 vec) {
+
+                   },
+                   [&](InputEvent::iVector2 vec) {
+
+                   }},
+               inputData.data);
+    if (!handledMouse) {
+        engine.mouse_ = {0.0f, 0.0f};
+    }
+}
 
 void MainMenu::GUIStart() {
-    auto &engine  = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     GUIManager::startWindowFrame();
     MainMenuGUI();
 }
 
 void MainMenu::MainMenuGUI() {
-    auto &engine = RedEngine::Engine::get();
+    auto &engine = redengine::Engine::get();
     ImGui::SetNextWindowSize(ImVec2(300, 500), 1);
     //ImGui::SetNextWindowPosCenter(1);
 
@@ -132,26 +106,40 @@ void MainMenu::MainMenuGUI() {
     ImGui::Separator();
     ImGui::SetNextItemWidth(ImGui::GetWindowWidth());
     ImGui::Text("Project Blue: Run and Gun");
-    if (ImGui::Button("Demo", ImVec2(285, 40))) {
-        engine.gameStack.AddToStack(std::make_shared<Demo>());
+    if (ImGui::Button("NPC Demo", ImVec2(285, 40))) {
+        auto p = std::make_shared<NPCDemo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
+    }
+    if (ImGui::Button("Physics Demo", ImVec2(285, 40))) {
+        auto p = std::make_shared<PhysicsDemo>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
+    }
+    if (ImGui::Button("Prefab Editor", ImVec2(285, 40))) {
+        auto p = std::make_shared<PrefabEditor>();
+        p->Init();
+        engine.game_stack_.AddToStack(p);
     }
     ImGui::Separator();
 
     ImGui::Text("Other options");
     if (ImGui::Button("Settings", ImVec2(285, 40))) {
-        engine.showSettingsMenu = !engine.showSettingsMenu;
+        engine.show_settings_menu_ = !engine.show_settings_menu_;
     }
     if (ImGui::Button("Quit", ImVec2(285, 40))) {
-        engine.endEngine();
+        engine.GetGuiManager().ToggleWindow("quitScreen");
     }
 
-    if (engine.showSettingsMenu) {
+    if (engine.show_settings_menu_) {
         engine.SettingMenu();
     }
 
     ImGui::End();
+
+    engine.GetGuiManager().DisplayQuitScreen();
 }
 
 void MainMenu::GUIEnd() {
-    GUIManager::endWindowFrame();
+    GUIManager::EndWindowFrame();
 }

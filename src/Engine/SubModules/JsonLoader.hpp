@@ -1,16 +1,36 @@
 #pragma once
+
+#include <filesystem>
 #include <memory>
 #include <optional>
+
 #include <nlohmann/json.hpp>
-#include <filesystem>
 
 class Entity;
 class ECS;
+namespace physics {
+    class PhysicsEngine;
+    class PhysicsWorld;
+}
 
 class JSONLoader {
-public:
-    static nlohmann::json LoadJson(const std::filesystem::path& filepath);
-    static std::optional<std::shared_ptr<Entity>> LoadEntity(const std::filesystem::path& filepath, ECS& ecs);
-    static void LoadScene(const std::filesystem::path& filepath, ECS& ecs);
-};
+    enum class JsonType {
+        String,
+        Boolean,
+        Float,
+        Int,
+        Array,
+        Json,
+        Number
+    };
 
+   public:
+    static nlohmann::json LoadJson(const std::filesystem::path& file_path);
+    static std::optional<std::shared_ptr<Entity>> LoadEntity(
+        const std::filesystem::path& file_path, ECS* ecs, physics::PhysicsWorld* pw = nullptr);        // NOLINT
+    static void LoadScene(const std::filesystem::path& file_path, ECS* ecs, physics::PhysicsWorld* pw);// NOLINT
+    static void LoadPrefabList();
+
+    private:
+    static std::optional<std::reference_wrapper<nlohmann::json>> GetJsonField(nlohmann::json& input_json, const std::string &json_name, const std::string &field_name, JsonType expectedType);
+};

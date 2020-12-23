@@ -12,8 +12,13 @@
 #include "Engine/Renderer/OpenGL.hpp"
 #include "Engine/SubModules/ModelManager.hpp"
 #include "Engine/SubModules/GUIManager.hpp"
+#include "Engine/SubModules/Input/InputManager.hpp"
+#include "Engine/SubModules/PrefabRepo.hpp"
+#include "Engine/SubModules/ShaderRepo.hpp"
+#include "SubModules/ConsoleLog.hpp"
+#include "Engine/Physics/PhysicsEngine.hpp"
 
-namespace RedEngine {
+namespace redengine {
 
     /**
      * @class Engine
@@ -21,49 +26,45 @@ namespace RedEngine {
      */
     class Engine {
       public:
-        static constexpr auto FPS_UPDATE_INTERVAL = 0.5;
-
         /// Mouse movement.
-        glm::vec2 mouse = {};
+        glm::vec2 mouse_ = {};
 
         /// GLFW handles.
-        GLFWwindow *window = nullptr;
+        GLFWwindow *window_ = nullptr;
 
         /// Renderer for OpenGL
-        View::OpenGL renderer = {};
-
-        /// The current FPS
-        double fps           = 0.0;
+        view::OpenGL renderer_ = {};
 
         /// The game stack to allow to switch between scenes.
-        ///
-        GameStack<std::shared_ptr<BaseState>> gameStack;
+        GameStack<std::shared_ptr<BaseState>> game_stack_;
       private:
+        physics::PhysicsEngine physics_engine_ = {};
         /// GUI Manager for our GUI interface.
-        GUIManager guiManager;
+        GUIManager gui_manager_;
         /// Flag used to determine if the engine should shutdown.
-        bool isRunning = true;
+        bool is_running_ = true;
         /**
          * Sets the basepath of where the engine is running.
          */
-        auto setBasePath() -> void;
+        static auto SetupBasePath() -> std::filesystem::path;
         /**
          * Privatised constructor due to the engine being a singleton.
          */
         Engine();
 
         /// Testing values
-        int lastWindowXSize     = 800;
-        int lastWindowYSize     = 600;
+        int last_window_x_size_     = 800;
+        int last_window_y_size_     = 600;
 
-        double t  = 0.0;
-        double dt = 0.01;
-        double EngineFrameTime   = 0.0;
-        std::string glsl_version = "";
+        double t_  = 0.0;
+        double dt_ = 0.01;
+        double engine_frame_time_   = 0.0;
+        PrefabRepo prefabRepo_ = {};
+        ShaderRepo shaderRepo_ = {};
+        std::string glsl_version_ = "";
         /// Base path to the program.
-        std::filesystem::path basepath = {};
-
-
+        std::filesystem::path base_path_ = {};
+        ConsoleLog log_;
       public:
         /**
          * Deleted move constructor due to unique pointers being used.
@@ -89,13 +90,13 @@ namespace RedEngine {
         /**
          * @brief The game engine main loop
          */
-        static auto run() -> void;
+        static auto Run() -> void;
 
         /**
          * Gets the GUI manager interface.
          * @return the GUIManager object.
          */
-        GUIManager &getGuiManager();
+        GUIManager &GetGuiManager();
 
         /**
          * @brief Overloaded assignment operator, set to default overload
@@ -111,55 +112,103 @@ namespace RedEngine {
          * Check to see if the engine is running.
          * @return the current state of the engine.
          */
-        auto getIsRunning() const -> bool;
+        auto GetIsRunning() const -> bool;
 
         /**
          * Tells the engine the program is requesting termination.
          */
-        auto endEngine() -> void;
+        auto EndEngine() -> void;
 
         /**
          * Process the input from our 3rd party library.
          */
-        void processInput(double deltaTime);
+        void ProcessInput(double deltaTime);
 
         /**
          * Checks to see what type of mouse mode the engine has set.
          * @return the value of the mouse.
          */
-        bool getMouseMode();
+        bool GetMouseMode();
 
         /**
          * Sets the mouse mode
          * @param mode sets the mouse mode.
          */
-        void setMouseMode(bool mode);
+        void GetMouseMode(bool mode);
 
 
         void SettingMenu();
 
         ///Engine Sub Modules
-        ModelManager modelManager = {};
+        ModelManager model_manager_ = {};
 
         ///Engine Variables
 
-        float gammaCorrection = 1.f;
-        bool showSettingsMenu = false;
+        float gamma_correction_ = 1.f;
+        bool show_settings_menu_ = false;
 
-        int getLastWindowXSize() const;
+        /**
+         * Gets the last known size of a window.
+         * @return Gets the last known size of the given window.
+         */
+        int GetLastWindowXSize() const;
 
-        void setLastWindowXSize(int lastWindowXSize);
+        /**
+         * Set the Screen X size.
+         * @param last_window_x_size set the X size of the window.
+         */
+        void SetLastWindowXSize(int last_window_x_size);
 
-        int getLastWindowYSize() const;
+        /**
+         * Gets the last known size of a window.
+         * @return Gets the last known size of the given window.
+         */
+        int GetLastWindowYSize() const;
 
-        void setLastWindowYSize(int lastWindowYSize);
+        /**
+         * Set the Screen Y size.
+         * @param last_window_y_size set the Y size of the window.
+         */
+        void SetLastWindowYSize(int last_window_y_size);
 
-        double getT() const;
-        double getDt() const;
-        double getFrameTime() const;
+        /**
+         * Get the time since the engine executed.
+         * @return the time since engine loop began.
+         */
+        double GetT() const;
+
+        /**
+         * Returns the Delta time, this is a fixed time step so you should expect consistent values.
+         * @return Delta time, fixed time step.
+         */
+        double GetDt() const;
+
+        /**
+         * Returns the delta time for a given frame.
+         * @return Delta time relative to the frame.
+         */
+        double GetFrameTime() const;
+
         /**
          * Gets the basepath of the executable
          */
-        auto getBasePath() const -> std::filesystem::path;
+        input::InputManager input_manager_;
+
+        /**
+         * Get the basepath relative to the executable.
+         * @return file address
+         */
+        auto GetBasePath() -> std::filesystem::path;
+        /**
+         * Gets the prefab repo from the engine.
+         * @return a reference to the prefab repo.
+         */
+        PrefabRepo& GetPrefabRepo();
+
+        ConsoleLog &GetLog();
+
+        void CloseScene();
+
+        physics::PhysicsEngine& GetPhysicsEngine();
     };
 }

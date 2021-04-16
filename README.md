@@ -1,6 +1,6 @@
-# ICT398-Project-Red
+# Project-Red-Engine
 <p align=center>
-  <b> ICT398 Project Red </b>
+  <b> Project Red Engine </b>
 </p>
 <p align="center">
   <a href="#building">Building</a> •
